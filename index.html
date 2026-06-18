@@ -20,9 +20,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="apple-mobile-web-app-title" content="Mundial 2026"/>
   <meta name="theme-color" content="#0d1b5e"/>
-  <link rel="manifest" href="./manifest.json"/>
-  <link rel="icon" href="./icon.svg" type="image/svg+xml"/>
-  <link rel="apple-touch-icon" href="./icon.svg"/>
+  <link rel="manifest" id="pwa-manifest"/>
   <style>
     /* ═══════════════════════════════════════════
        LIQUID GLASS — Mundial 2026
@@ -58,7 +56,8 @@
       font-family: 'DM Sans', system-ui, sans-serif;
       padding-bottom: calc(72px + var(--safe-bottom));
       min-height: 100vh;
-      background: #060a18;
+      background: linear-gradient(180deg, #2541b0 0%, #1c3296 12%, #142772 28%, #0e1c54 46%, #0a1440 66%, #070f30 84%, #050b22 100%);
+      background-attachment: fixed;
       color: var(--text);
     }
 
@@ -73,7 +72,7 @@
     /* ── Header ── */
     .app-header {
       position: sticky; top: 0; z-index: 30;
-      background: rgba(4,10,38,0.7);
+      background: rgba(28,45,130,0.55);
       backdrop-filter: blur(24px) saturate(1.6);
       -webkit-backdrop-filter: blur(24px) saturate(1.6);
       border-bottom: 1px solid var(--border);
@@ -118,7 +117,7 @@
     /* ── Bottom nav ── */
     .bottom-nav {
       position: fixed; bottom: 0; left: 0; right: 0; z-index: 40;
-      background: rgba(4,10,38,0.82);
+      background: rgba(8,14,48,0.85);
       backdrop-filter: blur(24px) saturate(1.5);
       -webkit-backdrop-filter: blur(24px) saturate(1.5);
       border-top: 1px solid var(--border);
@@ -126,11 +125,11 @@
       display: flex; align-items: stretch;
     }
     .bottom-nav button {
-      flex: 1; display: flex; flex-direction: column; align-items: center;
+      flex: 1 1 0%; display: flex; flex-direction: column; align-items: center;
       justify-content: center; gap: 3px;
-      padding: 9px 4px 7px; border: none; background: none; cursor: pointer;
-      color: rgba(255,255,255,.38); font-size: 9px; font-weight: 700;
-      letter-spacing: .06em; text-transform: uppercase;
+      padding: 9px 2px 7px; border: none; background: none; cursor: pointer;
+      color: rgba(255,255,255,.38); font-size: 8.2px; font-weight: 700;
+      letter-spacing: .01em; text-transform: uppercase;
       transition: color .15s, transform .1s; position: relative; min-width: 0;
       font-family: 'DM Sans', system-ui, sans-serif;
     }
@@ -142,7 +141,14 @@
       border-radius: 0 0 4px 4px;
     }
     .bottom-nav button:active { transform: scale(.9); }
-    .bottom-nav .nav-label { line-height: 1; margin-top: 1px; }
+    .bottom-nav .nav-label {
+      display: block; width: 100%; max-width: 100%;
+      white-space: normal; overflow-wrap: break-word; word-break: break-word;
+      text-align: center; line-height: 1.15; margin-top: 1px;
+    }
+    @media (max-width: 380px) {
+      .bottom-nav button { font-size: 7.6px; }
+    }
 
     /* ── Content ── */
     .app-content { max-width: 680px; margin: 0 auto; padding: 14px 12px 10px; }
@@ -266,7 +272,7 @@
     #loading {
       display:flex; align-items:center; justify-content:center;
       min-height:100vh; flex-direction:column; gap:14px;
-      background: linear-gradient(160deg, #040c28 0%, #050f35 40%, #06112a 100%);
+      background: linear-gradient(180deg, #2541b0 0%, #142772 30%, #0a1440 65%, #050b22 100%);
     }
     .spinner {
       width:40px; height:40px;
@@ -346,12 +352,42 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 // ── PWA setup ──────────────────────────────────────────────────
-// Manifest jest teraz statycznym plikiem manifest.json (zob. <link rel="manifest">),
-// a Service Worker prawdziwym plikiem sw.js – dzięki temu wszystko działa
-// poprawnie po wystawieniu na GitHub Pages (blob: URL-e nie są tam wiarygodne).
 (function() {
+  // manifest
+  const manifest = {
+    name: "Mundial 2026 – Typer",
+    short_name: "Mundial 26",
+    description: "Typowanie wyników FIFA World Cup 2026",
+    start_url: "./",
+    display: "standalone",
+    background_color: "#eef1f8",
+    theme_color: "#0d1b5e",
+    orientation: "portrait",
+    icons: [
+      { src: "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="40" fill="#0d1b5e"/><text x="96" y="130" text-anchor="middle" font-size="100">⚽</text></svg>'), sizes: "192x192", type: "image/svg+xml" },
+      { src: "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="96" fill="#0d1b5e"/><text x="256" y="350" text-anchor="middle" font-size="280">⚽</text></svg>'), sizes: "512x512", type: "image/svg+xml" }
+    ]
+  };
+  try {
+    const blob = new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'});
+    document.getElementById('pwa-manifest').href = URL.createObjectURL(blob);
+  } catch(e) {}
+  // service worker (basic caching)
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js').catch(()=>{});
+    const swCode = `
+const CACHE = 'mundial2026-v1';
+const OFFLINE_URLS = [self.location.href];
+self.addEventListener('install', e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(OFFLINE_URLS)).catch(()=>{})));
+self.addEventListener('activate', e => e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))));
+self.addEventListener('fetch', e => {
+  if(e.request.method !== 'GET') return;
+  e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+});
+`;
+    try {
+      const swBlob = new Blob([swCode], {type:'application/javascript'});
+      navigator.serviceWorker.register(URL.createObjectURL(swBlob));
+    } catch(e) {}
   }
 })();
 
@@ -721,13 +757,14 @@ function ScoreInput({value,onChange,disabled=false,label}) {
       {label&&<span className="text-[10px] uppercase tracking-wider text-stone-500 font-medium">{label}</span>}
       <div className="flex items-center gap-0.5">
         <button type="button" onClick={()=>set((num??0)-1)} disabled={disabled}
-          style={{width:44,height:56,borderRadius:'10px 0 0 10px',background:'rgba(255,255,255,.15)',border:'1px solid rgba(255,255,255,.25)',color:'white',fontWeight:800,fontSize:22,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',userSelect:'none',transition:'background .1s'}}>−</button>
+          style={{width:40,height:52,borderRadius:'12px 0 0 12px',background:'rgba(255,255,255,.08)',border:'1px solid rgba(255,255,255,.18)',color:'rgba(255,255,255,.85)',fontWeight:700,fontSize:20,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',userSelect:'none',transition:'background .1s'}}>−</button>
         <input type="number" inputMode="numeric" value={num===null?'':num}
           onChange={e=>{ const v=e.target.value; if(v==='')onChange(null); else set(parseInt(v)||0); }}
           disabled={disabled} min="0" max="99"
-          className="w-16 h-14 text-center text-2xl font-bold bg-white border-y-2 border-stone-300 focus:border-[#0d1b5e] focus:outline-none disabled:bg-stone-100 font-display" />
+          style={{width:56,height:52,textAlign:'center',background:'rgba(255,255,255,.05)',border:'1px solid rgba(255,255,255,.18)',borderLeft:'none',borderRight:'none',color:'white'}}
+          className="text-2xl font-bold focus:outline-none disabled:opacity-50 font-display" />
         <button type="button" onClick={()=>set((num??0)+1)} disabled={disabled}
-          style={{width:44,height:56,borderRadius:'0 10px 10px 0',background:'rgba(255,255,255,.15)',border:'1px solid rgba(255,255,255,.25)',color:'white',fontWeight:800,fontSize:22,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',userSelect:'none',transition:'background .1s'}}>+</button>
+          style={{width:40,height:52,borderRadius:'0 12px 12px 0',background:'rgba(255,255,255,.08)',border:'1px solid rgba(255,255,255,.18)',color:'rgba(255,255,255,.85)',fontWeight:700,fontSize:20,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',userSelect:'none',transition:'background .1s'}}>+</button>
       </div>
     </div>
   );
@@ -796,11 +833,21 @@ const FLAG_ABBR={
   'pt':'POR','cd':'COD','uz':'UZB','co':'COL',
   'gb-eng':'ENG','hr':'CRO','gh':'GHA','pa':'PAN',
 };
-function FlagImg({code, size=20, className='', title}) {
+function FlagImg({code, size=34, className='', title}) {
   if(!code) return null;
   const abbr=FLAG_ABBR[code.toLowerCase()]||'';
   if(!abbr) return null;
-  return <span title={title} style={{fontSize:11,fontWeight:800,color:'rgba(255,255,255,.9)',fontFamily:'monospace',letterSpacing:'0.06em',verticalAlign:'middle',flexShrink:0}}>{abbr}</span>;
+  return (
+    <span title={title} className={className} style={{
+      width:size, height:size, borderRadius:'50%', flexShrink:0,
+      display:'inline-flex', alignItems:'center', justifyContent:'center',
+      background:'rgba(255,255,255,.10)',
+      border:'1px solid rgba(255,255,255,.22)',
+      boxShadow:'0 1px 5px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.12)',
+      fontSize:Math.round(size*0.30), fontWeight:800, color:'rgba(255,255,255,.92)',
+      fontFamily:"'DM Sans',system-ui,sans-serif", letterSpacing:'0.01em',
+    }}>{abbr}</span>
+  );
 }
 function TeamLabel({team,size='md',placeholderHint=null}) {
   if(!team) return <span className={`inline-flex items-center gap-1.5 text-stone-400 italic text-${size}`}><span>❓</span><span>{placeholderHint||'TBD'}</span></span>;
@@ -892,17 +939,19 @@ function MatchCard({match,teams,prediction,result,allPredictions,players,activeP
           </div>
         </div>
         <div className="mt-1">
-          {/* "Meksyk vs RPA" */}
-          <div style={{textAlign:'center',fontSize:13,fontWeight:700,color:'rgba(255,255,255,.75)',marginBottom:6,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>
-            {home?.name||'?'} <span style={{color:'rgba(255,255,255,.35)',fontWeight:400}}>vs</span> {away?.name||'?'}
-          </div>
-          {/* skrót — wynik — skrót */}
-          <div className="flex items-center justify-center gap-2">
-            <span style={{flex:1,textAlign:'right',fontSize:11,fontWeight:800,color:'rgba(255,255,255,.55)',fontFamily:'monospace',letterSpacing:'0.08em'}}>{FLAG_ABBR[home?.flag]||NAME_TO_ABBR[home?.name?.toLowerCase()]||''}</span>
-            <div style={{padding:'4px 12px',borderRadius:10,background:'rgba(255,255,255,.12)',backdropFilter:'blur(8px)',border:'1px solid rgba(255,255,255,.22)',fontFamily:'Bebas Neue,sans-serif',fontSize:22,color:'white',minWidth:64,textAlign:'center',letterSpacing:'0.04em'}}>
+          {/* flaga+nazwa — wynik/czas — flaga+nazwa */}
+          <div className="flex items-center justify-between gap-2">
+            <div style={{flex:1,minWidth:0,display:'flex',flexDirection:'column',alignItems:'center',gap:5}}>
+              <FlagImg code={home?.flag} size={32} title={home?.name}/>
+              <span style={{fontSize:11.5,fontWeight:700,color:'rgba(255,255,255,.85)',textAlign:'center',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',maxWidth:'100%'}}>{home?.name||'TBD'}</span>
+            </div>
+            <div style={{padding:'5px 14px',borderRadius:10,background:'rgba(255,255,255,.12)',backdropFilter:'blur(8px)',border:'1px solid rgba(255,255,255,.22)',fontFamily:'Bebas Neue,sans-serif',fontSize:22,color:'white',minWidth:68,textAlign:'center',letterSpacing:'0.04em',flexShrink:0}}>
               {result?`${result.home}:${result.away}`:prediction?`${prediction.home}:${prediction.away}`:'vs'}
             </div>
-            <span style={{flex:1,textAlign:'left',fontSize:11,fontWeight:800,color:'rgba(255,255,255,.55)',fontFamily:'monospace',letterSpacing:'0.08em'}}>{FLAG_ABBR[away?.flag]||NAME_TO_ABBR[away?.name?.toLowerCase()]||''}</span>
+            <div style={{flex:1,minWidth:0,display:'flex',flexDirection:'column',alignItems:'center',gap:5}}>
+              <FlagImg code={away?.flag} size={32} title={away?.name}/>
+              <span style={{fontSize:11.5,fontWeight:700,color:'rgba(255,255,255,.85)',textAlign:'center',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',maxWidth:'100%'}}>{away?.name||'TBD'}</span>
+            </div>
           </div>
         </div>
         <div className="flex items-center gap-3 mt-2 text-[11px] text-stone-500">
@@ -926,19 +975,23 @@ function MatchCard({match,teams,prediction,result,allPredictions,players,activeP
           {activePlayerId&&teamsAssigned&&(
             <>
               <div className="my-3">
-                {/* "Meksyk vs RPA" */}
-                <div style={{textAlign:'center',fontSize:14,fontWeight:700,color:'rgba(255,255,255,.8)',marginBottom:8,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>
-                  {home.name} <span style={{color:'rgba(255,255,255,.35)',fontWeight:400}}>vs</span> {away.name}
-                </div>
-                {/* skrót — pola wyniku — skrót */}
-                <div className="flex items-center justify-center gap-3">
-                  <span style={{flex:1,textAlign:'right',fontSize:11,fontWeight:800,color:'rgba(255,255,255,.6)',fontFamily:'monospace',letterSpacing:'0.08em'}}>{FLAG_ABBR[home.flag]||NAME_TO_ABBR[home.name?.toLowerCase()]||''}</span>
-                  <div className="flex items-center gap-1">
-                    <ScoreInput value={draft.home} onChange={n=>setDraft(d=>({...d,home:n}))} disabled={locked}/>
-                    <span className="font-display text-2xl text-stone-400">:</span>
-                    <ScoreInput value={draft.away} onChange={n=>setDraft(d=>({...d,away:n}))} disabled={locked}/>
+                {/* flaga+nazwa — VS — flaga+nazwa */}
+                <div className="flex items-center justify-between gap-2 mb-3">
+                  <div style={{flex:1,minWidth:0,display:'flex',flexDirection:'column',alignItems:'center',gap:5}}>
+                    <FlagImg code={home.flag} size={30} title={home.name}/>
+                    <span style={{fontSize:12,fontWeight:700,color:'rgba(255,255,255,.85)',textAlign:'center',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',maxWidth:'100%'}}>{home.name}</span>
                   </div>
-                  <span style={{flex:1,textAlign:'left',fontSize:11,fontWeight:800,color:'rgba(255,255,255,.6)',fontFamily:'monospace',letterSpacing:'0.08em'}}>{FLAG_ABBR[away.flag]||NAME_TO_ABBR[away.name?.toLowerCase()]||''}</span>
+                  <span style={{fontSize:10.5,fontWeight:700,color:'rgba(255,255,255,.32)',flexShrink:0,letterSpacing:'0.06em'}}>VS</span>
+                  <div style={{flex:1,minWidth:0,display:'flex',flexDirection:'column',alignItems:'center',gap:5}}>
+                    <FlagImg code={away.flag} size={30} title={away.name}/>
+                    <span style={{fontSize:12,fontWeight:700,color:'rgba(255,255,255,.85)',textAlign:'center',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',maxWidth:'100%'}}>{away.name}</span>
+                  </div>
+                </div>
+                {/* pola wyniku */}
+                <div className="flex items-center justify-center gap-1">
+                  <ScoreInput value={draft.home} onChange={n=>setDraft(d=>({...d,home:n}))} disabled={locked}/>
+                  <span className="font-display text-2xl" style={{color:'rgba(255,255,255,.45)'}}>:</span>
+                  <ScoreInput value={draft.away} onChange={n=>setDraft(d=>({...d,away:n}))} disabled={locked}/>
                 </div>
               </div>
 
@@ -2545,7 +2598,7 @@ function Mundial2026() {
             className={activeTab===t.k?'active':''}
             onClick={()=>setActiveTab(t.k)}
             style={t.k==='admin'&&activeTab===t.k?{color:'#7c3aed'}:{}}>
-            <Icon name={t.i} size={22} style={t.k==='admin'&&activeTab===t.k?{stroke:'#7c3aed'}:{}}/>
+            <Icon name={t.i} size={20} style={t.k==='admin'&&activeTab===t.k?{stroke:'#7c3aed'}:{}}/>
             <span className="nav-label">{t.l}</span>
           </button>
         ))}
