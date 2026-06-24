@@ -442,7 +442,7 @@ function Icon({ name, size = 16, className = '' }) {
 //  STAŁE
 // ═══════════════════════════════════════════════════════════════
 const POINTS = { group:{exact:3,winner:1}, knockout:{exact:5,winner:2,penBonus:1},
-  groupOrder:5, champion:20, runnerUp:10, third:5, topScorer:15, mvp:15 };
+  groupOrderAll:10, groupOrderTwo:6, groupOrderOne:3, champion:20, runnerUp:10, third:5, topScorer:15, mvp:15 };
 const GROUPS = ['A','B','C','D','E','F','G','H','I','J','K','L'];
 const PHASE_LABELS = { group:'Faza grupowa', r32:'1/16 finału', r16:'1/8 finału',
   qf:'Ćwierćfinał', sf:'Półfinał', third:'Mecz o 3. miejsce', final:'Finał' };
@@ -691,7 +691,11 @@ function scoreSpecials(special, results) {
   let groupOrders=0,podium=0,awards=0;
   GROUPS.forEach(g => {
     const p=special.groupOrders?.[g]||[], r=results.groupOrders?.[g]||[];
-    for(let i=0;i<4;i++) if(p[i]&&r[i]&&p[i]===r[i]) groupOrders+=POINTS.groupOrder;
+    if(!r.some(Boolean)) return;
+    const exact=p.filter((t,i)=>t&&r[i]&&t===r[i]).length;
+    if(exact===4) groupOrders+=POINTS.groupOrderAll;
+    else if(exact===2) groupOrders+=POINTS.groupOrderTwo;
+    else if(exact===1) groupOrders+=POINTS.groupOrderOne;
   });
   if(special.champion&&results.champion&&special.champion===results.champion) podium+=POINTS.champion;
   if(special.runnerUp&&results.runnerUp&&special.runnerUp===results.runnerUp) podium+=POINTS.runnerUp;
@@ -1203,7 +1207,7 @@ function SpecialsView({teams,players,activePlayerId,specialPredictions,specialRe
 
       <section className="bg-white border border-stone-200 rounded-xl p-4">
         <h3 className="font-display text-lg tracking-wide text-stone-900 mb-1">Kolejność w grupach</h3>
-        <p className="text-xs text-stone-500 mb-3">5 pkt za każdą trafioną pozycję • max 20 pkt na grupę</p>
+        <p className="text-xs text-stone-500 mb-3">1 trafione: 3 pkt • 2 trafione: 6 pkt • wszystkie 4: 10 pkt</p>
         <div className="flex gap-1 overflow-x-auto pb-2 mb-3">
           {GROUPS.map(g=><button key={g} onClick={()=>setActiveGroup(g)} className={`shrink-0 w-10 h-10 rounded-lg font-bold ${activeGroup===g?'bg-[#0d1b5e] text-white':'bg-stone-100 text-stone-700'}`}>{g}</button>)}
         </div>
@@ -1214,10 +1218,10 @@ function SpecialsView({teams,players,activePlayerId,specialPredictions,specialRe
           const realOrder=specialResults?.groupOrders?.[activeGroup]||[];
           const isCorrect=hasResults&&realOrder[pos]&&realOrder[pos]===selected;
           return (
-            <div key={pos} className={`border-2 rounded-lg p-2 mb-2 ${isCorrect?'border-[#4060c0] bg-[#f0f3fc]':'border-stone-200 bg-stone-50'}`}>
+            <div key={pos} className="border-2 rounded-lg p-2 mb-2 border-stone-200 bg-stone-50" style={isCorrect?{background:'rgba(0,150,70,0.25)',borderColor:'rgba(0,200,100,0.5)'}:hasResults&&realOrder[pos]&&selected&&!isCorrect?{background:'rgba(192,21,26,0.25)',borderColor:'rgba(220,50,50,0.5)'}:{}}>
               <div className="flex items-center justify-between mb-1.5">
                 <span className="text-xs font-bold text-stone-700">{placeName}</span>
-                {isCorrect&&<Badge variant="success">+5 pkt</Badge>}
+                {isCorrect&&<Badge variant="success">✓</Badge>}
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
                 {teamsOfGroup(activeGroup).map(t=>{
@@ -1369,7 +1373,9 @@ function SpecialsAllView({players,specialPredictions,specialResults,teams}) {
                     {[0,1,2,3].map(i=>{
                       const tid=order[i];
                       const isOk=hasResults&&real[i]&&tid&&real[i]===tid;
-                      return <td key={i} className={`px-2 py-2 text-center ${isOk?'bg-[#f0f3fc] text-[#0d1b5e] font-bold':''}`}>
+                      const isWrong=hasResults&&real[i]&&tid&&real[i]!==tid;
+                      const cellStyle=isOk?{background:'rgba(0,150,70,0.35)',boxShadow:'inset 0 0 0 1px rgba(0,200,100,0.4)'}:isWrong?{background:'rgba(192,21,26,0.35)',boxShadow:'inset 0 0 0 1px rgba(220,50,50,0.4)'}:{};
+                      return <td key={i} className="px-2 py-2 text-center" style={cellStyle}>
                         {tid?<span style={{fontSize:11,fontWeight:800,color:'rgba(255,255,255,0.9)',fontFamily:'monospace',letterSpacing:'0.04em',verticalAlign:'middle'}} title={teamName(tid)}>{teamAbbr(tid)}</span>:<span className="text-stone-300">—</span>}
                       </td>;
                     })}
@@ -1401,11 +1407,14 @@ function SpecialsAllView({players,specialPredictions,specialResults,teams}) {
                 return (
                   <tr key={pl.id} className="border-b border-stone-100 last:border-0">
                     <td className="px-3 py-2 font-semibold text-stone-800 truncate max-w-[100px]">{pl.name}</td>
-                    {['champion','runnerUp','third'].map(key=>(
-                      <td key={key} className={`px-2 py-2 text-center ${chk(key)?'bg-[#f0f3fc] text-[#0d1b5e] font-bold':''}`}>
+                    {['champion','runnerUp','third'].map(key=>{
+                      const isOk=chk(key);
+                      const isWrong=hasResults&&specialResults?.[key]&&sp[key]&&sp[key]!==specialResults[key];
+                      const cellStyle=isOk?{background:'rgba(0,150,70,0.35)',boxShadow:'inset 0 0 0 1px rgba(0,200,100,0.4)'}:isWrong?{background:'rgba(192,21,26,0.35)',boxShadow:'inset 0 0 0 1px rgba(220,50,50,0.4)'}:{};
+                      return <td key={key} className="px-2 py-2 text-center" style={cellStyle}>
                         {sp[key]?<span style={{fontSize:11,fontWeight:800,color:'rgba(255,255,255,0.9)',fontFamily:'monospace',letterSpacing:'0.04em',verticalAlign:'middle'}} title={teamName(sp[key])}>{teamAbbr(sp[key])}</span>:<span className="text-stone-300">—</span>}
-                      </td>
-                    ))}
+                      </td>;
+                    })}
                   </tr>
                 );
               })}
@@ -1435,8 +1444,8 @@ function SpecialsAllView({players,specialPredictions,specialResults,teams}) {
                 return (
                   <tr key={pl.id} className="border-b border-stone-100 last:border-0">
                     <td className="px-3 py-2 font-semibold text-stone-800 truncate max-w-[80px]">{pl.name}</td>
-                    <td className={`px-3 py-2 ${okScorer?'bg-[#f0f3fc] text-[#0d1b5e] font-bold':''}`}>{sp.topScorer||<span className="text-stone-300">—</span>}</td>
-                    <td className={`px-3 py-2 ${okMvp?'bg-[#f0f3fc] text-[#0d1b5e] font-bold':''}`}>{sp.mvp||<span className="text-stone-300">—</span>}</td>
+                    <td className="px-3 py-2" style={okScorer?{background:'rgba(0,150,70,0.35)',boxShadow:'inset 0 0 0 1px rgba(0,200,100,0.4)'}:hasResults&&specialResults?.topScorer&&sp.topScorer&&!okScorer?{background:'rgba(192,21,26,0.35)',boxShadow:'inset 0 0 0 1px rgba(220,50,50,0.4)'}:{}}>{sp.topScorer||<span className="text-stone-300">—</span>}</td>
+                    <td className="px-3 py-2" style={okMvp?{background:'rgba(0,150,70,0.35)',boxShadow:'inset 0 0 0 1px rgba(0,200,100,0.4)'}:hasResults&&specialResults?.mvp&&sp.mvp&&!okMvp?{background:'rgba(192,21,26,0.35)',boxShadow:'inset 0 0 0 1px rgba(220,50,50,0.4)'}:{}}>{sp.mvp||<span className="text-stone-300">—</span>}</td>
                   </tr>
                 );
               })}
@@ -1595,16 +1604,33 @@ function MyPredictionsView({activePlayerId,players,matches,teams,predictions,res
 // ═══════════════════════════════════════════════════════════════
 function CompareView({matches,teams,predictions,results,players}) {
   const [phaseFilter,setPhaseFilter]=useState('all');
-  const filtered=useMemo(()=>matches.filter(m=>phaseFilter==='all'||m.phase===phaseFilter).sort((a,b)=>PHASE_ORDER.indexOf(a.phase)-PHASE_ORDER.indexOf(b.phase)||a.num-b.num),[matches,phaseFilter]);
+  const [sortNearest,setSortNearest]=useState(false);
+  const now=useMemo(()=>new Date(),[]);
+  const filtered=useMemo(()=>{
+    const base=matches.filter(m=>phaseFilter==='all'||m.phase===phaseFilter);
+    if(sortNearest){
+      const sorted=[...base].sort((a,b)=>Math.abs(new Date(a.date)-now)-Math.abs(new Date(b.date)-now));
+      const top3=sorted.slice(0,3);
+      const top3ids=new Set(top3.map(m=>m.id));
+      const rest=base.filter(m=>!top3ids.has(m.id)).sort((a,b)=>PHASE_ORDER.indexOf(a.phase)-PHASE_ORDER.indexOf(b.phase)||a.num-b.num);
+      return [...top3,...rest];
+    }
+    return [...base].sort((a,b)=>PHASE_ORDER.indexOf(a.phase)-PHASE_ORDER.indexOf(b.phase)||a.num-b.num);
+  },[matches,phaseFilter,sortNearest,now]);
   if(players.length===0) return <div className="text-center text-stone-500 py-12">Dodaj graczy, żeby porównywać typy.</div>;
   return (
     <div className="space-y-3">
       <div className="bg-white border border-[#b0bce8] rounded-xl p-3 filters-sticky shadow-sm">
-        <div className="flex gap-1 overflow-x-auto">
+        <div className="flex gap-1 overflow-x-auto mb-2">
           {[{k:'all',l:'Wszystkie'},{k:'group',l:'Grupowa'},{k:'r32',l:'1/16'},{k:'r16',l:'1/8'},{k:'qf',l:'1/4'},{k:'sf',l:'1/2'},{k:'final',l:'Finał'}].map(t=>(
             <button key={t.k} onClick={()=>setPhaseFilter(t.k)} className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold ${phaseFilter===t.k?'bg-[#0d1b5e] text-white':'bg-stone-100 text-stone-700'}`}>{t.l}</button>
           ))}
         </div>
+        <button onClick={()=>setSortNearest(s=>!s)}
+          className={`w-full py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors ${sortNearest?'bg-[#0d1b5e] text-white':'bg-stone-100 text-stone-700'}`}>
+          <span>📅</span>
+          {sortNearest?'Sortuj od: nadchodzące mecze':'Sortuj od: nadchodzące mecze'}
+        </button>
       </div>
       {filtered.map(m=>{
         const home=teams[m.homeTeamId], away=teams[m.awayTeamId], result=results[m.id];
