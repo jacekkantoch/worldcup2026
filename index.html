@@ -23,27 +23,41 @@
   <link rel="manifest" id="pwa-manifest"/>
   <style>
     /* ═══════════════════════════════════════════
-       LIQUID GLASS — Mundial 2026
-       Tło: głęboki granat z rozmytymi bańkami
-       Karty: szkło (blur + przezroczystość)
-       Akcenty: biel, złoto, czerwień
+       iOS 26 LIQUID GLASS — Mundial 2026
+       Apple Liquid Glass design language
+       WWDC 2025 — translucency, refraction, depth
     ═══════════════════════════════════════════ */
     :root {
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 20px);
       --navy:   #050d2e;
       --navy2:  #0a1850;
-      --glass:  rgba(255,255,255,0.11);
-      --glass2: rgba(255,255,255,0.18);
-      --glass3: rgba(255,255,255,0.26);
-      --border: rgba(255,255,255,0.22);
-      --border2:rgba(255,255,255,0.35);
+      /* iOS 26 Liquid Glass material */
+      --glass:  rgba(255,255,255,0.13);
+      --glass2: rgba(255,255,255,0.20);
+      --glass3: rgba(255,255,255,0.30);
+      --glass-bg: linear-gradient(145deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.06) 100%);
+      --glass-bg2: linear-gradient(145deg, rgba(255,255,255,0.30) 0%, rgba(255,255,255,0.10) 100%);
+      --border: rgba(255,255,255,0.28);
+      --border2:rgba(255,255,255,0.45);
+      /* specular highlight — top edge glow */
+      --specular: inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -1px 0 rgba(0,0,0,0.08);
+      --specular2: inset 0 1.5px 0 rgba(255,255,255,0.70), inset 0 -1px 0 rgba(0,0,0,0.12);
+      /* depth shadows */
+      --shadow-sm: 0 4px 20px rgba(0,0,0,0.28), 0 1px 4px rgba(0,0,0,0.18);
+      --shadow-md: 0 8px 40px rgba(0,0,0,0.35), 0 2px 8px rgba(0,0,0,0.22);
+      --shadow-lg: 0 16px 60px rgba(0,0,0,0.45), 0 4px 16px rgba(0,0,0,0.28);
       --gold:   #f4c842;
       --red:    #c0151a;
       --green:  #006940;
       --text:   rgba(255,255,255,1.0);
       --text2:  rgba(255,255,255,0.85);
       --text3:  rgba(255,255,255,0.60);
+      /* iOS 26 border radius */
+      --radius-sm: 14px;
+      --radius-md: 20px;
+      --radius-lg: 28px;
+      --radius-xl: 36px;
     }
 
     html, body {
@@ -54,132 +68,161 @@
 
     body {
       font-family: 'DM Sans', system-ui, sans-serif;
-      padding-bottom: calc(72px + var(--safe-bottom));
+      padding-bottom: calc(88px + var(--safe-bottom));
       min-height: 100vh;
-      background: linear-gradient(180deg, #2541b0 0%, #1c3296 12%, #142772 28%, #0e1c54 46%, #0a1440 66%, #070f30 84%, #050b22 100%);
+      background:
+        radial-gradient(ellipse 80% 50% at 20% -10%, rgba(100,120,255,0.45) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 85% 15%, rgba(60,80,200,0.35) 0%, transparent 55%),
+        radial-gradient(ellipse 70% 60% at 10% 80%, rgba(20,50,160,0.40) 0%, transparent 65%),
+        radial-gradient(ellipse 90% 70% at 70% 90%, rgba(10,30,100,0.50) 0%, transparent 70%),
+        linear-gradient(180deg, #1a2fa8 0%, #0f2070 20%, #0a1855 45%, #070f38 70%, #040a22 100%);
       background-attachment: fixed;
       color: var(--text);
     }
 
-    /* ── Liquid glass helper ── */
+    /* ── iOS 26 Liquid Glass material ── */
     .glass {
-      background: var(--glass);
-      backdrop-filter: blur(16px) saturate(1.4);
-      -webkit-backdrop-filter: blur(16px) saturate(1.4);
+      background: var(--glass-bg);
+      backdrop-filter: blur(40px) saturate(1.8) brightness(1.05);
+      -webkit-backdrop-filter: blur(40px) saturate(1.8) brightness(1.05);
       border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm), var(--specular);
+    }
+    .glass-strong {
+      background: var(--glass-bg2);
+      backdrop-filter: blur(50px) saturate(2.0) brightness(1.08);
+      -webkit-backdrop-filter: blur(50px) saturate(2.0) brightness(1.08);
+      border: 1px solid var(--border2);
+      box-shadow: var(--shadow-md), var(--specular2);
     }
 
-    /* ── Header ── */
+    /* ── iOS 26 Header — floating glass bar ── */
     .app-header {
       position: sticky; top: 0; z-index: 30;
-      background: rgba(28,45,130,0.55);
-      backdrop-filter: blur(24px) saturate(1.6);
-      -webkit-backdrop-filter: blur(24px) saturate(1.6);
-      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(30,50,160,0.60) 0%, rgba(15,30,120,0.45) 100%);
+      backdrop-filter: blur(48px) saturate(1.9) brightness(1.06);
+      -webkit-backdrop-filter: blur(48px) saturate(1.9) brightness(1.06);
+      border-bottom: 1px solid rgba(255,255,255,0.18);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.12), 0 4px 24px rgba(0,0,0,0.30);
       color: white;
-      padding: calc(var(--safe-top) + 10px) 14px 10px;
+      padding: calc(var(--safe-top) + 12px) 16px 12px;
       display: flex; align-items: center; justify-content: space-between; gap: 10px;
     }
-    .app-header .logo { display: flex; align-items: center; gap: 9px; min-width: 0; }
+    .app-header .logo { display: flex; align-items: center; gap: 10px; min-width: 0; }
     .app-header .logo-icon {
-      width:36px; height:36px; background:white; border-radius:10px;
+      width:38px; height:38px;
+      background: linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(220,230,255,0.90) 100%);
+      border-radius: var(--radius-sm);
       display:flex; align-items:center; justify-content:center; flex-shrink:0;
-      box-shadow: 0 2px 12px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.8);
+      box-shadow: 0 4px 16px rgba(0,0,0,.40), inset 0 1px 0 rgba(255,255,255,1.0), inset 0 -1px 0 rgba(0,0,0,.08);
     }
     .app-header .title-group { min-width: 0; }
     .app-header .title-group h1 {
       margin:0; font-family:'Bebas Neue',sans-serif;
-      font-size:19px; letter-spacing:.12em; line-height:1; color:white;
+      font-size:20px; letter-spacing:.12em; line-height:1; color:white;
+      text-shadow: 0 1px 8px rgba(0,0,0,.3);
     }
     .app-header .title-group small {
-      font-size:9.5px; letter-spacing:.2em; color:rgba(255,255,255,.5);
-      text-transform:uppercase; display:block; margin-top:1px;
+      font-size:9px; letter-spacing:.22em; color:rgba(255,255,255,.50);
+      text-transform:uppercase; display:block; margin-top:2px;
     }
-    .player-row { display:flex; align-items:center; gap:7px; }
+    .player-row { display:flex; align-items:center; gap:8px; }
     .player-row select {
-      background: rgba(255,255,255,.1);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255,255,255,.22);
-      color: white; font-size: 13px; border-radius: 10px; padding: 6px 10px;
+      background: linear-gradient(145deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.08) 100%);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,.28);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.30), 0 2px 8px rgba(0,0,0,.2);
+      color: white; font-size: 13px; border-radius: var(--radius-sm); padding: 7px 11px;
       max-width: 130px; font-family: 'DM Sans',system-ui,sans-serif; font-weight:600;
     }
     .player-row select option { background: #050d2e; }
     .players-btn {
-      width:36px; height:36px; border-radius:10px;
-      border: 1px solid rgba(255,255,255,.22);
-      background: rgba(255,255,255,.1);
-      backdrop-filter: blur(8px);
+      width:38px; height:38px; border-radius: var(--radius-sm);
+      border: 1px solid rgba(255,255,255,.28);
+      background: linear-gradient(145deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.08) 100%);
+      backdrop-filter: blur(20px);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.30), 0 2px 8px rgba(0,0,0,.2);
       color: white; display:flex; align-items:center; justify-content:center;
-      cursor:pointer; flex-shrink:0; transition: background .15s;
+      cursor:pointer; flex-shrink:0; transition: all .18s cubic-bezier(.22,1,.36,1);
     }
-    .players-btn:active { background: rgba(255,255,255,.2); }
+    .players-btn:active { transform: scale(.92); background: linear-gradient(145deg, rgba(255,255,255,0.26) 0%, rgba(255,255,255,0.14) 100%); }
 
-    /* ── Bottom nav ── */
+    /* ── iOS 26 Bottom nav — floating glass pill ── */
     .bottom-nav {
       position: fixed; bottom: 0; left: 0; right: 0; z-index: 40;
-      background: rgba(8,14,48,0.85);
-      backdrop-filter: blur(24px) saturate(1.5);
-      -webkit-backdrop-filter: blur(24px) saturate(1.5);
-      border-top: 1px solid var(--border);
+      /* iOS 26: full-width glass bar with pill active indicator */
+      background: linear-gradient(180deg, rgba(8,18,70,0.72) 0%, rgba(4,10,40,0.82) 100%);
+      backdrop-filter: blur(50px) saturate(2.0) brightness(1.04);
+      -webkit-backdrop-filter: blur(50px) saturate(2.0) brightness(1.04);
+      border-top: 1px solid rgba(255,255,255,0.15);
+      box-shadow: 0 -1px 0 rgba(255,255,255,0.10), 0 -8px 32px rgba(0,0,0,0.40);
       padding-bottom: var(--safe-bottom);
       display: flex; align-items: stretch;
     }
     .bottom-nav button {
       flex: 1 1 0%; display: flex; flex-direction: column; align-items: center;
       justify-content: center; gap: 3px;
-      padding: 9px 2px 7px; border: none; background: none; cursor: pointer;
-      color: rgba(255,255,255,.38); font-size: 8.2px; font-weight: 700;
-      letter-spacing: .01em; text-transform: uppercase;
-      transition: color .15s, transform .1s; position: relative; min-width: 0;
+      padding: 10px 4px 8px; border: none; background: none; cursor: pointer;
+      color: rgba(255,255,255,.35); font-size: 8px; font-weight: 700;
+      letter-spacing: .02em; text-transform: uppercase;
+      transition: color .2s cubic-bezier(.22,1,.36,1), transform .15s cubic-bezier(.22,1,.36,1);
+      position: relative; min-width: 0;
       font-family: 'DM Sans', system-ui, sans-serif;
     }
+    /* iOS 26: active tab gets glass pill background */
     .bottom-nav button.active { color: white; }
     .bottom-nav button.active svg { stroke: white; }
-    .bottom-nav button.active::after {
-      content: ''; position: absolute; top: 0; left: 20%; right: 20%; height: 2px;
-      background: linear-gradient(90deg, var(--green), var(--gold), var(--red));
-      border-radius: 0 0 4px 4px;
+    .bottom-nav button.active::before {
+      content: '';
+      position: absolute; top: 6px; left: 10%; right: 10%; bottom: 6px;
+      background: linear-gradient(145deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.09) 100%);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.28);
+      border-radius: var(--radius-md);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), 0 2px 12px rgba(0,0,0,0.25);
+      z-index: -1;
     }
-    .bottom-nav button:active { transform: scale(.9); }
+    .bottom-nav button:active { transform: scale(.88); }
     .bottom-nav .nav-label {
       display: block; width: 100%; max-width: 100%;
       white-space: normal; overflow-wrap: break-word; word-break: break-word;
-      text-align: center; line-height: 1.15; margin-top: 1px;
+      text-align: center; line-height: 1.15; margin-top: 2px;
     }
     @media (max-width: 380px) {
-      .bottom-nav button { font-size: 7.6px; }
+      .bottom-nav button { font-size: 7.2px; }
     }
 
     /* ── Content ── */
-    .app-content { max-width: 680px; margin: 0 auto; padding: 14px 12px 10px; }
+    .app-content { max-width: 680px; margin: 0 auto; padding: 16px 14px 12px; }
 
-    /* ── Tab animation ── */
-    .tab-view { animation: slideIn .22s cubic-bezier(.22,1,.36,1) both; }
-    @keyframes slideIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+    /* ── iOS 26 Tab animation — spring ── */
+    .tab-view { animation: slideIn .38s cubic-bezier(.34,1.56,.64,1) both; }
+    @keyframes slideIn { from{opacity:0;transform:translateY(16px) scale(0.97)} to{opacity:1;transform:none} }
 
-    /* ── Toast ── */
+    /* ── iOS 26 Toast — glass pill ── */
     .toast-bar {
-      position:fixed; top:calc(var(--safe-top) + 66px); left:50%; transform:translateX(-50%);
+      position:fixed; top:calc(var(--safe-top) + 70px); left:50%; transform:translateX(-50%);
       z-index:100;
-      background: rgba(255,255,255,.18);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255,255,255,.3);
-      color: white; padding:9px 20px; border-radius:999px;
+      background: linear-gradient(145deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.12) 100%);
+      backdrop-filter: blur(48px) saturate(2.0);
+      -webkit-backdrop-filter: blur(48px) saturate(2.0);
+      border: 1px solid rgba(255,255,255,.38);
+      color: white; padding:10px 22px; border-radius:999px;
       font-weight:700; font-size:13px;
-      box-shadow: 0 8px 32px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.25);
-      animation: toastIn .25s ease-out, toastOut .25s ease-in 1.7s both;
+      box-shadow: 0 8px 40px rgba(0,0,0,.45), inset 0 1.5px 0 rgba(255,255,255,.55), inset 0 -1px 0 rgba(0,0,0,.1);
+      animation: toastIn .32s cubic-bezier(.34,1.56,.64,1), toastOut .22s ease-in 1.8s both;
       pointer-events:none; white-space:nowrap;
     }
-    @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(-8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
-    @keyframes toastOut{to{opacity:0;transform:translateX(-50%) translateY(-10px)}}
+    @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(-12px) scale(0.92)}to{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}}
+    @keyframes toastOut{to{opacity:0;transform:translateX(-50%) translateY(-8px) scale(0.95)}}
 
-    /* ── Install banner ── */
+    /* ── iOS 26 Install banner ── */
     .install-banner {
-      background: var(--glass2);
-      backdrop-filter: blur(16px);
-      border: 1px solid var(--border2);
-      border-radius: 16px; padding:14px; margin-bottom:14px;
+      background: linear-gradient(145deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.09) 100%);
+      backdrop-filter: blur(40px) saturate(1.8);
+      border: 1px solid rgba(255,255,255,0.32);
+      box-shadow: var(--shadow-md), var(--specular2);
+      border-radius: var(--radius-lg); padding:16px; margin-bottom:16px;
       display:flex; align-items:center; justify-content:space-between; gap:10px;
     }
     .install-banner .ib-text h4{margin:0 0 2px;font-size:14px;font-weight:800;color:white;}
@@ -189,16 +232,16 @@
       padding:8px 14px; font-weight:800; font-size:13px; cursor:pointer; white-space:nowrap;
     }
 
-    /* ── Tailwind overrides — glass cards ── */
-    /* bg-white → glass */
+    /* ── iOS 26 — Tailwind overrides — Liquid Glass cards ── */
+    /* bg-white → iOS 26 glass material */
     .bg-white {
-      background: rgba(255,255,255,0.07) !important;
-      backdrop-filter: blur(16px) saturate(1.3) !important;
-      -webkit-backdrop-filter: blur(16px) saturate(1.3) !important;
+      background: linear-gradient(145deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.07) 100%) !important;
+      backdrop-filter: blur(40px) saturate(1.8) brightness(1.05) !important;
+      -webkit-backdrop-filter: blur(40px) saturate(1.8) brightness(1.05) !important;
     }
     /* borders */
-    .border-stone-200, .border { border-color: var(--border) !important; }
-    .border-stone-100 { border-color: rgba(255,255,255,.08) !important; }
+    .border-stone-200, .border { border-color: rgba(255,255,255,0.22) !important; }
+    .border-stone-100 { border-color: rgba(255,255,255,.10) !important; }
     /* text colors — wszystkie białe */
     .text-stone-900, .text-stone-800,
     .text-stone-700, .text-stone-600,
@@ -211,23 +254,35 @@
       background: rgba(0,0,0,.35) !important;
       backdrop-filter: blur(12px) !important;
     }
-    /* inputs */
+    /* iOS 26 inputs — glass fields */
     input, select, textarea {
-      background: rgba(255,255,255,.1) !important;
+      background: linear-gradient(145deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.07) 100%) !important;
+      backdrop-filter: blur(20px) !important;
       color: white !important;
-      border-color: var(--border) !important;
+      border-color: rgba(255,255,255,0.25) !important;
+      border-radius: var(--radius-sm) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.20), 0 1px 4px rgba(0,0,0,0.15) !important;
+      transition: all .2s cubic-bezier(.22,1,.36,1) !important;
     }
-    input::placeholder, textarea::placeholder { color: rgba(255,255,255,.35) !important; }
+    input::placeholder, textarea::placeholder { color: rgba(255,255,255,.32) !important; }
     input:focus, select:focus, textarea:focus {
       border-color: rgba(255,255,255,.55) !important;
-      background: rgba(255,255,255,.15) !important;
+      background: linear-gradient(145deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.12) 100%) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), 0 0 0 3px rgba(255,255,255,0.08), 0 2px 8px rgba(0,0,0,0.2) !important;
       outline: none;
     }
     select option { background: #050d2e; color: white; }
-    /* rounded cards shadow */
-    .rounded-xl, .rounded-2xl {
-      box-shadow: 0 4px 24px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.12) !important;
+    /* iOS 26 rounded cards — specular + depth */
+    .rounded-xl {
+      border-radius: var(--radius-md) !important;
+      box-shadow: var(--shadow-sm), var(--specular) !important;
     }
+    .rounded-2xl {
+      border-radius: var(--radius-lg) !important;
+      box-shadow: var(--shadow-md), var(--specular) !important;
+    }
+    .rounded-lg { border-radius: var(--radius-sm) !important; }
+    .rounded-full { border-radius: 999px !important; }
     /* amber/warning backgrounds */
     .bg-amber-50 { background: rgba(244,200,66,.1) !important; }
     .border-amber-200, .border-amber-300 { border-color: rgba(244,200,66,.35) !important; }
@@ -268,11 +323,14 @@
     input[type=number] { -moz-appearance:textfield; }
     .pitch-bg { background: transparent; }
 
-    /* ── Loading ── */
+    /* ── iOS 26 Loading ── */
     #loading {
       display:flex; align-items:center; justify-content:center;
       min-height:100vh; flex-direction:column; gap:14px;
-      background: linear-gradient(180deg, #2541b0 0%, #142772 30%, #0a1440 65%, #050b22 100%);
+      background:
+        radial-gradient(ellipse 80% 50% at 20% -10%, rgba(100,120,255,0.45) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 85% 15%, rgba(60,80,200,0.35) 0%, transparent 55%),
+        linear-gradient(180deg, #1a2fa8 0%, #0a1855 45%, #040a22 100%);
     }
     .spinner {
       width:40px; height:40px;
@@ -287,13 +345,12 @@
 
     span[style*="monospace"] { color: rgba(255,255,255,0.9) !important; }
 
-    /* Usuń jasne hover */
-    .hover\:bg-white\/10:hover { background: rgba(255,255,255,.10) !important; }
-    .hover\:bg-white\/15:hover { background: rgba(255,255,255,.15) !important; }
-    button:hover, [role="button"]:hover { background-color: rgba(255,255,255,.05) !important; }
-    /* Wyjątek: przyciski z własnym kolorem */
-    .bg-\[\#0d1b5e\]:hover { background: rgba(20,40,120,.8) !important; }
-    .bg-amber-500:hover, .bg-amber-600:hover { background: rgba(180,100,0,.7) !important; }
+    /* iOS 26 hover — subtle glass brightening */
+    .hover\:bg-white\/10:hover { background: rgba(255,255,255,.12) !important; }
+    .hover\:bg-white\/15:hover { background: rgba(255,255,255,.18) !important; }
+    button:hover, [role="button"]:hover { background-color: rgba(255,255,255,.06) !important; }
+    .bg-\[\#0d1b5e\]:hover { background: rgba(20,40,130,.85) !important; }
+    .bg-amber-500:hover, .bg-amber-600:hover { background: rgba(190,110,0,.75) !important; }
 
     /* Nadpisania jasnych Tailwind bg na szklane */
     [class*="bg-sky-"], [class*="bg-blue-"],
@@ -338,7 +395,7 @@
   </div>
   <div id="root" style="display:none;"></div>
 
-<script type="text/babel">
+<script type="text/babel" data-presets="react" data-plugins="">
 // ─── Firebase init ─────────────────────────────────────────────
 const firebaseConfig = {
   apiKey: "AIzaSyDexi8bjlzHwNyKym-Ok2pBAyb8zpaPTKo",
@@ -752,17 +809,22 @@ function hashPwd(s) {
 //  KOMPONENTY UI
 // ═══════════════════════════════════════════════════════════════
 function Btn({children,variant='primary',size='md',className='',...props}) {
-  const base='inline-flex items-center justify-center gap-2 font-semibold transition-all rounded-lg disabled:opacity-40 disabled:cursor-not-allowed select-none active:scale-95';
+  const base='inline-flex items-center justify-center gap-2 font-semibold disabled:opacity-40 disabled:cursor-not-allowed select-none';
   const sizes={sm:'px-3 py-1.5 text-sm',md:'px-4 py-2.5 text-sm',lg:'px-5 py-3 text-base'};
   const variants={
-    primary:'bg-[#0d1b5e] hover:bg-[#162570] active:bg-[#060e30] text-white shadow-sm',
-    gold:'bg-amber-500 hover:bg-amber-600 text-stone-900 shadow-sm',
+    primary:'bg-[#0d1b5e] hover:bg-[#162570] active:bg-[#060e30] text-white',
+    gold:'bg-amber-500 hover:bg-amber-600 text-stone-900',
     ghost:'text-stone-700 hover:bg-white/10',
     outline:'border border-stone-300 text-stone-800 hover:bg-white/10 bg-white',
-    danger:'bg-red-600 hover:bg-red-700 text-white shadow-sm',
+    danger:'bg-red-600 hover:bg-red-700 text-white',
     dark:'bg-stone-900 hover:bg-stone-800 text-stone-50',
   };
-  return <button className={`${base} ${sizes[size]} ${variants[variant]} ${className}`} {...props}>{children}</button>;
+  const ios26Style={
+    borderRadius:'var(--radius-sm)',
+    transition:'all .22s cubic-bezier(.22,1,.36,1)',
+    boxShadow:'inset 0 1px 0 rgba(255,255,255,0.18), 0 2px 8px rgba(0,0,0,0.2)',
+  };
+  return <button style={ios26Style} className={`${base} ${sizes[size]} ${variants[variant]} ${className}`} {...props}>{children}</button>;
 }
 
 function ScoreInput({value,onChange,disabled=false,label}) {
@@ -903,7 +965,7 @@ function AutocompleteInput({value,onChange,suggestions,placeholder,disabled}) {
 // ═══════════════════════════════════════════════════════════════
 //  KARTA MECZU
 // ═══════════════════════════════════════════════════════════════
-function MatchCard({match,teams,prediction,result,allPredictions,players,activePlayerId,phaseLocks,onSavePrediction,expanded,onToggle}) {
+const MatchCard=React.memo(function MatchCard({match,teams,prediction,result,allPredictions,players,activePlayerId,phaseLocks,onSavePrediction,expanded,onToggle}) {
   const [draft,setDraft]=useState(prediction||{home:null,away:null,penWinner:null});
   const [pin,setPin]=useState('');
   const [pinErr,setPinErr]=useState('');
@@ -961,7 +1023,7 @@ function MatchCard({match,teams,prediction,result,allPredictions,players,activeP
               <FlagImg code={home?.flag} size={32} title={home?.name}/>
               <span style={{fontSize:11.5,fontWeight:700,color:'rgba(255,255,255,.85)',textAlign:'center',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',maxWidth:'100%'}}>{home?.name||'TBD'}</span>
             </div>
-            <div style={{padding:'5px 14px',borderRadius:10,background:'rgba(255,255,255,.12)',backdropFilter:'blur(8px)',border:'1px solid rgba(255,255,255,.22)',fontFamily:'Bebas Neue,sans-serif',fontSize:22,color:'white',minWidth:68,textAlign:'center',letterSpacing:'0.04em',flexShrink:0}}>
+            <div style={{padding:'6px 16px',borderRadius:'var(--radius-md)',background:'linear-gradient(145deg,rgba(255,255,255,.18) 0%,rgba(255,255,255,.07) 100%)',backdropFilter:'blur(40px) saturate(1.8)',WebkitBackdropFilter:'blur(40px) saturate(1.8)',border:'1px solid rgba(255,255,255,.28)',boxShadow:'inset 0 1px 0 rgba(255,255,255,.40), 0 4px 16px rgba(0,0,0,.30)',fontFamily:'Bebas Neue,sans-serif',fontSize:24,color:'white',minWidth:72,textAlign:'center',letterSpacing:'0.04em',flexShrink:0}}>
               {result?`${result.home}:${result.away}`:prediction?`${prediction.home}:${prediction.away}`:'vs'}
             </div>
             <div style={{flex:1,minWidth:0,display:'flex',flexDirection:'column',alignItems:'center',gap:5}}>
@@ -1102,7 +1164,7 @@ function MatchCard({match,teams,prediction,result,allPredictions,players,activeP
       )}
     </div>
   );
-}
+});
 
 // ═══════════════════════════════════════════════════════════════
 //  WIDOK: MECZE
@@ -2419,6 +2481,7 @@ function PlayersManager({open,onClose,players,onAddPlayer}) {
 // ═══════════════════════════════════════════════════════════════
 //  GŁÓWNA APLIKACJA
 // ═══════════════════════════════════════════════════════════════
+const INITIAL_TEAMS_CACHE=generateInitialTeams();
 function Mundial2026() {
   const [players,setPlayers,plLoaded]=useFirebaseState(FB.players,[]);
   const [teams,setTeams,tLoaded]=useFirebaseState(FB.teams,generateInitialTeams());
@@ -2535,18 +2598,22 @@ function Mundial2026() {
     ...(adminUnlocked?[{k:'admin',l:'Wyniki',i:'settings'}]:[]),
   ];
 
-  const safeTeams=useMemo(()=>{const init=generateInitialTeams();const src=teams||init;return Object.fromEntries(Object.entries(src).map(([k,v])=>[k,{...(init[k]||{}), ...v}]));}, [teams]);
-  const safeMatches=Array.isArray(matches)?matches:[];
-  const safePlayers=Array.isArray(players)?players:[];
-  const safePredictions=predictions||{};
-  const safeResults=results||{};
-  const safeSpecialPredictions=specialPredictions||{};
-  const safeSpecialResults=specialResults||{groupOrders:{}};
+  const safeTeams=useMemo(()=>{const init=INITIAL_TEAMS_CACHE;const src=teams||init;return Object.fromEntries(Object.entries(src).map(([k,v])=>[k,{...(init[k]||{}), ...v}]));}, [teams]);
+  const safeMatches=useMemo(()=>Array.isArray(matches)?matches:[],[matches]);
+  const safePlayers=useMemo(()=>Array.isArray(players)?players:[],[players]);
+  const safePredictions=useMemo(()=>predictions||{},[predictions]);
+  const safeResults=useMemo(()=>results||{},[results]);
+  const safeSpecialPredictions=useMemo(()=>specialPredictions||{},[specialPredictions]);
+  const safeSpecialResults=useMemo(()=>specialResults||{groupOrders:{}},[specialResults]);
 
   // ── install prompt ──
   const [installPrompt,setInstallPrompt]=useState(null);
   const [showInstall,setShowInstall]=useState(false);
   const [toast,setToast]=useState('');
+  const showToast=useCallback((msg)=>{setToast(msg);setTimeout(()=>setToast(''),1600);},[]);
+  const onSavePredictionCb=useCallback((id,p,pin,onErr)=>{handleSavePrediction(id,p,pin,onErr,()=>showToast('Typ zapisany ✓'));},[handleSavePrediction,showToast]);
+  const onSaveSpecialCb=useCallback((id,p,pin,onErr)=>{handleSaveSpecial(id,p,pin,onErr,()=>showToast('Typy specjalne zapisane ✓'));},[handleSaveSpecial,showToast]);
+  const onSaveResultCb=useCallback((id,p)=>{handleSaveResult(id,p);showToast('Wynik zapisany ✓');},[handleSaveResult,showToast]);
   useEffect(()=>{
     const h=e=>{e.preventDefault();setInstallPrompt(e);setShowInstall(true);};
     window.addEventListener('beforeinstallprompt',h);
@@ -2611,8 +2678,8 @@ function Mundial2026() {
         )}
 
         <div className="tab-view" key={activeTab}>
-          {activeTab==='matches'&&<MatchesView matches={safeMatches} teams={safeTeams} predictions={safePredictions} results={safeResults} players={safePlayers} activePlayerId={activePlayer} phaseLocks={phaseLocks} onSavePrediction={(id,p,pin,onErr)=>{handleSavePrediction(id,p,pin,onErr,()=>{setToast('Typ zapisany ✓');setTimeout(()=>setToast(''),1600);});}}/>}
-          {activeTab==='specials'&&<SpecialsView teams={safeTeams} players={safePlayers} activePlayerId={activePlayer} specialPredictions={safeSpecialPredictions} specialResults={safeSpecialResults} onSaveSpecial={(id,p,pin,onErr)=>{handleSaveSpecial(id,p,pin,onErr,()=>{setToast('Typy specjalne zapisane ✓');setTimeout(()=>setToast(''),1600);});}} tournamentLocked={false} specialsLocked={!!(phaseLocks&&phaseLocks['specials'])}/>}
+          {activeTab==='matches'&&<MatchesView matches={safeMatches} teams={safeTeams} predictions={safePredictions} results={safeResults} players={safePlayers} activePlayerId={activePlayer} phaseLocks={phaseLocks} onSavePrediction={onSavePredictionCb}/>}
+          {activeTab==='specials'&&<SpecialsView teams={safeTeams} players={safePlayers} activePlayerId={activePlayer} specialPredictions={safeSpecialPredictions} specialResults={safeSpecialResults} onSaveSpecial={onSaveSpecialCb} tournamentLocked={false} specialsLocked={!!(phaseLocks&&phaseLocks['specials'])}/>}
           {activeTab==='leaderboard'&&<LeaderboardView players={safePlayers} matches={safeMatches} predictions={safePredictions} results={safeResults} specialPredictions={safeSpecialPredictions} specialResults={safeSpecialResults}/>}
           {activeTab==='mine'&&<MyPredictionsView activePlayerId={activePlayer} players={safePlayers} matches={safeMatches} teams={safeTeams} predictions={safePredictions} results={safeResults}/>}
           {activeTab==='compare'&&<CompareView matches={safeMatches} teams={safeTeams} predictions={safePredictions} results={safeResults} players={safePlayers}/>}
@@ -2623,7 +2690,7 @@ function Mundial2026() {
               : <AdminPanel teams={safeTeams} matches={safeMatches} results={safeResults} specialResults={safeSpecialResults} players={safePlayers} predictions={safePredictions} specialPredictions={safeSpecialPredictions}
                   phaseLocks={phaseLocks} onSavePhaseLocks={setPhaseLocks}
                   onRemovePlayer={handleRemovePlayer}
-                  onSaveResult={(id,p)=>{handleSaveResult(id,p);setToast('Wynik zapisany ✓');setTimeout(()=>setToast(''),1600);}} onDeleteResult={handleDeleteResult} onUpdateTeam={handleUpdateTeam}
+                  onSaveResult={onSaveResultCb} onDeleteResult={handleDeleteResult} onUpdateTeam={handleUpdateTeam}
                   onSaveSpecialResults={s=>setSpecialResults(s)} onResetAll={handleResetAll}
                   onExport={()=>({version:1,exportedAt:new Date().toISOString(),players:safePlayers,teams:safeTeams,matches:safeMatches,predictions:safePredictions,results:safeResults,specialPredictions:safeSpecialPredictions,specialResults:safeSpecialResults,phaseLocks})}
                   onImport={handleImport} onLogout={()=>setAdminUnlocked(false)}/>
