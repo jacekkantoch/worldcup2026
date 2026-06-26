@@ -334,6 +334,7 @@
     <div class="spinner"></div>
     <div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:0.1em;color:white;">MUNDIAL 2026</div>
     <div style="font-size:0.75rem;color:rgba(255,255,255,.5);">Ładowanie aplikacji…</div>
+    <div id="loading-slow" style="display:none;margin-top:12px;font-size:0.7rem;color:rgba(255,200,100,.8);">Wolne połączenie z bazą danych…<br>Aplikacja załaduje się automatycznie.</div>
   </div>
   <div id="root" style="display:none;"></div>
 
@@ -372,6 +373,11 @@ const db = firebase.database();
     const blob = new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'});
     document.getElementById('pwa-manifest').href = URL.createObjectURL(blob);
   } catch(e) {}
+  // show "slow connection" message after 4s
+  setTimeout(() => {
+    const el = document.getElementById('loading-slow');
+    if (el) el.style.display = 'block';
+  }, 4000);
   // service worker (basic caching)
   if ('serviceWorker' in navigator) {
     const swCode = `
@@ -386,7 +392,7 @@ self.addEventListener('fetch', e => {
 `;
     try {
       const swBlob = new Blob([swCode], {type:'application/javascript'});
-      navigator.serviceWorker.register(URL.createObjectURL(swBlob));
+      navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>{});
     } catch(e) {}
   }
 })();
@@ -635,7 +641,12 @@ function useFirebaseState(path, defaultValue) {
 
   useEffect(() => {
     const ref = db.ref(path);
+    const timeout = setTimeout(() => {
+      console.warn('Firebase timeout for path:', path, '— using default');
+      setLoaded(true);
+    }, 8000);
     const handler = ref.on('value', (snap) => {
+      clearTimeout(timeout);
       const data = snap.val();
       if (data !== null && data !== undefined) {
         valueRef.current = data;
@@ -645,8 +656,8 @@ function useFirebaseState(path, defaultValue) {
         setValue(defaultValue);
       }
       setLoaded(true);
-    }, (err) => { console.error('Firebase read error:', path, err); setLoaded(true); });
-    return () => ref.off('value', handler);
+    }, (err) => { clearTimeout(timeout); console.error('Firebase read error:', path, err); setLoaded(true); });
+    return () => { clearTimeout(timeout); ref.off('value', handler); };
   }, [path]);
 
   const updateValue = useCallback(async (next) => {
@@ -1628,8 +1639,7 @@ function CompareView({matches,teams,predictions,results,players}) {
         </div>
         <button onClick={()=>setSortNearest(s=>!s)}
           className={`w-full py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors ${sortNearest?'bg-[#0d1b5e] text-white':'bg-stone-100 text-stone-700'}`}>
-          <span>📅</span>
-          {sortNearest?'Sortuj od: nadchodzące mecze':'Sortuj od: nadchodzące mecze'}
+          Sortuj od: nadchodzące mecze
         </button>
       </div>
       {filtered.map(m=>{
