@@ -1226,6 +1226,531 @@
         font-size: 11px;
       }
     }
+
+
+    /* ═══════════════════════════════════════════════════════════════
+       FLAT LIQUID GLASS BORDERS — thinner, subtler, less 3D
+       Inspired by the attached reference: soft glass with fine outlines.
+    ═══════════════════════════════════════════════════════════════ */
+    :root {
+      --border-1: rgba(255,255,255,.14);
+      --border-2: rgba(255,255,255,.18);
+      --border-3: rgba(255,255,255,.24);
+      --sep: rgba(255,255,255,.10);
+      --hl: none;
+      --hl2: none;
+      --shadow-sm: 0 10px 24px rgba(0,0,0,.16);
+      --shadow-md: 0 14px 34px rgba(0,0,0,.18);
+      --shadow-lg: 0 22px 54px rgba(0,0,0,.24);
+      --shadow-glow: none;
+    }
+
+    .glass,
+    .glass-strong,
+    .match-card,
+    .filters-sticky,
+    section.bg-white,
+    div.bg-white,
+    .install-banner,
+    .app-header,
+    .bottom-nav,
+    .login-btn,
+    .players-btn,
+    .selection-tile,
+    input,
+    select,
+    textarea,
+    .fixed.inset-0.z-50 > .relative,
+    .toast-bar {
+      border-width: 1px !important;
+      border-style: solid !important;
+      border-color: rgba(255,255,255,.16) !important;
+      box-shadow: 0 12px 28px rgba(0,0,0,.16) !important;
+    }
+
+    .glass,
+    section.bg-white,
+    div.bg-white,
+    .match-card,
+    .install-banner {
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.095), rgba(255,255,255,.035)) !important;
+    }
+
+    .glass-strong,
+    .filters-sticky,
+    .app-header,
+    .bottom-nav,
+    .fixed.inset-0.z-50 > .relative,
+    .toast-bar {
+      background:
+        linear-gradient(145deg, rgba(34,45,70,.72), rgba(12,18,31,.58)) !important;
+    }
+
+    .app-header,
+    .bottom-nav,
+    .filters-sticky,
+    .fixed.inset-0.z-50 > .relative {
+      box-shadow: 0 16px 38px rgba(0,0,0,.20) !important;
+    }
+
+    .login-btn,
+    .players-btn,
+    input,
+    select,
+    textarea,
+    .selection-tile {
+      box-shadow: 0 6px 16px rgba(0,0,0,.10) !important;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.03)) !important;
+    }
+
+    .login-btn:hover,
+    .players-btn:hover,
+    .selection-tile:hover,
+    input:hover,
+    select:hover,
+    textarea:hover {
+      border-color: rgba(255,255,255,.22) !important;
+      box-shadow: 0 8px 18px rgba(0,0,0,.12) !important;
+      transform: translateY(-1px);
+    }
+
+    .selection-tile.is-selected,
+    .selection-tile.is-selected:hover,
+    .bottom-nav button.active {
+      border-color: rgba(160,214,255,.44) !important;
+      box-shadow: 0 8px 20px rgba(26,106,255,.14) !important;
+    }
+
+    .selection-tile.is-selected,
+    .selection-tile.is-selected:hover {
+      background:
+        linear-gradient(145deg, rgba(93,184,255,.30), rgba(52,106,240,.20) 58%, rgba(114,83,241,.16)) !important;
+      text-shadow: none !important;
+    }
+
+    .selection-tile.is-correct,
+    .selection-tile.is-correct:hover {
+      box-shadow: 0 8px 18px rgba(0,160,60,.10) !important;
+    }
+
+    .selection-tile.is-wrong,
+    .selection-tile.is-wrong:hover {
+      box-shadow: 0 8px 18px rgba(180,0,0,.08) !important;
+    }
+
+    .match-card:hover,
+    section.bg-white:hover,
+    .glass:hover,
+    .glass-strong:hover {
+      border-color: rgba(255,255,255,.20) !important;
+      box-shadow: 0 14px 32px rgba(0,0,0,.18) !important;
+    }
+
+    .match-card.expanded {
+      border-color: rgba(255,255,255,.18) !important;
+      box-shadow: 0 16px 36px rgba(0,0,0,.18) !important;
+    }
+
+    .nav-droplet {
+      border: 1px solid rgba(154,211,255,.42) !important;
+      background:
+        linear-gradient(145deg, rgba(108,190,255,.28), rgba(49,109,250,.18) 58%, rgba(126,92,245,.14)) !important;
+      box-shadow: 0 8px 20px rgba(26,106,255,.16) !important;
+    }
+
+    .bottom-nav button.active {
+      background:
+        linear-gradient(145deg, rgba(111,192,255,.12), rgba(64,116,244,.08) 56%, rgba(128,92,244,.06)) !important;
+      text-shadow: none !important;
+    }
+
+    .app-header .logo-icon,
+    .loading-icon {
+      box-shadow: 0 10px 24px rgba(26,111,255,.18) !important;
+      border: 1px solid rgba(255,255,255,.30) !important;
+    }
+
+    .fixed.inset-0.z-50 > .absolute.inset-0 {
+      background: rgba(2,4,10,.46) !important;
+    }
+
+
+
+    /* Final geometry fixes: phase label pill + square score centre. */
+    .match-card > button:first-child span[style*="text-transform: uppercase"] {
+      border-radius: 999px !important;
+    }
+    .score-input-shell {
+      gap: 0 !important;
+    }
+    .score-input-shell .score-value-input,
+    .admin-score-controls .score-value-input {
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      margin: 0 !important;
+    }
+    .score-input-shell > button:first-child {
+      border-radius: 22px 0 0 22px !important;
+    }
+    .score-input-shell > button:last-child {
+      border-radius: 0 22px 22px 0 !important;
+    }
+
+
+    /* Disable hover lift/bounce while preserving click/drag feedback. */
+    @media (hover: hover) and (pointer: fine) {
+      button:hover,
+      [role="button"]:hover,
+      .match-card:hover,
+      section.bg-white:hover,
+      div.bg-white:hover,
+      .glass:hover,
+      .glass-strong:hover,
+      .login-btn:hover,
+      .players-btn:hover,
+      .selection-tile:hover,
+      input:hover,
+      select:hover,
+      textarea:hover,
+      .bg-\[\#0d1b5e\]:hover,
+      .bg-\[\#162570\]:hover {
+        transform: none !important;
+      }
+    }
+
+
+
+    /* Selected states without glow */
+    .selection-tile.is-selected,
+    .selection-tile.is-selected:hover,
+    .selection-tile.is-correct,
+    .selection-tile.is-correct:hover,
+    .selection-tile.is-wrong,
+    .selection-tile.is-wrong:hover,
+    .player-choice.is-selected,
+    .player-choice.is-selected .player-choice-avatar,
+    .bottom-nav button.active,
+    .nav-droplet,
+    .nav-droplet.dragging {
+      box-shadow: none !important;
+      text-shadow: none !important;
+      filter: none !important;
+    }
+
+    .bottom-nav button.active svg,
+    .bottom-nav button.active .nav-label {
+      filter: none !important;
+      text-shadow: none !important;
+    }
+
+    .selection-tile.is-selected,
+    .selection-tile.is-selected:hover {
+      border-color: rgba(151,211,255,.52) !important;
+    }
+
+    .nav-droplet,
+    .nav-droplet.dragging {
+      border-color: rgba(154,211,255,.42) !important;
+    }
+
+
+
+    /* Unified shell alignment + flat matte bottom slider */
+    :root {
+      --app-shell-max: 736px;
+      --app-shell-gutter: 12px;
+    }
+
+    .app-header,
+    .bottom-nav {
+      width: min(var(--app-shell-max), calc(100% - (var(--app-shell-gutter) * 2))) !important;
+      left: 0 !important;
+      right: 0 !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+    }
+
+    .app-content {
+      max-width: 760px !important;
+      padding-left: var(--app-shell-gutter) !important;
+      padding-right: var(--app-shell-gutter) !important;
+    }
+
+    .nav-droplet,
+    .nav-droplet.dragging {
+      background: rgba(84, 132, 188, .42) !important;
+      border: 0 !important;
+      outline: 0 !important;
+      box-shadow: none !important;
+      filter: none !important;
+      border-radius: 999px !important;
+    }
+
+    .bottom-nav button,
+    .bottom-nav button.active,
+    .bottom-nav button:hover,
+    .bottom-nav button:focus-visible {
+      border: 0 !important;
+      outline: 0 !important;
+      box-shadow: none !important;
+      background: transparent !important;
+    }
+
+    .bottom-nav button.active {
+      color: rgba(244,248,255,.98) !important;
+    }
+
+    @media (max-width: 520px) {
+      :root { --app-shell-gutter: 9px; }
+      .app-header,
+      .bottom-nav {
+        width: calc(100% - 18px) !important;
+      }
+    }
+
+
+
+
+
+    /* Bottom navigation icons — solid 2D silhouettes without overlapping strokes. */
+    .bottom-nav button svg.nav-icon {
+      display: block;
+      fill: currentColor !important;
+      stroke: none !important;
+      stroke-width: 0 !important;
+      opacity: .72;
+      filter: none !important;
+      transform: none !important;
+      transition: opacity .18s ease, color .18s ease !important;
+      shape-rendering: geometricPrecision;
+    }
+    .bottom-nav button.active svg.nav-icon {
+      fill: currentColor !important;
+      stroke: none !important;
+      opacity: 1;
+      filter: none !important;
+      transform: none !important;
+    }
+
+
+
+    /* Wypełnione ikony w górnym pasku — spójne z dolną nawigacją. */
+    .app-header .login-btn .nav-icon,
+    .app-header .players-btn .nav-icon {
+      display: block;
+      flex: 0 0 auto;
+      color: currentColor;
+      opacity: .92;
+      filter: none !important;
+    }
+    .app-header .login-btn:hover .nav-icon,
+    .app-header .players-btn:hover .nav-icon,
+    .app-header .players-btn:focus-visible .nav-icon,
+    .app-header .login-btn:focus-visible .nav-icon {
+      opacity: 1;
+    }
+
+
+    /* ═══════════════════════════════════════════════════════════════
+       DRABINKA TURNIEJU
+    ═══════════════════════════════════════════════════════════════ */
+    .bracket-page {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .bracket-intro {
+      padding: 18px;
+      border-radius: var(--radius-lg);
+      background: var(--glass-1);
+      border: 1px solid var(--border-1);
+    }
+    .bracket-intro h2 {
+      margin: 0 0 5px;
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: -.02em;
+    }
+    .bracket-intro p {
+      margin: 0;
+      color: var(--label-2);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    .bracket-section {
+      border-radius: var(--radius-lg);
+      background: var(--glass-1);
+      border: 1px solid var(--border-1);
+      padding: 14px;
+      overflow: hidden;
+    }
+    .bracket-section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .bracket-section-title h3 {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 800;
+    }
+    .bracket-section-title span {
+      font-size: 10px;
+      color: var(--label-3);
+      white-space: nowrap;
+    }
+    .bracket-scroll {
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      padding: 4px 2px 12px;
+      scroll-snap-type: x proximity;
+    }
+    .bracket-board {
+      position: relative;
+      width: 930px;
+      height: 618px;
+      margin: 0 auto;
+    }
+    .bracket-round-label {
+      position: absolute;
+      top: 0;
+      width: 192px;
+      text-align: center;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--label-2);
+    }
+    .bracket-connectors {
+      position: absolute;
+      left: 0;
+      top: 40px;
+      width: 930px;
+      height: 560px;
+      pointer-events: none;
+      overflow: visible;
+    }
+    .bracket-connectors path {
+      fill: none;
+      stroke: rgba(174,203,238,.25);
+      stroke-width: 1.25;
+      stroke-linecap: square;
+      stroke-linejoin: round;
+      vector-effect: non-scaling-stroke;
+      shape-rendering: geometricPrecision;
+    }
+    .bracket-match {
+      position: absolute;
+      width: 192px;
+      height: 66px;
+      border-radius: 18px;
+      background: linear-gradient(145deg, rgba(255,255,255,.085), rgba(255,255,255,.03));
+      border: 1px solid rgba(255,255,255,.14);
+      overflow: hidden;
+      color: var(--label-1);
+    }
+    .bracket-match.is-finished {
+      border-color: rgba(255,255,255,.20);
+    }
+    .bracket-match-head {
+      height: 19px;
+      padding: 2px 8px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 8px;
+      color: var(--label-3);
+      border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+    .bracket-team-row {
+      height: 23px;
+      padding: 2px 7px;
+      display: grid;
+      grid-template-columns: 18px minmax(0,1fr) 22px;
+      align-items: center;
+      gap: 6px;
+      color: var(--label-2);
+    }
+    .bracket-team-row + .bracket-team-row {
+      border-top: 1px solid rgba(255,255,255,.055);
+    }
+    .bracket-team-row.is-winner {
+      color: var(--label-1);
+      background: rgba(74,145,235,.12);
+      font-weight: 750;
+    }
+    .bracket-team-row.is-loser {
+      opacity: .55;
+    }
+    .bracket-team-name {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 10px;
+    }
+    .bracket-placeholder {
+      color: var(--label-3);
+      font-style: italic;
+    }
+    .bracket-score {
+      text-align: center;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 16px;
+      line-height: 1;
+      color: inherit;
+    }
+    .bracket-finals-grid {
+      display: grid;
+      grid-template-columns: repeat(2,minmax(0,1fr));
+      gap: 12px;
+    }
+    .bracket-final-card {
+      position: relative;
+      width: 100%;
+      height: auto;
+      min-height: 96px;
+      border-radius: 22px;
+      background: linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.03));
+      border: 1px solid rgba(255,255,255,.15);
+      overflow: hidden;
+    }
+    .bracket-final-card .bracket-match-head {
+      height: 25px;
+      padding: 4px 10px 0;
+      font-size: 9px;
+    }
+    .bracket-final-card .bracket-team-row {
+      height: 34px;
+      grid-template-columns: 24px minmax(0,1fr) 28px;
+      padding: 4px 10px;
+    }
+    .bracket-final-card .bracket-team-name { font-size: 12px; }
+    .bracket-final-card .bracket-score { font-size: 20px; }
+    .bracket-champion {
+      margin-top: 12px;
+      padding: 13px 14px;
+      border-radius: 999px;
+      text-align: center;
+      background: rgba(238,190,72,.12);
+      border: 1px solid rgba(238,190,72,.24);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .bracket-champion-empty { color: var(--label-3); font-weight: 600; }
+    @media (max-width: 620px) {
+      .bracket-section { padding: 11px 8px; }
+      .bracket-intro { padding: 15px; }
+      .bracket-finals-grid { grid-template-columns: 1fr; }
+      .bracket-board { margin-left: 0; }
+    }
+
 </style>
 </head>
 <body>
@@ -1302,6 +1827,20 @@ const db = firebase.database();
 // ─── React hooks ───────────────────────────────────────────────
 const { useState, useEffect, useMemo, useCallback, useRef } = React;
 
+// Wspólny powrót na górę po zmianie dowolnej zakładki / podzakładki.
+function scrollAppToTop() {
+  const reset=()=>{
+    window.scrollTo(0,0);
+    document.documentElement.scrollTop=0;
+    document.body.scrollTop=0;
+    const rootEl=document.getElementById('root');
+    if(rootEl) rootEl.scrollTop=0;
+  };
+  reset();
+  requestAnimationFrame(reset);
+  setTimeout(reset,0);
+}
+
 // ─── Ikony (SVG inline) ────────────────────────────────────────
 function Ico({ d, size = 16, className = '', style }) {
   return (
@@ -1346,6 +1885,29 @@ const ICONS = {
 };
 const Icon = React.memo(function Icon({ name, size = 16, className = '', style }) {
   return <Ico d={ICONS[name] || 'M12 12'} size={size} className={className} style={style} />;
+});
+
+// Czyste, wypełnione ikony dolnej nawigacji. Każdy symbol jest malowany
+// jako jeden kształt, dzięki czemu linie nie nakładają się i nie jaśnieją.
+const NAV_ICON_PATHS = {
+  calendar: 'M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h1V3a1 1 0 0 1 1-1Zm13 8H4v9a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-9ZM5 6a1 1 0 0 0-1 1v1h16V7a1 1 0 0 0-1-1h-1v1a1 1 0 1 1-2 0V6H8v1a1 1 0 1 1-2 0V6H5Z',
+  star: 'M12 2.4a1 1 0 0 1 .91.58l2.46 5.18 5.62.72a1 1 0 0 1 .56 1.7l-4.12 3.88 1.05 5.56a1 1 0 0 1-1.47 1.06L12 18.37l-5.01 2.71a1 1 0 0 1-1.47-1.06l1.05-5.56-4.12-3.88a1 1 0 0 1 .56-1.7l5.62-.72 2.46-5.18A1 1 0 0 1 12 2.4Z',
+  podium: 'M3 11h4a1 1 0 0 1 1 1v9H2v-9a1 1 0 0 1 1-1Zm7-8h4a1 1 0 0 1 1 1v17H9V4a1 1 0 0 1 1-1Zm7 5h4a1 1 0 0 1 1 1v12h-6V9a1 1 0 0 1 1-1Z',
+  user: 'M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.42 0-8 2.24-8 5v3h16v-3c0-2.76-3.58-5-8-5Z',
+  eye: 'M12 4c5.35 0 9.27 3.42 10.82 7.43a1.6 1.6 0 0 1 0 1.14C21.27 16.58 17.35 20 12 20S2.73 16.58 1.18 12.57a1.6 1.6 0 0 1 0-1.14C2.73 7.42 6.65 4 12 4Zm0 3.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9Zm0 2a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5Z',
+  users: 'M8 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-3.87 0-7 2.02-7 4.5V21h14v-3.5C15 15.02 11.87 13 8 13Zm9-2a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm0 2c-.67 0-1.36.08-2.03.24C16.83 14.45 18 15.98 18 17.5V21h5v-3c0-2.76-2.69-5-6-5Z',
+  bracket: 'M3 3h5a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Zm0 12h5a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1Zm13-6h5a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-5a1 1 0 0 1-1-1v-1h-3a1 1 0 0 1-1-1V7H9V5h3a1 1 0 0 1 1 1v5h2v-1a1 1 0 0 1 1-1Zm-5 4h2v5a1 1 0 0 1-1 1H9v-2h2v-4Z',
+  settings: 'M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.07-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.61-.22l-2.39.96a7.14 7.14 0 0 0-1.62-.94l-.36-2.51A.49.49 0 0 0 13.9 2h-3.8a.49.49 0 0 0-.49.41l-.36 2.54c-.58.24-1.12.55-1.62.94l-2.39-.96a.49.49 0 0 0-.61.22L2.71 8.47a.5.5 0 0 0 .12.64l2.03 1.58c-.05.31-.08.65-.08.98s.03.66.08.98l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32c.13.23.4.32.61.22l2.39-.96c.5.39 1.04.71 1.62.94l.36 2.54c.04.24.24.41.49.41h3.84c.24 0 .44-.17.48-.41l.36-2.54c.58-.24 1.12-.55 1.62-.94l2.39.96c.22.08.48 0 .61-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.04-1.59ZM12 15.5A3.5 3.5 0 1 1 12 8a3.5 3.5 0 0 1 0 7.5Z'
+};
+
+const NavIcon = React.memo(function NavIcon({name,size=20,className='',style}){
+  const path=NAV_ICON_PATHS[name] || NAV_ICON_PATHS.star;
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true"
+      className={`nav-icon ${className}`} style={style} fill="currentColor" stroke="none">
+      <path d={path} fillRule="evenodd" clipRule="evenodd"/>
+    </svg>
+  );
 });
 
 // ═══════════════════════════════════════════════════════════════
@@ -1687,14 +2249,14 @@ function ScoreInput({value,onChange,disabled=false,label}) {
   return (
     <div className="flex flex-col items-center gap-1">
       {label&&<span className="text-[10px] uppercase tracking-wider text-stone-500 font-medium">{label}</span>}
-      <div className="flex items-center gap-0.5">
+      <div className="flex items-center gap-0 score-input-shell">
         <button type="button" onClick={()=>set((num??0)-1)} disabled={disabled}
           style={{width:44,height:56,borderRadius:'22px 0 0 22px',background:'var(--glass-3)',border:'1px solid var(--border-2)',borderRight:'none',color:'var(--label-1)',fontWeight:700,fontSize:22,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',userSelect:'none',transition:'background .12s'}}>−</button>
         <input type="number" inputMode="numeric" value={num===null?'':num}
           onChange={e=>{ const v=e.target.value; if(v==='')onChange(null); else set(parseInt(v)||0); }}
           disabled={disabled} min="0" max="99"
           style={{width:62,height:56,textAlign:'center',background:'var(--bg-3)',border:'1px solid var(--border-2)',borderLeft:'none',borderRight:'none',color:'white',fontFamily:"'Bebas Neue',sans-serif",fontSize:28,letterSpacing:'0.04em'}}
-          className="text-2xl font-bold focus:outline-none disabled:opacity-50 font-display" />
+          className="score-value-input text-2xl font-bold focus:outline-none disabled:opacity-50 font-display" />
         <button type="button" onClick={()=>set((num??0)+1)} disabled={disabled}
           style={{width:44,height:56,borderRadius:'0 22px 22px 0',background:'var(--glass-3)',border:'1px solid var(--border-2)',borderLeft:'none',color:'var(--label-1)',fontWeight:700,fontSize:22,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',userSelect:'none',transition:'background .12s'}}>+</button>
       </div>
@@ -1961,7 +2523,7 @@ const MatchCard=React.memo(function MatchCard({match,teams,prediction,result,all
       <button type="button" onClick={()=>onToggleMatch(match.id)} className="w-full text-left p-3 sm:p-4 transition-colors" style={{transition:"background .15s"}}>
         <div className="flex items-center justify-between gap-2 mb-2">
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span style={{...phaseStyle,display:'inline-block',padding:'2px 8px',borderRadius:6,fontSize:10,textTransform:'uppercase',letterSpacing:'0.06em',fontWeight:800,border:'1px solid'}}>
+            <span style={{...phaseStyle,display:'inline-flex',alignItems:'center',padding:'3px 10px',borderRadius:999,fontSize:10,textTransform:'uppercase',letterSpacing:'0.06em',fontWeight:800,border:'1px solid',lineHeight:1.25}}>
               {match.phase==='group'?`Grupa ${match.group}`:PHASE_LABELS[match.phase]}
             </span>
             <span className="text-[10px] text-stone-500 font-mono">#{match.num}</span>
@@ -1990,9 +2552,9 @@ const MatchCard=React.memo(function MatchCard({match,teams,prediction,result,all
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-3 mt-2 text-[11px] text-stone-500">
-          <span className="inline-flex items-center gap-1"><Icon name="calendar" size={11}/>{formatDate(match.date)}</span>
-          <span className="inline-flex items-center gap-1"><Icon name="mappin" size={11}/>{match.city}</span>
+        <div className="flex items-center justify-center flex-wrap gap-x-3 gap-y-1 mt-2 text-[11px] text-stone-500 text-center w-full">
+          <span className="inline-flex items-center justify-center gap-1"><Icon name="calendar" size={11}/>{formatDate(match.date)}</span>
+          <span className="inline-flex items-center justify-center gap-1"><Icon name="mappin" size={11}/>{match.city}</span>
         </div>
       </button>
 
@@ -2135,6 +2697,10 @@ function MatchesView({matches,teams,predictions,results,players,activePlayerId,p
   const compactDevice=useMemo(()=>typeof window!=="undefined"&&(window.innerWidth<=700||window.matchMedia("(pointer: coarse)").matches),[]);
   const [visibleCount,setVisibleCount]=useState(()=>compactDevice?18:Number.MAX_SAFE_INTEGER);
   const handleToggleMatch=useCallback((id)=>setExpandedId(prev=>prev===id?null:id),[]);
+  const handlePhaseFilter=useCallback((phase)=>{
+    setPhaseFilter(phase);
+    scrollAppToTop();
+  },[]);
 
   const filtered=useMemo(()=>{
     return matches.filter(m=>{
@@ -2161,18 +2727,18 @@ function MatchesView({matches,teams,predictions,results,players,activePlayerId,p
       <div className="bg-white border border-[#b0bce8] rounded-xl p-3 filters-sticky shadow-sm">
         <div className="flex flex-col gap-2">
           <div className="flex gap-1 overflow-x-auto pb-1">
-            {filterBtns.map(t=><button key={t.k} onClick={()=>setPhaseFilter(t.k)}
+            {filterBtns.map(t=><button key={t.k} onClick={()=>handlePhaseFilter(t.k)}
               className={`selection-tile${phaseFilter===t.k?' is-selected':''} shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold`}>{t.l}</button>)}
           </div>
           {phaseFilter==='group'&&(
             <div className="flex gap-1 overflow-x-auto pb-1">
-              <button onClick={()=>setGroupFilter('all')} className={`selection-tile${groupFilter==='all'?' is-selected':''} shrink-0 px-2.5 py-1 rounded-lg text-xs font-bold`}>Wszystkie</button>
-              {GROUPS.map(g=><button key={g} onClick={()=>setGroupFilter(g)} className={`selection-tile${groupFilter===g?' is-selected':''} shrink-0 w-8 h-7 rounded-lg text-xs font-bold`}>{g}</button>)}
+              <button onClick={()=>{setGroupFilter('all');scrollAppToTop();}} className={`selection-tile${groupFilter==='all'?' is-selected':''} shrink-0 px-2.5 py-1 rounded-lg text-xs font-bold`}>Wszystkie</button>
+              {GROUPS.map(g=><button key={g} onClick={()=>{setGroupFilter(g);scrollAppToTop();}} className={`selection-tile${groupFilter===g?' is-selected':''} shrink-0 w-8 h-7 rounded-lg text-xs font-bold`}>{g}</button>)}
             </div>
           )}
           <div className="flex gap-1">
             {[{k:'all',l:'Wszystkie'},{k:'pending',l:'Nadchodzące'},{k:'done',l:'Zakończone'}].map(t=>(
-              <button key={t.k} onClick={()=>setStatusFilter(t.k)} className={`selection-tile${statusFilter===t.k?' is-selected':''} flex-1 px-2 py-1 rounded-lg text-xs font-medium`}>{t.l}</button>
+              <button key={t.k} onClick={()=>{setStatusFilter(t.k);scrollAppToTop();}} className={`selection-tile${statusFilter===t.k?' is-selected':''} flex-1 px-2 py-1 rounded-lg text-xs font-medium`}>{t.l}</button>
             ))}
           </div>
         </div>
@@ -2256,7 +2822,7 @@ function SpecialsView({teams,players,activePlayerId,specialPredictions,specialRe
         <h3 className="font-display text-lg tracking-wide text-stone-900 mb-1">Kolejność w grupach</h3>
         <p className="text-xs text-stone-500 mb-3">1 trafione: 3 pkt • 2 trafione: 6 pkt • wszystkie 4: 10 pkt</p>
         <div className="flex gap-1 overflow-x-auto pb-2 mb-3">
-          {GROUPS.map(g=><button key={g} onClick={()=>setActiveGroup(g)} className={`selection-tile${activeGroup===g?' is-selected':''} shrink-0 w-10 h-10 rounded-lg font-bold`}>{g}</button>)}
+          {GROUPS.map(g=><button key={g} onClick={()=>{setActiveGroup(g);scrollAppToTop();}} className={`selection-tile${activeGroup===g?' is-selected':''} shrink-0 w-10 h-10 rounded-lg font-bold`}>{g}</button>)}
         </div>
         {[0,1,2,3].map(pos=>{
           const placeName=['1. miejsce','2. miejsce','3. miejsce','4. miejsce'][pos];
@@ -2405,7 +2971,7 @@ function SpecialsAllView({players,specialPredictions,specialResults,teams}) {
           <span>Kolejność w grupach</span>
         </div>
         <div className="flex gap-1 p-2 overflow-x-auto">
-          {GROUPS.map(g=><button key={g} onClick={()=>setSelGroup(g)} className={`selection-tile${selGroup===g?' is-selected':''} shrink-0 w-9 h-9 rounded-lg text-sm font-bold`}>{g}</button>)}
+          {GROUPS.map(g=><button key={g} onClick={()=>{setSelGroup(g);scrollAppToTop();}} className={`selection-tile${selGroup===g?' is-selected':''} shrink-0 w-9 h-9 rounded-lg text-sm font-bold`}>{g}</button>)}
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
@@ -2684,7 +3250,7 @@ function CompareView({matches,teams,predictions,results,players}) {
       <div className="bg-white border border-[#b0bce8] rounded-xl p-3 filters-sticky shadow-sm">
         <div className="flex gap-1 overflow-x-auto mb-2">
           {[{k:'all',l:'Wszystkie'},{k:'group',l:'Grupowa'},{k:'r32',l:'1/16'},{k:'r16',l:'1/8'},{k:'qf',l:'1/4'},{k:'sf',l:'1/2'},{k:'final',l:'Finał'}].map(t=>(
-            <button key={t.k} onClick={()=>setPhaseFilter(t.k)} className={`selection-tile${phaseFilter===t.k?' is-selected':''} shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold`}>{t.l}</button>
+            <button key={t.k} onClick={()=>{setPhaseFilter(t.k);scrollAppToTop();}} className={`selection-tile${phaseFilter===t.k?' is-selected':''} shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold`}>{t.l}</button>
           ))}
         </div>
         <button onClick={()=>setSortNearest(s=>!s)}
@@ -3036,17 +3602,46 @@ function AdminMatchRow({match,teams,teamOptions,result,editing,onToggleEdit,onSa
   );
 }
 
+function adminFlagCode(value, teamName='') {
+  const normalized = normalizeFlagValue(value);
+  if (normalized.code) return normalized.code;
+
+  const raw = String(value || '').trim().toUpperCase();
+  const byAbbr = Object.entries(FLAG_ABBR).find(([,abbr])=>abbr===raw);
+  if (byAbbr) return byAbbr[0];
+
+  const nameAbbr = NAME_TO_ABBR[String(teamName || '').trim().toLowerCase()];
+  const byName = nameAbbr && Object.entries(FLAG_ABBR).find(([,abbr])=>abbr===nameAbbr);
+  return byName ? byName[0] : '';
+}
+
 function AdminTeamRow({team,onSave}) {
   const [name,setName]=useState(team.name);
-  const [flag,setFlag]=useState(team.flag);
-  useEffect(()=>{setName(team.name);setFlag(team.flag);},[team]);
+  const [flag,setFlag]=useState(()=>adminFlagCode(team.flag,team.name));
+  useEffect(()=>{
+    setName(team.name);
+    setFlag(adminFlagCode(team.flag,team.name));
+  },[team]);
+
+  const saveTeam=()=>{
+    const cleanName=name.trim()||team.id;
+    const cleanFlag=adminFlagCode(flag,cleanName)||'xx';
+    setFlag(cleanFlag);
+    onSave(cleanName,cleanFlag);
+  };
+
   return (
     <div className="bg-stone-50 border border-stone-200 rounded-lg p-2 space-y-1.5">
       <div className="text-xs text-stone-500 font-mono">{team.id} · Grupa {team.group}</div>
       <div className="flex gap-2">
-        <input value={flag} onChange={e=>setFlag(e.target.value)} placeholder="np. pl" maxLength={6} className="w-20 px-2 py-2 text-center text-sm font-mono border border-stone-200 rounded-lg focus:border-[#0d1b5e] focus:outline-none"/>
+        <input value={flag}
+          onChange={e=>setFlag(e.target.value.toLowerCase().replace(/[^a-z-]/g,''))}
+          onBlur={()=>setFlag(adminFlagCode(flag,name))}
+          placeholder="np. pl" maxLength={6} autoCapitalize="none" spellCheck={false}
+          aria-label={`Kod flagi dla ${name}`}
+          className="w-20 px-2 py-2 text-center text-sm font-mono uppercase border border-stone-200 rounded-lg focus:border-[#0d1b5e] focus:outline-none"/>
         <input value={name} onChange={e=>setName(e.target.value)} placeholder="Nazwa drużyny" className="flex-1 px-3 py-2 border border-stone-200 rounded-lg focus:border-[#0d1b5e] focus:outline-none text-sm"/>
-        <Btn variant="primary" size="sm" onClick={()=>onSave(name.trim()||team.id,flag.trim()||'xx')}><Icon name="check" size={14}/></Btn>
+        <Btn variant="primary" size="sm" onClick={saveTeam}><Icon name="check" size={14}/></Btn>
       </div>
     </div>
   );
@@ -3126,7 +3721,7 @@ function AdminPanel({teams,matches,results,specialResults,players,predictions,sp
       </div>
 
       <div className="bg-white border border-stone-200 rounded-xl p-1 flex flex-wrap gap-1">
-        {tabs.map(t=><button key={t.k} onClick={()=>setTab(t.k)} className={`selection-tile${tab===t.k?' is-selected':''} flex-1 px-3 py-2 rounded-lg text-xs font-semibold`}>{t.l}</button>)}
+        {tabs.map(t=><button key={t.k} onClick={()=>{setTab(t.k);scrollAppToTop();}} className={`selection-tile${tab===t.k?' is-selected':''} flex-1 px-3 py-2 rounded-lg text-xs font-semibold`}>{t.l}</button>)}
       </div>
 
 
@@ -3142,7 +3737,7 @@ function AdminPanel({teams,matches,results,specialResults,players,predictions,sp
             </div>
             <div className="flex gap-1 overflow-x-auto">
               {[{k:'all',l:'Wszystkie'},{k:'group',l:'Grupowa'},{k:'r32',l:'1/16'},{k:'r16',l:'1/8'},{k:'qf',l:'1/4'},{k:'sf',l:'1/2'},{k:'third',l:'3.'},{k:'final',l:'Finał'}].map(t=>(
-                <button key={t.k} onClick={()=>setMPhase(t.k)} className={`selection-tile${mPhase===t.k?' is-selected':''} shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold`}>{t.l}</button>
+                <button key={t.k} onClick={()=>{setMPhase(t.k);scrollAppToTop();}} className={`selection-tile${mPhase===t.k?' is-selected':''} shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold`}>{t.l}</button>
               ))}
             </div>
           </div>
@@ -3175,7 +3770,7 @@ function AdminPanel({teams,matches,results,specialResults,players,predictions,sp
           <div className="bg-white border border-stone-200 rounded-xl p-4">
             <h4 className="font-display text-base mb-2">Kolejność w grupach</h4>
             <div className="flex gap-1 overflow-x-auto pb-2 mb-3">
-              {GROUPS.map(g=><button key={g} onClick={()=>setSpGroup(g)} className={`selection-tile${spGroup===g?' is-selected':''} shrink-0 w-9 h-9 rounded-lg font-bold`}>{g}</button>)}
+              {GROUPS.map(g=><button key={g} onClick={()=>{setSpGroup(g);scrollAppToTop();}} className={`selection-tile${spGroup===g?' is-selected':''} shrink-0 w-9 h-9 rounded-lg font-bold`}>{g}</button>)}
             </div>
             {[0,1,2,3].map(pos=>{
               const gTeams=Object.values(teams).filter(t=>t&&t.group===spGroup);
@@ -3507,6 +4102,170 @@ function PlayersManager({open,onClose,players,onAddPlayer}) {
 }
 
 // ═══════════════════════════════════════════════════════════════
+//  DRABINKA TURNIEJU
+// ═══════════════════════════════════════════════════════════════
+const BRACKET_LAYOUT = {
+  upper: {
+    title:'Górna połowa drabinki',
+    rounds:[
+      {label:'1/16 finału',ids:['M73','M74','M75','M76','M77','M78','M79','M80']},
+      {label:'1/8 finału',ids:['M89','M90','M91','M92']},
+      {label:'Ćwierćfinał',ids:['M97','M98']},
+      {label:'Półfinał',ids:['M101']},
+    ]
+  },
+  lower: {
+    title:'Dolna połowa drabinki',
+    rounds:[
+      {label:'1/16 finału',ids:['M81','M82','M83','M84','M85','M86','M87','M88']},
+      {label:'1/8 finału',ids:['M93','M94','M95','M96']},
+      {label:'Ćwierćfinał',ids:['M99','M100']},
+      {label:'Półfinał',ids:['M102']},
+    ]
+  }
+};
+
+const BRACKET_SOURCES = {
+  M89:['Zwycięzca M73','Zwycięzca M74'], M90:['Zwycięzca M75','Zwycięzca M76'],
+  M91:['Zwycięzca M77','Zwycięzca M78'], M92:['Zwycięzca M79','Zwycięzca M80'],
+  M93:['Zwycięzca M81','Zwycięzca M82'], M94:['Zwycięzca M83','Zwycięzca M84'],
+  M95:['Zwycięzca M85','Zwycięzca M86'], M96:['Zwycięzca M87','Zwycięzca M88'],
+  M97:['Zwycięzca M89','Zwycięzca M90'], M98:['Zwycięzca M91','Zwycięzca M92'],
+  M99:['Zwycięzca M93','Zwycięzca M94'], M100:['Zwycięzca M95','Zwycięzca M96'],
+  M101:['Zwycięzca M97','Zwycięzca M98'], M102:['Zwycięzca M99','Zwycięzca M100'],
+  M103:['Przegrany M101','Przegrany M102'], M104:['Zwycięzca M101','Zwycięzca M102'],
+};
+
+function bracketWinnerSide(result){
+  if(!result) return null;
+  if(result.advancingTeam==='home'||result.advancingTeam==='away') return result.advancingTeam;
+  if(typeof result.home==='number'&&typeof result.away==='number'&&result.home!==result.away)
+    return result.home>result.away?'home':'away';
+  return null;
+}
+
+function BracketMatchCard({match,teams,result,sourceLabels=['Do ustalenia','Do ustalenia'],style,large=false}){
+  if(!match) return null;
+  const home=teams[match.homeTeamId];
+  const away=teams[match.awayTeamId];
+  const winner=bracketWinnerSide(result);
+  const finished=!!result;
+  const row=(side,team,placeholder)=>{
+    const isWinner=winner===side;
+    const isLoser=finished&&winner&&winner!==side;
+    const score=result&&typeof result[side]==='number'?result[side]:'–';
+    return (
+      <div className={`bracket-team-row${isWinner?' is-winner':''}${isLoser?' is-loser':''}`}>
+        {team?<FlagImg code={team.flag} size={large?22:16} title={team.name}/>:<span/>}
+        <span className={`bracket-team-name${team?'':' bracket-placeholder'}`}>{team?.name||placeholder}</span>
+        <span className="bracket-score">{score}</span>
+      </div>
+    );
+  };
+  return (
+    <div className={`${large?'bracket-final-card':'bracket-match'}${finished?' is-finished':''}`} style={style}>
+      <div className="bracket-match-head">
+        <span>Mecz {match.num}</span>
+        <span>{formatDate(match.date)}</span>
+      </div>
+      {row('home',home,sourceLabels[0])}
+      {row('away',away,sourceLabels[1])}
+    </div>
+  );
+}
+
+function BracketHalf({config,matchesById,teams,results}){
+  const xs=[0,246,492,738];
+  const ys=[
+    [0,70,140,210,280,350,420,490],
+    [35,175,315,455],
+    [105,385],
+    [245],
+  ];
+  const cardH=66;
+  const cardW=192;
+  const connectorPaths=[];
+  for(let round=0;round<3;round++){
+    const fromYs=ys[round];
+    const toYs=ys[round+1];
+    const x1=xs[round]+cardW;
+    const x2=xs[round+1];
+    const mid=(x1+x2)/2;
+    toYs.forEach((toY,targetIndex)=>{
+      const firstSource=fromYs[targetIndex*2];
+      const secondSource=fromYs[targetIndex*2+1];
+      if(firstSource===undefined||secondSource===undefined) return;
+      const yTop=firstSource+cardH/2;
+      const yBottom=secondSource+cardH/2;
+      const yTarget=toY+cardH/2;
+      /* Jedna ścieżka na każde połączenie pary. Dzięki temu wspólny pionowy
+         i końcowy poziomy odcinek nie są rysowane dwa razy i nie robią się jaśniejsze. */
+      const d=[
+        `M${x1},${yTop} H${mid}`,
+        `M${x1},${yBottom} H${mid}`,
+        `M${mid},${yTop} V${yBottom}`,
+        `M${mid},${yTarget} H${x2}`,
+      ].join(' ');
+      connectorPaths.push(<path key={`${round}-${targetIndex}`} d={d}/>);
+    });
+  }
+  return (
+    <section className="bracket-section">
+      <div className="bracket-section-title">
+        <h3>{config.title}</h3>
+        <span>Przesuń poziomo, aby zobaczyć kolejne rundy</span>
+      </div>
+      <div className="bracket-scroll">
+        <div className="bracket-board">
+          {config.rounds.map((round,idx)=><div key={round.label} className="bracket-round-label" style={{left:xs[idx]}}>{round.label}</div>)}
+          <svg className="bracket-connectors" viewBox="0 0 930 560" preserveAspectRatio="none">{connectorPaths}</svg>
+          {config.rounds.map((round,rIdx)=>round.ids.map((id,mIdx)=>{
+            const match=matchesById[id];
+            return <BracketMatchCard key={id} match={match} teams={teams} result={results[id]} sourceLabels={BRACKET_SOURCES[id]} style={{left:xs[rIdx],top:40+ys[rIdx][mIdx]}}/>;
+          }))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function TournamentBracket({matches,teams,results}){
+  const matchesById=useMemo(()=>Object.fromEntries(matches.map(m=>[m.id,m])),[matches]);
+  const finalMatch=matchesById.M104;
+  const thirdMatch=matchesById.M103;
+  const finalResult=results.M104;
+  const finalWinner=bracketWinnerSide(finalResult);
+  const championId=finalWinner&&finalMatch?(finalWinner==='home'?finalMatch.homeTeamId:finalMatch.awayTeamId):null;
+  const champion=championId?teams[championId]:null;
+  return (
+    <div className="bracket-page">
+      <div className="bracket-intro">
+        <h2>Drabinka turnieju</h2>
+        <p>Pary i wyniki aktualizują się automatycznie po zapisaniu ich przez administratora. Na telefonie przeciągnij drabinkę poziomo.</p>
+      </div>
+      <BracketHalf config={BRACKET_LAYOUT.upper} matchesById={matchesById} teams={teams} results={results}/>
+      <BracketHalf config={BRACKET_LAYOUT.lower} matchesById={matchesById} teams={teams} results={results}/>
+      <section className="bracket-section">
+        <div className="bracket-section-title"><h3>Medale</h3><span>Finał i mecz o 3. miejsce</span></div>
+        <div className="bracket-finals-grid">
+          <div>
+            <div className="text-xs font-bold text-stone-500 mb-2 text-center">Mecz o 3. miejsce</div>
+            <BracketMatchCard match={thirdMatch} teams={teams} result={results.M103} sourceLabels={BRACKET_SOURCES.M103} large/>
+          </div>
+          <div>
+            <div className="text-xs font-bold text-stone-500 mb-2 text-center">Finał</div>
+            <BracketMatchCard match={finalMatch} teams={teams} result={finalResult} sourceLabels={BRACKET_SOURCES.M104} large/>
+          </div>
+        </div>
+        <div className="bracket-champion">
+          {champion?<span className="inline-flex items-center justify-center gap-2"><FlagImg code={champion.flag} size={22} title={champion.name}/>Mistrz świata 2026: {champion.name}</span>:<span className="bracket-champion-empty">Mistrz świata zostanie pokazany po zapisaniu wyniku finału</span>}
+        </div>
+      </section>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════
 //  DOLNA NAWIGACJA — przeciągalna "kropla" w stylu iOS 26
 // ═══════════════════════════════════════════════════════════════
 function BottomNav({tabs, activeTab, onSelect}) {
@@ -3673,7 +4432,7 @@ function BottomNav({tabs, activeTab, onSelect}) {
               aria-current={visuallyActive?'page':undefined}
               onClick={e=>onNavClick(e,t.k)}
               style={t.k==='admin'&&visuallyActive?{color:'#ddd1ff'}:{}}>
-              <Icon name={t.i} size={20} style={t.k==='admin'&&visuallyActive?{stroke:'#ddd1ff'}:{}}/>
+              <NavIcon name={t.i} size={20} style={t.k==='admin'&&visuallyActive?{color:'#ddd1ff'}:{}}/>
               <span className="nav-label">{t.l}</span>
             </button>
           );
@@ -3703,6 +4462,10 @@ function Mundial2026() {
   const setActivePlayer=useCallback((id)=>{try{localStorage.setItem('wc2026:activePlayer',id);}catch(e){}setActivePlayerState(id);},[]);
 
   const [activeTab,setActiveTab]=useState('matches');
+
+  // Po każdej zmianie głównej zakładki wróć na samą górę strony.
+  useEffect(()=>{ scrollAppToTop(); },[activeTab]);
+
   const [adminUnlocked,setAdminUnlocked]=useState(false);
   const [playersModal,setPlayersModal]=useState(false);
   const [loginModal,setLoginModal]=useState(false);
@@ -3798,6 +4561,7 @@ function Mundial2026() {
   },[compareOn,adminUnlocked]);
   const tabs=useMemo(()=>[
     {k:'matches',l:'Mecze',i:'calendar'},
+    {k:'bracket',l:'Drabinka',i:'bracket'},
     {k:'specials',l:'Specjalne',i:'star'},
     {k:'leaderboard',l:'Ranking',i:'podium'},
     {k:'mine',l:'Moje',i:'user'},
@@ -3851,17 +4615,17 @@ function Mundial2026() {
         </div>
         <div className="player-row">
           <button onClick={()=>setLoginModal(true)} className="login-btn">
-            <Icon name="user" size={14}/>
+            <NavIcon name="user" size={15}/>
             {activePlayerData
               ?<span style={{overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{activePlayerData.name}</span>
               :<span>Zaloguj się</span>}
           </button>
           <button className="players-btn" onClick={()=>setPlayersModal(true)} title="Zarządzaj graczami">
-            <Icon name="users" size={17}/>
+            <NavIcon name="users" size={18}/>
           </button>
           <button className="players-btn" onClick={()=>{setActiveTab('admin');}} title="Panel admina (wyniki)"
             style={{background:activeTab==='admin'?'rgba(124,58,237,.3)':'rgba(0,0,0,.2)',borderColor:activeTab==='admin'?'#a78bfa':'rgba(255,255,255,.25)'}}>
-            <Icon name="settings" size={16}/>
+            <NavIcon name="settings" size={17}/>
           </button>
         </div>
       </header>
@@ -3895,6 +4659,7 @@ function Mundial2026() {
 
         <div className="tab-view" key={activeTab}>
           {activeTab==='matches'&&<MatchesView matches={safeMatches} teams={safeTeams} predictions={safePredictions} results={safeResults} players={safePlayers} activePlayerId={activePlayer} phaseLocks={phaseLocks} onSavePrediction={onSavePredictionCb}/>}
+          {activeTab==='bracket'&&<TournamentBracket matches={safeMatches} teams={safeTeams} results={safeResults}/>}
           {activeTab==='specials'&&<SpecialsView teams={safeTeams} players={safePlayers} activePlayerId={activePlayer} specialPredictions={safeSpecialPredictions} specialResults={safeSpecialResults} onSaveSpecial={onSaveSpecialCb} tournamentLocked={false} specialsLocked={!!(phaseLocks&&phaseLocks['specials'])}/>}
           {activeTab==='leaderboard'&&<LeaderboardView players={safePlayers} matches={safeMatches} predictions={safePredictions} results={safeResults} specialPredictions={safeSpecialPredictions} specialResults={safeSpecialResults}/>}
           {activeTab==='mine'&&<MyPredictionsView activePlayerId={activePlayer} players={safePlayers} matches={safeMatches} teams={safeTeams} predictions={safePredictions} results={safeResults}/>}
