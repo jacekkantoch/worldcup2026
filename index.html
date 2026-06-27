@@ -2356,7 +2356,28 @@
     /* Filter cards and admin tab rows need a little horizontal breathing room
        so pills and inputs do not appear shaved by the outer container radius. */
     .filters-sticky .chip-scroll-row,
-    .filters-sticky .pill-scroll-safe,
+    .filters-sticky .pill-scroll-safe {
+      width: 100%;
+      min-width: 0;
+      padding-inline: 5px !important;
+      overflow-x: auto !important;
+      overflow-y: hidden !important;
+      touch-action: pan-x;
+      overscroll-behavior-inline: contain;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .filters-sticky .chip-scroll-row::-webkit-scrollbar,
+    .filters-sticky .pill-scroll-safe::-webkit-scrollbar {
+      display: none;
+    }
+
+    .filters-sticky .chip-scroll-row > *,
+    .filters-sticky .pill-scroll-safe > * {
+      flex: 0 0 auto;
+    }
+
     .filters-sticky .edge-safe-row {
       padding-inline: 5px !important;
       overflow: visible !important;
