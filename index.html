@@ -1030,6 +1030,52 @@
     }
 
 
+    /* Spacing helpers for chip rows and admin tabs */
+    .chip-scroll-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 2px;
+      overflow-x: auto;
+      overflow-y: visible;
+      -webkit-overflow-scrolling: touch;
+    }
+    .chip-scroll-row.tight {
+      padding-top: 6px;
+      padding-bottom: 4px;
+    }
+    .admin-tabs-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      padding: 12px;
+      align-items: stretch;
+    }
+    .admin-tabs-grid .admin-tab-span-2 {
+      grid-column: span 2 / span 2;
+    }
+    .admin-tabs-grid .selection-tile {
+      min-height: 96px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      line-height: 1.18;
+      padding: 14px 12px !important;
+    }
+    @media (max-width: 640px) {
+      .admin-tabs-grid {
+        gap: 10px;
+        padding: 10px;
+      }
+      .admin-tabs-grid .selection-tile {
+        min-height: 84px;
+        font-size: 13px !important;
+        padding: 12px 10px !important;
+      }
+    }
+
+
     /* Unified selected-state polish */
     .selection-tile {
       position: relative;
@@ -1923,6 +1969,46 @@
       }
       .bottom-nav {
         bottom: calc(var(--standalone-bottom-safe) + 10px) !important;
+      }
+    }
+
+
+
+    /* iOS standalone safe-area spacing for the floating top header. */
+    :root {
+      --standalone-top-safe: max(env(safe-area-inset-top, 0px), 20px);
+    }
+
+    html.is-standalone {
+      scroll-padding-top: calc(var(--standalone-top-safe) + 96px);
+    }
+
+    html.is-standalone .app-header {
+      margin-top: calc(var(--standalone-top-safe) + 7px) !important;
+      top: calc(var(--standalone-top-safe) + 7px) !important;
+    }
+
+    html.is-standalone .filters-sticky {
+      top: calc(var(--standalone-top-safe) + 88px) !important;
+    }
+
+    html.is-standalone .toast-bar {
+      top: calc(var(--standalone-top-safe) + 78px) !important;
+    }
+
+    @media (display-mode: standalone) {
+      html {
+        scroll-padding-top: calc(var(--standalone-top-safe) + 96px);
+      }
+      .app-header {
+        margin-top: calc(var(--standalone-top-safe) + 7px) !important;
+        top: calc(var(--standalone-top-safe) + 7px) !important;
+      }
+      .filters-sticky {
+        top: calc(var(--standalone-top-safe) + 88px) !important;
+      }
+      .toast-bar {
+        top: calc(var(--standalone-top-safe) + 78px) !important;
       }
     }
 
@@ -2905,17 +2991,17 @@ function MatchesView({matches,teams,predictions,results,players,activePlayerId,p
     <div className="space-y-3">
       <div className="bg-white border border-[#b0bce8] rounded-xl p-3 filters-sticky shadow-sm">
         <div className="flex flex-col gap-2">
-          <div className="flex gap-1 overflow-x-auto pb-1">
+          <div className="chip-scroll-row tight">
             {filterBtns.map(t=><button key={t.k} onClick={()=>handlePhaseFilter(t.k)}
               className={`selection-tile${phaseFilter===t.k?' is-selected':''} shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold`}>{t.l}</button>)}
           </div>
           {phaseFilter==='group'&&(
-            <div className="flex gap-1 overflow-x-auto pb-1">
+            <div className="chip-scroll-row tight">
               <button onClick={()=>{setGroupFilter('all');scrollAppToTop();}} className={`selection-tile${groupFilter==='all'?' is-selected':''} shrink-0 px-2.5 py-1 rounded-lg text-xs font-bold`}>Wszystkie</button>
               {GROUPS.map(g=><button key={g} onClick={()=>{setGroupFilter(g);scrollAppToTop();}} className={`selection-tile${groupFilter===g?' is-selected':''} shrink-0 w-8 h-7 rounded-lg text-xs font-bold`}>{g}</button>)}
             </div>
           )}
-          <div className="flex gap-1">
+          <div className="flex gap-1 items-center py-1">
             {[{k:'all',l:'Wszystkie'},{k:'pending',l:'Nadchodzące'},{k:'done',l:'Zakończone'}].map(t=>(
               <button key={t.k} onClick={()=>{setStatusFilter(t.k);scrollAppToTop();}} className={`selection-tile${statusFilter===t.k?' is-selected':''} flex-1 px-2 py-1 rounded-lg text-xs font-medium`}>{t.l}</button>
             ))}
@@ -3900,8 +3986,10 @@ function AdminPanel({teams,matches,results,specialResults,players,predictions,sp
         <Btn variant="ghost" size="sm" onClick={onLogout} className="text-stone-300 hover:bg-stone-800 hover:text-white">Wyloguj</Btn>
       </div>
 
-      <div className="bg-white border border-stone-200 rounded-xl p-1 flex flex-wrap gap-1">
-        {tabs.map(t=><button key={t.k} onClick={()=>{setTab(t.k);scrollAppToTop();}} className={`selection-tile${tab===t.k?' is-selected':''} flex-1 px-3 py-2 rounded-lg text-xs font-semibold`}>{t.l}</button>)}
+      <div className="bg-white border border-stone-200 rounded-xl">
+        <div className="admin-tabs-grid">
+          {tabs.map((t,i)=><button key={t.k} onClick={()=>{setTab(t.k);scrollAppToTop();}} className={`selection-tile${tab===t.k?' is-selected':''} rounded-lg text-xs font-semibold ${i>=4?'admin-tab-span-2':''}`}>{t.l}</button>)}
+        </div>
       </div>
 
 
@@ -3915,7 +4003,7 @@ function AdminPanel({teams,matches,results,specialResults,players,predictions,sp
             <div className="relative"><Icon name="search" size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400"/>
               <input value={matchSearch} onChange={e=>setMatchSearch(e.target.value)} placeholder="Szukaj drużyny / numeru (M5)" className="w-full pl-9 pr-3 py-2 border border-stone-200 rounded-lg focus:border-[#0d1b5e] focus:outline-none text-sm"/>
             </div>
-            <div className="flex gap-1 overflow-x-auto">
+            <div className="chip-scroll-row">
               {[{k:'all',l:'Wszystkie'},{k:'group',l:'Grupowa'},{k:'r32',l:'1/16'},{k:'r16',l:'1/8'},{k:'qf',l:'1/4'},{k:'sf',l:'1/2'},{k:'third',l:'3.'},{k:'final',l:'Finał'}].map(t=>(
                 <button key={t.k} onClick={()=>{setMPhase(t.k);scrollAppToTop();}} className={`selection-tile${mPhase===t.k?' is-selected':''} shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold`}>{t.l}</button>
               ))}
