@@ -1603,6 +1603,55 @@
     }
 
 
+
+
+    /* Jeden wspólny punkt wejścia do logowania i zarządzania użytkownikami. */
+    .profile-menu-btn {
+      min-width: 0;
+      max-width: 190px;
+    }
+    .profile-avatar {
+      width: 25px;
+      height: 25px;
+      flex: 0 0 25px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.16);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.10);
+      font-size: 11px;
+      line-height: 1;
+      font-weight: 850;
+      color: rgba(255,255,255,.96);
+    }
+    .profile-menu-btn.is-authenticated .profile-avatar {
+      background: linear-gradient(145deg, rgba(93,188,255,.46), rgba(91,77,242,.38));
+      border-color: rgba(174,220,255,.46);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.28), 0 4px 12px rgba(35,121,255,.16);
+    }
+    .profile-avatar .nav-icon {
+      opacity: .96;
+    }
+    @media (max-width: 520px) {
+      .profile-menu-btn {
+        width: 38px !important;
+        height: 38px !important;
+        min-width: 38px !important;
+        max-width: 38px !important;
+        padding: 0 !important;
+      }
+      .profile-avatar {
+        width: 27px;
+        height: 27px;
+        flex-basis: 27px;
+      }
+      .profile-button-label {
+        display: none !important;
+      }
+    }
+
     /* ═══════════════════════════════════════════════════════════════
        DRABINKA TURNIEJU
     ═══════════════════════════════════════════════════════════════ */
@@ -2010,6 +2059,184 @@
       .toast-bar {
         top: calc(var(--standalone-top-safe) + 78px) !important;
       }
+    }
+
+
+    /* ═══════════════════════════════════════════════════════════════
+       UNIFIED APP GEOMETRY — single border width and corner radius
+       One 30 px radius is used everywhere for the softer, more spacious iOS 26 geometry. CSS automatically scales
+       it down to half the element height/width, so compact controls
+       become fully rounded pills/circles without separate magic values.
+    ═══════════════════════════════════════════════════════════════ */
+    :root {
+      --ui-border-width: 1px;
+      --ui-corner-radius: 30px;
+
+      /* Keep every existing component token on the same geometry. */
+      --radius-sm: var(--ui-corner-radius);
+      --radius-md: var(--ui-corner-radius);
+      --radius-lg: var(--ui-corner-radius);
+      --radius-xl: var(--ui-corner-radius);
+    }
+
+    /* All existing visible borders stay thin, including Tailwind's
+       border-2 utility and borders created through inline React styles. */
+    .border,
+    .border-2 {
+      border-width: var(--ui-border-width) !important;
+    }
+    .border-t { border-top-width: var(--ui-border-width) !important; }
+    .border-b { border-bottom-width: var(--ui-border-width) !important; }
+    [style*="border:"] {
+      border-width: var(--ui-border-width) !important;
+    }
+    [style*="border-top:"] {
+      border-top-width: var(--ui-border-width) !important;
+    }
+    [style*="border-right:"] {
+      border-right-width: var(--ui-border-width) !important;
+    }
+    [style*="border-bottom:"] {
+      border-bottom-width: var(--ui-border-width) !important;
+    }
+    [style*="border-left:"] {
+      border-left-width: var(--ui-border-width) !important;
+    }
+    .spinner { border-width: var(--ui-border-width) !important; }
+    .border-0 { border-width: 0 !important; }
+
+    /* One radius for every tile, card, field, chip, badge and control. */
+    .rounded,
+    .rounded-lg,
+    .rounded-xl,
+    .rounded-2xl,
+    .rounded-full,
+    .glass,
+    .glass-strong,
+    .match-card,
+    .deferred-card,
+    .filters-sticky,
+    section.bg-white,
+    div.bg-white,
+    .install-banner,
+    .app-header,
+    .bottom-nav,
+    .login-btn,
+    .players-btn,
+    .selection-tile,
+    input,
+    select,
+    textarea,
+    .toast-bar,
+    .install-banner button,
+    .app-header .logo-icon,
+    .nav-droplet,
+    .bottom-nav button,
+    .match-points-badge,
+    .pill-soft,
+    .player-choice-avatar,
+    .spinner,
+    .loading-icon,
+    .bracket-intro,
+    .bracket-section,
+    .bracket-match,
+    .bracket-final-card,
+    .bracket-champion,
+    .fixed.inset-0.z-50 > .relative,
+    [style*="border-radius"] {
+      border-radius: var(--ui-corner-radius) !important;
+    }
+
+    /* Top-only rounded containers retain their open lower edge. */
+    .rounded-t-2xl,
+    .fixed.inset-0.z-50 > .relative > div:first-child {
+      border-radius: var(--ui-corner-radius) var(--ui-corner-radius) 0 0 !important;
+    }
+
+    /* Joined score controls are one compound element: only the outside
+       corners are rounded; the centre input and internal seams stay flat. */
+    .score-input-shell .score-value-input,
+    .admin-score-controls .score-value-input {
+      border-radius: 0 !important;
+    }
+    .score-input-shell > button:first-child,
+    .admin-score-controls > div > div:last-child > button:first-child {
+      border-radius: var(--ui-corner-radius) 0 0 var(--ui-corner-radius) !important;
+    }
+    .score-input-shell > button:last-child,
+    .admin-score-controls > div > div:last-child > button:last-child {
+      border-radius: 0 var(--ui-corner-radius) var(--ui-corner-radius) 0 !important;
+    }
+
+    /* Keep decorative navigation items borderless where they were designed
+       as a moving fill rather than a bordered tile. */
+    .nav-droplet,
+    .bottom-nav button {
+      border-width: 0 !important;
+    }
+
+    :focus-visible {
+      border-radius: var(--ui-corner-radius) !important;
+    }
+
+
+    /* Tournament bracket exception — tighter geometry for dense layouts. */
+    .bracket-page .bracket-intro,
+    .bracket-page .bracket-section {
+      border-radius: 24px !important;
+    }
+
+    .bracket-page .bracket-match {
+      border-radius: 18px !important;
+    }
+
+    .bracket-page .bracket-final-card {
+      border-radius: 22px !important;
+    }
+
+    /* This compact status element should remain a full capsule. */
+    .bracket-page .bracket-champion {
+      border-radius: 999px !important;
+    }
+
+    @media (max-width: 520px) {
+      .bracket-page .bracket-intro,
+      .bracket-page .bracket-section {
+        border-radius: 22px !important;
+      }
+
+      .bracket-page .bracket-match {
+        border-radius: 16px !important;
+      }
+
+      .bracket-page .bracket-final-card {
+        border-radius: 20px !important;
+      }
+    }
+
+
+    /* Safe horizontal pill rows — keep selected outlines and glow inside
+       the scrollport instead of clipping them at the top edge. */
+    .pill-scroll-safe {
+      display: flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+      overflow-x: auto !important;
+      overflow-y: hidden !important;
+      padding: 9px 3px 10px !important;
+      margin: -6px 0 2px !important;
+      scroll-padding-inline: 3px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .pill-scroll-safe::-webkit-scrollbar {
+      display: none;
+    }
+
+    .pill-scroll-safe .selection-tile {
+      flex: 0 0 auto;
+      transform-origin: center;
     }
 
 </style>
@@ -3086,7 +3313,7 @@ function SpecialsView({teams,players,activePlayerId,specialPredictions,specialRe
       <section className="bg-white border border-stone-200 rounded-xl p-4">
         <h3 className="font-display text-lg tracking-wide text-stone-900 mb-1">Kolejność w grupach</h3>
         <p className="text-xs text-stone-500 mb-3">1 trafione: 3 pkt • 2 trafione: 6 pkt • wszystkie 4: 10 pkt</p>
-        <div className="flex gap-1 overflow-x-auto pb-2 mb-3">
+        <div className="pill-scroll-safe">
           {GROUPS.map(g=><button key={g} onClick={()=>{setActiveGroup(g);scrollAppToTop();}} className={`selection-tile${activeGroup===g?' is-selected':''} shrink-0 w-10 h-10 rounded-lg font-bold`}>{g}</button>)}
         </div>
         {[0,1,2,3].map(pos=>{
@@ -3514,7 +3741,7 @@ function CompareView({matches,teams,predictions,results,players}) {
   return (
     <div className="space-y-3">
       <div className="bg-white border border-[#b0bce8] rounded-xl p-3 filters-sticky shadow-sm">
-        <div className="flex gap-1 overflow-x-auto mb-2">
+        <div className="pill-scroll-safe">
           {[{k:'all',l:'Wszystkie'},{k:'group',l:'Grupowa'},{k:'r32',l:'1/16'},{k:'r16',l:'1/8'},{k:'qf',l:'1/4'},{k:'sf',l:'1/2'},{k:'final',l:'Finał'}].map(t=>(
             <button key={t.k} onClick={()=>{setPhaseFilter(t.k);scrollAppToTop();}} className={`selection-tile${phaseFilter===t.k?' is-selected':''} shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold`}>{t.l}</button>
           ))}
@@ -4138,7 +4365,7 @@ function AdminPanel({teams,matches,results,specialResults,players,predictions,sp
 // ═══════════════════════════════════════════════════════════════
 //  LOGIN MODAL — wybór gracza
 // ═══════════════════════════════════════════════════════════════
-function LoginModal({open,onClose,players,activePlayer,onLogin,onRename}) {
+function LoginModal({open,onClose,players,activePlayer,onLogin,onRename,onManagePlayers}) {
   const [selected,setSelected]=useState('');
   const [step,setStep]=useState('pick'); // 'pick' | 'pin' | 'rename'
   const [pin,setPin]=useState('');
@@ -4175,13 +4402,16 @@ function LoginModal({open,onClose,players,activePlayer,onLogin,onRename}) {
   };
 
   return (
-    <Modal open={open} onClose={onClose} title="Zaloguj się">
+    <Modal open={open} onClose={onClose} title={activePlayer?"Profil i użytkownicy":"Zaloguj się"}>
       <div className="space-y-4">
         {step==='pick'&&(
           <>
-            <p className="text-sm text-stone-600">Wybierz swój profil, żeby typować.</p>
+            <p className="text-sm text-stone-600">{activePlayer?'Zmień profil lub zarządzaj swoim kontem.':'Wybierz swój profil, żeby typować.'}</p>
+            <Btn variant="outline" onClick={onManagePlayers} className="w-full">
+              <Icon name="plus" size={15}/>{players.length===0?'Dodaj pierwszego użytkownika':'Dodaj użytkownika'}
+            </Btn>
             <div className="space-y-1.5">
-              {players.length===0&&<p className="text-center text-stone-500 text-sm py-4">Brak graczy. Dodaj uczestników przyciskiem zarządzania graczami.</p>}
+              {players.length===0&&<p className="text-center text-stone-500 text-sm py-4">Brak użytkowników. Użyj przycisku powyżej, aby dodać pierwszą osobę.</p>}
               {players.map(p=>(
                 <button key={p.id} onClick={()=>setSelected(p.id)}
                   className={`selection-tile player-choice${selected===p.id?' is-selected':''}`}
@@ -4881,14 +5111,19 @@ function Mundial2026() {
           </div>
         </div>
         <div className="player-row">
-          <button onClick={()=>setLoginModal(true)} className="login-btn">
-            <NavIcon name="user" size={15}/>
+          <button
+            onClick={()=>setLoginModal(true)}
+            className={`login-btn profile-menu-btn${activePlayerData?' is-authenticated':''}`}
+            title={activePlayerData?`Profil: ${activePlayerData.name}`:'Zaloguj się lub wybierz użytkownika'}
+            aria-label={activePlayerData?`Otwórz profil użytkownika ${activePlayerData.name}`:'Zaloguj się lub wybierz użytkownika'}>
+            <div className="profile-avatar" aria-hidden="true">
+              {activePlayerData
+                ?activePlayerData.name.slice(0,1).toUpperCase()
+                :<NavIcon name="user" size={15}/>}
+            </div>
             {activePlayerData
-              ?<span style={{overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{activePlayerData.name}</span>
-              :<span>Zaloguj się</span>}
-          </button>
-          <button className="players-btn" onClick={()=>setPlayersModal(true)} title="Zarządzaj graczami">
-            <NavIcon name="users" size={18}/>
+              ?<span className="profile-button-label" style={{overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{activePlayerData.name}</span>
+              :<span className="profile-button-label">Zaloguj się</span>}
           </button>
           <button className="players-btn" onClick={()=>{setActiveTab('admin');}} title="Panel admina (wyniki)"
             style={{background:activeTab==='admin'?'rgba(124,58,237,.3)':'rgba(0,0,0,.2)',borderColor:activeTab==='admin'?'#a78bfa':'rgba(255,255,255,.25)'}}>
@@ -4915,7 +5150,7 @@ function Mundial2026() {
 
         {safePlayers.length===0&&activeTab!=='admin'&&(
           <div className="bg-amber-50 border border-amber-300 rounded-xl p-5 mb-4 text-center">
-            <Icon name="users" size={32} className="text-amber-700 mx-auto mb-3 block"/>
+            <NavIcon name="users" size={32} className="text-amber-700 mx-auto mb-3 block"/>
             <p className="font-display text-xl tracking-wide text-amber-900 mb-1">Brak uczestników</p>
             <p className="text-sm text-amber-800 mb-4">Zacznij od dodania siebie i znajomych.</p>
             <Btn variant="gold" size="lg" onClick={()=>setPlayersModal(true)}>
@@ -4949,7 +5184,7 @@ function Mundial2026() {
       <BottomNav tabs={tabs} activeTab={activeTab} onSelect={setActiveTab}/>
 
       <PlayersManager open={playersModal} onClose={()=>setPlayersModal(false)} players={safePlayers} onAddPlayer={handleAddPlayer}/>
-      <LoginModal open={loginModal} onClose={()=>setLoginModal(false)} players={safePlayers} activePlayer={activePlayer} onLogin={(id)=>{setActivePlayer(id);setLoginModal(false);}} onRename={handleRenamePlayer}/>
+      <LoginModal open={loginModal} onClose={()=>setLoginModal(false)} players={safePlayers} activePlayer={activePlayer} onLogin={(id)=>{setActivePlayer(id);setLoginModal(false);}} onRename={handleRenamePlayer} onManagePlayers={()=>{setLoginModal(false);setPlayersModal(true);}}/>
     </div>
   );
 }
