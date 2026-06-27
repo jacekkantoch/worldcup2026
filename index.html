@@ -1715,6 +1715,13 @@
       height: 618px;
       margin: 0 auto;
     }
+    .bracket-board-unified {
+      min-width: 1176px;
+    }
+    .bracket-connectors.bracket-connectors-unified {
+      width: 1176px;
+      height: 1120px;
+    }
     .bracket-round-label {
       position: absolute;
       top: 0;
@@ -1724,6 +1731,15 @@
       font-weight: 800;
       letter-spacing: .06em;
       text-transform: uppercase;
+      color: var(--label-2);
+    }
+    .bracket-third-place-label {
+      position: absolute;
+      width: 192px;
+      text-align: center;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .045em;
       color: var(--label-2);
     }
     .bracket-connectors {
@@ -2181,8 +2197,8 @@
 
 
     /* Tournament bracket exception — tighter geometry for dense layouts. */
-    .bracket-page .bracket-intro,
-    .bracket-page .bracket-section {
+    html body .bracket-page .bracket-intro:not(#__bracket_border_restore__),
+    html body .bracket-page .bracket-section:not(#__bracket_border_restore__) {
       border-radius: 24px !important;
     }
 
@@ -2404,6 +2420,97 @@
     }
 
 
+    /* Matches tab exception — remove all visible borders only within the
+       Matches view, while preserving spacing, fills and shadows. */
+    .matches-view .border,
+    .matches-view .border-2,
+    .matches-view .border-t,
+    .matches-view .border-b,
+    .matches-view .filters-sticky,
+    .matches-view .match-card,
+    .matches-view .selection-tile,
+    .matches-view .match-points-badge,
+    .matches-view [style*="border:"],
+    .matches-view [style*="border-top:"],
+    .matches-view [style*="border-right:"],
+    .matches-view [style*="border-bottom:"],
+    .matches-view [style*="border-left:"] {
+      border-width: 0 !important;
+      border-color: transparent !important;
+    }
+
+
+    /* Entire application without element borders, including the tournament bracket.
+       The nonexistent ID inside :not() raises specificity so this wins over earlier
+       component rules that also use !important. */
+    html body,
+    html body *:not(#__no_element_borders__),
+    html body *:not(#__no_element_borders__)::before,
+    html body *:not(#__no_element_borders__)::after {
+      border: 0 solid transparent !important;
+      border-width: 0 !important;
+      border-style: none !important;
+      border-color: transparent !important;
+    }
+
+
+    /* Tournament bracket finishing pass: visible 1 px outlines and connectors
+       that stop before translucent match cards. */
+    .bracket-page .bracket-intro,
+    .bracket-page .bracket-section {
+      border: 1px solid rgba(255,255,255,.14) !important;
+      border-width: 1px !important;
+      border-style: solid !important;
+      border-color: rgba(255,255,255,.14) !important;
+    }
+
+    html body .bracket-page .bracket-match:not(#__bracket_border_restore__),
+    html body .bracket-page .bracket-final-card:not(#__bracket_border_restore__) {
+      border: 1px solid rgba(255,255,255,.18) !important;
+      border-width: 1px !important;
+      border-style: solid !important;
+      border-color: rgba(255,255,255,.18) !important;
+      z-index: 2;
+    }
+
+    html body .bracket-page .bracket-match.is-finished:not(#__bracket_border_restore__),
+    html body .bracket-page .bracket-final-card.is-finished:not(#__bracket_border_restore__) {
+      border-color: rgba(255,255,255,.24) !important;
+    }
+
+    html body .bracket-page .bracket-match-head:not(#__bracket_border_restore__) {
+      border-bottom: 1px solid rgba(255,255,255,.08) !important;
+      border-bottom-width: 1px !important;
+      border-bottom-style: solid !important;
+      border-bottom-color: rgba(255,255,255,.08) !important;
+    }
+
+    html body .bracket-page .bracket-team-row + .bracket-team-row:not(#__bracket_border_restore__) {
+      border-top: 1px solid rgba(255,255,255,.065) !important;
+      border-top-width: 1px !important;
+      border-top-style: solid !important;
+      border-top-color: rgba(255,255,255,.065) !important;
+    }
+
+    .bracket-page .bracket-connectors {
+      z-index: 1;
+    }
+
+    .bracket-page .bracket-connectors path {
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .bracket-page .bracket-round-label,
+    .bracket-page .bracket-third-place-label {
+      z-index: 3;
+    }
+
+    .bracket-section-title-instruction {
+      justify-content: flex-end;
+    }
+
+
     /* Admin match editor uses a separate component and needs the same joined
        geometry as public match cards. */
     .admin-match-card {
@@ -2431,6 +2538,167 @@
       background-clip: padding-box;
       -webkit-mask-image: -webkit-radial-gradient(white, black);
               mask-image: radial-gradient(white, black);
+    }
+
+
+
+    /* Ranking history chart — positions after every completed match. */
+    .ranking-history-card {
+      position: relative;
+      overflow: hidden;
+      padding: 16px;
+      border-radius: 0 !important;
+      background:
+        radial-gradient(circle at 14% -15%, rgba(112,184,255,.18), transparent 38%),
+        linear-gradient(145deg, rgba(255,255,255,.10), rgba(255,255,255,.035));
+      box-shadow: var(--shadow-md), var(--hl2), var(--shadow-glow);
+      -webkit-backdrop-filter: blur(24px) saturate(170%);
+      backdrop-filter: blur(24px) saturate(170%);
+    }
+    .ranking-history-title-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .ranking-history-title {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: -.015em;
+      color: var(--label-1);
+    }
+    .ranking-history-subtitle {
+      margin: 3px 0 0;
+      font-size: 11px;
+      line-height: 1.45;
+      color: var(--label-2);
+    }
+    .ranking-history-latest {
+      flex: 0 0 auto;
+      min-width: 68px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(112,184,255,.13);
+      color: #bfe1ff;
+      font-size: 10px;
+      font-weight: 800;
+      text-align: center;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .ranking-history-player-strip,
+    .ranking-history-focus-list {
+      display: flex;
+      gap: 7px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .ranking-history-player-strip::-webkit-scrollbar,
+    .ranking-history-focus-list::-webkit-scrollbar,
+    .ranking-history-scroll::-webkit-scrollbar { display: none; }
+    .ranking-history-player-strip {
+      padding: 2px 1px 9px;
+    }
+    .ranking-history-player-button {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 32px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.055) !important;
+      color: var(--label-2) !important;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .ranking-history-player-button.is-active {
+      background: rgba(112,184,255,.18) !important;
+      color: white !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 5px 16px rgba(10,132,255,.12);
+    }
+    .ranking-history-color-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex: 0 0 auto;
+      box-shadow: 0 0 9px currentColor;
+    }
+    .ranking-history-focus {
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 20px;
+      background: rgba(0,0,0,.17);
+    }
+    .ranking-history-focus-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 7px;
+      font-size: 11px;
+      color: var(--label-2);
+    }
+    .ranking-history-focus-heading strong {
+      color: var(--label-1) !important;
+      font-size: 12px;
+    }
+    .ranking-history-focus-chip {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 9px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.055);
+      font-size: 10px;
+      color: var(--label-2);
+      white-space: nowrap;
+    }
+    .ranking-history-focus-chip strong {
+      color: white !important;
+      font-size: 11px;
+    }
+    .ranking-history-scroll {
+      overflow-x: auto;
+      overflow-y: hidden;
+      overscroll-behavior-inline: contain;
+      touch-action: pan-x;
+      scrollbar-width: none;
+      border-radius: 0 !important;
+      background: rgba(0,0,0,.13);
+    }
+    .ranking-history-svg {
+      display: block;
+      max-width: none;
+      overflow: visible;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "DM Sans", sans-serif;
+    }
+    .ranking-history-empty {
+      padding: 24px 14px;
+      border-radius: 0 !important;
+      background: rgba(255,255,255,.045);
+      color: var(--label-2);
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .ranking-history-note {
+      margin: 9px 2px 0;
+      font-size: 9.5px;
+      line-height: 1.45;
+      color: var(--label-3);
+    }
+    @media (max-width: 520px) {
+      .ranking-history-card { padding: 13px 10px; border-radius: 0 !important; }
+      .ranking-history-title-row { margin-bottom: 10px; }
+      .ranking-history-title { font-size: 15px; }
+      .ranking-history-subtitle { font-size: 10.5px; }
+      .ranking-history-latest { min-width: 60px; padding-inline: 8px; }
     }
 
 </style>
@@ -3409,7 +3677,7 @@ function MatchesView({matches,teams,predictions,results,players,activePlayerId,p
   const filterBtns=[{k:'all',l:'Wszystkie'},{k:'group',l:'Grupowa'},{k:'r32',l:'1/16'},{k:'r16',l:'1/8'},{k:'qf',l:'1/4'},{k:'sf',l:'1/2'},{k:'third',l:'3. m.'},{k:'final',l:'Finał'}];
 
   return (
-    <div className="space-y-3">
+    <div className="matches-view space-y-3">
       <div className="bg-white border border-[#b0bce8] rounded-xl p-3 filters-sticky shadow-sm">
         <div className="flex flex-col gap-1">
           <div className="chip-scroll-row tight">
@@ -3653,7 +3921,7 @@ function SpecialsAllView({players,specialPredictions,specialResults,teams}) {
 
       {/* Kolejność grup */}
       <div className="bg-white border border-stone-200 rounded-xl overflow-hidden table-card">
-        <div className="bg-[#0d1b5e] text-white px-4 py-2.5 text-sm font-bold tracking-wide flex items-center justify-between inner-top-cap">
+        <div className="px-4 py-3 text-sm font-bold tracking-wide text-stone-800 flex items-center justify-between">
           <span>Kolejność w grupach</span>
         </div>
         <div className="flex gap-1 p-2 overflow-x-auto">
@@ -3694,7 +3962,7 @@ function SpecialsAllView({players,specialPredictions,specialResults,teams}) {
 
       {/* Podium */}
       <div className="bg-white border border-stone-200 rounded-xl overflow-hidden table-card">
-        <div className="bg-[#0d1b5e] text-white px-4 py-2.5 text-sm font-bold tracking-wide inner-top-cap">Podium turnieju</div>
+        <div className="px-4 py-3 text-sm font-bold tracking-wide text-stone-800">Podium turnieju</div>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
@@ -3730,7 +3998,7 @@ function SpecialsAllView({players,specialPredictions,specialResults,teams}) {
 
       {/* Król strzelców + MVP */}
       <div className="bg-white border border-stone-200 rounded-xl overflow-hidden table-card">
-        <div className="bg-[#0d1b5e] text-white px-4 py-2.5 text-sm font-bold tracking-wide inner-top-cap">Nagrody indywidualne</div>
+        <div className="px-4 py-3 text-sm font-bold tracking-wide text-stone-800">Nagrody indywidualne</div>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
@@ -3765,6 +4033,193 @@ function SpecialsAllView({players,specialPredictions,specialResults,teams}) {
 // ═══════════════════════════════════════════════════════════════
 //  WIDOK: RANKING
 // ═══════════════════════════════════════════════════════════════
+
+function RankingHistoryChart({players,matches,predictions,results}) {
+  const [selectedPlayerId,setSelectedPlayerId]=useState(null);
+  const [focusIndex,setFocusIndex]=useState(0);
+  const scrollRef=useRef(null);
+
+  const playerColors=useMemo(()=>{
+    const colors={};
+    players.forEach((pl,index)=>{
+      const hue=Math.round((index*137.508+202)%360);
+      colors[pl.id]=`hsl(${hue} 78% 68%)`;
+    });
+    return colors;
+  },[players]);
+
+  const history=useMemo(()=>{
+    const completed=matches
+      .filter(match=>!!results[match.id])
+      .slice()
+      .sort((a,b)=>(Number(a.num)||0)-(Number(b.num)||0)||String(a.date||'').localeCompare(String(b.date||'')));
+    const totals={};
+    const exacts={};
+    players.forEach(pl=>{totals[pl.id]=0;exacts[pl.id]=0;});
+
+    return completed.map(match=>{
+      const result=results[match.id];
+      players.forEach(pl=>{
+        const prediction=predictions[`${pl.id}:${match.id}`];
+        if(!prediction||!result) return;
+        totals[pl.id]+=scoreMatch(prediction,result,match.phase);
+        if(predictionQuality(prediction,result,match.phase)==='exact') exacts[pl.id]+=1;
+      });
+      const order=players
+        .map((pl,index)=>({player:pl,index,total:totals[pl.id]||0,exact:exacts[pl.id]||0}))
+        .sort((a,b)=>b.total-a.total||b.exact-a.exact||a.index-b.index);
+      const positions={};
+      order.forEach((entry,index)=>{positions[entry.player.id]=index+1;});
+      return {
+        match,
+        positions,
+        totals:{...totals},
+        exacts:{...exacts},
+        order
+      };
+    });
+  },[players,matches,predictions,results]);
+
+  useEffect(()=>{
+    setFocusIndex(Math.max(0,history.length-1));
+    const frame=requestAnimationFrame(()=>{
+      if(scrollRef.current) scrollRef.current.scrollLeft=scrollRef.current.scrollWidth;
+    });
+    return()=>cancelAnimationFrame(frame);
+  },[history.length]);
+
+  useEffect(()=>{
+    if(selectedPlayerId&&!players.some(pl=>pl.id===selectedPlayerId)) setSelectedPlayerId(null);
+  },[players,selectedPlayerId]);
+
+  if(players.length===0) return null;
+  if(history.length===0) {
+    return (
+      <div className="ranking-history-card">
+        <div className="ranking-history-title-row">
+          <div>
+            <h4 className="ranking-history-title">Historia miejsc w klasyfikacji</h4>
+            <p className="ranking-history-subtitle">Pozycja każdego gracza po kolejnych meczach.</p>
+          </div>
+        </div>
+        <div className="ranking-history-empty">Wykres pojawi się po zapisaniu pierwszego wyniku meczu.</div>
+      </div>
+    );
+  }
+
+  const count=history.length;
+  const margin={left:42,right:22,top:22,bottom:42};
+  const stepX=count>1?30:0;
+  const innerWidth=Math.max(520,(count-1)*stepX);
+  const width=margin.left+innerWidth+margin.right;
+  const rowGap=players.length<=4?54:players.length<=8?42:34;
+  const innerHeight=Math.max(170,(players.length-1)*rowGap);
+  const height=margin.top+innerHeight+margin.bottom;
+  const xFor=index=>margin.left+(count===1?innerWidth/2:index*(innerWidth/(count-1)));
+  const yFor=place=>margin.top+(players.length===1?innerHeight/2:(place-1)*(innerHeight/(players.length-1)));
+  const labelEvery=Math.max(1,Math.ceil(count/10));
+  const safeFocus=Math.min(Math.max(focusIndex,0),count-1);
+  const focused=history[safeFocus];
+
+  return (
+    <div className="ranking-history-card">
+      <div className="ranking-history-title-row">
+        <div>
+          <h4 className="ranking-history-title">Historia miejsc w klasyfikacji</h4>
+          <p className="ranking-history-subtitle">Miejsce po każdym kolejnym rozegranym meczu. 1. miejsce znajduje się na górze.</p>
+        </div>
+        <div className="ranking-history-latest">{count} {count===1?'mecz':count<5?'mecze':'meczów'}</div>
+      </div>
+
+      <div className="ranking-history-player-strip" aria-label="Wybierz gracza do wyróżnienia">
+        <button type="button" className={`ranking-history-player-button${selectedPlayerId===null?' is-active':''}`} onClick={()=>setSelectedPlayerId(null)}>
+          Wszyscy
+        </button>
+        {players.map(pl=>(
+          <button key={pl.id} type="button" className={`ranking-history-player-button${selectedPlayerId===pl.id?' is-active':''}`} onClick={()=>setSelectedPlayerId(pl.id)}>
+            <span className="ranking-history-color-dot" style={{background:playerColors[pl.id],color:playerColors[pl.id]}}/>
+            {pl.name}
+          </button>
+        ))}
+      </div>
+
+      <div className="ranking-history-focus">
+        <div className="ranking-history-focus-heading">
+          <strong>Po meczu #{focused.match.num}</strong>
+          <span>{formatDate(focused.match.date)}</span>
+        </div>
+        <div className="ranking-history-focus-list">
+          {focused.order.map(entry=>(
+            <div key={entry.player.id} className="ranking-history-focus-chip" style={{opacity:selectedPlayerId&&selectedPlayerId!==entry.player.id ? .72 : 1}}>
+              <span className="ranking-history-color-dot" style={{background:playerColors[entry.player.id],color:playerColors[entry.player.id]}}/>
+              <strong>#{focused.positions[entry.player.id]}</strong>
+              <span>{entry.player.name}</span>
+              <span>{entry.total} pkt</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="ranking-history-scroll" ref={scrollRef}>
+        <svg className="ranking-history-svg" width={width} height={height} viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Wykres miejsc graczy po kolejnych meczach">
+          <defs>
+            <linearGradient id="rankingHistoryFade" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="rgba(112,184,255,.055)"/>
+              <stop offset="100%" stopColor="rgba(112,184,255,0)"/>
+            </linearGradient>
+          </defs>
+          <rect x={margin.left} y={margin.top} width={innerWidth} height={innerHeight} rx="0" fill="url(#rankingHistoryFade)"/>
+
+          {players.map((pl,index)=>{
+            const place=index+1;
+            const y=yFor(place);
+            return (
+              <g key={`grid-${pl.id}`}>
+                <line x1={margin.left} y1={y} x2={margin.left+innerWidth} y2={y} stroke="rgba(255,255,255,.075)" strokeWidth="1" strokeDasharray="3 7"/>
+                <text x={margin.left-12} y={y+4} fill="rgba(235,241,255,.58)" fontSize="10" fontWeight="700" textAnchor="end">{place}.</text>
+              </g>
+            );
+          })}
+
+          {history.map((snapshot,index)=>{
+            if(index%labelEvery!==0&&index!==count-1) return null;
+            const x=xFor(index);
+            return (
+              <g key={`x-${snapshot.match.id}`}>
+                <line x1={x} y1={margin.top} x2={x} y2={margin.top+innerHeight} stroke="rgba(255,255,255,.035)" strokeWidth="1"/>
+                <text x={x} y={height-17} fill="rgba(235,241,255,.48)" fontSize="9" textAnchor="middle">#{snapshot.match.num}</text>
+              </g>
+            );
+          })}
+
+          {players.map(pl=>{
+            const points=history.map((snapshot,index)=>`${xFor(index)},${yFor(snapshot.positions[pl.id])}`).join(' ');
+            const active=!selectedPlayerId||selectedPlayerId===pl.id;
+            return (
+              <polyline key={`line-${pl.id}`} points={points} fill="none" stroke={playerColors[pl.id]} strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" opacity={active?1:.14}/>
+            );
+          })}
+
+          {selectedPlayerId&&history.map((snapshot,index)=>(
+            <circle key={`point-${snapshot.match.id}`} cx={xFor(index)} cy={yFor(snapshot.positions[selectedPlayerId])} r={index===safeFocus?5:2.8} fill={playerColors[selectedPlayerId]} stroke="rgba(5,7,13,.9)" strokeWidth="1"/>
+          ))}
+
+          <line x1={xFor(safeFocus)} y1={margin.top-5} x2={xFor(safeFocus)} y2={margin.top+innerHeight+5} stroke="rgba(255,255,255,.34)" strokeWidth="1" strokeDasharray="4 5" pointerEvents="none"/>
+
+          {history.map((snapshot,index)=>{
+            const previous=index===0?xFor(index):xFor(index-1);
+            const next=index===count-1?xFor(index):xFor(index+1);
+            const start=index===0?margin.left:(previous+xFor(index))/2;
+            const end=index===count-1?margin.left+innerWidth:(xFor(index)+next)/2;
+            return <rect key={`hit-${snapshot.match.id}`} x={start} y={margin.top-10} width={Math.max(12,end-start)} height={innerHeight+20} fill="transparent" style={{cursor:'crosshair'}} onPointerEnter={()=>setFocusIndex(index)} onPointerDown={()=>setFocusIndex(index)}/>;
+          })}
+        </svg>
+      </div>
+      <p className="ranking-history-note">Wykres uwzględnia punkty zdobyte za wyniki meczów. Bonusy za tabele grup, podium i nagrody nie mają w danych przypisanego momentu przyznania, dlatego nie są dodawane do historii mecz po meczu.</p>
+    </div>
+  );
+}
+
 function LeaderboardView({players,matches,predictions,results,specialPredictions,specialResults}) {
   const ranking=useMemo(()=>{
     return players.map(pl=>{
@@ -3833,6 +4288,7 @@ function LeaderboardView({players,matches,predictions,results,specialPredictions
           </div>
         );
       })}
+      <RankingHistoryChart players={players} matches={matches} predictions={predictions} results={results}/>
     </div>
   );
 }
@@ -4797,24 +5253,13 @@ function PlayersManager({open,onClose,players,onAddPlayer}) {
 //  DRABINKA TURNIEJU
 // ═══════════════════════════════════════════════════════════════
 const BRACKET_LAYOUT = {
-  upper: {
-    title:'Górna połowa drabinki',
-    rounds:[
-      {label:'1/16 finału',ids:['M73','M74','M75','M76','M77','M78','M79','M80']},
-      {label:'1/8 finału',ids:['M89','M90','M91','M92']},
-      {label:'Ćwierćfinał',ids:['M97','M98']},
-      {label:'Półfinał',ids:['M101']},
-    ]
-  },
-  lower: {
-    title:'Dolna połowa drabinki',
-    rounds:[
-      {label:'1/16 finału',ids:['M81','M82','M83','M84','M85','M86','M87','M88']},
-      {label:'1/8 finału',ids:['M93','M94','M95','M96']},
-      {label:'Ćwierćfinał',ids:['M99','M100']},
-      {label:'Półfinał',ids:['M102']},
-    ]
-  }
+  rounds:[
+    {label:'1/16 finału',ids:['M73','M74','M75','M76','M77','M78','M79','M80','M81','M82','M83','M84','M85','M86','M87','M88']},
+    {label:'1/8 finału',ids:['M89','M90','M91','M92','M93','M94','M95','M96']},
+    {label:'Ćwierćfinał',ids:['M97','M98','M99','M100']},
+    {label:'Półfinał',ids:['M101','M102']},
+    {label:'Finał',ids:['M104']},
+  ]
 };
 
 const BRACKET_SOURCES = {
@@ -4866,23 +5311,34 @@ function BracketMatchCard({match,teams,result,sourceLabels=['Do ustalenia','Do u
   );
 }
 
-function BracketHalf({config,matchesById,teams,results}){
-  const xs=[0,246,492,738];
+function BracketTree({config,matchesById,teams,results}){
+  const xs=[0,246,492,738,984];
   const ys=[
-    [0,70,140,210,280,350,420,490],
-    [35,175,315,455],
-    [105,385],
-    [245],
+    [0,70,140,210,280,350,420,490,560,630,700,770,840,910,980,1050],
+    [35,175,315,455,595,735,875,1015],
+    [105,385,665,945],
+    [245,805],
+    [525],
   ];
   const cardH=66;
   const cardW=192;
+  const boardW=1176;
+  const connectorH=1120;
+  const connectorGap=8;
+  const connectorRadius=8;
   const connectorPaths=[];
-  for(let round=0;round<3;round++){
+  for(let round=0;round<config.rounds.length-1;round++){
     const fromYs=ys[round];
     const toYs=ys[round+1];
-    const x1=xs[round]+cardW;
-    const x2=xs[round+1];
-    const mid=(x1+x2)/2;
+    const xStart=xs[round]+cardW+connectorGap;
+    const xEnd=xs[round+1]-connectorGap;
+    const xTurn=(xStart+xEnd)/2;
+    const roundedArm=(yStart,yTarget)=>{
+      const direction=yTarget>=yStart?1:-1;
+      const radius=Math.min(connectorRadius,Math.abs(yTarget-yStart)/2,Math.max(0,xTurn-xStart));
+      if(radius<=0) return `M${xStart},${yStart} H${xTurn}`;
+      return `M${xStart},${yStart} H${xTurn-radius} Q${xTurn},${yStart} ${xTurn},${yStart+direction*radius} V${yTarget}`;
+    };
     toYs.forEach((toY,targetIndex)=>{
       const firstSource=fromYs[targetIndex*2];
       const secondSource=fromYs[targetIndex*2+1];
@@ -4890,31 +5346,35 @@ function BracketHalf({config,matchesById,teams,results}){
       const yTop=firstSource+cardH/2;
       const yBottom=secondSource+cardH/2;
       const yTarget=toY+cardH/2;
-      /* Jedna ścieżka na każde połączenie pary. Dzięki temu wspólny pionowy
-         i końcowy poziomy odcinek nie są rysowane dwa razy i nie robią się jaśniejsze. */
       const d=[
-        `M${x1},${yTop} H${mid}`,
-        `M${x1},${yBottom} H${mid}`,
-        `M${mid},${yTop} V${yBottom}`,
-        `M${mid},${yTarget} H${x2}`,
+        roundedArm(yTop,yTarget),
+        roundedArm(yBottom,yTarget),
+        `M${xTurn},${yTarget} H${xEnd}`,
       ].join(' ');
       connectorPaths.push(<path key={`${round}-${targetIndex}`} d={d}/>);
     });
   }
   return (
-    <section className="bracket-section">
-      <div className="bracket-section-title">
-        <h3>{config.title}</h3>
+    <section className="bracket-section bracket-section-unified">
+      <div className="bracket-section-title bracket-section-title-instruction">
         <span>Przesuń poziomo, aby zobaczyć kolejne rundy</span>
       </div>
       <div className="bracket-scroll">
-        <div className="bracket-board">
+        <div className="bracket-board bracket-board-unified" style={{width:boardW,height:1174}}>
           {config.rounds.map((round,idx)=><div key={round.label} className="bracket-round-label" style={{left:xs[idx]}}>{round.label}</div>)}
-          <svg className="bracket-connectors" viewBox="0 0 930 560" preserveAspectRatio="none">{connectorPaths}</svg>
+          <svg className="bracket-connectors bracket-connectors-unified" viewBox={`0 0 ${boardW} ${connectorH}`} preserveAspectRatio="none">{connectorPaths}</svg>
           {config.rounds.map((round,rIdx)=>round.ids.map((id,mIdx)=>{
             const match=matchesById[id];
             return <BracketMatchCard key={id} match={match} teams={teams} result={results[id]} sourceLabels={BRACKET_SOURCES[id]} style={{left:xs[rIdx],top:40+ys[rIdx][mIdx]}}/>;
           }))}
+          <div className="bracket-third-place-label" style={{left:xs[4],top:682}}>Mecz o 3. miejsce</div>
+          <BracketMatchCard
+            match={matchesById.M103}
+            teams={teams}
+            result={results.M103}
+            sourceLabels={BRACKET_SOURCES.M103}
+            style={{left:xs[4],top:702}}
+          />
         </div>
       </div>
     </section>
@@ -4923,36 +5383,13 @@ function BracketHalf({config,matchesById,teams,results}){
 
 function TournamentBracket({matches,teams,results}){
   const matchesById=useMemo(()=>Object.fromEntries(matches.map(m=>[m.id,m])),[matches]);
-  const finalMatch=matchesById.M104;
-  const thirdMatch=matchesById.M103;
-  const finalResult=results.M104;
-  const finalWinner=bracketWinnerSide(finalResult);
-  const championId=finalWinner&&finalMatch?(finalWinner==='home'?finalMatch.homeTeamId:finalMatch.awayTeamId):null;
-  const champion=championId?teams[championId]:null;
   return (
     <div className="bracket-page">
       <div className="bracket-intro">
         <h2>Drabinka turnieju</h2>
         <p>Pary i wyniki aktualizują się automatycznie po zapisaniu ich przez administratora. Na telefonie przeciągnij drabinkę poziomo.</p>
       </div>
-      <BracketHalf config={BRACKET_LAYOUT.upper} matchesById={matchesById} teams={teams} results={results}/>
-      <BracketHalf config={BRACKET_LAYOUT.lower} matchesById={matchesById} teams={teams} results={results}/>
-      <section className="bracket-section">
-        <div className="bracket-section-title"><h3>Medale</h3><span>Finał i mecz o 3. miejsce</span></div>
-        <div className="bracket-finals-grid">
-          <div>
-            <div className="text-xs font-bold text-stone-500 mb-2 text-center">Mecz o 3. miejsce</div>
-            <BracketMatchCard match={thirdMatch} teams={teams} result={results.M103} sourceLabels={BRACKET_SOURCES.M103} large/>
-          </div>
-          <div>
-            <div className="text-xs font-bold text-stone-500 mb-2 text-center">Finał</div>
-            <BracketMatchCard match={finalMatch} teams={teams} result={finalResult} sourceLabels={BRACKET_SOURCES.M104} large/>
-          </div>
-        </div>
-        <div className="bracket-champion">
-          {champion?<span className="inline-flex items-center justify-center gap-2"><FlagImg code={champion.flag} size={22} title={champion.name}/>Mistrz świata 2026: {champion.name}</span>:<span className="bracket-champion-empty">Mistrz świata zostanie pokazany po zapisaniu wyniku finału</span>}
-        </div>
-      </section>
+      <BracketTree config={BRACKET_LAYOUT} matchesById={matchesById} teams={teams} results={results}/>
     </div>
   );
 }
