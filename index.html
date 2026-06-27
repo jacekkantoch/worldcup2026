@@ -25,6 +25,13 @@
   <meta name="apple-mobile-web-app-title" content="Mundial 2026"/>
   <meta name="theme-color" content="#07101d"/>
   <link rel="manifest" id="pwa-manifest"/>
+  <script>
+    (function(){
+      var ua=navigator.userAgent||"";
+      var isiOS=/iPad|iPhone|iPod/.test(ua)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+      if(isiOS) document.documentElement.classList.add("ios-safe");
+    })();
+  </script>
   <style>
     /* ═══════════════════════════════════════════════════════════════
        iOS 26 · MATTE 2D LIQUID GLASS · Mundial 2026
@@ -82,6 +89,7 @@
     }
 
     *, *::before, *::after { box-sizing: border-box; }
+    button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
     html, body { overscroll-behavior: none; -webkit-overflow-scrolling: touch; margin: 0; padding: 0; }
 
     body {
@@ -923,6 +931,56 @@
       }
     }
 
+    /* Mobile Safari safe mode: keep the glass palette, reduce GPU compositing. */
+    @media (max-width: 700px), (pointer: coarse) {
+      body,
+      .pitch-bg {
+        background-attachment: scroll !important;
+      }
+      .pitch-bg::before,
+      .pitch-bg::after {
+        display: none !important;
+        animation: none !important;
+        filter: none !important;
+      }
+      .match-card,
+      .deferred-card {
+        content-visibility: visible !important;
+        contain: none !important;
+      }
+      .glass,
+      .glass-strong,
+      .match-card,
+      .filters-sticky,
+      section.bg-white,
+      div.bg-white,
+      .install-banner,
+      .fixed.inset-0.z-50 > .absolute.inset-0,
+      .fixed.inset-0.z-50 > .relative {
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+      }
+      .app-header,
+      .bottom-nav {
+        -webkit-backdrop-filter: blur(10px) saturate(135%) !important;
+        backdrop-filter: blur(10px) saturate(135%) !important;
+      }
+      .match-card:hover,
+      section.bg-white:hover {
+        transform: none !important;
+      }
+    }
+
+    html.ios-safe .pitch-bg::before,
+    html.ios-safe .pitch-bg::after {
+      display: none !important;
+    }
+    html.ios-safe .match-card,
+    html.ios-safe .deferred-card {
+      content-visibility: visible !important;
+      contain: none !important;
+    }
+
     @media (prefers-reduced-transparency: reduce) {
       .glass,
       .glass-strong,
@@ -1097,22 +1155,14 @@ const db = firebase.database();
     const el = document.getElementById('loading-slow');
     if (el) el.style.display = 'block';
   }, 4000);
-  // service worker (basic caching)
+  // Mobile-safe cleanup: this single-file build does not register a blob service worker.
   if ('serviceWorker' in navigator) {
-    const swCode = `
-const CACHE = 'mundial2026-v2-optimized';
-const OFFLINE_URLS = [self.location.href];
-self.addEventListener('install', e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(OFFLINE_URLS)).catch(()=>{})));
-self.addEventListener('activate', e => e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))));
-self.addEventListener('fetch', e => {
-  if(e.request.method !== 'GET') return;
-  e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
-});
-`;
-    try {
-      const swBlob = new Blob([swCode], {type:'application/javascript'});
-      navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>{});
-    } catch(e) {}
+    navigator.serviceWorker.getRegistrations()
+      .then(registrations=>registrations.forEach(registration=>registration.unregister()))
+      .catch(()=>{});
+  }
+  if ('caches' in window) {
+    caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('mundial2026-')).map(k=>caches.delete(k)))).catch(()=>{});
   }
 })();
 
@@ -1904,6 +1954,8 @@ function MatchesView({matches,teams,predictions,results,players,activePlayerId,p
   const [groupFilter,setGroupFilter]=useState('all');
   const [statusFilter,setStatusFilter]=useState('all');
   const [expandedId,setExpandedId]=useState(null);
+  const compactDevice=useMemo(()=>typeof window!=="undefined"&&(window.innerWidth<=700||window.matchMedia("(pointer: coarse)").matches),[]);
+  const [visibleCount,setVisibleCount]=useState(()=>compactDevice?18:Number.MAX_SAFE_INTEGER);
   const handleToggleMatch=useCallback((id)=>setExpandedId(prev=>prev===id?null:id),[]);
 
   const filtered=useMemo(()=>{
@@ -1915,6 +1967,14 @@ function MatchesView({matches,teams,predictions,results,players,activePlayerId,p
       return true;
     }).sort((a,b)=>(PHASE_RANK[a.phase]??99)-(PHASE_RANK[b.phase]??99)||a.num-b.num);
   },[matches,phaseFilter,groupFilter,statusFilter,results]);
+
+  useEffect(()=>{
+    setVisibleCount(compactDevice?18:Number.MAX_SAFE_INTEGER);
+    setExpandedId(null);
+  },[phaseFilter,groupFilter,statusFilter,compactDevice]);
+
+  const visibleMatches=compactDevice?filtered.slice(0,visibleCount):filtered;
+  const hasMoreMatches=compactDevice&&visibleCount<filtered.length;
 
   const filterBtns=[{k:'all',l:'Wszystkie'},{k:'group',l:'Grupowa'},{k:'r32',l:'1/16'},{k:'r16',l:'1/8'},{k:'qf',l:'1/4'},{k:'sf',l:'1/2'},{k:'third',l:'3. m.'},{k:'final',l:'Finał'}];
 
@@ -1940,7 +2000,7 @@ function MatchesView({matches,teams,predictions,results,players,activePlayerId,p
         </div>
         <div className="text-[11px] text-stone-500 mt-2 text-center">{filtered.length} {plMecze(filtered.length)}</div>
       </div>
-      {filtered.map(m=>(
+      {visibleMatches.map(m=>(
         <MatchCard key={m.id} match={m} teams={teams}
           prediction={predictions[`${activePlayerId}:${m.id}`]}
           result={results[m.id]} allPredictions={predictions}
@@ -1950,6 +2010,10 @@ function MatchesView({matches,teams,predictions,results,players,activePlayerId,p
           expanded={expandedId===m.id}
           onToggleMatch={handleToggleMatch}/>
       ))}
+      {hasMoreMatches&&<button type="button" onClick={()=>setVisibleCount(count=>count+18)}
+        className="selection-tile w-full rounded-xl px-4 py-3 text-sm font-semibold">
+        Pokaż kolejne mecze ({filtered.length-visibleCount})
+      </button>}
       {filtered.length===0&&<div className="text-center text-stone-500 py-12">Brak meczów dla wybranych filtrów</div>}
     </div>
   );
