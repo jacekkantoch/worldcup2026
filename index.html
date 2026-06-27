@@ -640,7 +640,7 @@
     .bottom-nav {
       left: 10px;
       right: 10px;
-      bottom: calc(8px + var(--safe-bottom));
+      bottom: calc(5px + var(--safe-bottom));
       width: min(740px, calc(100% - 20px));
       margin: 0 auto;
       padding-bottom: 0;
@@ -995,7 +995,7 @@
       .login-btn { max-width: 105px; padding-left: 10px; padding-right: 10px; }
       .players-btn { width: 36px; height: 36px; }
       .app-content { padding-left: 9px; padding-right: 9px; }
-      .bottom-nav { left: 7px; right: 7px; width: calc(100% - 14px); bottom: calc(6px + var(--safe-bottom)); border-radius: 25px; }
+      .bottom-nav { left: 7px; right: 7px; width: calc(100% - 14px); bottom: calc(3px + var(--safe-bottom)); border-radius: 25px; }
       .bottom-nav button { min-height: 55px; }
       .filters-sticky { top: calc(var(--safe-top) + 78px); }
     }
@@ -1047,31 +1047,31 @@
     .admin-tabs-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 12px;
-      padding: 12px;
+      gap: 10px;
+      padding: 10px;
       align-items: stretch;
     }
     .admin-tabs-grid .admin-tab-span-2 {
       grid-column: span 2 / span 2;
     }
     .admin-tabs-grid .selection-tile {
-      min-height: 96px;
+      min-height: 74px;
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
-      line-height: 1.18;
-      padding: 14px 12px !important;
+      line-height: 1.15;
+      padding: 10px 12px !important;
     }
     @media (max-width: 640px) {
       .admin-tabs-grid {
-        gap: 10px;
-        padding: 10px;
+        gap: 8px;
+        padding: 8px;
       }
       .admin-tabs-grid .selection-tile {
-        min-height: 84px;
+        min-height: 68px;
         font-size: 13px !important;
-        padding: 12px 10px !important;
+        padding: 9px 10px !important;
       }
     }
 
@@ -2009,7 +2009,7 @@
     }
 
     html.is-standalone .bottom-nav {
-      bottom: calc(var(--standalone-bottom-safe) + 10px) !important;
+      bottom: calc(var(--standalone-bottom-safe) + 7px) !important;
     }
 
     @media (display-mode: standalone) {
@@ -2237,6 +2237,179 @@
     .pill-scroll-safe .selection-tile {
       flex: 0 0 auto;
       transform-origin: center;
+    }
+
+
+    /* Final radius-clipping hardening — on iOS Safari translucent layers,
+       hover/pressed fills and inner bands can visually escape rounded shells.
+       Clip those surfaces to the parent radius everywhere this pattern appears. */
+    .glass,
+    .glass-strong,
+    .match-card,
+    .deferred-card,
+    .filters-sticky,
+    section.bg-white,
+    div.bg-white,
+    .install-banner,
+    .app-header,
+    .bottom-nav,
+    .fixed.inset-0.z-50 > .relative,
+    .bg-white.border.rounded-xl,
+    .bg-white.border.rounded-2xl,
+    .bg-stone-50.border.rounded-xl,
+    .bg-stone-50.border.rounded-lg,
+    .bg-stone-900.border.rounded-xl,
+    .bg-stone-900.border.rounded-lg,
+    .bg-amber-50.border.rounded-xl,
+    .bg-red-50.border.rounded-xl,
+    .border.rounded-xl,
+    .border.rounded-lg {
+      overflow: hidden !important;
+      isolation: isolate;
+      background-clip: padding-box;
+      -webkit-mask-image: -webkit-radial-gradient(white, black);
+              mask-image: radial-gradient(white, black);
+    }
+
+    /* Interactive headers / first rows inside rounded cards should inherit
+       the outer geometry, so pressed/hover backgrounds never square off. */
+    .match-card > button:first-child,
+    section.bg-white > button:first-child,
+    div.bg-white > button:first-child,
+    .bg-white.border.rounded-xl > button:first-child,
+    .bg-white.border.rounded-2xl > button:first-child {
+      border-radius: inherit !important;
+      overflow: hidden;
+      background-clip: padding-box;
+    }
+
+    /* Dedicated card headers get only the upper corners rounded. This is kept
+       scoped to explicit header wrappers to avoid clipping ordinary layout rows
+       inside filter panels and admin sections. */
+    .table-card > .inner-top-cap,
+    .card-top-cap {
+      border-radius: var(--ui-corner-radius) var(--ui-corner-radius) 0 0 !important;
+      overflow: hidden;
+      background-clip: padding-box;
+    }
+
+    /* Match rows and list tiles often contain a clickable surface that receives
+       the interaction highlight. Force clipping there as well. */
+    .match-card > button:first-child,
+    .deferred-card,
+    .selection-tile {
+      -webkit-mask-image: -webkit-radial-gradient(white, black);
+              mask-image: radial-gradient(white, black);
+    }
+
+
+    /* Expanded match card join fix — when a match is opened, the summary row
+       must only keep the top corners rounded. Otherwise the inherited lower
+       rounding creates a mismatched crescent at the seam with the details pane. */
+    .match-card.expanded > button:first-child {
+      border-radius: var(--ui-corner-radius) var(--ui-corner-radius) 0 0 !important;
+      overflow: hidden !important;
+      background-clip: padding-box;
+    }
+
+    .match-card.expanded > div:last-child {
+      border-radius: 0 0 var(--ui-corner-radius) var(--ui-corner-radius) !important;
+      overflow: hidden !important;
+      background-clip: padding-box;
+      -webkit-mask-image: -webkit-radial-gradient(white, black);
+              mask-image: radial-gradient(white, black);
+    }
+
+    /* Keep the divider seam visually clean in the expanded state. */
+    .match-card.expanded > div:last-child {
+      margin-top: 0 !important;
+    }
+
+
+    /* Interior controls that sit close to the outer edge get a tiny safe inset,
+       so their glow and curved ends do not visually collide with the card radius. */
+    .edge-safe-row {
+      padding-inline: 3px !important;
+      overflow: visible !important;
+    }
+
+    .edge-safe-button {
+      width: calc(100% - 6px) !important;
+      margin-inline: 3px !important;
+    }
+
+    /* Table-like summary cards in special predictions use a coloured top band. */
+    .table-card {
+      overflow: hidden !important;
+      isolation: isolate;
+    }
+
+    .table-card > .inner-top-cap {
+      border-radius: var(--ui-corner-radius) var(--ui-corner-radius) 0 0 !important;
+      overflow: hidden;
+      background-clip: padding-box;
+      -webkit-mask-image: -webkit-radial-gradient(white, black);
+              mask-image: radial-gradient(white, black);
+    }
+
+
+    /* Filter cards and admin tab rows need a little horizontal breathing room
+       so pills and inputs do not appear shaved by the outer container radius. */
+    .filters-sticky .chip-scroll-row,
+    .filters-sticky .pill-scroll-safe,
+    .filters-sticky .edge-safe-row {
+      padding-inline: 5px !important;
+      overflow: visible !important;
+    }
+
+    .filters-sticky .relative {
+      padding-inline: 3px;
+    }
+
+    .filters-sticky .relative > input {
+      width: 100%;
+    }
+
+    /* Admin overview tabs should match the rest of the app: large rounded
+       rectangles instead of extra-pill geometry. */
+    .admin-tabs-grid .selection-tile {
+      border-radius: var(--ui-corner-radius) !important;
+    }
+
+    @media (max-width: 640px) {
+      .admin-tabs-grid .selection-tile {
+        border-radius: 28px !important;
+      }
+    }
+
+
+    /* Admin match editor uses a separate component and needs the same joined
+       geometry as public match cards. */
+    .admin-match-card {
+      overflow: hidden !important;
+      isolation: isolate;
+      background-clip: padding-box;
+      -webkit-mask-image: -webkit-radial-gradient(white, black);
+              mask-image: radial-gradient(white, black);
+    }
+
+    .admin-match-card > .admin-match-summary-button {
+      border-radius: inherit !important;
+      overflow: hidden !important;
+      background-clip: padding-box;
+    }
+
+    .admin-match-card.expanded > .admin-match-summary-button {
+      border-radius: var(--ui-corner-radius) var(--ui-corner-radius) 0 0 !important;
+    }
+
+    .admin-match-card.expanded > .admin-match-details {
+      border-radius: 0 0 var(--ui-corner-radius) var(--ui-corner-radius) !important;
+      overflow: hidden !important;
+      margin-top: 0 !important;
+      background-clip: padding-box;
+      -webkit-mask-image: -webkit-radial-gradient(white, black);
+              mask-image: radial-gradient(white, black);
     }
 
 </style>
@@ -3217,7 +3390,7 @@ function MatchesView({matches,teams,predictions,results,players,activePlayerId,p
   return (
     <div className="space-y-3">
       <div className="bg-white border border-[#b0bce8] rounded-xl p-3 filters-sticky shadow-sm">
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1">
           <div className="chip-scroll-row tight">
             {filterBtns.map(t=><button key={t.k} onClick={()=>handlePhaseFilter(t.k)}
               className={`selection-tile${phaseFilter===t.k?' is-selected':''} shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold`}>{t.l}</button>)}
@@ -3228,13 +3401,13 @@ function MatchesView({matches,teams,predictions,results,players,activePlayerId,p
               {GROUPS.map(g=><button key={g} onClick={()=>{setGroupFilter(g);scrollAppToTop();}} className={`selection-tile${groupFilter===g?' is-selected':''} shrink-0 w-8 h-7 rounded-lg text-xs font-bold`}>{g}</button>)}
             </div>
           )}
-          <div className="flex gap-1 items-center py-1">
+          <div className="edge-safe-row flex gap-1 items-center py-0.5">
             {[{k:'all',l:'Wszystkie'},{k:'pending',l:'Nadchodzące'},{k:'done',l:'Zakończone'}].map(t=>(
               <button key={t.k} onClick={()=>{setStatusFilter(t.k);scrollAppToTop();}} className={`selection-tile${statusFilter===t.k?' is-selected':''} flex-1 px-2 py-1 rounded-lg text-xs font-medium`}>{t.l}</button>
             ))}
           </div>
         </div>
-        <div className="text-[11px] text-stone-500 mt-2 text-center">{filtered.length} {plMecze(filtered.length)}</div>
+        <div className="text-[11px] text-stone-500 mt-1 text-center">{filtered.length} {plMecze(filtered.length)}</div>
       </div>
       {visibleMatches.map(m=>(
         <MatchCard key={m.id} match={m} teams={teams}
@@ -3458,8 +3631,8 @@ function SpecialsAllView({players,specialPredictions,specialResults,teams}) {
       </div>
 
       {/* Kolejność grup */}
-      <div className="bg-white border border-stone-200 rounded-xl overflow-hidden">
-        <div className="bg-[#0d1b5e] text-white px-4 py-2.5 text-sm font-bold tracking-wide flex items-center justify-between">
+      <div className="bg-white border border-stone-200 rounded-xl overflow-hidden table-card">
+        <div className="bg-[#0d1b5e] text-white px-4 py-2.5 text-sm font-bold tracking-wide flex items-center justify-between inner-top-cap">
           <span>Kolejność w grupach</span>
         </div>
         <div className="flex gap-1 p-2 overflow-x-auto">
@@ -3499,8 +3672,8 @@ function SpecialsAllView({players,specialPredictions,specialResults,teams}) {
       </div>
 
       {/* Podium */}
-      <div className="bg-white border border-stone-200 rounded-xl overflow-hidden">
-        <div className="bg-[#0d1b5e] text-white px-4 py-2.5 text-sm font-bold tracking-wide">Podium turnieju</div>
+      <div className="bg-white border border-stone-200 rounded-xl overflow-hidden table-card">
+        <div className="bg-[#0d1b5e] text-white px-4 py-2.5 text-sm font-bold tracking-wide inner-top-cap">Podium turnieju</div>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
@@ -3535,8 +3708,8 @@ function SpecialsAllView({players,specialPredictions,specialResults,teams}) {
       </div>
 
       {/* Król strzelców + MVP */}
-      <div className="bg-white border border-stone-200 rounded-xl overflow-hidden">
-        <div className="bg-[#0d1b5e] text-white px-4 py-2.5 text-sm font-bold tracking-wide">Nagrody indywidualne</div>
+      <div className="bg-white border border-stone-200 rounded-xl overflow-hidden table-card">
+        <div className="bg-[#0d1b5e] text-white px-4 py-2.5 text-sm font-bold tracking-wide inner-top-cap">Nagrody indywidualne</div>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
@@ -3747,7 +3920,7 @@ function CompareView({matches,teams,predictions,results,players}) {
           ))}
         </div>
         <button onClick={()=>setSortNearest(s=>!s)}
-          className={`selection-tile${sortNearest?' is-selected':''} w-full py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors`}>
+          className={`selection-tile edge-safe-button${sortNearest?' is-selected':''} w-full py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors`}>
           Sortuj od: nadchodzące mecze
         </button>
       </div>
@@ -3996,8 +4169,8 @@ function AdminMatchRow({match,teams,teamOptions,result,editing,onToggleEdit,onSa
     onSave(payload);
   };
   return (
-    <div className={`bg-white border rounded-xl overflow-hidden ${result?'border-[#7090d8]':'border-stone-200'}`}>
-      <button onClick={onToggleEdit} className="w-full p-3 text-left hover:bg-white/10">
+    <div className={`admin-match-card${editing?' expanded':''} bg-white border rounded-xl overflow-hidden ${result?'border-[#7090d8]':'border-stone-200'}`}>
+      <button onClick={onToggleEdit} className="admin-match-summary-button w-full p-3 text-left hover:bg-white/10">
         <div className="admin-match-summary-row flex items-center justify-between gap-2">
           <div className="admin-match-summary-main flex items-center gap-2 min-w-0 flex-1 text-sm">
             <Badge>{match.phase==='group'?`Gr ${match.group}`:PHASE_LABELS[match.phase].split(' ')[0]}</Badge>
@@ -4021,7 +4194,7 @@ function AdminMatchRow({match,teams,teamOptions,result,editing,onToggleEdit,onSa
         </div>
       </button>
       {editing&&(
-        <div className="border-t border-stone-100 p-3 bg-stone-50/50">
+        <div className="admin-match-details border-t border-stone-100 p-3 bg-stone-50/50">
           {isKO&&(
             <div className="mb-3 bg-amber-50 border border-amber-200 rounded-lg p-3">
               <p className="text-xs font-semibold text-amber-900 mb-2">Przypisz drużyny:</p>
