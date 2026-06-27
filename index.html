@@ -431,8 +431,8 @@
       --shadow-lg: 0 28px 90px rgba(0,0,0,.50), 0 8px 24px rgba(0,0,0,.30);
       --shadow-glow: 0 0 0 1px rgba(255,255,255,.03), 0 16px 50px rgba(20,94,190,.14);
 
-      --radius-sm: 16px;
-      --radius-md: 22px;
+      --radius-sm: 22px;
+      --radius-md: 24px;
       --radius-lg: 30px;
       --radius-xl: 40px;
       --ease-spring: cubic-bezier(.2,1.28,.35,1);
@@ -650,40 +650,82 @@
       backdrop-filter: blur(34px) saturate(190%);
       box-shadow: 0 24px 70px rgba(0,0,0,.44), inset 0 1px 0 rgba(255,255,255,.24), inset 0 -1px 0 rgba(255,255,255,.045);
     }
-    .nav-track { padding: 6px; }
+    .nav-track {
+      padding: 7px;
+      gap: 2px;
+      isolation: isolate;
+    }
     .nav-droplet {
-      top: 5px;
-      bottom: 5px;
-      border-radius: 21px;
+      top: 7px;
+      bottom: 7px;
+      border-radius: 999px;
       background:
-        radial-gradient(circle at 25% 0%, rgba(255,255,255,.37), transparent 44%),
-        linear-gradient(145deg, rgba(88,184,255,.35), rgba(39,103,255,.20) 56%, rgba(159,82,255,.16));
-      border: 1px solid rgba(151,211,255,.48);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.34), inset 0 -1px 0 rgba(255,255,255,.08), 0 8px 24px rgba(31,112,255,.20);
+        radial-gradient(circle at 28% 0%, rgba(255,255,255,.38), transparent 42%),
+        linear-gradient(145deg, rgba(82,178,255,.39), rgba(35,105,248,.25) 58%, rgba(133,82,245,.18));
+      border: 1px solid rgba(158,216,255,.55);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.38),
+        inset 0 -1px 0 rgba(255,255,255,.07),
+        0 7px 20px rgba(28,112,255,.22),
+        0 0 0 1px rgba(77,160,255,.08);
+      will-change: left, width, transform;
+      transform: translateZ(0);
+    }
+    .nav-droplet.dragging {
+      transform: translateZ(0) scale(1.025);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.42),
+        inset 0 -1px 0 rgba(255,255,255,.08),
+        0 10px 27px rgba(28,112,255,.29),
+        0 0 0 1px rgba(77,160,255,.12);
     }
     .bottom-nav button {
       min-height: 58px;
       padding: 8px 2px 7px;
-      color: rgba(226,235,255,.48);
-      border-radius: 22px;
+      color: rgba(226,235,255,.45);
+      border-radius: 999px;
       background: transparent !important;
       overflow: hidden;
+      text-shadow: none;
+      transition: color .22s var(--ease-out), transform .16s var(--ease-spring), opacity .22s ease !important;
     }
     .bottom-nav button:hover,
-    .bottom-nav button:focus-visible {
+    .bottom-nav button:focus-visible,
+    .bottom-nav button.active {
       background: transparent !important;
     }
+    .bottom-nav button:not(.active) svg { opacity: .72; }
+    .bottom-nav button:not(.active) .nav-label { opacity: .82; }
     .bottom-nav button.active {
-      color: #cdeaff !important;
-      text-shadow: 0 1px 10px rgba(84,176,255,.38);
-      border-radius: 22px;
-      background:
-        radial-gradient(circle at 25% 0%, rgba(255,255,255,.12), transparent 44%),
-        linear-gradient(145deg, rgba(88,184,255,.12), rgba(39,103,255,.08) 56%, rgba(159,82,255,.06)) !important;
+      color: #eef8ff !important;
+      text-shadow: 0 1px 12px rgba(90,184,255,.42);
     }
-    .bottom-nav button svg { opacity: .95; stroke-width: 2.1; }
+    .bottom-nav button.active svg {
+      stroke: #eef8ff;
+      opacity: 1;
+      stroke-width: 2.25;
+      filter: drop-shadow(0 0 7px rgba(100,190,255,.45));
+      transform: translateY(-1px) scale(1.04);
+    }
+    .bottom-nav button.active .nav-label {
+      opacity: 1;
+      font-weight: 800;
+      letter-spacing: .035em;
+    }
+    .bottom-nav button svg {
+      opacity: .88;
+      stroke-width: 2.05;
+      transition: opacity .22s ease, transform .22s var(--ease-spring), filter .22s ease, stroke .22s ease;
+    }
     .rounded-lg, .rounded-xl, .rounded-2xl, .rounded { background-clip: padding-box; }
-    .bottom-nav button.active svg { stroke: #cdeaff; filter: drop-shadow(0 0 8px rgba(84,176,255,.22)); }
+    .pill-soft,
+    .selection-tile,
+    input, select, textarea,
+    .login-btn, .players-btn,
+    button.rounded-lg, button.rounded, button.rounded-full,
+    span.rounded, span.rounded-lg, span.rounded-full {
+      border-radius: 999px !important;
+    }
 
     /* Controls */
     input,
@@ -1631,7 +1673,7 @@ function Btn({children,variant='primary',size='md',className='',...props}) {
     dark:'bg-stone-900 hover:bg-stone-800 text-stone-50',
   };
   const ios26Style={
-    borderRadius:'var(--radius-md)',
+    borderRadius:'999px',
     transition:'all .20s var(--ease-out)',
     boxShadow:'var(--hl), 0 2px 8px rgba(0,0,0,0.30)',
     letterSpacing:'0.01em',
@@ -1647,14 +1689,14 @@ function ScoreInput({value,onChange,disabled=false,label}) {
       {label&&<span className="text-[10px] uppercase tracking-wider text-stone-500 font-medium">{label}</span>}
       <div className="flex items-center gap-0.5">
         <button type="button" onClick={()=>set((num??0)-1)} disabled={disabled}
-          style={{width:44,height:56,borderRadius:'14px 0 0 14px',background:'var(--glass-3)',border:'1px solid var(--border-2)',borderRight:'none',color:'var(--label-1)',fontWeight:700,fontSize:22,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',userSelect:'none',transition:'background .12s'}}>−</button>
+          style={{width:44,height:56,borderRadius:'22px 0 0 22px',background:'var(--glass-3)',border:'1px solid var(--border-2)',borderRight:'none',color:'var(--label-1)',fontWeight:700,fontSize:22,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',userSelect:'none',transition:'background .12s'}}>−</button>
         <input type="number" inputMode="numeric" value={num===null?'':num}
           onChange={e=>{ const v=e.target.value; if(v==='')onChange(null); else set(parseInt(v)||0); }}
           disabled={disabled} min="0" max="99"
           style={{width:62,height:56,textAlign:'center',background:'var(--bg-3)',border:'1px solid var(--border-2)',borderLeft:'none',borderRight:'none',color:'white',fontFamily:"'Bebas Neue',sans-serif",fontSize:28,letterSpacing:'0.04em'}}
           className="text-2xl font-bold focus:outline-none disabled:opacity-50 font-display" />
         <button type="button" onClick={()=>set((num??0)+1)} disabled={disabled}
-          style={{width:44,height:56,borderRadius:'0 14px 14px 0',background:'var(--glass-3)',border:'1px solid var(--border-2)',borderLeft:'none',color:'var(--label-1)',fontWeight:700,fontSize:22,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',userSelect:'none',transition:'background .12s'}}>+</button>
+          style={{width:44,height:56,borderRadius:'0 22px 22px 0',background:'var(--glass-3)',border:'1px solid var(--border-2)',borderLeft:'none',color:'var(--label-1)',fontWeight:700,fontSize:22,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',userSelect:'none',transition:'background .12s'}}>+</button>
       </div>
     </div>
   );
@@ -1664,7 +1706,7 @@ function Badge({children,variant='default'}) {
   const v={default:'bg-stone-100 text-stone-700 border-stone-200',success:'bg-emerald-500 text-white border-emerald-600',
     warning:'bg-amber-100 text-amber-800 border-amber-200',info:'bg-sky-100 text-sky-800 border-sky-200',
     gold:'bg-amber-50 text-amber-900 border-amber-300',dark:'bg-stone-800 text-stone-100 border-stone-700'};
-  return <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold border ${v[variant]||v.default}`}>{children}</span>;
+  return <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border ${v[variant]||v.default}`}>{children}</span>;
 }
 
 function Modal({open,onClose,title,children,maxWidth='max-w-md'}) {
@@ -1804,6 +1846,47 @@ function TeamLabel({team,size='md',placeholderHint=null,flagSize=null}) {
       <FlagImg code={team.flag} size={resolvedFlagSize} title={team.name}/>
       <span className={`${size==='lg'?'font-semibold':''} min-w-0 truncate`}>{team.name}</span>
     </span>
+  );
+}
+
+function TeamPicker({value,onChange,options,disabled=false,placeholder='— wybierz drużynę —',status=''}) {
+  const [open,setOpen]=useState(false);
+  const ref=useRef(null);
+  const selected=options.find(t=>t.id===value);
+  useEffect(()=>{
+    const close=(e)=>{ if(ref.current&&!ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener('mousedown',close);
+    document.addEventListener('touchstart',close,{passive:true});
+    return()=>{
+      document.removeEventListener('mousedown',close);
+      document.removeEventListener('touchstart',close);
+    };
+  },[]);
+  useEffect(()=>{ if(disabled) setOpen(false); },[disabled]);
+  const stateClass=status==='correct'?' is-correct':status==='wrong'?' is-wrong':selected?' is-selected':'';
+  return (
+    <div className="relative" ref={ref}>
+      <button type="button" disabled={disabled} onClick={()=>setOpen(v=>!v)}
+        className={`selection-tile${stateClass} w-full px-3 py-2.5 rounded-full border inline-flex items-center gap-2 text-sm font-semibold disabled:opacity-60 min-w-0`}>
+        {selected ? <FlagImg code={selected.flag} size={20} title={selected.name}/> : <span className="w-5 h-5 rounded-full border border-stone-300 shrink-0"/>}
+        <span className={`min-w-0 flex-1 truncate text-left ${selected?'':'text-stone-400 font-medium'}`}>{selected?selected.name:placeholder}</span>
+        {selected&&<span className="text-[10px] text-stone-400 shrink-0">Gr. {selected.group}</span>}
+        <Icon name={open?'chevup':'chevdown'} size={16} className="shrink-0"/>
+      </button>
+      {open&&!disabled&&(
+        <div className="absolute z-40 left-0 right-0 mt-2 max-h-64 overflow-y-auto rounded-2xl border border-stone-200 shadow-xl p-1.5"
+          style={{background:'linear-gradient(145deg, rgba(31,40,59,.97), rgba(10,15,26,.96))',backdropFilter:'blur(24px) saturate(180%)'}}>
+          <button type="button" onClick={()=>{onChange('');setOpen(false);}}
+            className="w-full px-3 py-2 rounded-full text-left text-sm text-stone-400 hover:bg-white/10">{placeholder}</button>
+          {options.map(t=><button key={t.id} type="button" onClick={()=>{onChange(t.id);setOpen(false);}}
+            className={`w-full px-3 py-2 rounded-full inline-flex items-center gap-2 text-sm text-left hover:bg-white/10 ${value===t.id?'bg-white/10':''}`}>
+            <FlagImg code={t.flag} size={20} title={t.name}/>
+            <span className="min-w-0 flex-1 truncate">{t.name}</span>
+            <span className="text-[10px] text-stone-400 shrink-0">Gr. {t.group}</span>
+          </button>)}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -2193,8 +2276,8 @@ function SpecialsView({teams,players,activePlayerId,specialPredictions,specialRe
                   const wrong=sel&&hasResults&&realOrder[pos]&&!isCorrect;
                   return <button key={t.id} onClick={()=>setGroupOrder(activeGroup,pos,t.id)} disabled={tournamentLocked||specialsLocked}
                     style={correct?{background:'rgba(0,160,60,.30)',borderColor:'rgba(0,220,80,.45)',color:'#4ade80'}:wrong?{background:'rgba(180,0,0,.28)',borderColor:'rgba(220,0,0,.40)',color:'#f87171'}:{}}
-                    className={`selection-tile${correct?' is-correct':wrong?' is-wrong':sel?' is-selected':''} px-2 py-2 rounded-lg text-xs font-semibold border transition-all disabled:opacity-60`}>
-                    {t.name}
+                    className={`selection-tile${correct?' is-correct':wrong?' is-wrong':sel?' is-selected':''} px-2 py-2 rounded-lg text-xs font-semibold border transition-all disabled:opacity-60 inline-flex items-center gap-2 justify-start min-w-0`}>
+                    <FlagImg code={t.flag} size={16} title={t.name}/><span className="min-w-0 truncate">{t.name}</span>
                   </button>;
                 })}
               </div>
@@ -2214,11 +2297,14 @@ function SpecialsView({teams,players,activePlayerId,specialPredictions,specialRe
                 {item.label} <span className="text-stone-400">({item.pts} pkt)</span>
                 {isCorrect&&<Badge variant="success">+{item.pts}</Badge>}
               </label>
-              <select value={draft[item.key]||''} onChange={e=>setDraft(d=>({...d,[item.key]:e.target.value}))} disabled={tournamentLocked||specialsLocked}
-                className={`w-full px-3 py-2.5 border-2 rounded-lg focus:outline-none text-sm bg-white disabled:bg-stone-100 ${isCorrect?'border-[#4060c0]':'border-stone-200 focus:border-[#0d1b5e]'}`}>
-                <option value="">— wybierz drużynę —</option>
-                {teamOptions.map(t=><option key={t.id} value={t.id}>{t.name} (gr. {t.group})</option>)}
-              </select>
+              <TeamPicker
+                value={draft[item.key]||''}
+                onChange={teamId=>setDraft(d=>({...d,[item.key]:teamId}))}
+                options={teamOptions}
+                disabled={tournamentLocked||specialsLocked}
+                placeholder="— wybierz drużynę —"
+                status={isCorrect?'correct':realVal&&draft[item.key]&&!isCorrect?'wrong':''}
+              />
             </div>
           );
         })}
@@ -3427,90 +3513,171 @@ function BottomNav({tabs, activeTab, onSelect}) {
   const trackRef = useRef(null);
   const [drop, setDrop] = useState({left:0, width:0});
   const [dragging, setDragging] = useState(false);
-  const dragInfo = useRef({active:false, startX:0, hoverIdx:0});
+  const [previewIdx, setPreviewIdx] = useState(null);
+  const dragInfo = useRef({active:false, startX:0, hoverIdx:0, moved:false, pointerId:null, captured:false});
+  const suppressClick = useRef(false);
   const moveFrame = useRef(0);
 
   const activeIdx = Math.max(0, tabs.findIndex(t=>t.k===activeTab));
+  const visualIdx = dragging && previewIdx!==null ? previewIdx : activeIdx;
 
-  // Position the droplet under a given tab index
+  // Pozycja pastylki jest liczona z faktycznego prostokąta przycisku.
   const positionFor = useCallback((idx)=>{
     const track = trackRef.current;
     if(!track) return null;
-    const btn = track.children[idx+1]; // +1 because droplet is first child
+    const buttons = track.querySelectorAll('button[data-nav-index]');
+    const btn = buttons[idx];
     if(!btn) return null;
-    const pad = btn.offsetWidth*0.10;
-    return { left: btn.offsetLeft+pad, width: btn.offsetWidth-pad*2 };
+    const trackRect = track.getBoundingClientRect();
+    const btnRect = btn.getBoundingClientRect();
+    const inset = 1;
+    return {
+      left: btnRect.left - trackRect.left + inset,
+      width: Math.max(0, btnRect.width - inset*2)
+    };
   },[]);
 
-  // Snap droplet to active tab whenever it changes / tabs change / resize
+  // Dopasowanie po zmianie zakładki i rozmiaru ekranu.
   useEffect(()=>{
+    if(dragging) return;
     const update=()=>{ const p=positionFor(activeIdx); if(p) setDrop(p); };
-    update();
+    const frame=requestAnimationFrame(update);
     window.addEventListener('resize', update);
-    return ()=>window.removeEventListener('resize', update);
-  },[activeIdx, tabs.length, positionFor]);
+    return ()=>{
+      cancelAnimationFrame(frame);
+      window.removeEventListener('resize', update);
+    };
+  },[activeIdx, tabs.length, positionFor, dragging]);
 
   const idxFromX = useCallback((clientX)=>{
     const track = trackRef.current;
     if(!track) return activeIdx;
-    const rect = track.getBoundingClientRect();
-    const x = clientX - rect.left;
-    const w = rect.width / tabs.length;
-    let i = Math.floor(x / w);
-    return Math.min(tabs.length-1, Math.max(0, i));
-  },[tabs.length, activeIdx]);
+    const buttons = Array.from(track.querySelectorAll('button[data-nav-index]'));
+    if(!buttons.length) return activeIdx;
+    let nearest = 0;
+    let nearestDistance = Infinity;
+    buttons.forEach((btn, idx)=>{
+      const rect = btn.getBoundingClientRect();
+      const center = rect.left + rect.width/2;
+      const distance = Math.abs(clientX-center);
+      if(distance<nearestDistance){ nearestDistance=distance; nearest=idx; }
+    });
+    return nearest;
+  },[activeIdx]);
 
   const onPointerDown = (e)=>{
-    dragInfo.current = {active:true, startX:e.clientX, hoverIdx:activeIdx};
-    setDragging(true);
-    if(e.target.setPointerCapture) try{e.target.setPointerCapture(e.pointerId);}catch(_){}
+    if(e.button!==undefined && e.button!==0) return;
+    const startIdx=idxFromX(e.clientX);
+    dragInfo.current={
+      active:true,
+      startX:e.clientX,
+      hoverIdx:startIdx,
+      moved:false,
+      pointerId:e.pointerId,
+      captured:false
+    };
+    suppressClick.current=false;
+    // Nie przechwytujemy wskaźnika od razu, bo na iOS blokuje to zwykły click
+    // przycisku. Pointer capture włączamy dopiero po rozpoczęciu przeciągania.
   };
+
   const onPointerMove = (e)=>{
-    if(!dragInfo.current.active) return;
+    const info=dragInfo.current;
+    if(!info.active || (info.pointerId!==null && e.pointerId!==info.pointerId)) return;
     const clientX=e.clientX;
+    if(!info.moved && Math.abs(clientX-info.startX)>6){
+      info.moved=true;
+      suppressClick.current=true;
+      setDragging(true);
+      if(e.currentTarget.setPointerCapture){
+        try{
+          e.currentTarget.setPointerCapture(e.pointerId);
+          info.captured=true;
+        }catch(_){}
+      }
+    }
+    if(!info.moved) return;
+    if(e.cancelable) e.preventDefault();
     if(moveFrame.current) cancelAnimationFrame(moveFrame.current);
     moveFrame.current=requestAnimationFrame(()=>{
-      const idx = idxFromX(clientX);
-      dragInfo.current.hoverIdx = idx;
-      const p = positionFor(idx);
+      const idx=idxFromX(clientX);
+      dragInfo.current.hoverIdx=idx;
+      setPreviewIdx(idx);
+      const p=positionFor(idx);
       if(p) setDrop(p);
       moveFrame.current=0;
     });
   };
-  const endDrag = ()=>{
+
+  const finishPointer = (e, commit)=>{
     if(moveFrame.current){cancelAnimationFrame(moveFrame.current);moveFrame.current=0;}
-    if(!dragInfo.current.active) return;
-    const idx = dragInfo.current.hoverIdx;
-    dragInfo.current.active = false;
+    const info=dragInfo.current;
+    if(!info.active) return;
+    if(info.pointerId!==null && e?.pointerId!==undefined && e.pointerId!==info.pointerId) return;
+
+    if(info.captured && e?.currentTarget?.releasePointerCapture && info.pointerId!==null){
+      try{e.currentTarget.releasePointerCapture(info.pointerId);}catch(_){}
+    }
+
+    const moved=!!info.moved;
+    const idx=e?.clientX!==undefined ? idxFromX(e.clientX) : info.hoverIdx;
+    dragInfo.current={active:false,startX:0,hoverIdx:activeIdx,moved:false,pointerId:null,captured:false};
     setDragging(false);
-    if(tabs[idx] && tabs[idx].k!==activeTab) onSelect(tabs[idx].k);
-    else { const p=positionFor(idx); if(p) setDrop(p); }
+    setPreviewIdx(null);
+
+    if(moved && commit && tabs[idx]){
+      const p=positionFor(idx);
+      if(p) setDrop(p);
+      if(tabs[idx].k!==activeTab) onSelect(tabs[idx].k);
+      // Klik generowany po przeciągnięciu nie może cofnąć wyboru.
+      setTimeout(()=>{suppressClick.current=false;},0);
+    } else {
+      const p=positionFor(activeIdx);
+      if(p) setDrop(p);
+      if(!moved) suppressClick.current=false;
+      else setTimeout(()=>{suppressClick.current=false;},0);
+    }
+  };
+
+  const onNavClick=(e,tabKey)=>{
+    if(suppressClick.current){
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+    onSelect(tabKey);
   };
 
   useEffect(()=>()=>{if(moveFrame.current)cancelAnimationFrame(moveFrame.current);},[]);
 
-  const isAdminActive = tabs[activeIdx] && tabs[activeIdx].k==='admin';
+  const visualTab=tabs[visualIdx];
+  const isAdminVisual=visualTab && visualTab.k==='admin';
 
   return (
     <nav className="bottom-nav">
       <div className="nav-track" ref={trackRef}
            onPointerDown={onPointerDown}
            onPointerMove={onPointerMove}
-           onPointerUp={endDrag}
-           onPointerCancel={endDrag}
-           onPointerLeave={endDrag}>
+           onPointerUp={e=>finishPointer(e,true)}
+           onPointerCancel={e=>finishPointer(e,false)}>
         <div className={"nav-droplet"+(dragging?" dragging":"")}
              style={{left:drop.left+'px', width:drop.width+'px',
-                     ...(isAdminActive?{background:'linear-gradient(145deg,rgba(160,120,255,.40),rgba(124,58,237,.20))',borderColor:'rgba(170,130,255,.5)'}:{})}}/>
-        {tabs.map((t,i)=>(
-          <button key={t.k}
-            className={activeTab===t.k?'active':''}
-            onClick={()=>onSelect(t.k)}
-            style={t.k==='admin'&&activeTab===t.k?{color:'#c4b5fd'}:{}}>
-            <Icon name={t.i} size={20} style={t.k==='admin'&&activeTab===t.k?{stroke:'#c4b5fd'}:{}}/>
-            <span className="nav-label">{t.l}</span>
-          </button>
-        ))}
+                     ...(isAdminVisual?{background:'linear-gradient(145deg,rgba(160,120,255,.40),rgba(124,58,237,.20))',borderColor:'rgba(170,130,255,.5)'}:{})}}/>
+        {tabs.map((t,i)=>{
+          const visuallyActive=visualIdx===i;
+          return (
+            <button key={t.k}
+              type="button"
+              data-nav-index={i}
+              className={visuallyActive?'active':''}
+              aria-current={visuallyActive?'page':undefined}
+              onClick={e=>onNavClick(e,t.k)}
+              style={t.k==='admin'&&visuallyActive?{color:'#ddd1ff'}:{}}>
+              <Icon name={t.i} size={20} style={t.k==='admin'&&visuallyActive?{stroke:'#ddd1ff'}:{}}/>
+              <span className="nav-label">{t.l}</span>
+            </button>
+          );
+        })}
       </div>
     </nav>
   );
