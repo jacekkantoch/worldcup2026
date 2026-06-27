@@ -2681,15 +2681,15 @@ function CompareView({matches,teams,predictions,results,players}) {
 // ═══════════════════════════════════════════════════════════════
 function PhaseLockPanel({matches,phaseLocks,onSavePhaseLocks}) {
   const PHASE_DEFS=[
-    {key:'specials', label:'Typy specjalne', desc:'Kolejność grup, podium, król strzelców, MVP', icon:'sparkles', specialNote:true},
-    {key:'compareVisible', label:'Porównanie widoczne', desc:'Zakładki "Porównanie" i "Typy wszystkich" dostępne dla graczy', icon:'eye', compareNote:true},
-    {key:'group', label:'Faza grupowa', desc:'Mecze 1–72', icon:'ball'},
-    {key:'r32',   label:'1/16 finału',  desc:'Mecze 73–88', icon:'layers'},
-    {key:'r16',   label:'1/8 finału',   desc:'Mecze 89–96', icon:'target'},
-    {key:'qf',    label:'Ćwierćfinały', desc:'Mecze 97–100', icon:'medal'},
-    {key:'sf',    label:'Półfinały',    desc:'Mecze 101–102', icon:'podium'},
-    {key:'third', label:'Mecz o 3. miejsce', desc:'Mecz 103', icon:'medal'},
-    {key:'final', label:'Finał',        desc:'Mecz 104', icon:'trophy'},
+    {key:'specials', label:'Typy specjalne', desc:'Kolejność grup, podium, król strzelców, MVP', specialNote:true},
+    {key:'compareVisible', label:'Porównanie widoczne', desc:'Zakładki "Porównanie" i "Typy wszystkich" dostępne dla graczy', compareNote:true},
+    {key:'group', label:'Faza grupowa', desc:'Mecze 1–72'},
+    {key:'r32',   label:'1/16 finału',  desc:'Mecze 73–88'},
+    {key:'r16',   label:'1/8 finału',   desc:'Mecze 89–96'},
+    {key:'qf',    label:'Ćwierćfinały', desc:'Mecze 97–100'},
+    {key:'sf',    label:'Półfinały',    desc:'Mecze 101–102'},
+    {key:'third', label:'Mecz o 3. miejsce', desc:'Mecz 103'},
+    {key:'final', label:'Finał',        desc:'Mecz 104'},
   ];
 
   // Wyznacz pierwszy mecz każdej fazy
@@ -2730,19 +2730,18 @@ function PhaseLockPanel({matches,phaseLocks,onSavePhaseLocks}) {
   return (
     <div className="space-y-3">
       <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900">
-        <p className="font-bold mb-1 flex items-center gap-1.5"><Icon name="lock" size={15}/>Jak działają blokady i przełączniki?</p>
+        <p className="font-bold mb-1">Jak działają blokady i przełączniki?</p>
         <p>Zablokowanie fazy uniemożliwia graczom typowanie. Przełącznik <strong>Porównanie</strong> działa odwrotnie — włączenie go <em>udostępnia</em> zakładki Porównanie i Typy wszystkich graczom. Zrób to <strong>przed pierwszym meczem rundy</strong> — np. 24h wcześniej. Blokada <em>nie</em> wpływa na punktację (wyniki wpisuje admin niezależnie).</p>
       </div>
 
-      {PHASE_DEFS.map(({key,label,desc,icon,specialNote,compareNote})=>{
+      {PHASE_DEFS.map(({key,label,desc,specialNote,compareNote})=>{
         const isLocked=!!(localLocks[key]);
         const firstDate=firstMatchDate[key];
         const changed=isLocked!==(!!phaseLocks[key]);
         return (
           <div key={key} className={`bg-white border-2 rounded-xl p-4 transition-all ${key==='compareVisible'?(isLocked?'border-[#006940] bg-[#e6f4ec]':'border-stone-200'):(isLocked?'border-red-300 bg-red-50':'border-stone-200')}`}>
             <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-3 min-w-0 flex-1">
-                <span className="shrink-0"><Icon name={icon} size={23}/></span>
+              <div className="flex items-center min-w-0 flex-1">
                 <div className="min-w-0">
                   <div className="font-semibold text-stone-900 text-sm">{label}</div>
                   <div className="text-[11px] text-stone-500">{desc}</div>
@@ -2780,13 +2779,12 @@ function PhaseLockPanel({matches,phaseLocks,onSavePhaseLocks}) {
 
       <div className="flex gap-2 pt-2">
         <Btn variant={saved?'gold':'primary'} size="lg" onClick={handleSave} className="flex-1">
-          <Icon name={saved?'check':'save'} size={16}/>
           {saved?'Zapisano!':'Zapisz blokady'}
         </Btn>
       </div>
 
       <div className="bg-stone-50 border border-stone-200 rounded-xl p-3 text-xs text-stone-600 space-y-1">
-        <p className="font-bold text-stone-800 flex items-center gap-1.5"><Icon name="calendar" size={14}/>Sugerowany harmonogram blokad:</p>
+        <p className="font-bold text-stone-800">Sugerowany harmonogram blokad:</p>
         <p>• <strong>Porównanie</strong> — włącz kiedy chcesz (np. po zakończeniu fazy grupowej)</p>
         <p>• <strong>Typy specjalne</strong> — zablokuj do 10.06.2026 wieczór (dzień przed M1)</p>
         <p>• <strong>Faza grupowa</strong> — zablokuj do 10.06.2026 wieczór (dzień przed M1)</p>
