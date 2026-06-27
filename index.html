@@ -303,6 +303,79 @@
     .bg-\[\#0d1b5e\] { color: var(--label-1) !important; }
     [class*="bg-amber"] { color: #92400e !important; }
     [class*="bg-red"]   { color: #991b1b !important; }
+
+    /* Mobile layout hardening */
+    @media (max-width: 520px) {
+      .app-header .logo {
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow: hidden;
+      }
+      .app-header .title-group {
+        min-width: 0;
+        overflow: hidden;
+      }
+      .app-header .logo-icon {
+        width: 38px;
+        height: 38px;
+      }
+      .app-header .logo { gap: 7px; }
+      .app-header .title-group h1 {
+        font-size: 12px;
+        letter-spacing: -.01em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .player-row {
+        flex: 0 0 auto;
+      }
+      .login-btn {
+        width: 36px;
+        height: 36px;
+        min-width: 36px;
+        max-width: 36px;
+        padding: 0;
+        justify-content: center;
+        border-radius: 999px;
+      }
+      .login-btn > span {
+        display: none;
+      }
+      .mine-match-row {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 5px !important;
+        padding: 8px 9px !important;
+      }
+      .mine-match-teams {
+        width: 100%;
+        min-width: 0;
+      }
+      .mine-teams-line {
+        flex: 1 1 auto;
+        min-width: 0;
+        max-width: 100%;
+      }
+      .mine-team-name {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .mine-match-score {
+        justify-self: end;
+        min-width: 0;
+      }
+    }
+    @media (max-width: 380px) {
+      .app-header .title-group h1 {
+        font-size: 10.5px;
+        letter-spacing: -.015em;
+      }
+      .app-header .logo { gap: 7px; }
+      .app-header { padding-left: 9px; padding-right: 9px; }
+    }
+
     @media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
     :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 8px; }
 
@@ -608,6 +681,7 @@
         linear-gradient(145deg, rgba(88,184,255,.12), rgba(39,103,255,.08) 56%, rgba(159,82,255,.06)) !important;
     }
     .bottom-nav button svg { opacity: .95; stroke-width: 2.1; }
+    .rounded-lg, .rounded-xl, .rounded-2xl, .rounded { background-clip: padding-box; }
     .bottom-nav button.active svg { stroke: #cdeaff; filter: drop-shadow(0 0 8px rgba(84,176,255,.22)); }
 
     /* Controls */
@@ -890,7 +964,80 @@
       .match-card:hover { transform: none; }
     }
 
-  </style>
+  
+    /* Final mobile header sizing — placed after Liquid Glass overrides */
+    @media (max-width: 520px) {
+      .app-header .logo-icon { width: 38px !important; height: 38px !important; }
+      .app-header .logo { gap: 7px !important; }
+      .app-header .title-group h1 {
+        font-size: 12px !important;
+        letter-spacing: -.01em !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+    @media (max-width: 380px) {
+      .app-header .title-group h1 { font-size: 10.5px !important; letter-spacing: -.015em !important; }
+    }
+
+
+    /* Unified selected-state polish */
+    .selection-tile {
+      position: relative;
+      border-radius: var(--radius-sm) !important;
+      border: 1px solid rgba(255,255,255,.13) !important;
+      background:
+        radial-gradient(circle at 22% -20%, rgba(255,255,255,.11), transparent 45%),
+        linear-gradient(145deg, rgba(255,255,255,.080), rgba(255,255,255,.030)) !important;
+      color: rgba(235,241,255,.72) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.075), 0 2px 8px rgba(0,0,0,.10);
+      transition: background .18s var(--ease-out), border-color .18s var(--ease-out), box-shadow .18s var(--ease-out), color .18s var(--ease-out), transform .14s var(--ease-spring) !important;
+    }
+    .selection-tile:hover {
+      background:
+        radial-gradient(circle at 22% -20%, rgba(255,255,255,.17), transparent 45%),
+        linear-gradient(145deg, rgba(255,255,255,.115), rgba(255,255,255,.050)) !important;
+      border-color: rgba(255,255,255,.22) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 5px 14px rgba(0,0,0,.14);
+    }
+    .selection-tile:active {
+      transform: scale(.97);
+    }
+    .selection-tile.is-selected,
+    .selection-tile.is-selected:hover {
+      background:
+        radial-gradient(circle at 24% -8%, rgba(255,255,255,.34), transparent 45%),
+        linear-gradient(145deg, rgba(62,174,255,.58), rgba(36,101,242,.43) 58%, rgba(108,73,238,.34)) !important;
+      border-color: rgba(151,211,255,.58) !important;
+      color: #f5fbff !important;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.34),
+        inset 0 -1px 0 rgba(255,255,255,.07),
+        0 7px 18px rgba(22,112,255,.22),
+        0 0 0 1px rgba(65,151,255,.10);
+      text-shadow: 0 1px 8px rgba(48,143,255,.22);
+    }
+    .selection-tile:focus-visible {
+      outline: 2px solid rgba(132,204,255,.90);
+      outline-offset: 2px;
+    }
+    .selection-tile:disabled {
+      transform: none;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+    }
+    .player-choice-avatar {
+      background: rgba(255,255,255,.11);
+      border: 1px solid rgba(255,255,255,.18);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+      transition: inherit;
+    }
+    .player-choice.is-selected .player-choice-avatar {
+      background: linear-gradient(145deg, rgba(111,196,255,.42), rgba(76,103,238,.34));
+      border-color: rgba(181,225,255,.56);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.28), 0 4px 12px rgba(35,121,255,.18);
+    }
+</style>
 </head>
 <body>
   <div id="loading">
@@ -1777,17 +1924,17 @@ function MatchesView({matches,teams,predictions,results,players,activePlayerId,p
         <div className="flex flex-col gap-2">
           <div className="flex gap-1 overflow-x-auto pb-1">
             {filterBtns.map(t=><button key={t.k} onClick={()=>setPhaseFilter(t.k)}
-              className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold ${phaseFilter===t.k?'bg-[#0d1b5e] text-white':'bg-stone-100 text-stone-700 hover:bg-white/15'}`}>{t.l}</button>)}
+              className={`selection-tile${phaseFilter===t.k?' is-selected':''} shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold`}>{t.l}</button>)}
           </div>
           {phaseFilter==='group'&&(
             <div className="flex gap-1 overflow-x-auto pb-1">
-              <button onClick={()=>setGroupFilter('all')} className={`shrink-0 px-2.5 py-1 rounded text-xs font-bold ${groupFilter==='all'?'bg-stone-900 text-white':'bg-stone-100 text-stone-600'}`}>Wszystkie</button>
-              {GROUPS.map(g=><button key={g} onClick={()=>setGroupFilter(g)} className={`shrink-0 w-8 h-7 rounded text-xs font-bold ${groupFilter===g?'bg-stone-900 text-white':'bg-stone-100 text-stone-600'}`}>{g}</button>)}
+              <button onClick={()=>setGroupFilter('all')} className={`selection-tile${groupFilter==='all'?' is-selected':''} shrink-0 px-2.5 py-1 rounded-lg text-xs font-bold`}>Wszystkie</button>
+              {GROUPS.map(g=><button key={g} onClick={()=>setGroupFilter(g)} className={`selection-tile${groupFilter===g?' is-selected':''} shrink-0 w-8 h-7 rounded-lg text-xs font-bold`}>{g}</button>)}
             </div>
           )}
           <div className="flex gap-1">
             {[{k:'all',l:'Wszystkie'},{k:'pending',l:'Nadchodzące'},{k:'done',l:'Zakończone'}].map(t=>(
-              <button key={t.k} onClick={()=>setStatusFilter(t.k)} className={`flex-1 px-2 py-1 rounded text-xs font-medium ${statusFilter===t.k?'bg-stone-800 text-white':'bg-stone-100 text-stone-600'}`}>{t.l}</button>
+              <button key={t.k} onClick={()=>setStatusFilter(t.k)} className={`selection-tile${statusFilter===t.k?' is-selected':''} flex-1 px-2 py-1 rounded-lg text-xs font-medium`}>{t.l}</button>
             ))}
           </div>
         </div>
@@ -1867,7 +2014,7 @@ function SpecialsView({teams,players,activePlayerId,specialPredictions,specialRe
         <h3 className="font-display text-lg tracking-wide text-stone-900 mb-1">Kolejność w grupach</h3>
         <p className="text-xs text-stone-500 mb-3">1 trafione: 3 pkt • 2 trafione: 6 pkt • wszystkie 4: 10 pkt</p>
         <div className="flex gap-1 overflow-x-auto pb-2 mb-3">
-          {GROUPS.map(g=><button key={g} onClick={()=>setActiveGroup(g)} className={`shrink-0 w-10 h-10 rounded-lg font-bold ${activeGroup===g?'bg-[#0d1b5e] text-white':'bg-stone-100 text-stone-700'}`}>{g}</button>)}
+          {GROUPS.map(g=><button key={g} onClick={()=>setActiveGroup(g)} className={`selection-tile${activeGroup===g?' is-selected':''} shrink-0 w-10 h-10 rounded-lg font-bold`}>{g}</button>)}
         </div>
         {[0,1,2,3].map(pos=>{
           const placeName=['1. miejsce','2. miejsce','3. miejsce','4. miejsce'][pos];
@@ -1887,7 +2034,7 @@ function SpecialsView({teams,players,activePlayerId,specialPredictions,specialRe
                   const wrong=sel&&hasResults&&realOrder[pos]&&!isCorrect;
                   return <button key={t.id} onClick={()=>setGroupOrder(activeGroup,pos,t.id)} disabled={tournamentLocked||specialsLocked}
                     style={correct?{background:'rgba(0,160,60,.30)',borderColor:'rgba(0,220,80,.45)',color:'#4ade80'}:wrong?{background:'rgba(180,0,0,.28)',borderColor:'rgba(220,0,0,.40)',color:'#f87171'}:{}}
-                    className={`px-2 py-2 rounded text-xs font-semibold border transition-all disabled:opacity-60 ${correct||wrong?'':sel?'bg-[#0d1b5e] text-white border-[#0d1b5e]':'bg-white text-stone-700 border-stone-200 hover:border-[#4060c0]'}`}>
+                    className={`selection-tile${sel&&!correct&&!wrong?' is-selected':''} px-2 py-2 rounded-lg text-xs font-semibold border transition-all disabled:opacity-60`}>
                     {t.name}
                   </button>;
                 })}
@@ -2013,7 +2160,7 @@ function SpecialsAllView({players,specialPredictions,specialResults,teams}) {
           <span>Kolejność w grupach</span>
         </div>
         <div className="flex gap-1 p-2 overflow-x-auto">
-          {GROUPS.map(g=><button key={g} onClick={()=>setSelGroup(g)} className={`shrink-0 w-9 h-9 rounded-lg text-sm font-bold ${selGroup===g?'bg-[#0d1b5e] text-white':'bg-stone-100 text-stone-700'}`}>{g}</button>)}
+          {GROUPS.map(g=><button key={g} onClick={()=>setSelGroup(g)} className={`selection-tile${selGroup===g?' is-selected':''} shrink-0 w-9 h-9 rounded-lg text-sm font-bold`}>{g}</button>)}
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
@@ -2232,18 +2379,18 @@ function MyPredictionsView({activePlayerId,players,matches,teams,predictions,res
                 ?{background:'rgba(200,100,0,.30)',border:'1px solid rgba(220,140,0,.45)'}
                 :{background:'rgba(180,0,0,.28)',border:'1px solid rgba(220,0,0,.40)'};
           return (
-            <div key={match.id} style={{...rowBg,borderRadius:8,padding:'7px 10px',display:'flex',justifyContent:'space-between',alignItems:'center',gap:8}}>
-              <div style={{display:'flex',alignItems:'center',gap:6,minWidth:0,flex:1}}>
+            <div key={match.id} className="mine-match-row" style={{...rowBg,borderRadius:8,padding:'7px 10px',display:'flex',justifyContent:'space-between',alignItems:'center',gap:8}}>
+              <div className="mine-match-teams" style={{display:'flex',alignItems:'center',gap:6,minWidth:0,flex:1}}>
                 <Badge>{match.phase==='group'?`Gr ${match.group}`:PHASE_LABELS[match.phase].split(' ')[0]}</Badge>
-                <span style={{overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',fontSize:12,display:'flex',alignItems:'center',gap:5}}>
+                <span className="mine-teams-line" style={{overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',fontSize:12,display:'flex',alignItems:'center',gap:5}}>
                   <FlagImg code={home?.flag} size={16} title={home?.name}/>
-                  <span style={{color:'white',fontWeight:600}}>{home?.name||'?'}</span>
+                  <span className="mine-team-name" style={{color:'white',fontWeight:600}}>{home?.name||'?'}</span>
                   <span style={{color:'rgba(255,255,255,.35)',margin:'0 2px'}}>vs</span>
                   <FlagImg code={away?.flag} size={16} title={away?.name}/>
-                  <span style={{color:'white',fontWeight:600}}>{away?.name||'?'}</span>
+                  <span className="mine-team-name" style={{color:'white',fontWeight:600}}>{away?.name||'?'}</span>
                 </span>
               </div>
-              <div style={{display:'flex',alignItems:'center',gap:6,flexShrink:0,fontFamily:'ui-monospace,monospace',fontSize:13}}>
+              <div className="mine-match-score" style={{display:'flex',alignItems:'center',gap:6,flexShrink:0,fontFamily:'ui-monospace,monospace',fontSize:13}}>
                 <strong style={{color:'white'}}>{prediction.home}:{prediction.away}</strong>
                 {result&&<>
                   <Icon name="arrow" size={12} style={{stroke:'rgba(255,255,255,.5)',flexShrink:0}}/>
@@ -2283,11 +2430,11 @@ function CompareView({matches,teams,predictions,results,players}) {
       <div className="bg-white border border-[#b0bce8] rounded-xl p-3 filters-sticky shadow-sm">
         <div className="flex gap-1 overflow-x-auto mb-2">
           {[{k:'all',l:'Wszystkie'},{k:'group',l:'Grupowa'},{k:'r32',l:'1/16'},{k:'r16',l:'1/8'},{k:'qf',l:'1/4'},{k:'sf',l:'1/2'},{k:'final',l:'Finał'}].map(t=>(
-            <button key={t.k} onClick={()=>setPhaseFilter(t.k)} className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold ${phaseFilter===t.k?'bg-[#0d1b5e] text-white':'bg-stone-100 text-stone-700'}`}>{t.l}</button>
+            <button key={t.k} onClick={()=>setPhaseFilter(t.k)} className={`selection-tile${phaseFilter===t.k?' is-selected':''} shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold`}>{t.l}</button>
           ))}
         </div>
         <button onClick={()=>setSortNearest(s=>!s)}
-          className={`w-full py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors ${sortNearest?'bg-[#0d1b5e] text-white':'bg-stone-100 text-stone-700'}`}>
+          className={`selection-tile${sortNearest?' is-selected':''} w-full py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors`}>
           Sortuj od: nadchodzące mecze
         </button>
       </div>
@@ -2517,7 +2664,7 @@ function AdminMatchRow({match,teams,teamOptions,result,editing,onToggleEdit,onSa
     onSave(payload);
   };
   return (
-    <div className={`bg-white border rounded-xl ${result?'border-[#7090d8]':'border-stone-200'}`}>
+    <div className={`bg-white border rounded-xl overflow-hidden ${result?'border-[#7090d8]':'border-stone-200'}`}>
       <button onClick={onToggleEdit} className="w-full p-3 text-left hover:bg-white/10">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0 flex-1 text-sm">
@@ -2682,7 +2829,7 @@ function AdminPanel({teams,matches,results,specialResults,players,predictions,sp
       </div>
 
       <div className="bg-white border border-stone-200 rounded-xl p-1 flex flex-wrap gap-1">
-        {tabs.map(t=><button key={t.k} onClick={()=>setTab(t.k)} className={`flex-1 px-3 py-2 rounded-lg text-xs font-semibold ${tab===t.k?'bg-[#0d1b5e] text-white':'text-stone-700 hover:bg-white/10'}`}>{t.l}</button>)}
+        {tabs.map(t=><button key={t.k} onClick={()=>setTab(t.k)} className={`selection-tile${tab===t.k?' is-selected':''} flex-1 px-3 py-2 rounded-lg text-xs font-semibold`}>{t.l}</button>)}
       </div>
 
 
@@ -2698,7 +2845,7 @@ function AdminPanel({teams,matches,results,specialResults,players,predictions,sp
             </div>
             <div className="flex gap-1 overflow-x-auto">
               {[{k:'all',l:'Wszystkie'},{k:'group',l:'Grupowa'},{k:'r32',l:'1/16'},{k:'r16',l:'1/8'},{k:'qf',l:'1/4'},{k:'sf',l:'1/2'},{k:'third',l:'3.'},{k:'final',l:'Finał'}].map(t=>(
-                <button key={t.k} onClick={()=>setMPhase(t.k)} className={`shrink-0 px-2.5 py-1 rounded text-xs font-semibold ${mPhase===t.k?'bg-[#0d1b5e] text-white':'bg-stone-100 text-stone-700'}`}>{t.l}</button>
+                <button key={t.k} onClick={()=>setMPhase(t.k)} className={`selection-tile${mPhase===t.k?' is-selected':''} shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold`}>{t.l}</button>
               ))}
             </div>
           </div>
@@ -2731,7 +2878,7 @@ function AdminPanel({teams,matches,results,specialResults,players,predictions,sp
           <div className="bg-white border border-stone-200 rounded-xl p-4">
             <h4 className="font-display text-base mb-2">Kolejność w grupach</h4>
             <div className="flex gap-1 overflow-x-auto pb-2 mb-3">
-              {GROUPS.map(g=><button key={g} onClick={()=>setSpGroup(g)} className={`shrink-0 w-9 h-9 rounded-lg font-bold ${spGroup===g?'bg-[#0d1b5e] text-white':'bg-stone-100 text-stone-700'}`}>{g}</button>)}
+              {GROUPS.map(g=><button key={g} onClick={()=>setSpGroup(g)} className={`selection-tile${spGroup===g?' is-selected':''} shrink-0 w-9 h-9 rounded-lg font-bold`}>{g}</button>)}
             </div>
             {[0,1,2,3].map(pos=>{
               const gTeams=Object.values(teams).filter(t=>t&&t.group===spGroup);
@@ -2741,7 +2888,7 @@ function AdminPanel({teams,matches,results,specialResults,players,predictions,sp
                   {gTeams.map(t=>{
                     const sel=spDraft.groupOrders?.[spGroup]?.[pos]===t.id;
                     return <button key={t.id} onClick={()=>setSpDraft(d=>{const o=[...(d.groupOrders?.[spGroup]||[null,null,null,null])];for(let i=0;i<4;i++)if(o[i]===t.id)o[i]=null;o[pos]=t.id;return{...d,groupOrders:{...d.groupOrders,[spGroup]:o}};})}
-                      className={`px-2 py-1.5 rounded text-xs font-semibold border ${sel?'bg-[#0d1b5e] text-white border-[#0d1b5e]':'bg-white text-stone-700 border-stone-200'}`}>{FLAG_ABBR[t.flag]||''} {t.name}</button>;
+                      className={`selection-tile${sel?' is-selected':''} px-2 py-1.5 rounded-lg text-xs font-semibold border`}>{FLAG_ABBR[t.flag]||''} {t.name}</button>;
                   })}
                 </div>
               </div>;
@@ -2877,8 +3024,9 @@ function LoginModal({open,onClose,players,activePlayer,onLogin,onRename}) {
               {players.length===0&&<p className="text-center text-stone-500 text-sm py-4">Brak graczy. Dodaj uczestników przyciskiem zarządzania graczami.</p>}
               {players.map(p=>(
                 <button key={p.id} onClick={()=>setSelected(p.id)}
-                  style={{width:'100%',display:'flex',alignItems:'center',gap:12,padding:12,borderRadius:14,textAlign:'left',transition:'all .15s',cursor:'pointer',background:selected===p.id?'rgba(255,255,255,0.18)':'rgba(255,255,255,0.07)',border:selected===p.id?'2px solid rgba(255,255,255,0.7)':'1.5px solid rgba(255,255,255,0.15)'}}>
-                  <div style={{width:36,height:36,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,fontWeight:800,flexShrink:0,background:selected===p.id?'rgba(255,255,255,0.35)':'rgba(255,255,255,0.15)',color:'white',border:selected===p.id?'2px solid rgba(255,255,255,0.7)':'1px solid rgba(255,255,255,0.2)'}}>
+                  className={`selection-tile player-choice${selected===p.id?' is-selected':''}`}
+                  style={{width:'100%',display:'flex',alignItems:'center',gap:12,padding:12,textAlign:'left',cursor:'pointer'}}>
+                  <div className="player-choice-avatar" style={{width:36,height:36,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,fontWeight:800,flexShrink:0,color:'white'}}>
                     {p.name.slice(0,1).toUpperCase()}
                   </div>
                   <div className="flex-1 min-w-0">
