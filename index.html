@@ -3,15 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mundial 2026 – Liquid Glass</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.23.10/babel.min.js"></script>
+  <title>Mundial 2026 – Liquid Glass Optimized</title>
+  <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin />
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="preconnect" href="https://mundial2026-35b77-default-rtdb.europe-west1.firebasedatabase.app" crossorigin />
+  <link rel="dns-prefetch" href="//cdn.tailwindcss.com" />
+  <link rel="dns-prefetch" href="//www.gstatic.com" />
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" /></noscript>
 
   <!-- PWA -->
   <meta name="application-name" content="Mundial 2026"/>
@@ -117,8 +121,8 @@
       box-shadow: 0 2px 10px rgba(0,0,0,0.55);
     }
     .app-header .title-group { min-width: 0; }
-    .app-header .title-group h1 { margin: 0; font-family: 'Bebas Neue', sans-serif; font-size: 21px; letter-spacing: .13em; line-height: 1; color: var(--label-1); }
-    .app-header .title-group small { font-size: 9.5px; letter-spacing: .18em; color: var(--label-3); text-transform: uppercase; display: block; margin-top: 2px; font-weight: 600; }
+    .app-header .title-group h1 { margin: 0; font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: .06em; line-height: 1; color: var(--label-1); white-space: nowrap; }
+    .app-header .title-group small { display: none; }
     .player-row { display: flex; align-items: center; gap: 8px; }
 
     .login-btn {
@@ -423,7 +427,6 @@
     .match-card,
     .filters-sticky,
     section.bg-white,
-    div.bg-white,
     .install-banner {
       -webkit-backdrop-filter: blur(28px) saturate(175%);
       backdrop-filter: blur(28px) saturate(175%);
@@ -469,15 +472,13 @@
     }
     .app-header .title-group h1 {
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "DM Sans", sans-serif;
-      font-size: 17px;
+      font-size: 16px;
       font-weight: 780;
-      letter-spacing: -.025em;
+      letter-spacing: -.015em;
+      white-space: nowrap;
     }
     .app-header .title-group small {
-      margin-top: 3px;
-      font-size: 8.5px;
-      letter-spacing: .11em;
-      color: var(--label-3);
+      display: none;
     }
 
     .login-btn,
@@ -590,12 +591,24 @@
       min-height: 58px;
       padding: 8px 2px 7px;
       color: rgba(226,235,255,.48);
+      border-radius: 22px;
+      background: transparent !important;
+      overflow: hidden;
+    }
+    .bottom-nav button:hover,
+    .bottom-nav button:focus-visible {
+      background: transparent !important;
     }
     .bottom-nav button.active {
       color: #cdeaff !important;
       text-shadow: 0 1px 10px rgba(84,176,255,.38);
+      border-radius: 22px;
+      background:
+        radial-gradient(circle at 25% 0%, rgba(255,255,255,.12), transparent 44%),
+        linear-gradient(145deg, rgba(88,184,255,.12), rgba(39,103,255,.08) 56%, rgba(159,82,255,.06)) !important;
     }
-    .bottom-nav button.active svg { stroke: #cdeaff; }
+    .bottom-nav button svg { opacity: .95; stroke-width: 2.1; }
+    .bottom-nav button.active svg { stroke: #cdeaff; filter: drop-shadow(0 0 8px rgba(84,176,255,.22)); }
 
     /* Controls */
     input,
@@ -803,6 +816,53 @@
       outline-offset: 3px;
     }
 
+    /* Performance: skip painting off-screen cards and reduce GPU work on touch devices. */
+    .match-card,
+    .deferred-card {
+      content-visibility: auto;
+      contain-intrinsic-size: auto 220px;
+    }
+    .match-card {
+      contain: layout style paint;
+    }
+    .deferred-card {
+      contain: layout style paint;
+    }
+
+    @media (max-width: 700px), (pointer: coarse) {
+      body { background-attachment: scroll; }
+      .pitch-bg::before,
+      .pitch-bg::after {
+        animation: none !important;
+        filter: blur(48px);
+      }
+      .match-card {
+        -webkit-backdrop-filter: blur(14px) saturate(150%);
+        backdrop-filter: blur(14px) saturate(150%);
+      }
+      .glass,
+      .glass-strong,
+      section.bg-white,
+      .install-banner {
+        -webkit-backdrop-filter: blur(18px) saturate(155%);
+        backdrop-filter: blur(18px) saturate(155%);
+      }
+    }
+
+    @media (prefers-reduced-transparency: reduce) {
+      .glass,
+      .glass-strong,
+      .match-card,
+      .filters-sticky,
+      section.bg-white,
+      .install-banner,
+      .app-header,
+      .bottom-nav {
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+      }
+    }
+
     @media (min-width: 760px) {
       .app-content { padding-top: 22px; }
       .match-card { border-radius: 26px !important; }
@@ -820,7 +880,7 @@
     @media (max-width: 380px) {
       .app-header .title-group small { display: none; }
       .app-header .logo-icon { width: 38px; height: 38px; border-radius: 13px; }
-      .app-header .title-group h1 { font-size: 15px; }
+      .app-header .title-group h1 { font-size: 13px; letter-spacing: .02em; }
       .player-row { gap: 5px; }
       .login-btn { max-width: 92px; }
     }
@@ -841,6 +901,13 @@
     <div id="loading-slow" style="display:none;margin-top:14px;font-size:0.72rem;color:rgba(255,196,90,.75);text-align:center;">Wolne połączenie z bazą danych…<br>Aplikacja załaduje się automatycznie.</div>
   </div>
   <div id="root" style="display:none;"></div>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.23.10/babel.min.js"></script>
 
 <script type="text/babel" data-presets="react" data-plugins="">
 // ─── Firebase init ─────────────────────────────────────────────
@@ -870,8 +937,8 @@ const db = firebase.database();
     theme_color: "#07101d",
     orientation: "portrait",
     icons: [
-      { src: "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="40" fill="#0d1b5e"/><text x="96" y="130" text-anchor="middle" font-size="100">⚽</text></svg>'), sizes: "192x192", type: "image/svg+xml" },
-      { src: "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="96" fill="#0d1b5e"/><text x="256" y="350" text-anchor="middle" font-size="280">⚽</text></svg>'), sizes: "512x512", type: "image/svg+xml" }
+      { src: "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="40" fill="#0d1b5e"/><circle cx="96" cy="96" r="54" fill="none" stroke="white" stroke-width="10"/><path d="M75 82 96 67l21 15-8 25H83L75 82Z" fill="none" stroke="white" stroke-width="8" stroke-linejoin="round"/></svg>'), sizes: "192x192", type: "image/svg+xml" },
+      { src: "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="96" fill="#0d1b5e"/><circle cx="256" cy="256" r="145" fill="none" stroke="white" stroke-width="28"/><path d="M200 220 256 180l56 40-21 67h-70L200 220Z" fill="none" stroke="white" stroke-width="22" stroke-linejoin="round"/></svg>'), sizes: "512x512", type: "image/svg+xml" }
     ]
   };
   try {
@@ -886,7 +953,7 @@ const db = firebase.database();
   // service worker (basic caching)
   if ('serviceWorker' in navigator) {
     const swCode = `
-const CACHE = 'mundial2026-v1';
+const CACHE = 'mundial2026-v2-optimized';
 const OFFLINE_URLS = [self.location.href];
 self.addEventListener('install', e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(OFFLINE_URLS)).catch(()=>{})));
 self.addEventListener('activate', e => e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))));
@@ -908,15 +975,16 @@ self.addEventListener('fetch', e => {
 const { useState, useEffect, useMemo, useCallback, useRef } = React;
 
 // ─── Ikony (SVG inline) ────────────────────────────────────────
-function Ico({ d, size = 16, className = '' }) {
+function Ico({ d, size = 16, className = '', style }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`inline-block ${className}`}>
+      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`inline-block ${className}`} style={style}>
       {Array.isArray(d) ? d.map((path, i) => <path key={i} d={path} />) : <path d={d} />}
     </svg>
   );
 }
 const ICONS = {
+  ball:     ['M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z','M8.6 9.5 12 7l3.4 2.5-1.3 4.1H9.9L8.6 9.5z','M3.7 8.4l4.9 1.1','M15.4 9.5l4.9-1.1','M9.9 13.6l-2.4 5','M14.1 13.6l2.4 5'],
   trophy:   ['M6 9H4.5a2.5 2.5 0 0 1 0-5H6','M18 9h1.5a2.5 2.5 0 0 0 0-5H18','M8 21h8','M12 21v-6','M3 9h18','M12 9v6','M8 15h8'],
   users:    ['M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2','M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8','M23 21v-2a4 4 0 0 0-3-3.87','M16 3.13a4 4 0 0 1 0 7.75'],
   user:     ['M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2','M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8'],
@@ -948,9 +1016,9 @@ const ICONS = {
   podium:   ['M9 21H4V11h5v10z','M15 21H9V3h6v18z','M20 21h-5V8h5v13z'],
   layers:   ['M12 2L2 7l10 5 10-5-10-5z','M2 17l10 5 10-5','M2 12l10 5 10-5'],
 };
-function Icon({ name, size = 16, className = '' }) {
-  return <Ico d={ICONS[name] || 'M12 12'} size={size} className={className} />;
-}
+const Icon = React.memo(function Icon({ name, size = 16, className = '', style }) {
+  return <Ico d={ICONS[name] || 'M12 12'} size={size} className={className} style={style} />;
+});
 
 // ═══════════════════════════════════════════════════════════════
 //  STAŁE
@@ -961,6 +1029,7 @@ const GROUPS = ['A','B','C','D','E','F','G','H','I','J','K','L'];
 const PHASE_LABELS = { group:'Faza grupowa', r32:'1/16 finału', r16:'1/8 finału',
   qf:'Ćwierćfinał', sf:'Półfinał', third:'Mecz o 3. miejsce', final:'Finał' };
 const PHASE_ORDER = ['group','r32','r16','qf','sf','third','final'];
+const PHASE_RANK = Object.fromEntries(PHASE_ORDER.map((phase,index)=>[phase,index]));
 // HOST_CITIES replaced by real match data
 const STAR_PLAYERS = [
   'Kylian Mbappé','Erling Haaland','Harry Kane','Vinícius Júnior','Jude Bellingham',
@@ -1388,7 +1457,7 @@ function normalizeFlagValue(value) {
     return { code, fallback:FLAG_ABBR[code] || raw };
   }
 
-  // Zamiana emoji typu 🇵🇱 na kod ISO „pl”.
+  // Zamiana symbolu flagi na kod ISO kraju.
   const chars = Array.from(raw);
   if (chars.length === 2) {
     const points = chars.map(ch => ch.codePointAt(0));
@@ -1430,7 +1499,7 @@ function FlagImg({code, size=34, className='', title}) {
       {showImage
         ? <img src={src} width={size} height={size}
             style={{width:'100%',height:'100%',display:'block',borderRadius:'50%'}}
-            onError={()=>setErr(true)} alt={fallback} loading="lazy" referrerPolicy="no-referrer"/>
+            onError={()=>setErr(true)} alt={fallback} loading="lazy" decoding="async" referrerPolicy="no-referrer"/>
         : <span style={{
             fontSize:Math.round(size*(fallbackIsEmoji ? 0.56 : 0.27)),
             fontWeight:800,color:'var(--label-1)',
@@ -1442,7 +1511,7 @@ function FlagImg({code, size=34, className='', title}) {
   );
 }
 function TeamLabel({team,size='md',placeholderHint=null}) {
-  if(!team) return <span className={`inline-flex items-center gap-1.5 text-stone-400 italic text-${size}`}><span>❓</span><span>{placeholderHint||'TBD'}</span></span>;
+  if(!team) return <span className={`inline-flex items-center gap-1.5 text-stone-400 italic text-${size}`}><Icon name="alert" size={14}/><span>{placeholderHint||'TBD'}</span></span>;
   return <span className={`inline-flex items-center gap-2 text-stone-800 text-${size}`}><span style={{fontSize:11,fontWeight:800,color:'rgba(255,255,255,.9)',fontFamily:'monospace',letterSpacing:'0.06em',flexShrink:0}}>{FLAG_ABBR[team.flag]||NAME_TO_ABBR[team.name?.toLowerCase()]||''}</span><span className={size==='lg'?'font-semibold':''}>{team.name}</span></span>;
 }
 
@@ -1479,7 +1548,7 @@ function AutocompleteInput({value,onChange,suggestions,placeholder,disabled}) {
 // ═══════════════════════════════════════════════════════════════
 //  KARTA MECZU
 // ═══════════════════════════════════════════════════════════════
-const MatchCard=React.memo(function MatchCard({match,teams,prediction,result,allPredictions,players,activePlayerId,phaseLocks,onSavePrediction,expanded,onToggle}) {
+const MatchCard=React.memo(function MatchCard({match,teams,prediction,result,allPredictions,players,activePlayerId,phaseLocks,onSavePrediction,expanded,onToggleMatch}) {
   const [draft,setDraft]=useState(prediction||{home:null,away:null,penWinner:null});
   const [pin,setPin]=useState('');
   const [pinErr,setPinErr]=useState('');
@@ -1514,7 +1583,7 @@ const MatchCard=React.memo(function MatchCard({match,teams,prediction,result,all
 
   return (
     <div className={`match-card${expanded?' expanded':''}`} style={{background:expanded?'var(--glass-2)':'var(--glass-1)',border:expanded?'1px solid var(--border-2)':'1px solid var(--border-1)',borderRadius:18,overflow:'hidden',transition:'background .18s, border-color .18s',boxShadow:expanded?'var(--shadow-md), var(--hl2)':'var(--shadow-sm), var(--hl)'}}>
-      <button type="button" onClick={onToggle} className="w-full text-left p-3 sm:p-4 transition-colors" style={{transition:"background .15s"}}>
+      <button type="button" onClick={()=>onToggleMatch(match.id)} className="w-full text-left p-3 sm:p-4 transition-colors" style={{transition:"background .15s"}}>
         <div className="flex items-center justify-between gap-2 mb-2">
           <div className="flex items-center gap-1.5 flex-wrap">
             <span style={{...phaseStyle,display:'inline-block',padding:'2px 8px',borderRadius:6,fontSize:10,textTransform:'uppercase',letterSpacing:'0.06em',fontWeight:800,border:'1px solid'}}>
@@ -1589,7 +1658,7 @@ const MatchCard=React.memo(function MatchCard({match,teams,prediction,result,all
 
               {needsPen&&(
                 <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-3">
-                  <p className="text-xs font-semibold text-amber-900 mb-2">💡 W pucharach nie ma remisów — kto wygra karne?</p>
+                  <p className="text-xs font-semibold text-amber-900 mb-2 flex items-center gap-1.5"><Icon name="sparkles" size={14}/>W pucharach nie ma remisów — kto wygra karne?</p>
                   <div className="flex gap-2">
                     {['home','away'].map(side=>{
                       const t=side==='home'?home:away; const sel=draft.penWinner===side;
@@ -1688,6 +1757,7 @@ function MatchesView({matches,teams,predictions,results,players,activePlayerId,p
   const [groupFilter,setGroupFilter]=useState('all');
   const [statusFilter,setStatusFilter]=useState('all');
   const [expandedId,setExpandedId]=useState(null);
+  const handleToggleMatch=useCallback((id)=>setExpandedId(prev=>prev===id?null:id),[]);
 
   const filtered=useMemo(()=>{
     return matches.filter(m=>{
@@ -1696,7 +1766,7 @@ function MatchesView({matches,teams,predictions,results,players,activePlayerId,p
       if(statusFilter==='pending'&&results[m.id]) return false;
       if(statusFilter==='done'&&!results[m.id]) return false;
       return true;
-    }).sort((a,b)=>PHASE_ORDER.indexOf(a.phase)-PHASE_ORDER.indexOf(b.phase)||a.num-b.num);
+    }).sort((a,b)=>(PHASE_RANK[a.phase]??99)-(PHASE_RANK[b.phase]??99)||a.num-b.num);
   },[matches,phaseFilter,groupFilter,statusFilter,results]);
 
   const filterBtns=[{k:'all',l:'Wszystkie'},{k:'group',l:'Grupowa'},{k:'r32',l:'1/16'},{k:'r16',l:'1/8'},{k:'qf',l:'1/4'},{k:'sf',l:'1/2'},{k:'third',l:'3. m.'},{k:'final',l:'Finał'}];
@@ -1731,7 +1801,7 @@ function MatchesView({matches,teams,predictions,results,players,activePlayerId,p
           phaseLocks={phaseLocks}
           onSavePrediction={onSavePrediction}
           expanded={expandedId===m.id}
-          onToggle={()=>setExpandedId(expandedId===m.id?null:m.id)}/>
+          onToggleMatch={handleToggleMatch}/>
       ))}
       {filtered.length===0&&<div className="text-center text-stone-500 py-12">Brak meczów dla wybranych filtrów</div>}
     </div>
@@ -1809,7 +1879,6 @@ function SpecialsView({teams,players,activePlayerId,specialPredictions,specialRe
             <div key={pos} className="border-2 rounded-lg p-2 mb-2 border-stone-200 bg-stone-50" style={isCorrect?{background:'rgba(0,160,60,.30)',borderColor:'rgba(0,220,80,.45)'}:hasResults&&realOrder[pos]&&selected&&!isCorrect?{background:'rgba(180,0,0,.28)',borderColor:'rgba(220,0,0,.40)'}:{}}>
               <div className="flex items-center justify-between mb-1.5">
                 <span className="text-xs font-bold text-stone-700">{placeName}</span>
-                {isCorrect&&<Badge variant="success">✓</Badge>}
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
                 {teamsOfGroup(activeGroup).map(t=>{
@@ -1865,7 +1934,7 @@ function SpecialsView({teams,players,activePlayerId,specialPredictions,specialRe
         <div className="space-y-2 mt-2">
           {validErr&&(
             <div className="bg-red-50 border-2 border-red-400 rounded-xl p-3 flex items-start gap-2">
-              <span className="text-red-500 text-lg shrink-0">⚠️</span>
+              <Icon name="alert" size={19} className="text-red-500 shrink-0"/>
               <div>
                 <p className="text-sm font-bold text-red-700 uppercase tracking-wide">Uzupełnij wszystkie dane</p>
                 <p className="text-xs text-red-600 mt-0.5">{validErr}</p>
@@ -1986,9 +2055,9 @@ function SpecialsAllView({players,specialPredictions,specialResults,teams}) {
             <thead>
               <tr className="bg-stone-50 border-b border-stone-200">
                 <th className="px-3 py-2 text-left font-semibold text-stone-600">Gracz</th>
-                <th className="px-2 py-2 text-center">🥇</th>
-                <th className="px-2 py-2 text-center">🥈</th>
-                <th className="px-2 py-2 text-center">🥉</th>
+                <th className="px-2 py-2 text-center">1.</th>
+                <th className="px-2 py-2 text-center">2.</th>
+                <th className="px-2 py-2 text-center">3.</th>
               </tr>
             </thead>
             <tbody>
@@ -2022,8 +2091,8 @@ function SpecialsAllView({players,specialPredictions,specialResults,teams}) {
             <thead>
               <tr className="bg-stone-50 border-b border-stone-200">
                 <th className="px-3 py-2 text-left font-semibold text-stone-600">Gracz</th>
-                <th className="px-3 py-2 text-left font-semibold text-stone-600">👟 Król strzelców</th>
-                <th className="px-3 py-2 text-left font-semibold text-stone-600">⭐ MVP</th>
+                <th className="px-3 py-2 text-left font-semibold text-stone-600">Król strzelców</th>
+                <th className="px-3 py-2 text-left font-semibold text-stone-600">MVP</th>
               </tr>
             </thead>
             <tbody>
@@ -2072,13 +2141,13 @@ function LeaderboardView({players,matches,predictions,results,specialPredictions
   return (
     <div className="space-y-2">
       <div className="bg-gradient-to-br from-[#0d1b5e] via-[#162570] to-[#1a1a3a] text-white rounded-xl p-4">
-        <h3 className="font-display text-2xl tracking-wider flex items-center gap-2"><Icon name="trophy" size={22} className="text-amber-400"/>Klasyfikacja</h3>
+        <h3 className="font-display text-2xl tracking-wider">Klasyfikacja</h3>
         <p className="text-xs text-[#c8d4f4] mt-1">Punktacja na żywo</p>
       </div>
       {ranking.map((r,idx)=>{
-        const medal=idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':null;
+        const positionLabel=`#${idx+1}`;
         return (
-          <div key={r.player.id} className={`bg-white border rounded-xl overflow-hidden ${idx===0&&r.total>0?'border-amber-400 shadow-md':'border-stone-200'}`}>
+          <div key={r.player.id} className={`deferred-card bg-white border rounded-xl overflow-hidden ${idx===0&&r.total>0?'border-amber-400 shadow-md':'border-stone-200'}`}>
             <div className="p-3 sm:p-4">
               <div className="flex items-center justify-between gap-3 mb-2">
                 <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -2086,7 +2155,7 @@ function LeaderboardView({players,matches,predictions,results,specialPredictions
                     background:idx===0?'rgba(217,119,6,.5)':idx===1?'rgba(156,163,175,.25)':idx===2?'rgba(180,83,9,.35)':'rgba(255,255,255,.1)',
                     color:idx===0?'#fde68a':idx===1?'#e5e7eb':idx===2?'#fdba74':'rgba(255,255,255,.6)',
                     border:idx===0?'1px solid rgba(253,230,138,.4)':idx===1?'1px solid rgba(229,231,235,.2)':idx===2?'1px solid rgba(253,186,116,.3)':'1px solid rgba(255,255,255,.12)'}}>
-                    {medal||`#${idx+1}`}
+                    {positionLabel}
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="font-semibold text-stone-900 truncate">{r.player.name}</div>
@@ -2166,11 +2235,11 @@ function MyPredictionsView({activePlayerId,players,matches,teams,predictions,res
             <div key={match.id} style={{...rowBg,borderRadius:8,padding:'7px 10px',display:'flex',justifyContent:'space-between',alignItems:'center',gap:8}}>
               <div style={{display:'flex',alignItems:'center',gap:6,minWidth:0,flex:1}}>
                 <Badge>{match.phase==='group'?`Gr ${match.group}`:PHASE_LABELS[match.phase].split(' ')[0]}</Badge>
-                <span style={{overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',fontSize:12,display:'flex',alignItems:'center',gap:3}}>
-                  <span style={{fontSize:10,fontWeight:700,color:'rgba(255,255,255,.65)',fontFamily:'monospace'}}>{FLAG_ABBR[home?.flag||'']||NAME_TO_ABBR[home?.name?.toLowerCase()]||''}</span>
+                <span style={{overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',fontSize:12,display:'flex',alignItems:'center',gap:5}}>
+                  <FlagImg code={home?.flag} size={16} title={home?.name}/>
                   <span style={{color:'white',fontWeight:600}}>{home?.name||'?'}</span>
                   <span style={{color:'rgba(255,255,255,.35)',margin:'0 2px'}}>vs</span>
-                  <span style={{fontSize:10,fontWeight:700,color:'rgba(255,255,255,.65)',fontFamily:'monospace'}}>{FLAG_ABBR[away?.flag||'']||NAME_TO_ABBR[away?.name?.toLowerCase()]||''}</span>
+                  <FlagImg code={away?.flag} size={16} title={away?.name}/>
                   <span style={{color:'white',fontWeight:600}}>{away?.name||'?'}</span>
                 </span>
               </div>
@@ -2203,10 +2272,10 @@ function CompareView({matches,teams,predictions,results,players}) {
       const sorted=[...base].sort((a,b)=>Math.abs(new Date(a.date)-now)-Math.abs(new Date(b.date)-now));
       const top3=sorted.slice(0,3);
       const top3ids=new Set(top3.map(m=>m.id));
-      const rest=base.filter(m=>!top3ids.has(m.id)).sort((a,b)=>PHASE_ORDER.indexOf(a.phase)-PHASE_ORDER.indexOf(b.phase)||a.num-b.num);
+      const rest=base.filter(m=>!top3ids.has(m.id)).sort((a,b)=>(PHASE_RANK[a.phase]??99)-(PHASE_RANK[b.phase]??99)||a.num-b.num);
       return [...top3,...rest];
     }
-    return [...base].sort((a,b)=>PHASE_ORDER.indexOf(a.phase)-PHASE_ORDER.indexOf(b.phase)||a.num-b.num);
+    return [...base].sort((a,b)=>(PHASE_RANK[a.phase]??99)-(PHASE_RANK[b.phase]??99)||a.num-b.num);
   },[matches,phaseFilter,sortNearest,now]);
   if(players.length===0) return <div className="text-center text-stone-500 py-12">Dodaj graczy, żeby porównywać typy.</div>;
   return (
@@ -2225,7 +2294,7 @@ function CompareView({matches,teams,predictions,results,players}) {
       {filtered.map(m=>{
         const home=teams[m.homeTeamId], away=teams[m.awayTeamId], result=results[m.id];
         return (
-          <div key={m.id} style={{background:'rgba(255,255,255,.07)',border:'1px solid rgba(255,255,255,.12)',borderRadius:14,padding:14,marginBottom:8}}>
+          <div key={m.id} className="deferred-card" style={{background:'rgba(255,255,255,.07)',border:'1px solid rgba(255,255,255,.12)',borderRadius:14,padding:14,marginBottom:8}}>
             {/* Nagłówek: badge + wynik rzeczywisty */}
             <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:8}}>
               <div style={{display:'flex',alignItems:'center',gap:8}}>
@@ -2283,15 +2352,15 @@ function CompareView({matches,teams,predictions,results,players}) {
 // ═══════════════════════════════════════════════════════════════
 function PhaseLockPanel({matches,phaseLocks,onSavePhaseLocks}) {
   const PHASE_DEFS=[
-    {key:'specials', label:'Typy specjalne', desc:'Kolejność grup, podium, król strzelców, MVP', icon:'⭐', specialNote:true},
-    {key:'compareVisible', label:'Porównanie widoczne', desc:'Zakładki "Porównanie" i "Typy wszystkich" dostępne dla graczy', icon:'👁️', compareNote:true},
-    {key:'group', label:'Faza grupowa', desc:'Mecze 1–72', icon:'⚽'},
-    {key:'r32',   label:'1/16 finału',  desc:'Mecze 73–88', icon:'🥊'},
-    {key:'r16',   label:'1/8 finału',   desc:'Mecze 89–96', icon:'⚔️'},
-    {key:'qf',    label:'Ćwierćfinały', desc:'Mecze 97–100', icon:'🏅'},
-    {key:'sf',    label:'Półfinały',    desc:'Mecze 101–102', icon:'🔥'},
-    {key:'third', label:'Mecz o 3. miejsce', desc:'Mecz 103', icon:'🥉'},
-    {key:'final', label:'Finał',        desc:'Mecz 104', icon:'🏆'},
+    {key:'specials', label:'Typy specjalne', desc:'Kolejność grup, podium, król strzelców, MVP', icon:'sparkles', specialNote:true},
+    {key:'compareVisible', label:'Porównanie widoczne', desc:'Zakładki "Porównanie" i "Typy wszystkich" dostępne dla graczy', icon:'eye', compareNote:true},
+    {key:'group', label:'Faza grupowa', desc:'Mecze 1–72', icon:'ball'},
+    {key:'r32',   label:'1/16 finału',  desc:'Mecze 73–88', icon:'layers'},
+    {key:'r16',   label:'1/8 finału',   desc:'Mecze 89–96', icon:'target'},
+    {key:'qf',    label:'Ćwierćfinały', desc:'Mecze 97–100', icon:'medal'},
+    {key:'sf',    label:'Półfinały',    desc:'Mecze 101–102', icon:'podium'},
+    {key:'third', label:'Mecz o 3. miejsce', desc:'Mecz 103', icon:'medal'},
+    {key:'final', label:'Finał',        desc:'Mecz 104', icon:'trophy'},
   ];
 
   // Wyznacz pierwszy mecz każdej fazy
@@ -2332,7 +2401,7 @@ function PhaseLockPanel({matches,phaseLocks,onSavePhaseLocks}) {
   return (
     <div className="space-y-3">
       <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900">
-        <p className="font-bold mb-1">🔒 Jak działają blokady i przełączniki?</p>
+        <p className="font-bold mb-1 flex items-center gap-1.5"><Icon name="lock" size={15}/>Jak działają blokady i przełączniki?</p>
         <p>Zablokowanie fazy uniemożliwia graczom typowanie. Przełącznik <strong>Porównanie</strong> działa odwrotnie — włączenie go <em>udostępnia</em> zakładki Porównanie i Typy wszystkich graczom. Zrób to <strong>przed pierwszym meczem rundy</strong> — np. 24h wcześniej. Blokada <em>nie</em> wpływa na punktację (wyniki wpisuje admin niezależnie).</p>
       </div>
 
@@ -2344,21 +2413,21 @@ function PhaseLockPanel({matches,phaseLocks,onSavePhaseLocks}) {
           <div key={key} className={`bg-white border-2 rounded-xl p-4 transition-all ${key==='compareVisible'?(isLocked?'border-[#006940] bg-[#e6f4ec]':'border-stone-200'):(isLocked?'border-red-300 bg-red-50':'border-stone-200')}`}>
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-3 min-w-0 flex-1">
-                <span className="text-2xl">{icon}</span>
+                <span className="shrink-0"><Icon name={icon} size={23}/></span>
                 <div className="min-w-0">
                   <div className="font-semibold text-stone-900 text-sm">{label}</div>
                   <div className="text-[11px] text-stone-500">{desc}</div>
                   {compareNote?(
                     <div className={`text-[11px] mt-0.5 font-medium ${isLocked?'text-[#006940]':'text-stone-400'}`}>
-                      {isLocked?'✅ Zakładki widoczne dla graczy':'🚫 Zakładki ukryte dla graczy'}
+                      {isLocked?'Zakładki widoczne dla graczy':'Zakładki ukryte dla graczy'}
                     </div>
                   ):specialNote?(
                     <div className={`text-[11px] mt-0.5 font-medium ${isLocked?'text-red-700':'text-amber-700'}`}>
-                      {isLocked?'🔒 Zablokowane':'⏰ Deadline: przed 11.06.2026, godz. 21:00'}
+                      {isLocked?'Zablokowane':'Deadline: przed 11.06.2026, godz. 21:00'}
                     </div>
                   ):firstDate&&(
                     <div className={`text-[11px] mt-0.5 font-medium ${isLocked?'text-red-700':'text-[#0d1b5e]'}`}>
-                      {isLocked?'🔒 Zablokowane':'⏰ Pierwszy mecz: '}{!isLocked&&fmtDate(firstDate)}
+                      {isLocked?'Zablokowane':'Pierwszy mecz: '}{!isLocked&&fmtDate(firstDate)}
                     </div>
                   )}
                 </div>
@@ -2373,7 +2442,7 @@ function PhaseLockPanel({matches,phaseLocks,onSavePhaseLocks}) {
             </div>
             {changed&&(
               <div className="mt-2 text-[11px] text-amber-700 font-semibold">
-                ⚠ Niezapisana zmiana — kliknij Zapisz poniżej
+                Niezapisana zmiana — kliknij Zapisz poniżej
               </div>
             )}
           </div>
@@ -2388,7 +2457,7 @@ function PhaseLockPanel({matches,phaseLocks,onSavePhaseLocks}) {
       </div>
 
       <div className="bg-stone-50 border border-stone-200 rounded-xl p-3 text-xs text-stone-600 space-y-1">
-        <p className="font-bold text-stone-800">📋 Sugerowany harmonogram blokad:</p>
+        <p className="font-bold text-stone-800 flex items-center gap-1.5"><Icon name="calendar" size={14}/>Sugerowany harmonogram blokad:</p>
         <p>• <strong>Porównanie</strong> — włącz kiedy chcesz (np. po zakończeniu fazy grupowej)</p>
         <p>• <strong>Typy specjalne</strong> — zablokuj do 10.06.2026 wieczór (dzień przed M1)</p>
         <p>• <strong>Faza grupowa</strong> — zablokuj do 10.06.2026 wieczór (dzień przed M1)</p>
@@ -2533,7 +2602,7 @@ function AdminTeamRow({team,onSave}) {
       <div className="flex gap-2">
         <input value={flag} onChange={e=>setFlag(e.target.value)} placeholder="np. pl" maxLength={6} className="w-20 px-2 py-2 text-center text-sm font-mono border border-stone-200 rounded-lg focus:border-[#0d1b5e] focus:outline-none"/>
         <input value={name} onChange={e=>setName(e.target.value)} placeholder="Nazwa drużyny" className="flex-1 px-3 py-2 border border-stone-200 rounded-lg focus:border-[#0d1b5e] focus:outline-none text-sm"/>
-        <Btn variant="primary" size="sm" onClick={()=>onSave(name.trim()||team.id,flag.trim()||'⚽')}><Icon name="check" size={14}/></Btn>
+        <Btn variant="primary" size="sm" onClick={()=>onSave(name.trim()||team.id,flag.trim()||'xx')}><Icon name="check" size={14}/></Btn>
       </div>
     </div>
   );
@@ -2550,7 +2619,7 @@ function AdminPlayerRow({player,onRemove}) {
         </div>
         <div className="flex-1 min-w-0">
           <div className="font-semibold text-stone-900 text-sm truncate">{player.name}</div>
-          <div className="text-[11px] text-stone-500">{player.pinHash?'🔒 PIN ustawiony':'bez PINu'}</div>
+          <div className="text-[11px] text-stone-500">{player.pinHash?'PIN ustawiony':'bez PINu'}</div>
         </div>
         {!confirm&&(
           <button onClick={()=>setConfirm(true)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg" title="Usuń gracza">
@@ -2588,7 +2657,7 @@ function AdminPanel({teams,matches,results,specialResults,players,predictions,sp
       if(mPhase!=='all'&&m.phase!==mPhase) return false;
       if(q){const hn=teams[m.homeTeamId]?.name?.toLowerCase()||'',an=teams[m.awayTeamId]?.name?.toLowerCase()||'';return hn.includes(q)||an.includes(q)||m.id.toLowerCase().includes(q);}
       return true;
-    }).sort((a,b)=>PHASE_ORDER.indexOf(a.phase)-PHASE_ORDER.indexOf(b.phase)||a.num-b.num);
+    }).sort((a,b)=>(PHASE_RANK[a.phase]??99)-(PHASE_RANK[b.phase]??99)||a.num-b.num);
   },[matches,teams,mPhase,matchSearch]);
 
   const handleExport=()=>{
@@ -2603,7 +2672,7 @@ function AdminPanel({teams,matches,results,specialResults,players,predictions,sp
   const [spGroup,setSpGroup]=useState('A');
   useEffect(()=>setSpDraft(specialResults||{groupOrders:{}}),[specialResults]);
 
-  const tabs=[{k:'locks',l:'🔒 Blokady faz'},{k:'results',l:'Wyniki meczów'},{k:'teams',l:'Drużyny'},{k:'specials',l:'Wyniki specjalne'},{k:'players',l:'Gracze'},{k:'data',l:'Dane'}];
+  const tabs=[{k:'locks',l:'Blokady faz'},{k:'results',l:'Wyniki meczów'},{k:'teams',l:'Drużyny'},{k:'specials',l:'Wyniki specjalne'},{k:'players',l:'Gracze'},{k:'data',l:'Dane'}];
 
   return (
     <div className="space-y-3">
@@ -2645,7 +2714,7 @@ function AdminPanel({teams,matches,results,specialResults,players,predictions,sp
 
       {tab==='teams'&&(
         <div className="space-y-3">
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-900">💡 Wpisz nazwę drużyny oraz kod flagi (np. pl) albo emoji (np. 🇵🇱). Emoji flag znajdziesz na <a href="https://emojipedia.org/flags" target="_blank" className="underline">emojipedia.org/flags</a></div>
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-900">Wpisz nazwę drużyny oraz dwuliterowy kod kraju, np. pl, de lub fr.</div>
           {GROUPS.map(g=>(
             <div key={g} className="bg-white border border-stone-200 rounded-xl p-3">
               <h4 className="font-display text-lg mb-2">Grupa {g}</h4>
@@ -2805,7 +2874,7 @@ function LoginModal({open,onClose,players,activePlayer,onLogin,onRename}) {
           <>
             <p className="text-sm text-stone-600">Wybierz swój profil, żeby typować.</p>
             <div className="space-y-1.5">
-              {players.length===0&&<p className="text-center text-stone-500 text-sm py-4">Brak graczy. Dodaj uczestników przez ikonę 👥.</p>}
+              {players.length===0&&<p className="text-center text-stone-500 text-sm py-4">Brak graczy. Dodaj uczestników przyciskiem zarządzania graczami.</p>}
               {players.map(p=>(
                 <button key={p.id} onClick={()=>setSelected(p.id)}
                   style={{width:'100%',display:'flex',alignItems:'center',gap:12,padding:12,borderRadius:14,textAlign:'left',transition:'all .15s',cursor:'pointer',background:selected===p.id?'rgba(255,255,255,0.18)':'rgba(255,255,255,0.07)',border:selected===p.id?'2px solid rgba(255,255,255,0.7)':'1.5px solid rgba(255,255,255,0.15)'}}>
@@ -2814,7 +2883,7 @@ function LoginModal({open,onClose,players,activePlayer,onLogin,onRename}) {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div style={{fontWeight:700,fontSize:14,color:"rgba(255,255,255,.95)",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{p.name}</div>
-                    <div style={{fontSize:11,color:"rgba(255,255,255,0.6)",marginTop:2}}>{p.pinHash?'🔒 chroniony PINem':'bez PINu'}</div>
+                    <div style={{fontSize:11,color:"rgba(255,255,255,0.6)",marginTop:2}}>{p.pinHash?'chroniony PINem':'bez PINu'}</div>
                   </div>
                   {selected===p.id&&<Icon name="check" size={18} style={{stroke:"rgba(255,255,255,.9)",flexShrink:0}}/>}
                 </button>
@@ -2935,7 +3004,7 @@ function PlayersManager({open,onClose,players,onAddPlayer}) {
                   </div>
                   <div className="min-w-0 flex-1">
                     <span className="font-medium text-stone-800 block truncate">{p.name}</span>
-                    <span className="text-[11px] text-stone-500">{p.pinHash?'🔒 PIN ustawiony':'bez PINu'}</span>
+                    <span className="text-[11px] text-stone-500">{p.pinHash?'PIN ustawiony':'bez PINu'}</span>
                   </div>
                 </div>
               ))}
@@ -2949,7 +3018,7 @@ function PlayersManager({open,onClose,players,onAddPlayer}) {
               <Icon name="arrow" size={12} style={{transform:"rotate(180deg)"}}/>Wróć
             </button>
             <div style={{background:'rgba(220,150,0,.18)',border:'1px solid rgba(255,200,50,.4)',borderRadius:12,padding:14}}>
-              <div style={{fontSize:13,fontWeight:800,color:'#fcd34d',marginBottom:6}}>💰 Opłata za udział — 20 PLN</div>
+              <div style={{fontSize:13,fontWeight:800,color:'#fcd34d',marginBottom:6}}>Opłata za udział — 20 PLN</div>
               <div style={{fontSize:13,color:'rgba(255,255,255,.9)',lineHeight:1.6}}>
                 Aby wziąć udział w rozgrywce, prześlij <strong style={{color:'#fcd34d'}}>20 PLN</strong> BLIKiem na numer:
               </div>
@@ -2959,7 +3028,7 @@ function PlayersManager({open,onClose,players,onAddPlayer}) {
               <div style={{fontSize:11,color:'rgba(255,255,255,.55)',textAlign:'center'}}>W tytule podaj swoje imię i nazwisko</div>
             </div>
             <div style={{background:'rgba(255,200,50,.1)',border:'1px solid rgba(255,200,50,.3)',borderRadius:10,padding:12,fontSize:12,color:'rgba(255,255,255,.8)'}}>
-              ⚠️ Zapamiętaj PIN — nie da się go odzyskać. Bez PINu nie będziesz mógł zapisywać typów.
+              Zapamiętaj PIN — nie da się go odzyskać. Bez PINu nie będziesz mógł zapisywać typów.
             </div>
             <div>
               <label className="text-xs font-semibold text-stone-600 block mb-1">Imię i nazwisko</label>
@@ -3000,6 +3069,7 @@ function BottomNav({tabs, activeTab, onSelect}) {
   const [drop, setDrop] = useState({left:0, width:0});
   const [dragging, setDragging] = useState(false);
   const dragInfo = useRef({active:false, startX:0, hoverIdx:0});
+  const moveFrame = useRef(0);
 
   const activeIdx = Math.max(0, tabs.findIndex(t=>t.k===activeTab));
 
@@ -3038,12 +3108,18 @@ function BottomNav({tabs, activeTab, onSelect}) {
   };
   const onPointerMove = (e)=>{
     if(!dragInfo.current.active) return;
-    const idx = idxFromX(e.clientX);
-    dragInfo.current.hoverIdx = idx;
-    const p = positionFor(idx);
-    if(p) setDrop(p);
+    const clientX=e.clientX;
+    if(moveFrame.current) cancelAnimationFrame(moveFrame.current);
+    moveFrame.current=requestAnimationFrame(()=>{
+      const idx = idxFromX(clientX);
+      dragInfo.current.hoverIdx = idx;
+      const p = positionFor(idx);
+      if(p) setDrop(p);
+      moveFrame.current=0;
+    });
   };
   const endDrag = ()=>{
+    if(moveFrame.current){cancelAnimationFrame(moveFrame.current);moveFrame.current=0;}
     if(!dragInfo.current.active) return;
     const idx = dragInfo.current.hoverIdx;
     dragInfo.current.active = false;
@@ -3051,6 +3127,8 @@ function BottomNav({tabs, activeTab, onSelect}) {
     if(tabs[idx] && tabs[idx].k!==activeTab) onSelect(tabs[idx].k);
     else { const p=positionFor(idx); if(p) setDrop(p); }
   };
+
+  useEffect(()=>()=>{if(moveFrame.current)cancelAnimationFrame(moveFrame.current);},[]);
 
   const isAdminActive = tabs[activeIdx] && tabs[activeIdx].k==='admin';
 
@@ -3192,12 +3270,14 @@ function Mundial2026() {
     if(!compareOn&&!adminUnlocked&&(activeTab==='compare'||activeTab==='allspecials'))
       setActiveTab('matches');
   },[compareOn,adminUnlocked]);
-  const tabs=[
-    {k:'matches',l:'Mecze',i:'calendar'},{k:'specials',l:'Specjalne',i:'star'},
-    {k:'leaderboard',l:'Ranking',i:'podium'},{k:'mine',l:'Moje',i:'user'},
-    ...(compareOn||adminUnlocked?[{k:'compare',l:'Porównaj',i:'eye'},{k:'allspecials',l:'Wszyscy',i:'layers'}]:[]),
+  const tabs=useMemo(()=>[
+    {k:'matches',l:'Mecze',i:'calendar'},
+    {k:'specials',l:'Specjalne',i:'star'},
+    {k:'leaderboard',l:'Ranking',i:'podium'},
+    {k:'mine',l:'Moje',i:'user'},
+    ...(compareOn||adminUnlocked?[{k:'compare',l:'Porównaj',i:'eye'},{k:'allspecials',l:'Wszyscy',i:'users'}]:[]),
     ...(adminUnlocked?[{k:'admin',l:'Wyniki',i:'settings'}]:[]),
-  ];
+  ],[compareOn,adminUnlocked]);
 
   const safeTeams=useMemo(()=>{const init=INITIAL_TEAMS_CACHE;const src=teams||init;return Object.fromEntries(Object.entries(src).map(([k,v])=>[k,{...(init[k]||{}), ...v}]));}, [teams]);
   const safeMatches=useMemo(()=>Array.isArray(matches)?matches:[],[matches]);
@@ -3206,15 +3286,22 @@ function Mundial2026() {
   const safeResults=useMemo(()=>results||{},[results]);
   const safeSpecialPredictions=useMemo(()=>specialPredictions||{},[specialPredictions]);
   const safeSpecialResults=useMemo(()=>specialResults||{groupOrders:{}},[specialResults]);
+  const activePlayerData=useMemo(()=>safePlayers.find(p=>p.id===activePlayer)||null,[safePlayers,activePlayer]);
 
   // ── install prompt ──
   const [installPrompt,setInstallPrompt]=useState(null);
   const [showInstall,setShowInstall]=useState(false);
   const [toast,setToast]=useState('');
-  const showToast=useCallback((msg)=>{setToast(msg);setTimeout(()=>setToast(''),1600);},[]);
-  const onSavePredictionCb=useCallback((id,p,pin,onErr)=>{handleSavePrediction(id,p,pin,onErr,()=>showToast('Typ zapisany ✓'));},[handleSavePrediction,showToast]);
-  const onSaveSpecialCb=useCallback((id,p,pin,onErr)=>{handleSaveSpecial(id,p,pin,onErr,()=>showToast('Typy specjalne zapisane ✓'));},[handleSaveSpecial,showToast]);
-  const onSaveResultCb=useCallback((id,p)=>{handleSaveResult(id,p);showToast('Wynik zapisany ✓');},[handleSaveResult,showToast]);
+  const toastTimer=useRef(0);
+  const showToast=useCallback((msg)=>{
+    setToast(msg);
+    if(toastTimer.current)clearTimeout(toastTimer.current);
+    toastTimer.current=setTimeout(()=>{setToast('');toastTimer.current=0;},1600);
+  },[]);
+  useEffect(()=>()=>{if(toastTimer.current)clearTimeout(toastTimer.current);},[]);
+  const onSavePredictionCb=useCallback((id,p,pin,onErr)=>{handleSavePrediction(id,p,pin,onErr,()=>showToast('Typ zapisany'));},[handleSavePrediction,showToast]);
+  const onSaveSpecialCb=useCallback((id,p,pin,onErr)=>{handleSaveSpecial(id,p,pin,onErr,()=>showToast('Typy specjalne zapisane'));},[handleSaveSpecial,showToast]);
+  const onSaveResultCb=useCallback((id,p)=>{handleSaveResult(id,p);showToast('Wynik zapisany');},[handleSaveResult,showToast]);
   useEffect(()=>{
     const h=e=>{e.preventDefault();setInstallPrompt(e);setShowInstall(true);};
     window.addEventListener('beforeinstallprompt',h);
@@ -3229,15 +3316,14 @@ function Mundial2026() {
         <div className="logo">
           <div className="logo-icon">⚽</div>
           <div className="title-group">
-            <h1>MUNDIAL 2026</h1>
-            <small>Typowanie · USA · Kanada · Meksyk</small>
+            <h1>MISTRZOSTWA FIFA 2026</h1>
           </div>
         </div>
         <div className="player-row">
           <button onClick={()=>setLoginModal(true)} className="login-btn">
             <Icon name="user" size={14}/>
-            {activePlayer&&safePlayers.find(p=>p.id===activePlayer)
-              ?<span style={{overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{safePlayers.find(p=>p.id===activePlayer).name}</span>
+            {activePlayerData
+              ?<span style={{overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{activePlayerData.name}</span>
               :<span>Zaloguj się</span>}
           </button>
           <button className="players-btn" onClick={()=>setPlayersModal(true)} title="Zarządzaj graczami">
@@ -3259,7 +3345,7 @@ function Mundial2026() {
         {showInstall&&(
           <div className="install-banner">
             <div className="ib-text">
-              <h4>📲 Zainstaluj aplikację</h4>
+              <h4 className="flex items-center gap-1.5"><Icon name="download" size={15}/>Zainstaluj aplikację</h4>
               <p>Dodaj do ekranu głównego i typuj jak w natywnej apce!</p>
             </div>
             <button onClick={doInstall}>Zainstaluj</button>
