@@ -6385,7 +6385,788 @@
       border: 0 !important;
     }
 
+
+    /* Drabinka: usuń podwójny odstęp między nagłówkiem a właściwą drabinką.
+       Kontener miał jednocześnie gap: 18px i wspólny margin-top sekcji. */
+    .bracket-page {
+      gap: 0 !important;
+    }
+
+    .bracket-page > :not([hidden]) ~ :not([hidden]) {
+      margin-top: var(--tab-section-gap) !important;
+    }
+
+
+    /* ═══════════════════════════════════════════════════════════════
+       OSTATECZNY SYSTEM ODSTĘPÓW
+       Jedna wartość dla przerw między głównymi sekcjami i kartami.
+    ═══════════════════════════════════════════════════════════════ */
+    :root {
+      --ui-section-gap: 14px;
+      --ui-modal-gap: 12px;
+    }
+
+    /* Każda zakładka korzysta z prawdziwego flex-gap zamiast mieszanki
+       space-y, margin-top, margin-bottom i własnych wartości gap. */
+    .matches-view,
+    .specials-view,
+    .allspecials-view,
+    .leaderboard-view,
+    .compare-view,
+    .bracket-page,
+    .admin-panel {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: var(--ui-section-gap) !important;
+    }
+
+    /* Kasowanie lokalnych marginesów pomiędzy całymi sekcjami.
+       Od tej chwili odstęp tworzy wyłącznie gap kontenera. */
+    .matches-view > *,
+    .specials-view > *,
+    .allspecials-view > *,
+    .leaderboard-view > *,
+    .compare-view > *,
+    .bracket-page > *,
+    .admin-panel > * {
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+    }
+
+    .matches-view > :not([hidden]) ~ :not([hidden]),
+    .specials-view > :not([hidden]) ~ :not([hidden]),
+    .allspecials-view > :not([hidden]) ~ :not([hidden]),
+    .leaderboard-view > :not([hidden]) ~ :not([hidden]),
+    .compare-view > :not([hidden]) ~ :not([hidden]),
+    .bracket-page > :not([hidden]) ~ :not([hidden]),
+    .admin-panel > :not([hidden]) ~ :not([hidden]) {
+      margin-top: 0 !important;
+    }
+
+    /* Podsekcje będące bezpośrednimi stosami w zakładkach admina
+       i typów specjalnych także korzystają z tej samej przerwy. */
+    .admin-panel > .space-y-2,
+    .admin-panel > .space-y-3,
+    .admin-panel > .space-y-4,
+    .specials-view > .space-y-2,
+    .specials-view > .space-y-3,
+    .specials-view > .space-y-4,
+    .allspecials-view > .space-y-2,
+    .allspecials-view > .space-y-3,
+    .leaderboard-view > .space-y-2,
+    .leaderboard-view > .space-y-3,
+    .compare-view > .space-y-2,
+    .compare-view > .space-y-3,
+    .matches-view > .space-y-2,
+    .matches-view > .space-y-3 {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: var(--ui-section-gap) !important;
+    }
+
+    .admin-panel > .space-y-2 > *,
+    .admin-panel > .space-y-3 > *,
+    .admin-panel > .space-y-4 > *,
+    .specials-view > .space-y-2 > *,
+    .specials-view > .space-y-3 > *,
+    .specials-view > .space-y-4 > *,
+    .allspecials-view > .space-y-2 > *,
+    .allspecials-view > .space-y-3 > *,
+    .leaderboard-view > .space-y-2 > *,
+    .leaderboard-view > .space-y-3 > *,
+    .compare-view > .space-y-2 > *,
+    .compare-view > .space-y-3 > *,
+    .matches-view > .space-y-2 > *,
+    .matches-view > .space-y-3 > * {
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+    }
+
+    /* Powtarzające się karty — bez własnych dodatkowych marginesów,
+       żeby nie powstawały podwójne „szpary”. */
+    .match-card,
+    .admin-match-card,
+    .leaderboard-card,
+    .compare-match-card,
+    .table-card,
+    .bracket-intro,
+    .bracket-scroll-shell {
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+    }
+
+    .match-card + .match-card,
+    .admin-match-card + .admin-match-card,
+    .leaderboard-card + .leaderboard-card,
+    .compare-match-card + .compare-match-card,
+    .table-card + .table-card {
+      margin-top: 0 !important;
+    }
+
+    /* Główne stosy formularzy w modalach mają identyczny rytm. */
+    .login-modal-content > .space-y-3,
+    .login-modal-content > .space-y-4 {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: var(--ui-modal-gap) !important;
+    }
+
+    .login-modal-content > .space-y-3 > *,
+    .login-modal-content > .space-y-4 > * {
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+    }
+
+    @media (max-width: 520px) {
+      :root {
+        --ui-section-gap: 12px;
+        --ui-modal-gap: 12px;
+      }
+    }
+
+
+    /* Kapsułki karnych — płaski styl 2D:
+       bez gradientu, bez cienia, bez poświaty, jednolity kolor. */
+    .prediction-penalty,
+    .compare-player-penalty,
+    .match-penalty-badge {
+      background: rgba(70, 86, 120, 0.72) !important;
+      border: none !important;
+      box-shadow: none !important;
+      filter: none !important;
+      text-shadow: none !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      color: rgba(255, 255, 255, 0.96) !important;
+    }
+
+    .prediction-penalty::before,
+    .compare-player-penalty::before,
+    .match-penalty-badge::before {
+      box-shadow: none !important;
+      filter: none !important;
+      text-shadow: none !important;
+      background: none !important;
+    }
+
+    html[data-theme="light"] .prediction-penalty,
+    html[data-theme="light"] .compare-player-penalty,
+    html[data-theme="light"] .match-penalty-badge {
+      background: rgba(133, 160, 205, 0.34) !important;
+      border: none !important;
+      box-shadow: none !important;
+      filter: none !important;
+      text-shadow: none !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      color: #2c3d58 !important;
+    }
+
+    html[data-theme="light"] .prediction-penalty::before,
+    html[data-theme="light"] .compare-player-penalty::before,
+    html[data-theme="light"] .match-penalty-badge::before {
+      background: none !important;
+      box-shadow: none !important;
+      filter: none !important;
+      text-shadow: none !important;
+    }
+
+
+    /* Zakładka Mecze — wymuszony płaski styl 2D kapsułek karnych. */
+    .matches-view .match-penalty-badge,
+    .match-card .match-penalty-badge {
+      background: rgba(70, 86, 120, 0.72) !important;
+      background-image: none !important;
+      border: none !important;
+      box-shadow: none !important;
+      filter: none !important;
+      text-shadow: none !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      color: rgba(255, 255, 255, 0.96) !important;
+    }
+
+    .matches-view .match-penalty-badge::before,
+    .match-card .match-penalty-badge::before {
+      content: none !important;
+      display: none !important;
+      background: none !important;
+      border: none !important;
+      box-shadow: none !important;
+      filter: none !important;
+      text-shadow: none !important;
+    }
+
+    html[data-theme="light"] .matches-view .match-penalty-badge,
+    html[data-theme="light"] .match-card .match-penalty-badge {
+      background: rgba(133, 160, 205, 0.34) !important;
+      background-image: none !important;
+      border: none !important;
+      box-shadow: none !important;
+      filter: none !important;
+      text-shadow: none !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      color: #2c3d58 !important;
+    }
+
+
+    /* Przełączniki blokad faz — po najechaniu tylko delikatne przyciemnienie,
+       bez znikania koloru od globalnego button:hover. */
+    .phase-lock-toggle:hover {
+      background-color: inherit;
+    }
+
+    .phase-lock-toggle.is-compare-on:hover {
+      background: #005c38 !important;
+    }
+
+    .phase-lock-toggle.is-locked-on:hover {
+      background: #dc3f3f !important;
+    }
+
+    .phase-lock-toggle.is-off:hover {
+      background: #bfc5d0 !important;
+    }
+
+    .phase-lock-toggle:active {
+      transform: none !important;
+      filter: brightness(.98);
+    }
+
+    .phase-lock-toggle > span {
+      pointer-events: none;
+    }
+
+    html[data-theme="light"] .phase-lock-toggle.is-off:hover {
+      background: #c5cbd6 !important;
+    }
+
+
+    /* Pola formularzy — bez chwilowej białej/czarnej otoczki po kliknięciu.
+       Pozostaje jedynie kursor tekstowy i normalny kolor samego pola. */
+    input,
+    textarea,
+    select,
+    [contenteditable="true"] {
+      -webkit-tap-highlight-color: transparent !important;
+    }
+
+    input:focus,
+    input:focus-visible,
+    textarea:focus,
+    textarea:focus-visible,
+    select:focus,
+    select:focus-visible,
+    [contenteditable="true"]:focus,
+    [contenteditable="true"]:focus-visible {
+      outline: none !important;
+      outline-offset: 0 !important;
+      box-shadow: none !important;
+      filter: none !important;
+      -webkit-box-shadow: none !important;
+    }
+
+    /* Usuń również pierścień dodawany przez klasy focus/ring Tailwinda. */
+    input[class*="focus:ring"]:focus,
+    textarea[class*="focus:ring"]:focus,
+    select[class*="focus:ring"]:focus,
+    input[class*="focus:shadow"]:focus,
+    textarea[class*="focus:shadow"]:focus,
+    select[class*="focus:shadow"]:focus {
+      --tw-ring-offset-shadow: 0 0 transparent !important;
+      --tw-ring-shadow: 0 0 transparent !important;
+      --tw-shadow: 0 0 transparent !important;
+      box-shadow: none !important;
+    }
+
+    html[data-theme="light"] input:focus,
+    html[data-theme="light"] input:focus-visible,
+    html[data-theme="light"] textarea:focus,
+    html[data-theme="light"] textarea:focus-visible,
+    html[data-theme="light"] select:focus,
+    html[data-theme="light"] select:focus-visible,
+    html[data-theme="light"] [contenteditable="true"]:focus,
+    html[data-theme="light"] [contenteditable="true"]:focus-visible {
+      outline: none !important;
+      box-shadow: none !important;
+      -webkit-box-shadow: none !important;
+    }
+
+
+    /* Light mode: górny nagłówek ma dokładnie tę samą szerokość
+       co wewnętrzna zawartość aplikacji poniżej. */
+    html[data-theme="light"] body .app-header {
+      width: min(
+        var(--app-shell-max, 736px),
+        calc(100% - (var(--app-shell-gutter, 12px) * 2))
+      ) !important;
+      max-width: var(--app-shell-max, 736px) !important;
+    }
+
+    @media (max-width: 520px) {
+      html[data-theme="light"] body .app-header {
+        width: calc(100% - (var(--app-shell-gutter, 12px) * 2)) !important;
+      }
+    }
+
+
+    /* ═══════════════════════════════════════════════════════════════
+       Unified semantic helper messages
+       warning = yellow, info = blue, danger = coral, success = green
+    ═══════════════════════════════════════════════════════════════ */
+    .app-note {
+      --note-color: #cfe7ff;
+      --note-border: rgba(112,184,255,.22);
+      --note-left-glow: rgba(0,190,225,.22);
+      --note-right-glow: rgba(112,184,255,.12);
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+      border: 1px solid var(--note-border) !important;
+      border-radius: 24px !important;
+      padding: 15px 18px !important;
+      background:
+        radial-gradient(circle at -6% 50%, var(--note-left-glow), transparent 34%),
+        radial-gradient(circle at 106% 50%, var(--note-right-glow), transparent 30%),
+        linear-gradient(90deg, rgba(48,54,70,.97) 0%, rgba(27,29,38,.97) 56%, rgba(25,22,24,.97) 100%) !important;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.10),
+        inset 0 -1px 0 rgba(0,0,0,.18),
+        0 10px 28px rgba(0,0,0,.23) !important;
+      color: var(--note-color) !important;
+      font-size: 13px;
+      line-height: 1.45;
+      font-weight: 600;
+      letter-spacing: -.01em;
+    }
+    .app-note::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      border-radius: inherit;
+      background: linear-gradient(110deg, rgba(255,255,255,.055), transparent 35%, transparent 72%, rgba(255,255,255,.018));
+    }
+    .app-note--warning {
+      --note-color: #ffd65a;
+      --note-border: rgba(255,210,90,.20);
+      --note-left-glow: rgba(0,190,225,.22);
+      --note-right-glow: rgba(255,145,25,.13);
+    }
+    .app-note--info {
+      --note-color: #a9d8ff;
+      --note-border: rgba(112,184,255,.24);
+      --note-left-glow: rgba(0,190,225,.22);
+      --note-right-glow: rgba(70,125,255,.14);
+    }
+    .app-note--danger {
+      --note-color: #ffaaa2;
+      --note-border: rgba(255,105,97,.22);
+      --note-left-glow: rgba(0,190,225,.16);
+      --note-right-glow: rgba(255,70,75,.16);
+    }
+    .app-note--success {
+      --note-color: #8cebae;
+      --note-border: rgba(73,223,125,.22);
+      --note-left-glow: rgba(0,190,225,.15);
+      --note-right-glow: rgba(48,209,88,.16);
+    }
+    .app-note--compact {
+      border-radius: 22px !important;
+      padding: 13px 16px !important;
+    }
+    .app-note--center {
+      text-align: center !important;
+    }
+    .app-note--center.flex,
+    .app-note--center[class*="flex"] {
+      justify-content: center !important;
+    }
+    .app-note p,
+    .app-note > span,
+    .app-note > strong,
+    .app-note > em,
+    .app-note > h2,
+    .app-note > h3,
+    .app-note > h4,
+    .app-note > div > p,
+    .app-note > div > span,
+    .app-note > div > strong,
+    .app-note > div > em,
+    .app-note > div > h2,
+    .app-note > div > h3,
+    .app-note > div > h4 {
+      color: var(--note-color) !important;
+    }
+    .app-note strong { font-weight: 800; }
+    .app-note svg {
+      color: var(--note-color) !important;
+      stroke: currentColor !important;
+    }
+    .app-note p { margin-top: 0; margin-bottom: 0; }
+    .app-note p + p { margin-top: 6px; }
+    .app-note button {
+      position: relative;
+      z-index: 1;
+    }
+    .app-note.app-note--with-actions {
+      padding: 20px !important;
+    }
+    .app-note.app-note--with-actions > p:last-of-type {
+      margin-bottom: 14px;
+    }
+
+    /* Komunikaty są powierzchniami informacyjnymi, nie elementami interaktywnymi. */
+    .app-note,
+    div.app-note,
+    section.app-note {
+      cursor: default !important;
+      transition: none !important;
+      animation: none !important;
+      transform: none !important;
+      filter: none !important;
+      opacity: 1 !important;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .app-note:hover,
+    .app-note:active,
+    .app-note:focus,
+    .app-note:focus-visible,
+    .app-note:focus-within,
+    div.app-note:hover,
+    div.app-note:active,
+    section.app-note:hover,
+    section.app-note:active {
+      border-color: var(--note-border) !important;
+      background:
+        radial-gradient(circle at -6% 50%, var(--note-left-glow), transparent 34%),
+        radial-gradient(circle at 106% 50%, var(--note-right-glow), transparent 30%),
+        linear-gradient(90deg, rgba(48,54,70,.97) 0%, rgba(27,29,38,.97) 56%, rgba(25,22,24,.97) 100%) !important;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.10),
+        inset 0 -1px 0 rgba(0,0,0,.18),
+        0 10px 28px rgba(0,0,0,.23) !important;
+      color: var(--note-color) !important;
+      cursor: default !important;
+      transition: none !important;
+      animation: none !important;
+      transform: none !important;
+      filter: none !important;
+      opacity: 1 !important;
+      outline: none !important;
+    }
+
+    /* Przyciski umieszczone wewnątrz komunikatów nadal działają normalnie. */
+    .app-note button,
+    .app-note a,
+    .app-note input,
+    .app-note select,
+    .app-note textarea {
+      pointer-events: auto;
+    }
+
+    @media (max-width: 520px) {
+      .app-note {
+        border-radius: 22px !important;
+        padding: 14px 16px !important;
+        font-size: 12.5px;
+      }
+      .app-note--compact {
+        border-radius: 20px !important;
+        padding: 12px 14px !important;
+      }
+    }
+
 </style>
+
+  <style id="expanded-header-color-fix">
+    /* Rozwinięcie sekcji zmienia wyłącznie jej geometrię i pokazuje treść.
+       Nagłówek zachowuje ten sam kolor, tło i cień co przed rozwinięciem. */
+    .match-card.expanded {
+      background: var(--glass-1) !important;
+      border-color: var(--border-1) !important;
+      box-shadow: var(--shadow-sm), var(--hl), var(--shadow-glow) !important;
+    }
+
+    .match-card.expanded > button:first-child,
+    .match-card.expanded > button:first-child:focus,
+    .match-card.expanded > button:first-child:active {
+      background: transparent !important;
+      color: inherit !important;
+      box-shadow: none !important;
+    }
+
+    .admin-match-card.expanded {
+      background: var(--glass-1) !important;
+      border-color: var(--border-1) !important;
+      box-shadow: var(--shadow-sm), var(--hl), var(--shadow-glow) !important;
+    }
+
+    .admin-match-card.expanded > .admin-match-summary-button,
+    .admin-match-card.expanded > .admin-match-summary-button:focus,
+    .admin-match-card.expanded > .admin-match-summary-button:active {
+      background: transparent !important;
+      color: inherit !important;
+      box-shadow: none !important;
+    }
+
+    .profile-choice-shell.is-open .profile-choice-trigger,
+    .profile-choice-shell.is-open .profile-choice-trigger:focus,
+    .profile-choice-shell.is-open .profile-choice-trigger:active {
+      background:
+        radial-gradient(circle at 22% -20%, rgba(255,255,255,.11), transparent 45%),
+        linear-gradient(145deg, rgba(255,255,255,.080), rgba(255,255,255,.030)) !important;
+      border-color: rgba(255,255,255,.13) !important;
+      color: rgba(235,241,255,.72) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.075), 0 2px 8px rgba(0,0,0,.10) !important;
+      text-shadow: none !important;
+    }
+
+    .compare-match-toggle[aria-expanded="true"],
+    .compare-match-toggle[aria-expanded="true"]:focus,
+    .compare-match-toggle[aria-expanded="true"]:active {
+      background: rgba(255,255,255,.035) !important;
+      border-color: rgba(255,255,255,.09) !important;
+      color: inherit !important;
+      box-shadow: none !important;
+    }
+
+    html[data-theme="light"] .match-card.expanded,
+    html[data-theme="light"] .admin-match-card.expanded {
+      background: var(--glass-1) !important;
+      border-color: rgba(39,68,103,.11) !important;
+      box-shadow: var(--shadow-sm), var(--hl), var(--shadow-glow) !important;
+    }
+
+    html[data-theme="light"] .profile-choice-shell.is-open .profile-choice-trigger,
+    html[data-theme="light"] .profile-choice-shell.is-open .profile-choice-trigger:focus,
+    html[data-theme="light"] .profile-choice-shell.is-open .profile-choice-trigger:active {
+      background: linear-gradient(145deg, rgba(255,255,255,.78), rgba(229,238,249,.62)) !important;
+      border-color: rgba(39,68,103,.11) !important;
+      color: var(--label-1) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.96), 0 6px 18px rgba(60,86,117,.08) !important;
+      text-shadow: none !important;
+    }
+
+    html[data-theme="light"] .compare-match-toggle[aria-expanded="true"],
+    html[data-theme="light"] .compare-match-toggle[aria-expanded="true"]:focus,
+    html[data-theme="light"] .compare-match-toggle[aria-expanded="true"]:active {
+      background: rgba(248,251,255,.78) !important;
+      border-color: rgba(96,117,145,.22) !important;
+      color: inherit !important;
+      box-shadow: none !important;
+    }
+  </style>
+
+
+
+  <style id="unified-expanded-surfaces">
+    /*
+      Rozwijane elementy tworzą jedną kartę. Nagłówek i treść nie mają
+      oddzielnych teł, ramek, cieni ani zaokrągleń na styku.
+    */
+
+    /* Publiczne karty meczów */
+    .match-card.expanded {
+      overflow: hidden !important;
+      isolation: isolate;
+      background: var(--glass-1) !important;
+      border-color: var(--border-1) !important;
+      box-shadow: var(--shadow-sm), var(--hl), var(--shadow-glow) !important;
+    }
+    .match-card.expanded > button:first-child,
+    .match-card.expanded > button:first-child:hover,
+    .match-card.expanded > button:first-child:focus,
+    .match-card.expanded > button:first-child:active {
+      border-radius: 0 !important;
+      border: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      color: inherit !important;
+    }
+    .match-card.expanded > div:last-child {
+      margin-top: 0 !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      -webkit-mask-image: none !important;
+              mask-image: none !important;
+    }
+
+    /* Edytor meczu w panelu administratora */
+    .admin-match-card.expanded {
+      overflow: hidden !important;
+      isolation: isolate;
+      background: var(--glass-1) !important;
+      border-color: var(--border-1) !important;
+      box-shadow: var(--shadow-sm), var(--hl), var(--shadow-glow) !important;
+    }
+    .admin-match-card.expanded > .admin-match-summary-button,
+    .admin-match-card.expanded > .admin-match-summary-button:hover,
+    .admin-match-card.expanded > .admin-match-summary-button:focus,
+    .admin-match-card.expanded > .admin-match-summary-button:active {
+      border-radius: 0 !important;
+      border: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      color: inherit !important;
+    }
+    .admin-match-card.expanded > .admin-match-details {
+      margin-top: 0 !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      -webkit-mask-image: none !important;
+              mask-image: none !important;
+    }
+
+    /* Profil użytkownika: wiersz profilu i przyciski akcji są jedną kartą */
+    .profile-choice-shell.is-open {
+      overflow: hidden !important;
+      isolation: isolate;
+      border: 1px solid rgba(255,255,255,.13) !important;
+      border-radius: 30px !important;
+      background:
+        radial-gradient(circle at 22% -20%, rgba(255,255,255,.11), transparent 45%),
+        linear-gradient(145deg, rgba(255,255,255,.080), rgba(255,255,255,.030)) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.075), 0 2px 8px rgba(0,0,0,.10) !important;
+    }
+    .profile-choice-shell.is-open .profile-choice-trigger,
+    .profile-choice-shell.is-open .profile-choice-trigger:hover,
+    .profile-choice-shell.is-open .profile-choice-trigger:focus,
+    .profile-choice-shell.is-open .profile-choice-trigger:active,
+    .profile-choice-shell.is-open .profile-choice-actions {
+      width: 100% !important;
+      margin: 0 !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      color: rgba(235,241,255,.72) !important;
+      text-shadow: none !important;
+      -webkit-mask-image: none !important;
+              mask-image: none !important;
+    }
+    .profile-choice-shell.is-open .profile-choice-actions {
+      padding: 10px !important;
+    }
+
+    /* Ranking: „Rozkład punktów” jest jedną rozwijaną kapsułą */
+    .leaderboard-phase-details {
+      overflow: hidden !important;
+      isolation: isolate;
+      border: 1px solid rgba(255,255,255,.14) !important;
+      border-radius: 18px !important;
+      background:
+        radial-gradient(circle at 18% -24%, rgba(255,255,255,.14), transparent 42%),
+        linear-gradient(145deg, rgba(28,37,56,.78), rgba(11,16,28,.62)) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.10), 0 8px 18px rgba(0,0,0,.14) !important;
+    }
+    .leaderboard-phase-details > .leaderboard-phase-summary,
+    .leaderboard-phase-details > .leaderboard-phase-summary:hover,
+    .leaderboard-phase-details > .leaderboard-phase-summary:focus,
+    .leaderboard-phase-details > .leaderboard-phase-summary:active,
+    .leaderboard-phase-details[open] > .leaderboard-phase-summary,
+    .leaderboard-phase-details[open] > .leaderboard-phase-summary:hover,
+    .leaderboard-phase-details[open] > .leaderboard-phase-summary:focus,
+    .leaderboard-phase-details[open] > .leaderboard-phase-summary:active {
+      border: 0 !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      color: var(--label-2) !important;
+      transform: none !important;
+    }
+    .leaderboard-phase-details > .leaderboard-phase-content {
+      margin: 0 !important;
+      padding: 2px 13px 12px !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+
+    /* Porównanie: przycisk rozwijania i lista typów pozostają treścią tej samej karty */
+    .compare-match-toggle[aria-expanded="true"],
+    .compare-match-toggle[aria-expanded="true"]:hover,
+    .compare-match-toggle[aria-expanded="true"]:focus,
+    .compare-match-toggle[aria-expanded="true"]:active {
+      margin-bottom: 0 !important;
+      border-color: transparent !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      color: inherit !important;
+      transform: none !important;
+    }
+    .compare-match-toggle[aria-expanded="true"] + .compare-player-list {
+      margin-top: 0 !important;
+      padding-top: 8px !important;
+      border-top: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+
+    /* Jasny motyw */
+    html[data-theme="light"] .match-card.expanded,
+    html[data-theme="light"] .admin-match-card.expanded {
+      background: var(--glass-1) !important;
+      border-color: rgba(39,68,103,.11) !important;
+      box-shadow: var(--shadow-sm), var(--hl), var(--shadow-glow) !important;
+    }
+    html[data-theme="light"] .profile-choice-shell.is-open {
+      border-color: rgba(39,68,103,.11) !important;
+      background: linear-gradient(145deg, rgba(255,255,255,.78), rgba(229,238,249,.62)) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.96), 0 6px 18px rgba(60,86,117,.08) !important;
+    }
+    html[data-theme="light"] .profile-choice-shell.is-open .profile-choice-trigger,
+    html[data-theme="light"] .profile-choice-shell.is-open .profile-choice-trigger:hover,
+    html[data-theme="light"] .profile-choice-shell.is-open .profile-choice-trigger:focus,
+    html[data-theme="light"] .profile-choice-shell.is-open .profile-choice-trigger:active,
+    html[data-theme="light"] .profile-choice-shell.is-open .profile-choice-actions {
+      background: transparent !important;
+      border: 0 !important;
+      box-shadow: none !important;
+      color: var(--label-1) !important;
+    }
+    html[data-theme="light"] .leaderboard-phase-details {
+      border-color: rgba(117,145,181,.22) !important;
+      background: linear-gradient(145deg, rgba(239,245,251,.98), rgba(207,220,235,.94)) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.92), 0 4px 12px rgba(54,80,111,.10) !important;
+    }
+    html[data-theme="light"] .leaderboard-phase-details > .leaderboard-phase-summary,
+    html[data-theme="light"] .leaderboard-phase-details > .leaderboard-phase-summary:hover,
+    html[data-theme="light"] .leaderboard-phase-details > .leaderboard-phase-summary:focus,
+    html[data-theme="light"] .leaderboard-phase-details > .leaderboard-phase-summary:active,
+    html[data-theme="light"] .leaderboard-phase-details[open] > .leaderboard-phase-summary,
+    html[data-theme="light"] .leaderboard-phase-details[open] > .leaderboard-phase-summary:hover,
+    html[data-theme="light"] .leaderboard-phase-details[open] > .leaderboard-phase-summary:focus,
+    html[data-theme="light"] .leaderboard-phase-details[open] > .leaderboard-phase-summary:active {
+      background: transparent !important;
+      border: 0 !important;
+      box-shadow: none !important;
+      color: #5f7188 !important;
+      -webkit-text-fill-color: #5f7188 !important;
+    }
+    html[data-theme="light"] .leaderboard-phase-details[open] > .leaderboard-phase-summary * {
+      color: #5f7188 !important;
+      -webkit-text-fill-color: #5f7188 !important;
+    }
+    html[data-theme="light"] .compare-match-toggle[aria-expanded="true"],
+    html[data-theme="light"] .compare-match-toggle[aria-expanded="true"]:hover,
+    html[data-theme="light"] .compare-match-toggle[aria-expanded="true"]:focus,
+    html[data-theme="light"] .compare-match-toggle[aria-expanded="true"]:active {
+      border-color: transparent !important;
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+  </style>
+
 </head>
 <body>
   <div id="loading">
@@ -8990,6 +9771,7 @@ const MatchCard = React.memo(function MatchCard({
     away = teams[match.awayTeamId];
   const teamsAssigned = !!(home && away);
   const phaseLocked = !!(phaseLocks && phaseLocks[match.phase]);
+  const comparisonVisible = !!(phaseLocks && phaseLocks.compareVisible);
   const locked = !!result || phaseLocked;
   const lockReason = result ? 'wynik' : 'faza zablokowana przez admina';
   const activePl = players && players.find && players.find(p => p.id === activePlayerId);
@@ -9050,12 +9832,12 @@ const MatchCard = React.memo(function MatchCard({
   return /*#__PURE__*/React.createElement("div", {
     className: `match-card${expanded ? ' expanded' : ''}`,
     style: {
-      background: expanded ? 'var(--glass-2)' : 'var(--glass-1)',
-      border: expanded ? '1px solid var(--border-2)' : '1px solid var(--border-1)',
+      background: 'var(--glass-1)',
+      border: '1px solid var(--border-1)',
       borderRadius: 30,
       overflow: 'hidden',
       transition: 'background .18s, border-color .18s',
-      boxShadow: expanded ? 'var(--shadow-md), var(--hl2)' : 'var(--shadow-sm), var(--hl)'
+      boxShadow: 'var(--shadow-sm), var(--hl)'
     }
   }, /*#__PURE__*/React.createElement("button", {
     type: "button",
@@ -9219,13 +10001,13 @@ const MatchCard = React.memo(function MatchCard({
       background: "var(--bg-1)"
     }
   }, !activePlayerId && /*#__PURE__*/React.createElement("div", {
-    className: "text-center text-sm text-stone-600 bg-amber-50 border border-amber-200 rounded-lg p-3"
+    className: "text-center text-sm text-stone-600 bg-amber-50 border border-amber-200 rounded-lg p-3 app-note app-note--warning app-note--compact app-note--center"
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "alert",
     size: 16,
     className: "inline mr-1"
   }), "Wybierz uczestnika na g\xF3rze ekranu"), activePlayerId && !teamsAssigned && /*#__PURE__*/React.createElement("div", {
-    className: "text-center text-sm text-stone-600 bg-stone-100 border border-stone-200 rounded-lg p-3"
+    className: "text-center text-sm text-stone-600 bg-stone-100 border border-stone-200 rounded-lg p-3 app-note app-note--info app-note--compact app-note--center"
   }, "Dru\u017Cyny tego meczu nie zosta\u0142y jeszcze przypisane przez admina."), activePlayerId && teamsAssigned && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "my-3"
   }, /*#__PURE__*/React.createElement("div", {
@@ -9336,11 +10118,8 @@ const MatchCard = React.memo(function MatchCard({
   })))), needsPen && /*#__PURE__*/React.createElement("div", {
     className: "bg-amber-50 border border-amber-200 rounded-lg p-3 mb-3"
   }, /*#__PURE__*/React.createElement("p", {
-    className: "text-xs font-semibold text-amber-900 mb-2 flex items-center gap-1.5"
-  }, /*#__PURE__*/React.createElement(Icon, {
-    name: "sparkles",
-    size: 14
-  }), "W pucharach nie ma remis\xF3w \u2014 kto wygra karne?"), /*#__PURE__*/React.createElement("div", {
+    className: "text-xs font-semibold text-amber-900 mb-2 text-center"
+  }, "Kto wygra seri\u0119 rzut\xF3w karnych?"), /*#__PURE__*/React.createElement("div", {
     className: "flex gap-2"
   }, ['home', 'away'].map(side => {
     const t = side === 'home' ? home : away;
@@ -9379,7 +10158,7 @@ const MatchCard = React.memo(function MatchCard({
       fontWeight: 800
     }
   }, myPoints > 0 ? `+${myPoints} pkt` : '0 pkt')))), phaseLocked && !result && /*#__PURE__*/React.createElement("div", {
-    className: "text-center text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg p-3 flex items-center justify-center gap-2"
+    className: "text-center text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg p-3 flex items-center justify-center gap-2 app-note app-note--danger app-note--compact app-note--center"
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "lock",
     size: 16
@@ -9411,7 +10190,7 @@ const MatchCard = React.memo(function MatchCard({
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "save",
     size: 16
-  }), prediction ? 'Zaktualizuj typ' : 'Zapisz typ')), locked && allPredictions && players && /*#__PURE__*/React.createElement("div", {
+  }), prediction ? 'Zaktualizuj typ' : 'Zapisz typ')), locked && comparisonVisible && allPredictions && players && /*#__PURE__*/React.createElement("div", {
     className: "prediction-list-wrap mt-4 pt-3 border-t border-stone-200"
   }, /*#__PURE__*/React.createElement("p", {
     className: "prediction-list-title text-[10px] uppercase tracking-wider font-bold text-stone-500 mb-2"
@@ -9615,7 +10394,7 @@ function MatchesView({
     onClick: () => setVisibleCount(count => count + 18),
     className: "selection-tile w-full rounded-xl px-4 py-3 text-sm font-semibold"
   }, "Poka\u017C kolejne mecze (", filtered.length - visibleCount, ")"), filtered.length === 0 && /*#__PURE__*/React.createElement("div", {
-    className: "text-center text-stone-500 py-12"
+    className: "text-center text-stone-500 py-12 app-note app-note--info app-note--center"
   }, "Brak mecz\xF3w dla wybranych filtr\xF3w"));
 }
 
@@ -9696,12 +10475,12 @@ function SpecialsView({
   const myScores = useMemo(() => scoreSpecials(mine, specialResults), [mine, specialResults, scoringSettings]);
   const hasResults = !!(specialResults?.champion || specialResults?.topScorer || Object.keys(specialResults?.groupOrders || {}).length > 0);
   if (!activePlayerId) return /*#__PURE__*/React.createElement("div", {
-    className: "text-center text-sm text-stone-600 bg-amber-50 border border-amber-200 rounded-lg p-4 mt-4"
+    className: "text-center text-sm text-stone-600 bg-amber-50 border border-amber-200 rounded-lg p-4 mt-4 app-note app-note--warning app-note--center"
   }, "Wybierz uczestnika na g\xF3rze ekranu");
   return /*#__PURE__*/React.createElement("div", {
     className: "specials-view space-y-4"
   }, (tournamentLocked || specialsLocked) && /*#__PURE__*/React.createElement("div", {
-    className: "bg-[#0d1b5e] text-white rounded-lg p-3 text-sm flex items-center gap-2 mb-3"
+    className: "bg-[#0d1b5e] text-white rounded-lg p-3 text-sm flex items-center gap-2 mb-3 app-note app-note--danger app-note--compact"
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "lock",
     size: 16,
@@ -9850,7 +10629,7 @@ function SpecialsView({
   }))), !(tournamentLocked || specialsLocked) && /*#__PURE__*/React.createElement("div", {
     className: "space-y-2 mt-2"
   }, validErr && /*#__PURE__*/React.createElement("div", {
-    className: "bg-red-50 border-2 border-red-400 rounded-xl p-3 flex items-start gap-2"
+    className: "bg-red-50 border-2 border-red-400 rounded-xl p-3 flex items-start gap-2 app-note app-note--danger"
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "alert",
     size: 19,
@@ -9947,7 +10726,7 @@ function SpecialsAllView({
   return /*#__PURE__*/React.createElement("div", {
     className: "allspecials-view space-y-3"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "bg-blue-50 border border-blue-200 rounded-xl p-3 text-xs text-blue-900 allspecials-note"
+    className: "bg-blue-50 border border-blue-200 rounded-xl p-3 text-xs text-blue-900 allspecials-note app-note app-note--info app-note--compact"
   }, "Typy specjalne wszystkich uczestnik\xF3w \u2014 widoczne dla ka\u017Cdego."), /*#__PURE__*/React.createElement("div", {
     className: "bg-white border border-stone-200 rounded-xl overflow-hidden table-card"
   }, /*#__PURE__*/React.createElement("div", {
@@ -10385,7 +11164,7 @@ function MyPredictionsView({
     }).filter(r => r.prediction);
   }, [activePlayerId, matches, predictions, results]);
   if (!activePlayerId) return /*#__PURE__*/React.createElement("div", {
-    className: "text-center text-sm text-stone-600 bg-amber-50 border border-amber-200 rounded-lg p-4 mt-4"
+    className: "text-center text-sm text-stone-600 bg-amber-50 border border-amber-200 rounded-lg p-4 mt-4 app-note app-note--warning app-note--center"
   }, "Wybierz uczestnika na g\xF3rze ekranu");
   const totalPts = rows.reduce((s, r) => s + (r.points || 0), 0);
   return /*#__PURE__*/React.createElement("div", {
@@ -10412,7 +11191,7 @@ function MyPredictionsView({
   }, totalPts), /*#__PURE__*/React.createElement("div", {
     className: "text-[10px] uppercase text-stone-300"
   }, "Pkt")))), rows.length === 0 && /*#__PURE__*/React.createElement("div", {
-    className: "text-center text-stone-500 py-12 bg-white border border-stone-200 rounded-lg"
+    className: "text-center text-stone-500 py-12 bg-white border border-stone-200 rounded-lg app-note app-note--info app-note--center"
   }, "Nie masz jeszcze typ\xF3w. Przejd\u017A do zak\u0142adki ", /*#__PURE__*/React.createElement("strong", null, "Mecze"), "."), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
@@ -10569,7 +11348,7 @@ function CompareView({
     return [...base].sort((a, b) => (PHASE_RANK[a.phase] ?? 99) - (PHASE_RANK[b.phase] ?? 99) || a.num - b.num);
   }, [matches, phaseFilter, sortNearest, now]);
   if (players.length === 0) return /*#__PURE__*/React.createElement("div", {
-    className: "text-center text-stone-500 py-12"
+    className: "text-center text-stone-500 py-12 app-note app-note--info app-note--center"
   }, "Dodaj graczy, \u017Ceby por\xF3wnywa\u0107 typy.");
   return /*#__PURE__*/React.createElement("div", {
     className: "compare-view space-y-3"
@@ -10884,7 +11663,7 @@ function PhaseLockPanel({
   return /*#__PURE__*/React.createElement("div", {
     className: "space-y-3"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900"
+    className: "bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900 app-note app-note--warning"
   }, /*#__PURE__*/React.createElement("p", {
     className: "font-bold mb-1"
   }, "Jak dzia\u0142aj\u0105 blokady i prze\u0142\u0105czniki?"), /*#__PURE__*/React.createElement("p", null, "Zablokowanie fazy uniemo\u017Cliwia graczom typowanie. Prze\u0142\u0105cznik ", /*#__PURE__*/React.createElement("strong", null, "Por\xF3wnanie"), " dzia\u0142a odwrotnie \u2014 w\u0142\u0105czenie go ", /*#__PURE__*/React.createElement("em", null, "udost\u0119pnia"), " zak\u0142adki Por\xF3wnanie i Typy wszystkich graczom. Zr\xF3b to ", /*#__PURE__*/React.createElement("strong", null, "przed pierwszym meczem rundy"), " \u2014 np. 24h wcze\u015Bniej. Blokada ", /*#__PURE__*/React.createElement("em", null, "nie"), " wp\u0142ywa na punktacj\u0119 (wyniki wpisuje admin niezale\u017Cnie).")), PHASE_DEFS.map(({
@@ -10918,6 +11697,7 @@ function PhaseLockPanel({
       className: `text-[11px] mt-0.5 font-medium ${isLocked ? 'text-red-700' : 'text-[#0d1b5e]'}`
     }, isLocked ? 'Zablokowane' : 'Pierwszy mecz: ', !isLocked && fmtDate(firstDate)))), /*#__PURE__*/React.createElement("button", {
       onClick: () => toggle(key),
+      className: `phase-lock-toggle ${isLocked ? key === 'compareVisible' ? 'is-compare-on' : 'is-locked-on' : 'is-off'}`,
       style: {
         width: '48px',
         height: '26px',
@@ -10955,7 +11735,7 @@ function PhaseLockPanel({
     onClick: handleSave,
     className: "flex-1"
   }, saved ? 'Zapisano!' : 'Zapisz blokady')), /*#__PURE__*/React.createElement("div", {
-    className: "bg-stone-50 border border-stone-200 rounded-xl p-3 text-xs text-stone-600 space-y-1"
+    className: "bg-stone-50 border border-stone-200 rounded-xl p-3 text-xs text-stone-600 space-y-1 app-note app-note--info"
   }, /*#__PURE__*/React.createElement("p", {
     className: "font-bold text-stone-800"
   }, "Sugerowany harmonogram blokad:"), /*#__PURE__*/React.createElement("p", null, "\u2022 ", /*#__PURE__*/React.createElement("strong", null, "Por\xF3wnanie"), " \u2014 w\u0142\u0105cz kiedy chcesz (np. po zako\u0144czeniu fazy grupowej)"), /*#__PURE__*/React.createElement("p", null, "\u2022 ", /*#__PURE__*/React.createElement("strong", null, "Typy specjalne"), " \u2014 zablokuj do 10.06.2026 wiecz\xF3r (dzie\u0144 przed M1)"), /*#__PURE__*/React.createElement("p", null, "\u2022 ", /*#__PURE__*/React.createElement("strong", null, "Faza grupowa"), " \u2014 zablokuj do 10.06.2026 wiecz\xF3r (dzie\u0144 przed M1)"), /*#__PURE__*/React.createElement("p", null, "\u2022 ", /*#__PURE__*/React.createElement("strong", null, "1/16 fina\u0142u"), " \u2014 zablokuj do 27.06.2026 wiecz\xF3r (dzie\u0144 przed M73)"), /*#__PURE__*/React.createElement("p", null, "\u2022 ", /*#__PURE__*/React.createElement("strong", null, "1/8 fina\u0142u"), " \u2014 zablokuj do 03.07.2026 wiecz\xF3r (dzie\u0144 przed M89)"), /*#__PURE__*/React.createElement("p", null, "\u2022 ", /*#__PURE__*/React.createElement("strong", null, "\u0106wier\u0107fina\u0142y"), " \u2014 zablokuj do 08.07.2026 wiecz\xF3r"), /*#__PURE__*/React.createElement("p", null, "\u2022 ", /*#__PURE__*/React.createElement("strong", null, "P\xF3\u0142fina\u0142y"), " \u2014 zablokuj do 13.07.2026 wiecz\xF3r"), /*#__PURE__*/React.createElement("p", null, "\u2022 ", /*#__PURE__*/React.createElement("strong", null, "Mecz o 3. m."), " \u2014 zablokuj do 17.07.2026 wiecz\xF3r"), /*#__PURE__*/React.createElement("p", null, "\u2022 ", /*#__PURE__*/React.createElement("strong", null, "Fina\u0142"), " \u2014 zablokuj do 18.07.2026 wiecz\xF3r")));
@@ -11281,7 +12061,7 @@ function AdminMatchRow({
     name: "save",
     size: 14
   }), result ? 'Zaktualizuj' : 'Zapisz wynik'))) : /*#__PURE__*/React.createElement("div", {
-    className: "text-sm text-stone-600 bg-stone-100 rounded-lg p-3 text-center"
+    className: "text-sm text-stone-600 bg-stone-100 rounded-lg p-3 text-center app-note app-note--info app-note--compact app-note--center"
   }, "Najpierw przypisz dru\u017Cyny do meczu.")));
 }
 function adminFlagCode(value, teamName = '') {
@@ -11491,7 +12271,7 @@ function AdminScoringPanel({
   return /*#__PURE__*/React.createElement("div", {
     className: "space-y-3"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900"
+    className: "bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900 app-note app-note--warning"
   }, "Zapisanie zmian natychmiast przeliczy ca\u0142\u0105 klasyfikacj\u0119 na podstawie wszystkich dotychczasowych wynik\xF3w i typ\xF3w."), /*#__PURE__*/React.createElement("section", {
     className: "bg-white border border-stone-200 rounded-xl p-4"
   }, /*#__PURE__*/React.createElement("h4", {
@@ -11582,7 +12362,7 @@ function AdminScoringPanel({
     value: draft.mvp,
     onChange: v => setFlat('mvp', v)
   }))), saved && /*#__PURE__*/React.createElement("div", {
-    className: "bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-center text-sm font-semibold",
+    className: "bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-center text-sm font-semibold app-note app-note--success app-note--compact app-note--center",
     style: {
       color: '#7af0a1'
     }
@@ -11811,7 +12591,7 @@ function AdminPanel({
   }))), tab === 'teams' && /*#__PURE__*/React.createElement("div", {
     className: "space-y-3"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-900"
+    className: "bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-900 app-note app-note--info app-note--compact"
   }, "Wpisz nazw\u0119 dru\u017Cyny oraz dwuliterowy kod kraju, np. pl, de lub fr."), GROUPS.map(g => /*#__PURE__*/React.createElement("div", {
     key: g,
     className: "bg-white border border-stone-200 rounded-xl p-3"
@@ -11941,7 +12721,7 @@ function AdminPanel({
   }), tab === 'players' && /*#__PURE__*/React.createElement("div", {
     className: "space-y-3"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900"
+    className: "bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900 app-note app-note--warning"
   }, "Usuni\u0119cie gracza wymaga ponownego wpisania has\u0142a administratora. Gracz i wszystkie jego typy zostan\u0105 skasowane bez mo\u017Cliwo\u015Bci cofni\u0119cia."), players.length === 0 && /*#__PURE__*/React.createElement("p", {
     className: "text-center text-stone-500 text-sm py-8"
   }, "Brak graczy."), players.map(p => /*#__PURE__*/React.createElement(AdminPlayerRow, {
@@ -12014,7 +12794,7 @@ function AdminPanel({
     },
     className: "w-full"
   }, "Zaimportuj")), /*#__PURE__*/React.createElement("div", {
-    className: "bg-red-50 border border-red-200 rounded-xl p-4"
+    className: "bg-red-50 border border-red-200 rounded-xl p-4 app-note app-note--danger app-note--with-actions"
   }, /*#__PURE__*/React.createElement("h4", {
     className: "font-display text-base mb-2 text-red-900"
   }, "Strefa niebezpieczna"), /*#__PURE__*/React.createElement("p", {
@@ -12185,7 +12965,7 @@ function LoginModal({
         setSelected(prev => prev === p.id ? '' : p.id);
         setErr('');
       },
-      className: `selection-tile player-choice profile-choice-trigger${isOpen ? ' is-selected' : ''}`,
+      className: "selection-tile player-choice profile-choice-trigger",
       style: {
         width: '100%',
         display: 'flex',
@@ -12450,15 +13230,8 @@ function PlayersManager({
   }, /*#__PURE__*/React.createElement("div", {
     className: "space-y-4"
   }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      background: 'rgba(255,200,50,.1)',
-      border: '1px solid rgba(255,200,50,.3)',
-      borderRadius: 18,
-      padding: 12,
-      fontSize: 12,
-      color: 'rgba(255,255,255,.8)'
-    }
-  }, "Zapami\u0119taj PIN \u2014 nie da si\u0119 go odzyska\u0107. Bez PIN-u nie b\u0119dziesz m\xF3g\u0142 zapisywa\u0107 typ\xF3w."), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    className: "app-note app-note--warning app-note--compact"
+  }, "Zapami\u0119taj PIN \u2014 nie da si\u0119 go odzyska\u0107."), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "text-xs font-semibold text-stone-600 block mb-1"
   }, "Imi\u0119 i nazwisko"), /*#__PURE__*/React.createElement("input", {
     value: newName,
@@ -12750,8 +13523,6 @@ function BracketTree({
   return /*#__PURE__*/React.createElement("section", {
     className: "bracket-section bracket-section-unified"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "bracket-section-title bracket-section-title-instruction"
-  }, /*#__PURE__*/React.createElement("span", null, "Przesu\u0144 poziomo, aby zobaczy\u0107 kolejne rundy")), /*#__PURE__*/React.createElement("div", {
     className: "bracket-scroll"
   }, /*#__PURE__*/React.createElement("div", {
     className: "bracket-board bracket-board-unified",
@@ -13420,7 +14191,7 @@ function Mundial2026() {
   }), "Zainstaluj aplikacj\u0119"), /*#__PURE__*/React.createElement("p", null, "Dodaj do ekranu g\u0142\xF3wnego i typuj jak w natywnej apce!")), /*#__PURE__*/React.createElement("button", {
     onClick: doInstall
   }, "Zainstaluj")), safePlayers.length === 0 && activeTab !== 'admin' && /*#__PURE__*/React.createElement("div", {
-    className: "bg-amber-50 border border-amber-300 rounded-xl p-5 mb-4 text-center"
+    className: "bg-amber-50 border border-amber-300 rounded-xl p-5 mb-4 text-center app-note app-note--warning app-note--with-actions app-note--center"
   }, /*#__PURE__*/React.createElement(NavIcon, {
     name: "users",
     size: 32,
