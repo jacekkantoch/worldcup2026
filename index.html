@@ -4475,6 +4475,119 @@
     .bottom-nav button { font-size: 9px; }
     @media (max-width: 420px) { .bottom-nav button { font-size: 8.5px; } }
     @media (max-width: 360px) { .bottom-nav button { font-size: 8px; } }
+
+    /* ══════════════════════════════════════════════════════
+       SMOOTH SWITCH & NAV ANIMATIONS
+    ══════════════════════════════════════════════════════ */
+
+    /* ── Przełącznik motywu: sprężysty suwak ── */
+    .theme-switch-thumb {
+      transition:
+        transform  .46s cubic-bezier(.34,1.56,.64,1),
+        background .30s ease,
+        box-shadow .30s ease !important;
+      will-change: transform;
+    }
+
+    /* Wciśnięcie: zgniata kciuk */
+    .theme-toggle-btn.theme-switch:active .theme-switch-thumb {
+      transition: transform .10s ease !important;
+    }
+    .theme-toggle-btn.theme-switch:active.is-dark .theme-switch-thumb {
+      transform: translateX(0) scale(.80) !important;
+    }
+    .theme-toggle-btn.theme-switch:active.is-light .theme-switch-thumb {
+      transform: translateX(38px) scale(.80) !important;
+    }
+    @media (max-width: 420px) {
+      .theme-toggle-btn.theme-switch:active.is-light .theme-switch-thumb {
+        transform: translateX(36px) scale(.80) !important;
+      }
+    }
+
+    /* Ikona w kciuku: animacja pop-in przy zmianie motywu */
+    @keyframes icon-swap-in {
+      0%   { transform: scale(.30) rotate(-25deg); opacity: 0; }
+      65%  { transform: scale(1.22) rotate(8deg);  opacity: 1; }
+      100% { transform: scale(1)   rotate(0deg);   opacity: 1; }
+    }
+    .theme-switch.is-dark  .theme-switch-thumb svg {
+      animation: icon-swap-in .42s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    .theme-switch.is-light .theme-switch-thumb svg {
+      animation: icon-swap-in .42s cubic-bezier(.34,1.56,.64,1) both;
+    }
+
+    /* Boczne ikony (słońce/księżyc w torze): pulsują gdy aktywne */
+    .theme-switch-icon {
+      transition: color .22s ease, opacity .22s ease, transform .26s cubic-bezier(.34,1.56,.64,1) !important;
+    }
+    .theme-switch.is-dark  .theme-switch-icon-moon {
+      transform: translateY(-50%) scale(1.22) !important;
+    }
+    .theme-switch.is-light .theme-switch-icon-sun {
+      transform: translateY(-50%) scale(1.22) !important;
+    }
+    .theme-switch.is-dark  .theme-switch-icon-sun  {
+      transform: translateY(-50%) scale(.85) !important;
+    }
+    .theme-switch.is-light .theme-switch-icon-moon {
+      transform: translateY(-50%) scale(.85) !important;
+    }
+
+    /* Tor: subtelna zmiana blasku */
+    .theme-toggle-btn.theme-switch {
+      transition: background .30s ease, border-color .30s ease,
+                  box-shadow .30s ease, opacity .12s ease !important;
+    }
+
+    /* ── Dolna nawigacja: sprężysta kropla ── */
+    .nav-droplet {
+      transition:
+        left      .48s cubic-bezier(.34,1.56,.64,1),
+        width     .48s cubic-bezier(.34,1.56,.64,1),
+        transform .20s cubic-bezier(.34,1.56,.64,1) !important;
+      will-change: left, width, transform;
+    }
+    .nav-droplet.dragging {
+      transition: width .13s ease, transform .13s ease !important;
+    }
+
+    /* Squish: klasa dodawana przez JS na każde kliknięcie zakładki */
+    @keyframes droplet-squish {
+      0%   { transform: scale(1,    1); }
+      22%  { transform: scale(.78,  1.14); }
+      52%  { transform: scale(1.10, .92); }
+      76%  { transform: scale(.97,  1.03); }
+      100% { transform: scale(1,    1); }
+    }
+    .nav-droplet.squishing {
+      animation: droplet-squish .46s cubic-bezier(.34,1.56,.64,1) both !important;
+    }
+
+    /* Aktywna ikona zakładki: sprężysty skok w górę */
+    .bottom-nav button svg.nav-icon {
+      transition: transform .32s cubic-bezier(.34,1.56,.64,1),
+                  opacity   .20s ease !important;
+      transform: scale(1) translateY(0) !important;
+    }
+    .bottom-nav button.active svg.nav-icon {
+      transform: scale(1.20) translateY(-2px) !important;
+    }
+
+    /* Etykieta aktywnej zakładki: fade-in */
+    .bottom-nav button .nav-label {
+      transition: opacity .20s ease, color .20s ease !important;
+    }
+    .bottom-nav button:not(.active) .nav-label { opacity: .75 !important; }
+    .bottom-nav button.active .nav-label { opacity: 1 !important; }
+
+    /* Tap feedback na przyciskach nav */
+    .bottom-nav button:not(.active):active {
+      transform: scale(.86) !important;
+      transition: transform .09s ease !important;
+    }
+
 </style>
 </head>
 <body>
@@ -10964,6 +11077,12 @@ function BottomNav({
       e.preventDefault();
       e.stopPropagation();
       return;
+    }
+    const _dropEl = trackRef.current && trackRef.current.querySelector('.nav-droplet');
+    if (_dropEl) {
+      _dropEl.classList.remove('squishing');
+      void _dropEl.offsetWidth; // force reflow — restartuje animację
+      _dropEl.classList.add('squishing');
     }
     onSelect(tabKey);
   };
