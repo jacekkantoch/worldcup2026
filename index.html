@@ -5039,6 +5039,196 @@
       }
     }
 
+
+    /* Panel administratora: pełne napisy bez efektu zanikania. */
+    .admin-panel .truncate,
+    .admin-panel .admin-match-summary-teams,
+    .admin-panel .admin-score-team-name {
+      -webkit-mask-image: none !important;
+      mask-image: none !important;
+      text-overflow: clip !important;
+    }
+
+    .admin-panel .truncate {
+      overflow: visible !important;
+      white-space: normal !important;
+      overflow-wrap: anywhere;
+      word-break: normal;
+    }
+
+    .admin-panel .admin-match-summary-teams,
+    .admin-panel .admin-score-team-name {
+      overflow: visible !important;
+      white-space: normal !important;
+      overflow-wrap: anywhere;
+    }
+
+    /* Nazwy drużyn w wierszu meczu mogą przejść do następnej linii. */
+    .admin-panel .admin-match-summary-main,
+    .admin-panel .admin-match-summary-teams {
+      min-width: 0;
+    }
+
+    .admin-panel .admin-match-summary-teams > span {
+      max-width: 100%;
+      align-items: flex-start;
+    }
+
+    @media (max-width: 520px) {
+      .admin-panel .admin-match-summary-row {
+        align-items: flex-start !important;
+      }
+
+      .admin-panel .admin-match-summary-teams {
+        row-gap: 4px;
+      }
+    }
+
+
+    /* Wyrównanie przewijanych filtrów faz — oba rzędy zaczynają się
+       w tym samym miejscu i są lekko przesunięte w prawo. */
+    .phase-filter-panel .chip-scroll-row,
+    .admin-phase-filters .chip-scroll-row {
+      justify-content: flex-start !important;
+      padding-left: 36px !important;
+      padding-right: 28px !important;
+      scroll-padding-left: 36px !important;
+      scroll-padding-right: 28px !important;
+    }
+
+    @media (max-width: 520px) {
+      .phase-filter-panel .chip-scroll-row,
+      .admin-phase-filters .chip-scroll-row {
+        padding-left: 30px !important;
+        padding-right: 24px !important;
+        scroll-padding-left: 30px !important;
+        scroll-padding-right: 24px !important;
+      }
+    }
+
+
+    /* Delikatniejsze zanikanie w filtrach i dolnym menu. */
+    :root {
+      --horizontal-edge-fade: clamp(10px, 2.4vw, 16px) !important;
+      --overflow-fade-small: clamp(6px, 1.8vw, 10px) !important;
+    }
+
+    .chip-scroll-row,
+    .pill-scroll-safe,
+    .filters-sticky .overflow-x-auto {
+      -webkit-mask-image: linear-gradient(
+        to right,
+        transparent 0,
+        #000 var(--horizontal-edge-fade),
+        #000 calc(100% - var(--horizontal-edge-fade)),
+        transparent 100%
+      ) !important;
+      mask-image: linear-gradient(
+        to right,
+        transparent 0,
+        #000 var(--horizontal-edge-fade),
+        #000 calc(100% - var(--horizontal-edge-fade)),
+        transparent 100%
+      ) !important;
+    }
+
+    .bottom-nav .nav-label {
+      -webkit-mask-image: linear-gradient(
+        to right,
+        transparent 0,
+        #000 var(--overflow-fade-small),
+        #000 calc(100% - var(--overflow-fade-small)),
+        transparent 100%
+      ) !important;
+      mask-image: linear-gradient(
+        to right,
+        transparent 0,
+        #000 var(--overflow-fade-small),
+        #000 calc(100% - var(--overflow-fade-small)),
+        transparent 100%
+      ) !important;
+    }
+
+
+    /* Górny panel pozostaje zawsze na ekranie — tak jak dolne menu. */
+    .app-header {
+      position: fixed !important;
+      left: 50% !important;
+      right: auto !important;
+      transform: translateX(-50%) !important;
+      margin: 0 !important;
+      z-index: 70 !important;
+    }
+
+    /* Miejsce na stały nagłówek, aby nie zasłaniał treści strony. */
+    .app-content {
+      padding-top: 104px !important;
+    }
+
+    html:not(.is-standalone) .app-header {
+      top: 7px !important;
+      margin-top: 0 !important;
+    }
+
+    html.is-standalone .app-header {
+      top: calc(env(safe-area-inset-top, 0px) + 7px) !important;
+      margin-top: 0 !important;
+    }
+
+    @media (display-mode: standalone) {
+      .app-header {
+        top: calc(env(safe-area-inset-top, 0px) + 7px) !important;
+        margin-top: 0 !important;
+      }
+
+      .app-content {
+        padding-top: calc(104px + env(safe-area-inset-top, 0px)) !important;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .app-content {
+        padding-top: 96px !important;
+      }
+
+      html.is-standalone .app-content {
+        padding-top: calc(96px + env(safe-area-inset-top, 0px)) !important;
+      }
+    }
+
+
+    /* Kafelki rozkładu punktów — zaokrąglenia zgodne z resztą aplikacji. */
+    .leaderboard-category-card {
+      border-radius: 26px !important;
+      overflow: hidden;
+      background-clip: padding-box;
+    }
+
+    @media (max-width: 520px) {
+      .leaderboard-category-card {
+        border-radius: 23px !important;
+      }
+    }
+
+    @media (max-width: 370px) {
+      .leaderboard-category-card {
+        border-radius: 21px !important;
+      }
+    }
+
+
+    /* iPhone/Safari: brak automatycznego powiększania po wejściu w pole.
+       Safari powiększa formularz, gdy tekst pola ma mniej niż 16 px. */
+    @supports (-webkit-touch-callout: none) {
+      @media (max-width: 700px) {
+        input,
+        select,
+        textarea {
+          font-size: 16px !important;
+        }
+      }
+    }
+
 </style>
 </head>
 <body>
@@ -10251,7 +10441,7 @@ function AdminPanel({
     l: 'Dane'
   }];
   return /*#__PURE__*/React.createElement("div", {
-    className: "space-y-3"
+    className: "admin-panel space-y-3"
   }, /*#__PURE__*/React.createElement("div", {
     className: "admin-panel-banner bg-stone-900 text-white rounded-xl p-3 flex items-center justify-between"
   }, /*#__PURE__*/React.createElement("div", {
