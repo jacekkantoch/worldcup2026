@@ -5229,6 +5229,250 @@
       }
     }
 
+
+    /* ═══════════════════════════════════════════════════════════════
+       LIGHT MODE — poprawa stałego nagłówka i odstępów
+       Jasny motyw wcześniej przywracał position: sticky, przez co
+       nagłówek wracał do układu strony i powstawała duża pusta przestrzeń.
+    ═══════════════════════════════════════════════════════════════ */
+    html[data-theme="light"] .app-header {
+      position: fixed !important;
+      top: 7px !important;
+      left: 50% !important;
+      right: auto !important;
+      width: min(760px, calc(100% - 20px)) !important;
+      min-height: 64px !important;
+      margin: 0 !important;
+      transform: translateX(-50%) !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      z-index: 70 !important;
+    }
+
+    html[data-theme="light"] .app-header .logo {
+      display: flex !important;
+      flex: 1 1 auto !important;
+      align-items: center !important;
+      min-width: 0 !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+
+    html[data-theme="light"] .app-header .logo-icon,
+    html[data-theme="light"] .app-header .title-group,
+    html[data-theme="light"] .app-header .title-group h1,
+    html[data-theme="light"] .app-header .title-group small {
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+
+    html[data-theme="light"] .app-header .title-group h1,
+    html[data-theme="light"] .app-header .title-group small {
+      color: var(--label-1) !important;
+      -webkit-text-fill-color: var(--label-1) !important;
+    }
+
+    html[data-theme="light"] .app-header .player-row {
+      display: flex !important;
+      flex: 0 0 auto !important;
+      align-items: center !important;
+    }
+
+    /* Nagłówek jest fixed, więc nie zajmuje już miejsca w układzie.
+       Zostawiamy tylko jeden, kontrolowany odstęp nad treścią. */
+    html[data-theme="light"] .app-content {
+      padding-top: 96px !important;
+    }
+
+    html[data-theme="light"] .filters-sticky {
+      position: sticky !important;
+      top: 86px !important;
+      z-index: 20 !important;
+    }
+
+    html[data-theme="light"].is-standalone .app-header {
+      top: calc(env(safe-area-inset-top, 0px) + 7px) !important;
+    }
+
+    html[data-theme="light"].is-standalone .app-content {
+      padding-top: calc(96px + env(safe-area-inset-top, 0px)) !important;
+    }
+
+    html[data-theme="light"].is-standalone .filters-sticky {
+      top: calc(env(safe-area-inset-top, 0px) + 86px) !important;
+    }
+
+    @media (display-mode: standalone) {
+      html[data-theme="light"] .app-header {
+        top: calc(env(safe-area-inset-top, 0px) + 7px) !important;
+      }
+
+      html[data-theme="light"] .app-content {
+        padding-top: calc(96px + env(safe-area-inset-top, 0px)) !important;
+      }
+
+      html[data-theme="light"] .filters-sticky {
+        top: calc(env(safe-area-inset-top, 0px) + 86px) !important;
+      }
+    }
+
+    @media (max-width: 520px) {
+      html[data-theme="light"] .app-header {
+        width: calc(100% - 14px) !important;
+        min-height: 62px !important;
+      }
+
+      html[data-theme="light"] .app-content {
+        padding-top: 90px !important;
+      }
+
+      html[data-theme="light"] .filters-sticky {
+        top: 80px !important;
+      }
+
+      html[data-theme="light"].is-standalone .app-content {
+        padding-top: calc(90px + env(safe-area-inset-top, 0px)) !important;
+      }
+
+      html[data-theme="light"].is-standalone .filters-sticky {
+        top: calc(env(safe-area-inset-top, 0px) + 80px) !important;
+      }
+    }
+
+
+    /* Menu filtrów: zakładki wyrównane bliżej lewej krawędzi. */
+    .phase-filter-panel .chip-scroll-row,
+    .admin-phase-filters .chip-scroll-row {
+      justify-content: flex-start !important;
+      padding-left: 12px !important;
+      scroll-padding-left: 12px !important;
+    }
+
+    @media (max-width: 520px) {
+      .phase-filter-panel .chip-scroll-row,
+      .admin-phase-filters .chip-scroll-row {
+        padding-left: 10px !important;
+        scroll-padding-left: 10px !important;
+      }
+    }
+
+
+    /* ═══════════════════════════════════════════════════════════════
+       JEDNOLITE ZAOKRĄGLENIA
+       Wszystkie elementy mają bazowo 30 px. Przy elementach niższych
+       lub węższych przeglądarka automatycznie ogranicza promień do
+       połowy wymiaru, dzięki czemu powstaje pełna kapsułka lub okrąg.
+    ═══════════════════════════════════════════════════════════════ */
+    :root {
+      --radius-sm: 30px !important;
+      --radius-md: 30px !important;
+      --radius-lg: 30px !important;
+      --radius-xl: 30px !important;
+      --unified-radius: 30px;
+    }
+
+    .app-header,
+    .bottom-nav,
+    .nav-droplet,
+    .filters-sticky,
+    .glass,
+    .glass-strong,
+    .install-banner,
+    .match-card,
+    .admin-match-card,
+    .leaderboard-card,
+    .leaderboard-header,
+    .leaderboard-category-card,
+    .compare-match-card,
+    .selection-tile,
+    .login-modal-sheet,
+    .login-modal-compact-sheet,
+    .login-btn,
+    .players-btn,
+    .theme-toggle-btn,
+    .match-points-badge,
+    input,
+    select,
+    textarea,
+    button,
+    [role="button"],
+    .rounded,
+    .rounded-sm,
+    .rounded-md,
+    .rounded-lg,
+    .rounded-xl,
+    .rounded-2xl,
+    .rounded-3xl,
+    .rounded-full,
+    [class*="rounded-"],
+    [class~="rounded"] {
+      border-radius: var(--unified-radius) !important;
+    }
+
+    /* Elementy z osobno ustawionymi narożnikami również korzystają z 30 px. */
+    .rounded-t,
+    .rounded-b,
+    .rounded-l,
+    .rounded-r,
+    .rounded-tl,
+    .rounded-tr,
+    .rounded-bl,
+    .rounded-br,
+    [class*="rounded-t-"],
+    [class*="rounded-b-"],
+    [class*="rounded-l-"],
+    [class*="rounded-r-"],
+    [class*="rounded-tl-"],
+    [class*="rounded-tr-"],
+    [class*="rounded-bl-"],
+    [class*="rounded-br-"] {
+      border-radius: var(--unified-radius) !important;
+    }
+
+    /* Małe kwadraty, ikonki i kapsułki pozostają w pełni zaokrąglone.
+       999 px daje ten sam efekt co połowa ich wymiaru. */
+    .logo-icon,
+    .players-btn,
+    .theme-toggle-btn,
+    .match-points-badge,
+    .nav-droplet,
+    .rounded-full,
+    [aria-label*="Zamknij"],
+    [aria-label*="zamknij"] {
+      border-radius: 999px !important;
+    }
+
+
+    /* Ostateczne wymuszenie stałego nagłówka w obu motywach,
+       także po zmianie motywu bez przeładowania strony. */
+    html body .app-header,
+    html[data-theme="light"] body .app-header,
+    html[data-theme="dark"] body .app-header {
+      position: fixed !important;
+      inset-block-start: calc(env(safe-area-inset-top, 0px) + 7px) !important;
+      inset-inline-start: 50% !important;
+      inset-inline-end: auto !important;
+      top: calc(env(safe-area-inset-top, 0px) + 7px) !important;
+      left: 50% !important;
+      right: auto !important;
+      margin: 0 !important;
+      transform: translate3d(-50%, 0, 0) !important;
+      -webkit-transform: translate3d(-50%, 0, 0) !important;
+      z-index: 1000 !important;
+      will-change: transform;
+    }
+
+    html body .app-content {
+      padding-top: var(--fixed-header-content-offset, 96px) !important;
+    }
+
+    html body .filters-sticky {
+      top: var(--fixed-header-filter-offset, 82px) !important;
+    }
+
 </style>
 </head>
 <body>
@@ -11042,27 +11286,11 @@ function LoginModal({
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "unlock",
     size: 14
-  }), "Zaloguj"))), step === 'rename' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("button", {
-    onClick: () => {
-      setStep('pick');
-      setRenameErr('');
-    },
-    className: "text-xs text-stone-500 hover:text-stone-800 flex items-center gap-1"
-  }, /*#__PURE__*/React.createElement(Icon, {
-    name: "arrow",
-    size: 12,
-    style: {
-      transform: "rotate(180deg)"
-    }
-  }), "Wr\xF3\u0107"), /*#__PURE__*/React.createElement("div", {
+  }), "Zaloguj"))), step === 'rename' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "text-center py-2"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "w-14 h-14 rounded-full bg-[#e8ecf8] flex items-center justify-center text-2xl font-bold text-[#162570] mx-auto mb-2"
-  }, pl && pl.name.slice(0, 1).toUpperCase()), /*#__PURE__*/React.createElement("p", {
-    className: "text-xs text-stone-500"
-  }, "Zmiana nazwy dla: ", /*#__PURE__*/React.createElement("strong", null, pl && pl.name)), hasPinHash && /*#__PURE__*/React.createElement("p", {
-    className: "text-[11px] text-stone-500 mt-1"
-  }, "Aby zmieni\u0107 nazw\u0119, potwierd\u017A PIN tego u\u017Cytkownika.")), /*#__PURE__*/React.createElement("div", {
+    className: "w-14 h-14 rounded-full bg-[#e8ecf8] flex items-center justify-center text-2xl font-bold text-[#162570] mx-auto"
+  }, pl && pl.name.slice(0, 1).toUpperCase())), /*#__PURE__*/React.createElement("div", {
     className: "space-y-3"
   }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "text-xs font-semibold text-stone-600 block mb-1"
@@ -12346,6 +12574,65 @@ ReactDOM.createRoot(document.getElementById('root')).render(/*#__PURE__*/React.c
       Math.min(maxScrollLeft, row.scrollLeft + delta)
     );
   }, { passive: false });
+})();
+</script>
+
+
+<script>
+/* Safari/iOS potrafi po zmianie motywu ponownie przeliczyć pozycję
+   elementu z backdrop-filter. Wymuszamy fixed także bez przeładowania. */
+(function () {
+  function pinAppHeader() {
+    var header = document.querySelector('.app-header');
+    if (!header) return false;
+
+    header.style.setProperty('position', 'fixed', 'important');
+    header.style.setProperty('top', 'calc(env(safe-area-inset-top, 0px) + 7px)', 'important');
+    header.style.setProperty('left', '50%', 'important');
+    header.style.setProperty('right', 'auto', 'important');
+    header.style.setProperty('margin', '0', 'important');
+    header.style.setProperty('transform', 'translate3d(-50%, 0, 0)', 'important');
+    header.style.setProperty('-webkit-transform', 'translate3d(-50%, 0, 0)', 'important');
+    header.style.setProperty('z-index', '1000', 'important');
+
+    var height = Math.ceil(header.getBoundingClientRect().height || 64);
+    document.documentElement.style.setProperty(
+      '--fixed-header-content-offset',
+      'calc(' + (height + 24) + 'px + env(safe-area-inset-top, 0px))'
+    );
+    document.documentElement.style.setProperty(
+      '--fixed-header-filter-offset',
+      'calc(' + (height + 14) + 'px + env(safe-area-inset-top, 0px))'
+    );
+    return true;
+  }
+
+  function schedulePin() {
+    requestAnimationFrame(function () {
+      if (!pinAppHeader()) {
+        setTimeout(pinAppHeader, 80);
+      }
+    });
+  }
+
+  schedulePin();
+  window.addEventListener('load', schedulePin, { once: true });
+  window.addEventListener('resize', schedulePin);
+  window.addEventListener('orientationchange', schedulePin);
+
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', schedulePin);
+  }
+
+  new MutationObserver(schedulePin).observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-theme', 'class']
+  });
+
+  new MutationObserver(function () {
+    if (!document.querySelector('.app-header')) schedulePin();
+    else pinAppHeader();
+  }).observe(document.body, { childList: true, subtree: true });
 })();
 </script>
 
