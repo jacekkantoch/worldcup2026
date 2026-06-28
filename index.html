@@ -5904,6 +5904,353 @@
       color: #0b5fa8 !important;
     }
 
+
+    /* Poprawione kapsułki karnych — prostsze, lżejsze i bardziej spójne. */
+    .prediction-penalty,
+    .compare-player-penalty,
+    .match-penalty-badge {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 5px !important;
+      min-width: 52px !important;
+      padding: 4px 9px !important;
+      border-radius: 999px !important;
+      background: linear-gradient(
+        145deg,
+        rgba(95, 123, 175, .24),
+        rgba(95, 123, 175, .12)
+      ) !important;
+      border: 1px solid rgba(150, 180, 225, .22) !important;
+      color: rgba(247, 250, 255, .94) !important;
+      font-size: 11px !important;
+      font-weight: 800 !important;
+      line-height: 1 !important;
+      letter-spacing: .04em !important;
+      white-space: nowrap !important;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.12),
+        0 1px 4px rgba(0,0,0,.10) !important;
+      vertical-align: middle !important;
+    }
+
+    .prediction-penalty::before,
+    .compare-player-penalty::before,
+    .match-penalty-badge::before {
+      content: "K" !important;
+      display: inline-block !important;
+      width: auto !important;
+      height: auto !important;
+      background: none !important;
+      border-radius: 0 !important;
+      color: rgba(214, 229, 255, .82) !important;
+      font-size: 10px !important;
+      font-weight: 900 !important;
+      letter-spacing: .02em !important;
+      flex: 0 0 auto !important;
+    }
+
+    .prediction-penalty:empty,
+    .compare-player-penalty:empty,
+    .match-penalty-badge:empty {
+      visibility: hidden !important;
+      padding: 0 !important;
+      border: 0 !important;
+      min-width: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+
+    .prediction-penalty:empty::before,
+    .compare-player-penalty:empty::before,
+    .match-penalty-badge:empty::before {
+      display: none !important;
+    }
+
+    html[data-theme="light"] .prediction-penalty,
+    html[data-theme="light"] .compare-player-penalty,
+    html[data-theme="light"] .match-penalty-badge {
+      background: linear-gradient(
+        145deg,
+        rgba(66, 132, 212, .16),
+        rgba(66, 132, 212, .08)
+      ) !important;
+      border-color: rgba(66, 132, 212, .18) !important;
+      color: #23405f !important;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.45),
+        0 1px 3px rgba(35, 64, 95, .06) !important;
+    }
+
+    html[data-theme="light"] .prediction-penalty::before,
+    html[data-theme="light"] .compare-player-penalty::before,
+    html[data-theme="light"] .match-penalty-badge::before {
+      color: #3a6ca0 !important;
+    }
+
+
+    /* ═══════════════════════════════════════════════════════════════
+       FILTRY — jednolite zanikanie tylko z prawej strony
+       Brak zanikania po lewej we wszystkich poziomych menu filtrów.
+    ═══════════════════════════════════════════════════════════════ */
+    :root {
+      --filter-right-fade: 10px;
+    }
+
+    .chip-scroll-row,
+    .pill-scroll-safe,
+    .group-order-filter-row,
+    .admin-group-order-filter-row,
+    .phase-filter-panel .overflow-x-auto,
+    .admin-phase-filters .overflow-x-auto,
+    .filters-sticky .overflow-x-auto {
+      -webkit-mask-image: linear-gradient(
+        to right,
+        #000 0,
+        #000 calc(100% - var(--filter-right-fade)),
+        transparent 100%
+      ) !important;
+      mask-image: linear-gradient(
+        to right,
+        #000 0,
+        #000 calc(100% - var(--filter-right-fade)),
+        transparent 100%
+      ) !important;
+      -webkit-mask-repeat: no-repeat !important;
+      mask-repeat: no-repeat !important;
+      -webkit-mask-size: 100% 100% !important;
+      mask-size: 100% 100% !important;
+    }
+
+    /* Takie samo zanikanie po prawej również dla pasków grup A–L. */
+    .group-order-filter-row,
+    .admin-group-order-filter-row {
+      -webkit-mask-image: linear-gradient(
+        to right,
+        #000 0,
+        #000 calc(100% - var(--filter-right-fade)),
+        transparent 100%
+      ) !important;
+      mask-image: linear-gradient(
+        to right,
+        #000 0,
+        #000 calc(100% - var(--filter-right-fade)),
+        transparent 100%
+      ) !important;
+    }
+
+
+    /* ═══════════════════════════════════════════════════════════════
+       JEDNOLITE ODSTĘPY MIĘDZY SEKCJAMI WE WSZYSTKICH ZAKŁADKACH
+    ═══════════════════════════════════════════════════════════════ */
+    :root {
+      --tab-section-gap: 14px;
+    }
+
+    /* Główne kontenery wszystkich zakładek. */
+    .matches-view,
+    .specials-view,
+    .allspecials-view,
+    .leaderboard-view,
+    .compare-view,
+    .bracket-page,
+    .admin-panel {
+      --tw-space-y-reverse: 0 !important;
+    }
+
+    /* Usunięcie różnych lokalnych mb-* z elementów będących całymi sekcjami. */
+    .matches-view > *,
+    .specials-view > *,
+    .allspecials-view > *,
+    .leaderboard-view > *,
+    .compare-view > *,
+    .bracket-page > *,
+    .admin-panel > * {
+      margin-bottom: 0 !important;
+    }
+
+    /* Jeden wspólny odstęp między kolejnymi sekcjami. */
+    .matches-view > :not([hidden]) ~ :not([hidden]),
+    .specials-view > :not([hidden]) ~ :not([hidden]),
+    .allspecials-view > :not([hidden]) ~ :not([hidden]),
+    .leaderboard-view > :not([hidden]) ~ :not([hidden]),
+    .compare-view > :not([hidden]) ~ :not([hidden]),
+    .bracket-page > :not([hidden]) ~ :not([hidden]),
+    .admin-panel > :not([hidden]) ~ :not([hidden]) {
+      margin-top: var(--tab-section-gap) !important;
+    }
+
+    /* Sekcje generowane warunkowo wewnątrz głównych widoków. */
+    .matches-view .prediction-list-wrap,
+    .specials-view section + section,
+    .allspecials-view section + section,
+    .leaderboard-view .leaderboard-card + .leaderboard-card,
+    .compare-view .compare-match-card + .compare-match-card,
+    .admin-panel .admin-match-card + .admin-match-card {
+      margin-top: var(--tab-section-gap) !important;
+    }
+
+    @media (max-width: 520px) {
+      :root {
+        --tab-section-gap: 12px;
+      }
+    }
+
+
+    /* Profil użytkownika po rozwinięciu — bez bocznych „wcięć”.
+       Górna i dolna część tworzą jedną spójną kartę. */
+    .profile-choice-shell.is-open {
+      border-radius: 30px !important;
+      overflow: hidden !important;
+    }
+
+    .profile-choice-shell.is-open .profile-choice-trigger,
+    .profile-choice-shell.is-open .profile-choice-actions {
+      width: 100% !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      box-sizing: border-box !important;
+    }
+
+    .profile-choice-shell.is-open .profile-choice-trigger {
+      border-bottom-left-radius: 0 !important;
+      border-bottom-right-radius: 0 !important;
+      border-bottom-color: transparent !important;
+      margin-bottom: 0 !important;
+    }
+
+    .profile-choice-shell.is-open .profile-choice-actions {
+      margin-top: 0 !important;
+      border-top-left-radius: 0 !important;
+      border-top-right-radius: 0 !important;
+      border-bottom-left-radius: 30px !important;
+      border-bottom-right-radius: 30px !important;
+      border-top-width: 1px !important;
+      border-top-style: solid !important;
+      padding: 10px !important;
+      box-shadow: none !important;
+    }
+
+    .profile-choice-shell.is-open .profile-choice-action-grid {
+      width: 100% !important;
+      margin: 0 !important;
+    }
+
+
+    /* Modal profilu nie może wpadać pod stały górny pasek. */
+    .profile-modal-overlay {
+      display: flex !important;
+      justify-content: center !important;
+      align-items: flex-start !important;
+      padding-top: calc(var(--fixed-header-content-offset, 96px) + 8px) !important;
+      padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 18px) !important;
+      overflow-y: auto !important;
+      box-sizing: border-box !important;
+    }
+
+    .profile-modal-overlay .login-modal-sheet,
+    .profile-modal-overlay .login-modal-compact-sheet {
+      align-self: flex-start !important;
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+    }
+
+    @media (max-width: 520px) {
+      .profile-modal-overlay {
+        padding-top: calc(var(--fixed-header-content-offset, 90px) + 6px) !important;
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+      }
+
+      .profile-modal-overlay .login-modal-sheet {
+        max-height: calc(100dvh - var(--fixed-header-content-offset, 90px) - env(safe-area-inset-bottom, 0px) - 22px) !important;
+      }
+
+      .profile-modal-overlay .login-modal-compact-sheet {
+        max-height: calc(100dvh - var(--fixed-header-content-offset, 90px) - env(safe-area-inset-bottom, 0px) - 38px) !important;
+      }
+    }
+
+
+    /* Modal profilu: blokada przewijania ekranu znajdującego się pod spodem. */
+    html.modal-scroll-locked,
+    body.modal-scroll-locked {
+      overflow: hidden !important;
+      overscroll-behavior: none !important;
+    }
+
+    /* Klasa profile-modal-overlay należy do samego tła. */
+    .profile-modal-overlay {
+      display: block !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+    }
+
+    /* Kontener modala pozostaje pod stałym nagłówkiem i przechwytuje gesty. */
+    .profile-modal-overlay-root {
+      align-items: flex-start !important;
+      padding-top: calc(var(--fixed-header-content-offset, 96px) + 8px) !important;
+      padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 18px) !important;
+      padding-left: 12px !important;
+      padding-right: 12px !important;
+      overflow-y: auto !important;
+      overscroll-behavior: contain !important;
+      touch-action: none;
+      box-sizing: border-box !important;
+    }
+
+    .profile-modal-overlay-root .login-modal-sheet,
+    .profile-modal-overlay-root .login-modal-compact-sheet,
+    .profile-modal-overlay-root .login-modal-content {
+      touch-action: pan-y !important;
+      overscroll-behavior: contain !important;
+    }
+
+    .profile-modal-overlay-root .login-modal-sheet,
+    .profile-modal-overlay-root .login-modal-compact-sheet {
+      align-self: flex-start !important;
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+    }
+
+    @media (max-width: 520px) {
+      .profile-modal-overlay-root {
+        padding-top: calc(var(--fixed-header-content-offset, 90px) + 6px) !important;
+      }
+
+      .profile-modal-overlay-root .login-modal-sheet {
+        max-height: calc(100dvh - var(--fixed-header-content-offset, 90px) - env(safe-area-inset-bottom, 0px) - 22px) !important;
+      }
+
+      .profile-modal-overlay-root .login-modal-compact-sheet {
+        max-height: calc(100dvh - var(--fixed-header-content-offset, 90px) - env(safe-area-inset-bottom, 0px) - 38px) !important;
+      }
+    }
+
+
+    /* Pełna blokada przewijania tła pod każdym etapem modala profilu. */
+    html.modal-scroll-locked,
+    body.modal-scroll-locked,
+    body.modal-scroll-locked #root,
+    body.modal-scroll-locked .pitch-bg {
+      overscroll-behavior: none !important;
+    }
+
+    body.modal-scroll-locked {
+      touch-action: none !important;
+    }
+
+    .profile-modal-overlay-root,
+    .profile-modal-overlay {
+      overscroll-behavior: contain !important;
+    }
+
+    .profile-modal-overlay-root .login-modal-content {
+      -webkit-overflow-scrolling: touch !important;
+      overscroll-behavior: contain !important;
+      touch-action: pan-y !important;
+    }
+
 </style>
 </head>
 <body>
@@ -7929,9 +8276,155 @@ function Modal({
     document.addEventListener('keydown', h);
     return () => document.removeEventListener('keydown', h);
   }, [open, onClose]);
+  useEffect(() => {
+    if (!open) return;
+    const root = document.documentElement;
+    const body = document.body;
+    const stateKey = '__wc2026ModalScrollLock';
+    let state = window[stateKey];
+
+    if (!state) {
+      state = window[stateKey] = {
+        count: 0,
+        scrollY: 0,
+        rootOverflow: '',
+        rootOverscroll: '',
+        bodyPosition: '',
+        bodyTop: '',
+        bodyLeft: '',
+        bodyRight: '',
+        bodyWidth: '',
+        bodyOverflow: '',
+        bodyOverscroll: ''
+      };
+    }
+
+    if (state.count === 0) {
+      state.scrollY = window.scrollY || window.pageYOffset || 0;
+      state.rootOverflow = root.style.overflow;
+      state.rootOverscroll = root.style.overscrollBehavior;
+      state.bodyPosition = body.style.position;
+      state.bodyTop = body.style.top;
+      state.bodyLeft = body.style.left;
+      state.bodyRight = body.style.right;
+      state.bodyWidth = body.style.width;
+      state.bodyOverflow = body.style.overflow;
+      state.bodyOverscroll = body.style.overscrollBehavior;
+
+      root.classList.add('modal-scroll-locked');
+      body.classList.add('modal-scroll-locked');
+
+      root.style.setProperty('overflow', 'hidden', 'important');
+      root.style.setProperty('overscroll-behavior', 'none', 'important');
+      body.style.setProperty('position', 'fixed', 'important');
+      body.style.setProperty('top', `-${state.scrollY}px`, 'important');
+      body.style.setProperty('left', '0', 'important');
+      body.style.setProperty('right', '0', 'important');
+      body.style.setProperty('width', '100%', 'important');
+      body.style.setProperty('overflow', 'hidden', 'important');
+      body.style.setProperty('overscroll-behavior', 'none', 'important');
+    }
+
+    state.count += 1;
+
+    return () => {
+      state.count = Math.max(0, state.count - 1);
+      if (state.count !== 0) return;
+
+      root.classList.remove('modal-scroll-locked');
+      body.classList.remove('modal-scroll-locked');
+
+      root.style.overflow = state.rootOverflow;
+      root.style.overscrollBehavior = state.rootOverscroll;
+      body.style.position = state.bodyPosition;
+      body.style.top = state.bodyTop;
+      body.style.left = state.bodyLeft;
+      body.style.right = state.bodyRight;
+      body.style.width = state.bodyWidth;
+      body.style.overflow = state.bodyOverflow;
+      body.style.overscrollBehavior = state.bodyOverscroll;
+
+      window.scrollTo(0, state.scrollY);
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    let lastTouchY = 0;
+
+    const getScrollableModalContent = target => {
+      if (!(target instanceof Element)) return null;
+      const content = target.closest('.login-modal-content');
+      if (!content) return null;
+      return content;
+    };
+
+    const canScroll = (content, deltaY) => {
+      if (!content || content.scrollHeight <= content.clientHeight + 1) return false;
+
+      const atTop = content.scrollTop <= 0;
+      const atBottom = content.scrollTop + content.clientHeight >= content.scrollHeight - 1;
+
+      if (deltaY < 0 && atTop) return false;
+      if (deltaY > 0 && atBottom) return false;
+      return true;
+    };
+
+    const onTouchStart = event => {
+      if (event.touches && event.touches.length === 1) {
+        lastTouchY = event.touches[0].clientY;
+      }
+    };
+
+    const onTouchMove = event => {
+      if (!event.touches || event.touches.length !== 1) {
+        event.preventDefault();
+        return;
+      }
+
+      const currentY = event.touches[0].clientY;
+      const fingerDelta = currentY - lastTouchY;
+      const scrollDelta = -fingerDelta;
+      const content = getScrollableModalContent(event.target);
+
+      if (!canScroll(content, scrollDelta)) {
+        event.preventDefault();
+      }
+
+      lastTouchY = currentY;
+    };
+
+    const onWheel = event => {
+      const content = getScrollableModalContent(event.target);
+      if (!canScroll(content, event.deltaY)) {
+        event.preventDefault();
+      }
+    };
+
+    document.addEventListener('touchstart', onTouchStart, {
+      passive: true,
+      capture: true
+    });
+    document.addEventListener('touchmove', onTouchMove, {
+      passive: false,
+      capture: true
+    });
+    document.addEventListener('wheel', onWheel, {
+      passive: false,
+      capture: true
+    });
+
+    return () => {
+      document.removeEventListener('touchstart', onTouchStart, true);
+      document.removeEventListener('touchmove', onTouchMove, true);
+      document.removeEventListener('wheel', onWheel, true);
+    };
+  }, [open]);
+
   if (!open) return null;
   return /*#__PURE__*/React.createElement("div", {
-    className: "fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
+    className: `fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 ${overlayClassName ? `${overlayClassName}-root` : ''}`
   }, /*#__PURE__*/React.createElement("div", {
     className: `absolute inset-0 bg-stone-900/60 backdrop-blur-sm ${overlayClassName}`,
     onClick: onClose
@@ -11816,54 +12309,11 @@ function PlayersManager({
   return /*#__PURE__*/React.createElement(Modal, {
     open: open,
     onClose: closeModal,
-    title: "Dodaj u\u017Cytkownika"
+    title: "Dodaj u\u017Cytkownika",
+    overlayClassName: "profile-modal-overlay"
   }, /*#__PURE__*/React.createElement("div", {
     className: "space-y-3"
   }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      background: 'rgba(220,150,0,.18)',
-      border: '1px solid rgba(255,200,50,.4)',
-      borderRadius: 20,
-      padding: 14
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 13,
-      fontWeight: 800,
-      color: '#fcd34d',
-      marginBottom: 6
-    }
-  }, "Op\u0142ata za udzia\u0142 \u2014 20 PLN"), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 13,
-      color: 'rgba(255,255,255,.9)',
-      lineHeight: 1.6
-    }
-  }, "Aby wzi\u0105\u0107 udzia\u0142 w rozgrywce, prze\u015Blij ", /*#__PURE__*/React.createElement("strong", {
-    style: {
-      color: '#fcd34d'
-    }
-  }, "20 PLN"), " BLIKiem na numer:"), /*#__PURE__*/React.createElement("div", {
-    style: {
-      margin: '10px 0',
-      padding: '10px 14px',
-      background: 'rgba(0,0,0,.3)',
-      borderRadius: 18,
-      textAlign: 'center',
-      fontFamily: 'monospace',
-      fontSize: 20,
-      fontWeight: 900,
-      letterSpacing: '0.12em',
-      color: 'white',
-      border: '1px solid rgba(255,255,255,.15)'
-    }
-  }, "785 700 344"), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 11,
-      color: 'rgba(255,255,255,.55)',
-      textAlign: 'center'
-    }
-  }, "W tytule podaj swoje imi\u0119 i nazwisko")), /*#__PURE__*/React.createElement("div", {
     style: {
       background: 'rgba(255,200,50,.1)',
       border: '1px solid rgba(255,200,50,.3)',
