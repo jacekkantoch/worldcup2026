@@ -6251,6 +6251,140 @@
       touch-action: pan-y !important;
     }
 
+
+    /* Ostateczny wygląd kapsułek karnych — czytelniejszy podział K | EKW */
+    .prediction-penalty,
+    .compare-player-penalty,
+    .match-penalty-badge {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 0 !important;
+      min-width: 60px !important;
+      padding: 4px 10px !important;
+      border-radius: 999px !important;
+      background: linear-gradient(
+        145deg,
+        rgba(96, 118, 166, .22),
+        rgba(96, 118, 166, .11)
+      ) !important;
+      border: 1px solid rgba(166, 188, 228, .20) !important;
+      color: rgba(248, 250, 255, .96) !important;
+      font-size: 10px !important;
+      font-weight: 800 !important;
+      line-height: 1 !important;
+      letter-spacing: .06em !important;
+      white-space: nowrap !important;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.10),
+        0 1px 4px rgba(0,0,0,.10) !important;
+      vertical-align: middle !important;
+    }
+
+    .prediction-penalty::before,
+    .compare-player-penalty::before,
+    .match-penalty-badge::before {
+      content: "K" !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      margin-right: 7px !important;
+      padding-right: 7px !important;
+      border-right: 1px solid rgba(210, 224, 255, .24) !important;
+      color: rgba(215, 228, 255, .84) !important;
+      font-size: 9px !important;
+      font-weight: 900 !important;
+      letter-spacing: .03em !important;
+      line-height: 1 !important;
+      flex: 0 0 auto !important;
+    }
+
+    .prediction-score-grid {
+      grid-template-columns: 44px 58px 28px !important;
+      min-width: 142px !important;
+    }
+
+    html[data-theme="light"] .prediction-penalty,
+    html[data-theme="light"] .compare-player-penalty,
+    html[data-theme="light"] .match-penalty-badge {
+      background: linear-gradient(
+        145deg,
+        rgba(74, 128, 204, .15),
+        rgba(74, 128, 204, .08)
+      ) !important;
+      border-color: rgba(74, 128, 204, .16) !important;
+      color: #26415f !important;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.42),
+        0 1px 3px rgba(35, 64, 95, .05) !important;
+    }
+
+    html[data-theme="light"] .prediction-penalty::before,
+    html[data-theme="light"] .compare-player-penalty::before,
+    html[data-theme="light"] .match-penalty-badge::before {
+      color: #5275a2 !important;
+      border-right-color: rgba(82, 117, 162, .20) !important;
+    }
+
+
+    /* Kapsułki karnych: tylko trzyliterowy skrót drużyny. */
+    .prediction-penalty,
+    .compare-player-penalty,
+    .match-penalty-badge {
+      gap: 0 !important;
+      min-width: 0 !important;
+      width: auto !important;
+      padding: 4px 8px !important;
+      font-size: 10px !important;
+      font-weight: 800 !important;
+      letter-spacing: .07em !important;
+      line-height: 1 !important;
+      white-space: nowrap !important;
+    }
+
+    .prediction-penalty::before,
+    .compare-player-penalty::before,
+    .match-penalty-badge::before {
+      content: none !important;
+      display: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: 0 !important;
+    }
+
+    .prediction-score-grid {
+      grid-template-columns: 44px 40px 28px !important;
+      min-width: 124px !important;
+    }
+
+
+    /* Zakładka Mecze: kapsułka karnych pokazuje wyłącznie 3-literowy skrót. */
+    .matches-view .match-penalty-badge,
+    .match-card .match-penalty-badge {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: auto !important;
+      min-width: 0 !important;
+      padding: 4px 8px !important;
+      gap: 0 !important;
+      font-size: 10px !important;
+      font-weight: 800 !important;
+      line-height: 1 !important;
+      letter-spacing: .07em !important;
+      white-space: nowrap !important;
+      border-radius: 999px !important;
+    }
+
+    .matches-view .match-penalty-badge::before,
+    .match-card .match-penalty-badge::before {
+      content: none !important;
+      display: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: 0 !important;
+    }
+
 </style>
 </head>
 <body>
@@ -12310,9 +12444,11 @@ function PlayersManager({
     open: open,
     onClose: closeModal,
     title: "Dodaj u\u017Cytkownika",
+    maxWidth: "max-w-xs",
+    panelClassName: "login-modal-sheet login-modal-compact-sheet",
     overlayClassName: "profile-modal-overlay"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "space-y-3"
+    className: "space-y-4"
   }, /*#__PURE__*/React.createElement("div", {
     style: {
       background: 'rgba(255,200,50,.1)',
