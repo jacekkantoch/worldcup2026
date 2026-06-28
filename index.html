@@ -4512,6 +4512,13 @@
       .leaderboard-phase-content { padding-top: 8px; }
     }
 
+
+    html[data-theme="light"] .leaderboard-footnote {
+      color: #5f7188 !important;
+      -webkit-text-fill-color: #5f7188 !important;
+      opacity: 1 !important;
+    }
+
 </style>
 </head>
 <body>
@@ -5141,7 +5148,7 @@ function Badge({children,variant='default'}) {
   return <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border ${v[variant]||v.default}`}>{children}</span>;
 }
 
-function Modal({open,onClose,title,children,maxWidth='max-w-md'}) {
+function Modal({open,onClose,title,children,maxWidth='max-w-md',overlayClassName='',panelClassName=''}) {
   useEffect(()=>{
     if(!open) return;
     const h=(e)=>{if(e.key==='Escape')onClose();};
@@ -5151,8 +5158,8 @@ function Modal({open,onClose,title,children,maxWidth='max-w-md'}) {
   if(!open) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
-      <div className="absolute inset-0 bg-stone-900/60 backdrop-blur-sm" onClick={onClose}/>
-      <div className={`relative w-full ${maxWidth} rounded-t-2xl sm:rounded-2xl max-h-[90vh] overflow-hidden flex flex-col`} style={{background:'var(--bg-1)',border:'1px solid var(--sep)',boxShadow:'var(--shadow-lg), var(--hl)'}}>
+      <div className={`absolute inset-0 bg-stone-900/60 backdrop-blur-sm ${overlayClassName}`} onClick={onClose}/>
+      <div className={`relative w-full ${maxWidth} rounded-t-2xl sm:rounded-2xl max-h-[90vh] overflow-hidden flex flex-col ${panelClassName}`} style={{background:'var(--bg-1)',border:'1px solid var(--sep)',boxShadow:'var(--shadow-lg), var(--hl)'}}>
         <div className="flex items-center justify-between p-4 border-b" style={{borderColor:"var(--sep)",background:"var(--bg-2)"}}>
           <h3 className="font-display text-xl tracking-wide text-stone-900">{title}</h3>
           <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-white/10 text-stone-600"><Icon name="x" size={20}/></button>
@@ -6997,14 +7004,15 @@ function AdminPanel({teams,matches,results,specialResults,players,predictions,sp
 // ═══════════════════════════════════════════════════════════════
 function LoginModal({open,onClose,players,activePlayer,onLogin,onRename,onManagePlayers}) {
   const [selected,setSelected]=useState('');
-  const [step,setStep]=useState('pick'); // 'pick' | 'pin' | 'rename'
+  const [step,setStep]=useState('pick'); // 'pick' | 'actions' | 'pin' | 'rename'
   const [pin,setPin]=useState('');
   const [err,setErr]=useState('');
   const [newName,setNewName]=useState('');
+  const [renamePin,setRenamePin]=useState('');
   const [renameErr,setRenameErr]=useState('');
 
   useEffect(()=>{
-    if(open){setSelected(activePlayer||'');setStep('pick');setPin('');setErr('');setNewName('');setRenameErr('');}
+    if(open){setSelected(activePlayer||'');setStep('pick');setPin('');setErr('');setNewName('');setRenamePin('');setRenameErr('');}
   },[open,activePlayer]);
 
   const pl=players.find(p=>p.id===selected);
@@ -7026,24 +7034,28 @@ function LoginModal({open,onClose,players,activePlayer,onLogin,onRename,onManage
     const name=newName.trim();
     if(!name){setRenameErr('Wpisz imię i nazwisko');return;}
     if(name===pl.name){setRenameErr('Nowa nazwa jest taka sama jak obecna');return;}
+    if(hasPinHash){
+      if(renamePin.length<4){setRenameErr('Wpisz PIN użytkownika');return;}
+      if(hashPin(renamePin)!==pl.pinHash){setRenameErr('Błędny PIN — spróbuj jeszcze raz');return;}
+    }
     onRename(selected,name);
     onLogin(selected);
     onClose();
   };
 
   return (
-    <Modal open={open} onClose={onClose} title={activePlayer?"Profil i użytkownicy":"Zaloguj się"}>
+    <Modal open={open} onClose={onClose} title={activePlayer?"Profil i użytkownicy":"Zaloguj się"} maxWidth="max-w-sm" overlayClassName="bg-stone-950/42 backdrop-blur-[2px]">
       <div className="space-y-4">
         {step==='pick'&&(
           <>
-            <p className="text-sm text-stone-600">{activePlayer?'Zmień profil lub zarządzaj swoim kontem.':'Wybierz swój profil, żeby typować.'}</p>
+            <p className="text-sm text-stone-600">{activePlayer?'Wybierz profil, aby otworzyć dostępne akcje.':'Wybierz swój profil, żeby typować.'}</p>
             <Btn variant="outline" onClick={onManagePlayers} className="w-full">
               <Icon name="plus" size={15}/>{players.length===0?'Dodaj pierwszego użytkownika':'Dodaj użytkownika'}
             </Btn>
             <div className="space-y-1.5">
               {players.length===0&&<p className="text-center text-stone-500 text-sm py-4">Brak użytkowników. Użyj przycisku powyżej, aby dodać pierwszą osobę.</p>}
               {players.map(p=>(
-                <button key={p.id} onClick={()=>setSelected(p.id)}
+                <button key={p.id} onClick={()=>{setSelected(p.id);setErr('');setStep('actions');}}
                   className={`selection-tile player-choice${selected===p.id?' is-selected':''}`}
                   style={{width:'100%',display:'flex',alignItems:'center',gap:12,padding:12,textAlign:'left',cursor:'pointer'}}>
                   <div className="player-choice-avatar" style={{width:36,height:36,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,fontWeight:800,flexShrink:0,color:'white'}}>
@@ -7053,25 +7065,42 @@ function LoginModal({open,onClose,players,activePlayer,onLogin,onRename,onManage
                     <div style={{fontWeight:700,fontSize:14,color:"rgba(255,255,255,.95)",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{p.name}</div>
                     <div style={{fontSize:11,color:"rgba(255,255,255,0.6)",marginTop:2}}>{p.pinHash?'chroniony PINem':'bez PINu'}</div>
                   </div>
-                  {selected===p.id&&<Icon name="check" size={18} style={{stroke:"rgba(255,255,255,.9)",flexShrink:0}}/>}
+                  <Icon name="chevdown" size={18} style={{transform:'rotate(-90deg)',stroke:"rgba(255,255,255,.9)",flexShrink:0}}/>
                 </button>
               ))}
             </div>
             {err&&<p className="text-xs text-red-600 font-semibold">{err}</p>}
-            <div className="flex gap-2 flex-wrap">
+            <div className="flex gap-2">
               <Btn variant="outline" onClick={onClose} className="flex-1">Anuluj</Btn>
-              {selected&&<Btn variant="outline" onClick={()=>{if(!selected)return;setNewName(pl?.name||'');setStep('rename');setRenameErr('');}} className="flex-1">
-                <Icon name="edit" size={14}/>Zmień nazwę
-              </Btn>}
-              <Btn variant="primary" onClick={handlePick} disabled={!selected} className="flex-1">
-                {hasPinHash?<><Icon name="lock" size={14}/>Dalej</>:<><Icon name="check" size={14}/>Zaloguj</>}
-              </Btn>
             </div>
-            {activePlayer&&(
-              <button onClick={()=>{onLogin('');onClose();}} style={{width:'100%',marginTop:4,padding:'8px',background:'rgba(180,0,0,.18)',border:'1px solid rgba(220,0,0,.3)',borderRadius:18,color:'rgba(255,100,100,.9)',fontSize:13,fontWeight:600,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:6}}>
-                <Icon name="logout" size={14}/>Wyloguj się
-              </button>
-            )}
+          </>
+        )}
+        {step==='actions'&&pl&&(
+          <>
+            <button onClick={()=>{setStep('pick');setErr('');}} className="text-xs text-stone-500 hover:text-stone-800 flex items-center gap-1">
+              <Icon name="arrow" size={12} style={{transform:"rotate(180deg)"}}/>Wróć do listy
+            </button>
+            <div className="text-center py-2">
+              <div className="w-14 h-14 rounded-full bg-[#e8ecf8] flex items-center justify-center text-2xl font-bold text-[#162570] mx-auto mb-2">
+                {pl.name.slice(0,1).toUpperCase()}
+              </div>
+              <p className="font-semibold text-stone-900">{pl.name}</p>
+              <p className="text-xs text-stone-500 mt-0.5">{pl.pinHash?'Ten profil jest chroniony PINem.':'Możesz od razu przejść dalej.'}</p>
+            </div>
+            <div className="grid grid-cols-1 gap-2">
+              <Btn variant="outline" onClick={onClose} className="w-full">Anuluj</Btn>
+              <Btn variant="outline" onClick={()=>{setNewName(pl?.name||'');setRenamePin('');setStep('rename');setRenameErr('');}} className="w-full">
+                <Icon name="edit" size={14}/>Zmień nazwę
+              </Btn>
+              <Btn variant="primary" onClick={handlePick} className="w-full">
+                <Icon name={hasPinHash?'lock':'check'} size={14}/>Dalej
+              </Btn>
+              {activePlayer&&selected===activePlayer&&(
+                <button onClick={()=>{onLogin('');onClose();}} style={{width:'100%',padding:'10px 12px',background:'rgba(180,0,0,.18)',border:'1px solid rgba(220,0,0,.3)',borderRadius:18,color:'rgba(255,100,100,.9)',fontSize:13,fontWeight:700,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:6}}>
+                  <Icon name="logout" size={14}/>Wyloguj się
+                </button>
+              )}
+            </div>
           </>
         )}
         {step==='pin'&&(
@@ -7110,13 +7139,25 @@ function LoginModal({open,onClose,players,activePlayer,onLogin,onRename,onManage
                 {pl&&pl.name.slice(0,1).toUpperCase()}
               </div>
               <p className="text-xs text-stone-500">Zmiana nazwy dla: <strong>{pl&&pl.name}</strong></p>
+              {hasPinHash&&<p className="text-[11px] text-stone-500 mt-1">Aby zmienić nazwę, potwierdź PIN tego użytkownika.</p>}
             </div>
-            <div>
-              <label className="text-xs font-semibold text-stone-600 block mb-1">Nowe imię i nazwisko</label>
-              <input autoFocus value={newName} onChange={e=>{setNewName(e.target.value);setRenameErr('');}}
-                onKeyDown={e=>{if(e.key==='Enter')handleRenameSubmit();}}
-                placeholder="np. Jan Kowalski"
-                className={`w-full px-3 py-2.5 border-2 rounded-lg focus:outline-none text-sm ${renameErr?'border-red-400 bg-red-50':'border-stone-200 focus:border-[#0d1b5e]'}`}/>
+            <div className="space-y-3">
+              <div>
+                <label className="text-xs font-semibold text-stone-600 block mb-1">Nowe imię i nazwisko</label>
+                <input autoFocus value={newName} onChange={e=>{setNewName(e.target.value);setRenameErr('');}}
+                  onKeyDown={e=>{if(e.key==='Enter' && !hasPinHash)handleRenameSubmit();}}
+                  placeholder="np. Jan Kowalski"
+                  className={`w-full px-3 py-2.5 border-2 rounded-lg focus:outline-none text-sm ${renameErr?'border-red-400 bg-red-50':'border-stone-200 focus:border-[#0d1b5e]'}`}/>
+              </div>
+              {hasPinHash&&(
+                <div>
+                  <label className="text-xs font-semibold text-stone-600 block mb-1">PIN użytkownika</label>
+                  <input type="password" inputMode="numeric" value={renamePin} onChange={e=>{setRenamePin(e.target.value);setRenameErr('');}}
+                    onKeyDown={e=>{if(e.key==='Enter')handleRenameSubmit();}}
+                    placeholder="••••" maxLength={8}
+                    className={`w-full px-3 py-2.5 border-2 rounded-lg focus:outline-none text-sm tracking-[0.35em] text-center ${renameErr?'border-red-400 bg-red-50':'border-stone-200 focus:border-[#0d1b5e]'}`}/>
+                </div>
+              )}
               {renameErr&&<p className="text-xs text-red-600 font-semibold mt-1">{renameErr}</p>}
             </div>
             <div className="flex gap-2">
