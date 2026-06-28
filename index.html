@@ -4062,6 +4062,167 @@
       }
     }
 
+
+    /* Mobile ranking layout — compact, readable cards instead of five narrow vertical pills. */
+    .leaderboard-card {
+      border-radius: 28px !important;
+    }
+
+    @media (max-width: 520px) {
+      .leaderboard-view {
+        gap: 12px !important;
+      }
+      .leaderboard-header {
+        padding: 13px 16px !important;
+        border-radius: 24px !important;
+      }
+      .leaderboard-header h3 {
+        font-size: 20px !important;
+        line-height: 1.05 !important;
+        letter-spacing: -.01em !important;
+      }
+      .leaderboard-header p {
+        margin-top: 3px !important;
+        font-size: 12px !important;
+      }
+      .leaderboard-card {
+        border-radius: 28px !important;
+        overflow: hidden !important;
+      }
+      .leaderboard-card-body {
+        padding: 14px !important;
+      }
+      .leaderboard-card-summary {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) auto !important;
+        align-items: center !important;
+        gap: 10px !important;
+        margin-bottom: 13px !important;
+      }
+      .leaderboard-player-block {
+        gap: 10px !important;
+        min-width: 0 !important;
+      }
+      .leaderboard-position-badge {
+        width: 46px !important;
+        height: 46px !important;
+        min-width: 46px !important;
+        border-radius: 999px !important;
+        font-size: 16px !important;
+      }
+      .leaderboard-player-name {
+        font-size: 18px !important;
+        line-height: 1.08 !important;
+        margin-bottom: 4px !important;
+      }
+      .leaderboard-stats {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 2px !important;
+        font-size: 10.5px !important;
+        line-height: 1.18 !important;
+      }
+      .leaderboard-stats .rank-stat {
+        display: block !important;
+        min-width: 0 !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+      }
+      .leaderboard-total {
+        min-width: 62px !important;
+        padding-left: 4px !important;
+      }
+      .leaderboard-total-value {
+        font-size: 36px !important;
+        line-height: .92 !important;
+        letter-spacing: -.025em !important;
+      }
+      .leaderboard-total-label {
+        margin-top: 5px !important;
+        font-size: 10px !important;
+      }
+      .leaderboard-category-grid {
+        display: grid !important;
+        grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+        gap: 7px !important;
+      }
+      .leaderboard-category-card {
+        grid-column: span 2 !important;
+        min-width: 0 !important;
+        min-height: 76px !important;
+        padding: 9px 5px !important;
+        border-radius: 19px !important;
+      }
+      .leaderboard-category-card:nth-child(4),
+      .leaderboard-category-card:nth-child(5) {
+        grid-column: span 3 !important;
+      }
+      .leaderboard-category-score {
+        line-height: 1 !important;
+      }
+      .leaderboard-category-value {
+        font-size: 17px !important;
+      }
+      .leaderboard-category-max {
+        font-size: 9.5px !important;
+      }
+      .leaderboard-category-title {
+        margin-top: 6px !important;
+        font-size: 8px !important;
+        line-height: 1.12 !important;
+        letter-spacing: .04em !important;
+      }
+      .leaderboard-category-done {
+        margin-top: 5px !important;
+        font-size: 7px !important;
+        letter-spacing: .06em !important;
+      }
+      .leaderboard-footnote {
+        margin-top: 6px !important;
+        font-size: 8px !important;
+        text-align: center !important;
+      }
+    }
+
+    @media (max-width: 370px) {
+      .leaderboard-card-body {
+        padding: 12px !important;
+      }
+      .leaderboard-card-summary {
+        gap: 7px !important;
+      }
+      .leaderboard-position-badge {
+        width: 42px !important;
+        height: 42px !important;
+        min-width: 42px !important;
+        font-size: 14px !important;
+      }
+      .leaderboard-player-name {
+        font-size: 16px !important;
+      }
+      .leaderboard-stats {
+        font-size: 9.5px !important;
+      }
+      .leaderboard-total {
+        min-width: 52px !important;
+      }
+      .leaderboard-total-value {
+        font-size: 31px !important;
+      }
+      .leaderboard-category-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      }
+      .leaderboard-category-card,
+      .leaderboard-category-card:nth-child(4),
+      .leaderboard-category-card:nth-child(5) {
+        grid-column: span 1 !important;
+      }
+      .leaderboard-category-card:last-child {
+        grid-column: 1 / -1 !important;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -5532,7 +5693,7 @@ function LeaderboardView({players,matches,predictions,results,specialPredictions
 
   if(players.length===0) return <div className="text-center text-stone-600 bg-stone-100 border border-stone-200 rounded-lg p-6">Brak graczy.</div>;
   return (
-    <div className="space-y-2">
+    <div className="leaderboard-view space-y-2">
       <div className="leaderboard-header rounded-xl p-4">
         <h3 className="font-display text-2xl tracking-wider">Klasyfikacja</h3>
         <p className="text-xs mt-1">Punktacja na żywo</p>
@@ -5540,31 +5701,31 @@ function LeaderboardView({players,matches,predictions,results,specialPredictions
       {ranking.map((r,idx)=>{
         const positionLabel=`#${idx+1}`;
         return (
-          <div key={r.player.id} className={`deferred-card bg-white border rounded-xl overflow-hidden ${idx===0&&r.total>0?'border-amber-400 shadow-md':'border-stone-200'}`}>
-            <div className="p-3 sm:p-4">
-              <div className="flex items-center justify-between gap-3 mb-2">
-                <div className="flex items-center gap-3 min-w-0 flex-1">
+          <div key={r.player.id} className={`leaderboard-card deferred-card bg-white border rounded-xl overflow-hidden ${idx===0&&r.total>0?'border-amber-400 shadow-md':'border-stone-200'}`}>
+            <div className="leaderboard-card-body p-3 sm:p-4">
+              <div className="leaderboard-card-summary flex items-center justify-between gap-3 mb-2">
+                <div className="leaderboard-player-block flex items-center gap-3 min-w-0 flex-1">
                   <div className="leaderboard-position-badge" style={{width:36,height:36,borderRadius:16,display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,fontWeight:900,flexShrink:0,
                     background:idx===0?'rgba(217,119,6,.5)':idx===1?'rgba(156,163,175,.25)':idx===2?'rgba(180,83,9,.35)':'rgba(255,255,255,.1)',
                     color:idx===0?'#fde68a':idx===1?'#e5e7eb':idx===2?'#fdba74':'rgba(255,255,255,.6)',
                     border:idx===0?'1px solid rgba(253,230,138,.4)':idx===1?'1px solid rgba(229,231,235,.2)':idx===2?'1px solid rgba(253,186,116,.3)':'1px solid rgba(255,255,255,.12)'}}>
                     {positionLabel}
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="font-semibold text-stone-900 truncate">{r.player.name}</div>
-                    <div className="text-[11px] leading-snug" style={{display:'flex',flexWrap:'wrap',gap:'2px 6px'}}>
+                  <div className="leaderboard-player-info min-w-0 flex-1">
+                    <div className="leaderboard-player-name font-semibold text-stone-900 truncate">{r.player.name}</div>
+                    <div className="leaderboard-stats text-[11px] leading-snug" style={{display:'flex',flexWrap:'wrap',gap:'2px 6px'}}>
                       <span className="rank-stat rank-stat-exact" style={{color:'#4ade80'}}>Dokładne wyniki: {r.exact}</span>
                       <span className="rank-stat rank-stat-partial" style={{color:'#fbbf24'}}>Trafione rozstrzygnięcia: {r.partial}</span>
                       <span className="rank-stat rank-stat-miss" style={{color:'#f87171'}}>Niepoprawne typy: {r.incorrect}</span>
                     </div>
                   </div>
                 </div>
-                <div className="text-right shrink-0">
-                  <div className="font-display text-3xl tracking-wider text-stone-900 leading-none">{r.total}</div>
-                  <div className="text-[10px] uppercase tracking-wider text-stone-500">pkt</div>
+                <div className="leaderboard-total text-right shrink-0">
+                  <div className="leaderboard-total-value font-display text-3xl tracking-wider text-stone-900 leading-none">{r.total}</div>
+                  <div className="leaderboard-total-label text-[10px] uppercase tracking-wider text-stone-500">pkt</div>
                 </div>
               </div>
-              <div className="grid grid-cols-5 gap-1 text-[11px]">
+              <div className="leaderboard-category-grid grid grid-cols-5 gap-1 text-[11px]">
                 {[
                   {v:r.gm,max:categoryMaximums.gm,title:'Faza grupowa',done:categoryCompletion.gm,bg:'rgba(13,27,150,.45)',accent:'#93c5fd'},
                   {v:r.km,max:categoryMaximums.km,title:'Faza pucharowa',star:true,done:categoryCompletion.km,bg:'rgba(7,89,133,.45)',accent:'#7dd3fc'},
@@ -5572,17 +5733,17 @@ function LeaderboardView({players,matches,predictions,results,specialPredictions
                   {v:r.podium,max:categoryMaximums.podium,title:'Podium turnieju',done:categoryCompletion.podium,bg:'rgba(146,64,14,.45)',accent:'#fcd34d'},
                   {v:r.awards,max:categoryMaximums.awards,title:'Nagrody indywidualne',done:categoryCompletion.awards,bg:'rgba(159,18,57,.45)',accent:'#fda4af'},
                 ].map(({v,max,title,star,done,bg,accent})=>(
-                  <div key={title} style={{background:done?`linear-gradient(rgba(0,0,0,.20),rgba(0,0,0,.20)), ${bg}`:bg,border:`1px solid ${accent}30`,borderRadius:16,padding:'7px 3px',textAlign:'center',minHeight:done?88:70,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',transition:'background .18s ease'}}>
-                    <div style={{fontWeight:800,color:done?'rgba(255,255,255,.46)':'white',lineHeight:1.05,whiteSpace:'nowrap'}}>
-                      <span style={{fontSize:15}}>{v}</span>
-                      <span style={{fontSize:9.5,fontWeight:700,color:done?'rgba(255,255,255,.32)':'rgba(255,255,255,.68)'}}> / {max}{star?'*':''}</span>
+                  <div className="leaderboard-category-card" key={title} style={{background:done?`linear-gradient(rgba(0,0,0,.20),rgba(0,0,0,.20)), ${bg}`:bg,border:`1px solid ${accent}30`,borderRadius:16,padding:'7px 3px',textAlign:'center',minHeight:done?88:70,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',transition:'background .18s ease'}}>
+                    <div className="leaderboard-category-score" style={{fontWeight:800,color:done?'rgba(255,255,255,.46)':'white',lineHeight:1.05,whiteSpace:'nowrap'}}>
+                      <span className="leaderboard-category-value" style={{fontSize:15}}>{v}</span>
+                      <span className="leaderboard-category-max" style={{fontSize:9.5,fontWeight:700,color:done?'rgba(255,255,255,.32)':'rgba(255,255,255,.68)'}}> / {max}{star?'*':''}</span>
                     </div>
-                    <div style={{fontSize:8.2,textTransform:'uppercase',letterSpacing:'0.025em',color:done?'rgba(235,241,255,.34)':accent,marginTop:5,lineHeight:1.12,fontWeight:700,maxWidth:'100%'}}>{title}</div>
-                    {done&&<div style={{fontSize:7.5,fontWeight:900,letterSpacing:'0.075em',color:'#86efac',marginTop:6,lineHeight:1}}>ZAKOŃCZONO</div>}
+                    <div className="leaderboard-category-title" style={{fontSize:8.2,textTransform:'uppercase',letterSpacing:'0.025em',color:done?'rgba(235,241,255,.34)':accent,marginTop:5,lineHeight:1.12,fontWeight:700,maxWidth:'100%'}}>{title}</div>
+                    {done&&<div className="leaderboard-category-done" style={{fontSize:7.5,fontWeight:900,letterSpacing:'0.075em',color:'#86efac',marginTop:6,lineHeight:1}}>ZAKOŃCZONO</div>}
                   </div>
                 ))}
               </div>
-              <div style={{fontSize:8.5,color:'rgba(235,241,255,.48)',marginTop:5,textAlign:'right',lineHeight:1.2}}>* bez bonusów za rzuty karne</div>
+              <div className="leaderboard-footnote" style={{fontSize:8.5,color:'rgba(235,241,255,.48)',marginTop:5,textAlign:'right',lineHeight:1.2}}>* bez bonusów za rzuty karne</div>
             </div>
           </div>
         );
