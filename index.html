@@ -4519,6 +4519,72 @@
       opacity: 1 !important;
     }
 
+
+
+    /* Profile picker — selected profile and its actions form one connected card */
+    .profile-choice-shell {
+      width: 100%;
+    }
+    .profile-choice-shell.is-open .profile-choice-trigger {
+      border-bottom-left-radius: 0 !important;
+      border-bottom-right-radius: 0 !important;
+      border-bottom-color: transparent !important;
+      margin-bottom: 0 !important;
+    }
+    .profile-choice-actions {
+      margin-top: -1px !important;
+      border-top-left-radius: 0 !important;
+      border-top-right-radius: 0 !important;
+      border-top-color: rgba(255,255,255,.08) !important;
+    }
+    html[data-theme="light"] .profile-choice-actions {
+      border-top-color: rgba(89,126,172,.12) !important;
+    }
+
+
+
+    /* Profile action grid — login/logout always occupy the same slot */
+    .profile-choice-action-grid > * {
+      min-height: 42px;
+    }
+    .profile-choice-main-action,
+    .profile-choice-logout {
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border-radius: 18px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .profile-choice-logout {
+      padding: 10px 12px;
+      background: rgba(180,0,0,.18);
+      border: 1px solid rgba(255,105,97,.34);
+      color: #ff8b86;
+      -webkit-text-fill-color: #ff8b86;
+    }
+    .profile-choice-cancel {
+      background: rgba(255,255,255,.09) !important;
+      border-color: rgba(255,255,255,.18) !important;
+      color: var(--label-1) !important;
+      -webkit-text-fill-color: var(--label-1) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08) !important;
+    }
+    .profile-choice-cancel:hover {
+      background: rgba(255,255,255,.14) !important;
+      border-color: rgba(255,255,255,.25) !important;
+    }
+    html[data-theme="light"] .profile-choice-cancel {
+      background: rgba(225,235,247,.92) !important;
+      border-color: rgba(103,132,168,.24) !important;
+      color: #365c86 !important;
+      -webkit-text-fill-color: #365c86 !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.80) !important;
+    }
+
 </style>
 </head>
 <body>
@@ -7004,7 +7070,7 @@ function AdminPanel({teams,matches,results,specialResults,players,predictions,sp
 // ═══════════════════════════════════════════════════════════════
 function LoginModal({open,onClose,players,activePlayer,onLogin,onRename,onManagePlayers}) {
   const [selected,setSelected]=useState('');
-  const [step,setStep]=useState('pick'); // 'pick' | 'actions' | 'pin' | 'rename'
+  const [step,setStep]=useState('pick'); // 'pick' | 'pin' | 'rename'
   const [pin,setPin]=useState('');
   const [err,setErr]=useState('');
   const [newName,setNewName]=useState('');
@@ -7012,7 +7078,7 @@ function LoginModal({open,onClose,players,activePlayer,onLogin,onRename,onManage
   const [renameErr,setRenameErr]=useState('');
 
   useEffect(()=>{
-    if(open){setSelected(activePlayer||'');setStep('pick');setPin('');setErr('');setNewName('');setRenamePin('');setRenameErr('');}
+    if(open){setSelected('');setStep('pick');setPin('');setErr('');setNewName('');setRenamePin('');setRenameErr('');}
   },[open,activePlayer]);
 
   const pl=players.find(p=>p.id===selected);
@@ -7048,58 +7114,55 @@ function LoginModal({open,onClose,players,activePlayer,onLogin,onRename,onManage
       <div className="space-y-4">
         {step==='pick'&&(
           <>
-            <p className="text-sm text-stone-600">{activePlayer?'Wybierz profil, aby otworzyć dostępne akcje.':'Wybierz swój profil, żeby typować.'}</p>
+            <p className="text-sm text-stone-600">{activePlayer?'Wybierz profil i skorzystaj z akcji poniżej.':'Wybierz swój profil, żeby typować.'}</p>
             <Btn variant="outline" onClick={onManagePlayers} className="w-full">
               <Icon name="plus" size={15}/>{players.length===0?'Dodaj pierwszego użytkownika':'Dodaj użytkownika'}
             </Btn>
             <div className="space-y-1.5">
               {players.length===0&&<p className="text-center text-stone-500 text-sm py-4">Brak użytkowników. Użyj przycisku powyżej, aby dodać pierwszą osobę.</p>}
-              {players.map(p=>(
-                <button key={p.id} onClick={()=>{setSelected(p.id);setErr('');setStep('actions');}}
-                  className={`selection-tile player-choice${selected===p.id?' is-selected':''}`}
-                  style={{width:'100%',display:'flex',alignItems:'center',gap:12,padding:12,textAlign:'left',cursor:'pointer'}}>
-                  <div className="player-choice-avatar" style={{width:36,height:36,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,fontWeight:800,flexShrink:0,color:'white'}}>
-                    {p.name.slice(0,1).toUpperCase()}
+              {players.map(p=>{
+                const isOpen=selected===p.id;
+                const isCurrent=activePlayer&&activePlayer===p.id;
+                return (
+                  <div key={p.id} className={`profile-choice-shell${isOpen?' is-open':''}`}>
+                    <button onClick={()=>{setSelected(prev=>prev===p.id?'':p.id);setErr('');}}
+                      className={`selection-tile player-choice profile-choice-trigger${isOpen?' is-selected':''}`}
+                      style={{width:'100%',display:'flex',alignItems:'center',gap:12,padding:12,textAlign:'left',cursor:'pointer'}}>
+                      <div className="player-choice-avatar" style={{width:36,height:36,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,fontWeight:800,flexShrink:0,color:'white'}}>
+                        {p.name.slice(0,1).toUpperCase()}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div style={{fontWeight:700,fontSize:14,color:"rgba(255,255,255,.95)",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{p.name}</div>
+                        <div style={{fontSize:11,color:"rgba(255,255,255,0.6)",marginTop:2}}>{p.pinHash?'chroniony PINem':'bez PINu'}{isCurrent?' • aktywny':''}</div>
+                      </div>
+                      <Icon name="chevdown" size={18} style={{transform:isOpen?'rotate(180deg)':'none',stroke:"rgba(255,255,255,.9)",flexShrink:0,transition:'transform .2s ease'}}/>
+                    </button>
+                    {isOpen&&(
+                      <div className="selection-tile profile-choice-actions" style={{padding:10}}>
+                        <div className="grid grid-cols-2 gap-2 profile-choice-action-grid">
+                          {isCurrent?(
+                            <button className="profile-choice-main-action profile-choice-logout" onClick={()=>{onLogin('');onClose();}}>
+                              <Icon name="logout" size={14}/>Wyloguj się
+                            </button>
+                          ):(
+                            <Btn variant="primary" onClick={()=>{setSelected(p.id);if(p.pinHash){setStep('pin');setPin('');setErr('');}else{onLogin(p.id);}}} className="w-full profile-choice-main-action">
+                              <Icon name={p.pinHash?'lock':'check'} size={14}/>Zaloguj
+                            </Btn>
+                          )}
+                          <Btn variant="outline" onClick={()=>{setSelected(p.id);setNewName(p.name||'');setRenamePin('');setStep('rename');setRenameErr('');}} className="w-full">
+                            <Icon name="edit" size={14}/>Zmień nazwę
+                          </Btn>
+                          <Btn variant="outline" onClick={()=>setSelected('')} className="w-full col-span-2 profile-choice-cancel">Anuluj</Btn>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div style={{fontWeight:700,fontSize:14,color:"rgba(255,255,255,.95)",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{p.name}</div>
-                    <div style={{fontSize:11,color:"rgba(255,255,255,0.6)",marginTop:2}}>{p.pinHash?'chroniony PINem':'bez PINu'}</div>
-                  </div>
-                  <Icon name="chevdown" size={18} style={{transform:'rotate(-90deg)',stroke:"rgba(255,255,255,.9)",flexShrink:0}}/>
-                </button>
-              ))}
+                );
+              })}
             </div>
             {err&&<p className="text-xs text-red-600 font-semibold">{err}</p>}
             <div className="flex gap-2">
-              <Btn variant="outline" onClick={onClose} className="flex-1">Anuluj</Btn>
-            </div>
-          </>
-        )}
-        {step==='actions'&&pl&&(
-          <>
-            <button onClick={()=>{setStep('pick');setErr('');}} className="text-xs text-stone-500 hover:text-stone-800 flex items-center gap-1">
-              <Icon name="arrow" size={12} style={{transform:"rotate(180deg)"}}/>Wróć do listy
-            </button>
-            <div className="text-center py-2">
-              <div className="w-14 h-14 rounded-full bg-[#e8ecf8] flex items-center justify-center text-2xl font-bold text-[#162570] mx-auto mb-2">
-                {pl.name.slice(0,1).toUpperCase()}
-              </div>
-              <p className="font-semibold text-stone-900">{pl.name}</p>
-              <p className="text-xs text-stone-500 mt-0.5">{pl.pinHash?'Ten profil jest chroniony PINem.':'Możesz od razu przejść dalej.'}</p>
-            </div>
-            <div className="grid grid-cols-1 gap-2">
-              <Btn variant="outline" onClick={onClose} className="w-full">Anuluj</Btn>
-              <Btn variant="outline" onClick={()=>{setNewName(pl?.name||'');setRenamePin('');setStep('rename');setRenameErr('');}} className="w-full">
-                <Icon name="edit" size={14}/>Zmień nazwę
-              </Btn>
-              <Btn variant="primary" onClick={handlePick} className="w-full">
-                <Icon name={hasPinHash?'lock':'check'} size={14}/>Dalej
-              </Btn>
-              {activePlayer&&selected===activePlayer&&(
-                <button onClick={()=>{onLogin('');onClose();}} style={{width:'100%',padding:'10px 12px',background:'rgba(180,0,0,.18)',border:'1px solid rgba(220,0,0,.3)',borderRadius:18,color:'rgba(255,100,100,.9)',fontSize:13,fontWeight:700,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:6}}>
-                  <Icon name="logout" size={14}/>Wyloguj się
-                </button>
-              )}
+              <Btn variant="outline" onClick={onClose} className="flex-1">Zamknij</Btn>
             </div>
           </>
         )}
