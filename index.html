@@ -2,8 +2,8 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Mundial 2026 – Liquid Glass Optimized</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content" />
+  <title>FIFA WORLD CUP 2026 – Typer</title>
   <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin />
   <link rel="preconnect" href="https://www.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
@@ -18,11 +18,11 @@
   <noscript><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" /></noscript>
 
   <!-- PWA -->
-  <meta name="application-name" content="Mundial 2026"/>
+  <meta name="application-name" content="FIFA WORLD CUP 2026"/>
   <meta name="mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-  <meta name="apple-mobile-web-app-title" content="Mundial 2026"/>
+  <meta name="apple-mobile-web-app-title" content="FIFA WORLD CUP 2026"/>
   <meta name="theme-color" content="#0d2b4a"/>
   <link rel="manifest" id="pwa-manifest"/>
   <link rel="apple-touch-icon" sizes="180x180" href="./mundial2026-app-icon-v2-180.png"/>
@@ -4588,12 +4588,253 @@
       transition: transform .09s ease !important;
     }
 
+
+    /* ═══════════════════════════════════════════════════════════════
+       EDGE-TO-EDGE VIEWPORT FIX · iOS Safari + installed PWA
+       Uses the real visible viewport height, removes doubled body
+       padding and leaves scroll space above the floating navigation.
+    ═══════════════════════════════════════════════════════════════ */
+    :root {
+      --app-viewport-height: 100dvh;
+      --app-viewport-top: 0px;
+      --app-viewport-bottom: 0px;
+      --app-browser-bottom-space: max(env(safe-area-inset-bottom, 0px), var(--app-viewport-bottom));
+    }
+
+    html {
+      width: 100%;
+      min-height: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      width: 100%;
+      min-height: var(--app-viewport-height) !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      overflow-x: hidden;
+    }
+
+    #loading,
+    #root,
+    #root > .pitch-bg,
+    .pitch-bg {
+      min-height: var(--app-viewport-height) !important;
+    }
+
+    /* Override the earlier max(100dvh, …) rule. On iOS it can select
+       the larger layout viewport and make the bottom appear clipped. */
+    @supports (height: 100dvh) {
+      html,
+      body,
+      #loading,
+      #root,
+      #root > .pitch-bg,
+      .pitch-bg {
+        min-height: var(--app-viewport-height) !important;
+      }
+    }
+
+    body::before {
+      top: 0 !important;
+      bottom: auto !important;
+      width: 100% !important;
+      height: var(--app-viewport-height) !important;
+      min-height: var(--app-viewport-height) !important;
+    }
+
+    /* The last card can always be scrolled completely above the
+       floating bottom bar, including the iPhone home-indicator inset. */
+    .app-content {
+      padding-bottom: calc(124px + var(--app-browser-bottom-space)) !important;
+    }
+
+    /* In normal Safari the browser already excludes its own toolbars
+       from the visual viewport, so do not add the standalone insets. */
+    html:not(.is-standalone) .app-header {
+      top: 7px !important;
+      margin-top: 7px !important;
+    }
+    html:not(.is-standalone) .filters-sticky {
+      top: 78px !important;
+    }
+    html:not(.is-standalone) .bottom-nav {
+      bottom: 3px !important;
+    }
+
+    /* Installed PWA: draw edge-to-edge, while keeping controls clear
+       of the Dynamic Island/status bar and home indicator. */
+    html.is-standalone .app-header {
+      top: calc(env(safe-area-inset-top, 0px) + 7px) !important;
+      margin-top: calc(env(safe-area-inset-top, 0px) + 7px) !important;
+    }
+    html.is-standalone .filters-sticky {
+      top: calc(env(safe-area-inset-top, 0px) + 88px) !important;
+    }
+    html.is-standalone .bottom-nav {
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 7px) !important;
+    }
+    html.is-standalone .app-content {
+      padding-bottom: calc(124px + max(env(safe-area-inset-bottom, 0px), 20px)) !important;
+    }
+
+    @media (display-mode: standalone) {
+      .app-header {
+        top: calc(env(safe-area-inset-top, 0px) + 7px) !important;
+        margin-top: calc(env(safe-area-inset-top, 0px) + 7px) !important;
+      }
+      .filters-sticky {
+        top: calc(env(safe-area-inset-top, 0px) + 88px) !important;
+      }
+      .bottom-nav {
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 7px) !important;
+      }
+      .app-content {
+        padding-bottom: calc(124px + max(env(safe-area-inset-bottom, 0px), 20px)) !important;
+      }
+    }
+
+
+    /* ═══════════════════════════════════════════════════════════════
+       SOFT OVERFLOW FADE
+       Zamiast wielokropka lub ostrego ucięcia tekst łagodnie zanika.
+    ═══════════════════════════════════════════════════════════════ */
+    :root {
+      --overflow-fade: clamp(16px, 5vw, 30px);
+      --overflow-fade-small: clamp(10px, 3.5vw, 20px);
+    }
+
+    /* Elementy wyrównane do lewej — zanikanie przy prawej krawędzi. */
+    .truncate,
+    .app-header .title-group h1,
+    .app-header .title-group small,
+    .mine-team-name,
+    .admin-match-summary-teams,
+    .bracket-team-name,
+    .compare-view .compare-player-name,
+    .prediction-player-name,
+    .leaderboard-player-name,
+    .leaderboard-stats .rank-stat {
+      text-overflow: clip !important;
+      -webkit-mask-image: linear-gradient(
+        to right,
+        #000 0,
+        #000 calc(100% - var(--overflow-fade)),
+        transparent 100%
+      );
+      mask-image: linear-gradient(
+        to right,
+        #000 0,
+        #000 calc(100% - var(--overflow-fade)),
+        transparent 100%
+      );
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-size: 100% 100%;
+      mask-size: 100% 100%;
+    }
+
+    /* Wyśrodkowane etykiety — delikatne zanikanie po obu stronach. */
+    .bottom-nav .nav-label,
+    .admin-score-team-name {
+      text-overflow: clip !important;
+      -webkit-mask-image: linear-gradient(
+        to right,
+        transparent 0,
+        #000 var(--overflow-fade-small),
+        #000 calc(100% - var(--overflow-fade-small)),
+        transparent 100%
+      );
+      mask-image: linear-gradient(
+        to right,
+        transparent 0,
+        #000 var(--overflow-fade-small),
+        #000 calc(100% - var(--overflow-fade-small)),
+        transparent 100%
+      );
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-size: 100% 100%;
+      mask-size: 100% 100%;
+    }
+
+    /* Poziome rzędy przewijane również sugerują dalszą zawartość zanikiem. */
+    .chip-scroll-row {
+      -webkit-mask-image: linear-gradient(
+        to right,
+        #000 0,
+        #000 calc(100% - var(--overflow-fade)),
+        transparent 100%
+      );
+      mask-image: linear-gradient(
+        to right,
+        #000 0,
+        #000 calc(100% - var(--overflow-fade)),
+        transparent 100%
+      );
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-size: 100% 100%;
+      mask-size: 100% 100%;
+      padding-right: calc(var(--overflow-fade) + 4px);
+    }
+
+
+    /* Nagłówek aplikacji: pełny tytuł w dwóch widocznych wierszach */
+    .app-header .title-group {
+      flex: 1 1 auto;
+      min-width: 0;
+      overflow: visible !important;
+    }
+    .app-header .title-group h1,
+    .app-header .title-group small {
+      display: block !important;
+      width: auto;
+      max-width: none !important;
+      overflow: visible !important;
+      text-overflow: clip !important;
+      white-space: nowrap !important;
+      -webkit-mask-image: none !important;
+      mask-image: none !important;
+    }
+    .app-header .title-group h1 {
+      font-size: 15px !important;
+      line-height: 1.02 !important;
+      letter-spacing: .025em !important;
+    }
+    .app-header .title-group small {
+      margin-top: 3px !important;
+      font-size: 12px !important;
+      line-height: 1 !important;
+      letter-spacing: .14em !important;
+      color: var(--label-2) !important;
+    }
+    @media (max-width: 520px) {
+      .app-header .title-group h1 {
+        font-size: 13px !important;
+        letter-spacing: .015em !important;
+      }
+      .app-header .title-group small {
+        font-size: 11px !important;
+        letter-spacing: .12em !important;
+      }
+    }
+    @media (max-width: 380px) {
+      .app-header .title-group h1 {
+        font-size: 12px !important;
+      }
+      .app-header .title-group small {
+        font-size: 10px !important;
+        letter-spacing: .10em !important;
+      }
+    }
+
 </style>
 </head>
 <body>
   <div id="loading">
     <div class="loading-icon">⚽</div>
-    <div class="loading-title">MUNDIAL 2026</div>
+    <div class="loading-title">FIFA WORLD CUP 2026</div>
     <div class="loading-sub">USA · KANADA · MEKSYK</div>
     <div class="spinner" style="margin-top:4px;"></div>
     <div id="loading-slow" style="display:none;margin-top:14px;font-size:0.72rem;color:rgba(255,196,90,.75);text-align:center;">Wolne połączenie z bazą danych…<br>Aplikacja załaduje się automatycznie.</div>
@@ -4632,16 +4873,36 @@ const db = firebase.database();
   const syncViewportHeight = () => {
     cancelAnimationFrame(viewportFrame);
     viewportFrame = requestAnimationFrame(() => {
-      const visualHeight = window.visualViewport ? window.visualViewport.height : 0;
+      const vv = window.visualViewport;
+      const visualHeight = vv ? vv.height : 0;
       const height = visualHeight || window.innerHeight || document.documentElement.clientHeight || 0;
-      if (height > 0) document.documentElement.style.setProperty('--app-viewport-height', `${Math.ceil(height)}px`);
+      const top = vv ? Math.max(0, vv.offsetTop || 0) : 0;
+      const layoutHeight = Math.max(window.innerHeight || 0, document.documentElement.clientHeight || 0);
+      const bottom = vv ? Math.max(0, layoutHeight - top - vv.height) : 0;
+
+      if (height > 0) {
+        document.documentElement.style.setProperty('--app-viewport-height', `${Math.ceil(height)}px`);
+        document.documentElement.style.setProperty('--app-viewport-top', `${Math.round(top)}px`);
+        document.documentElement.style.setProperty('--app-viewport-bottom', `${Math.round(bottom)}px`);
+      }
     });
   };
   syncViewportHeight();
   window.addEventListener('resize', syncViewportHeight, {
     passive: true
   });
-  window.addEventListener('orientationchange', syncViewportHeight, {
+  window.addEventListener('orientationchange', () => {
+    syncViewportHeight();
+    setTimeout(syncViewportHeight, 250);
+  }, {
+    passive: true
+  });
+  window.addEventListener('pageshow', syncViewportHeight, {
+    passive: true
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) syncViewportHeight();
+  }, {
     passive: true
   });
   if (window.visualViewport) {
@@ -4654,8 +4915,8 @@ const db = firebase.database();
   }
   // manifest
   const manifest = {
-    name: "Mundial 2026 – Typer",
-    short_name: "Mundial 26",
+    name: "FIFA WORLD CUP 2026 – Typer",
+    short_name: "FIFA WC 2026",
     description: "Typowanie wyników FIFA World Cup 2026",
     start_url: new URL('./', window.location.href).href,
     scope: new URL('./', window.location.href).href,
@@ -11440,7 +11701,7 @@ function Mundial2026() {
     className: "logo-icon"
   }, "\u26BD"), /*#__PURE__*/React.createElement("div", {
     className: "title-group"
-  }, /*#__PURE__*/React.createElement("h1", null, "MISTRZOSTWA"), /*#__PURE__*/React.createElement("small", null, "FIFA 26"))), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("h1", null, "FIFA WORLD"), /*#__PURE__*/React.createElement("small", null, "CUP 2026"))), /*#__PURE__*/React.createElement("div", {
     className: "player-row"
   }, /*#__PURE__*/React.createElement("button", {
     type: "button",
