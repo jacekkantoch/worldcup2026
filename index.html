@@ -4585,6 +4585,44 @@
       box-shadow: inset 0 1px 0 rgba(255,255,255,.80) !important;
     }
 
+
+
+    /* Login / profile modal — better mobile layout */
+    .login-modal-sheet {
+      align-self: flex-start;
+      width: min(calc(100% - 16px), 420px) !important;
+      margin-top: calc(var(--safe-top) + 8px);
+      max-height: calc(100dvh - var(--safe-top) - 16px) !important;
+    }
+    .login-modal-compact-sheet {
+      width: min(calc(100% - 28px), 360px) !important;
+    }
+    .login-modal-title {
+      line-height: 1.08;
+      padding-right: 8px;
+      text-wrap: balance;
+    }
+    @media (max-width: 520px) {
+      .login-modal-sheet {
+        width: calc(100% - 14px) !important;
+        border-radius: 28px !important;
+        margin-top: calc(var(--safe-top) + 6px) !important;
+        max-height: calc(100dvh - var(--safe-top) - 10px) !important;
+      }
+      .login-modal-compact-sheet {
+        width: calc(100% - 28px) !important;
+        max-width: 360px !important;
+      }
+      .login-modal-title {
+        font-size: 16px !important;
+        letter-spacing: -.01em !important;
+        line-height: 1.12 !important;
+      }
+      .login-modal-content {
+        padding: 14px !important;
+      }
+    }
+
 </style>
 </head>
 <body>
@@ -5227,10 +5265,10 @@ function Modal({open,onClose,title,children,maxWidth='max-w-md',overlayClassName
       <div className={`absolute inset-0 bg-stone-900/60 backdrop-blur-sm ${overlayClassName}`} onClick={onClose}/>
       <div className={`relative w-full ${maxWidth} rounded-t-2xl sm:rounded-2xl max-h-[90vh] overflow-hidden flex flex-col ${panelClassName}`} style={{background:'var(--bg-1)',border:'1px solid var(--sep)',boxShadow:'var(--shadow-lg), var(--hl)'}}>
         <div className="flex items-center justify-between p-4 border-b" style={{borderColor:"var(--sep)",background:"var(--bg-2)"}}>
-          <h3 className="font-display text-xl tracking-wide text-stone-900">{title}</h3>
+          <h3 className="login-modal-title font-display text-xl tracking-wide text-stone-900">{title}</h3>
           <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-white/10 text-stone-600"><Icon name="x" size={20}/></button>
         </div>
-        <div className="overflow-y-auto p-4">{children}</div>
+        <div className="login-modal-content overflow-y-auto p-4">{children}</div>
       </div>
     </div>
   );
@@ -7083,6 +7121,7 @@ function LoginModal({open,onClose,players,activePlayer,onLogin,onRename,onManage
 
   const pl=players.find(p=>p.id===selected);
   const hasPinHash=pl&&pl.pinHash;
+  const isCompactStep=step==='pin'||step==='rename';
 
   const handlePick=()=>{
     if(!selected){setErr('Wybierz gracza');return;}
@@ -7110,7 +7149,7 @@ function LoginModal({open,onClose,players,activePlayer,onLogin,onRename,onManage
   };
 
   return (
-    <Modal open={open} onClose={onClose} title={activePlayer?"Profil i użytkownicy":"Zaloguj się"} maxWidth="max-w-sm" overlayClassName="bg-stone-950/42 backdrop-blur-[2px]">
+    <Modal open={open} onClose={onClose} title={activePlayer?"Profil i użytkownicy":"Zaloguj się"} maxWidth={isCompactStep?"max-w-xs":"max-w-sm"} panelClassName={`login-modal-sheet${isCompactStep?" login-modal-compact-sheet":""}`} overlayClassName="bg-stone-950/42 backdrop-blur-[2px]">
       <div className="space-y-4">
         {step==='pick'&&(
           <>
