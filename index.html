@@ -2540,6 +2540,23 @@
               mask-image: radial-gradient(white, black);
     }
 
+    /* Admin expanded-card seam fix: the generic rounded-card header selector
+       has higher specificity, so force the summary button to keep only its
+       top corners when the editor is open. This removes the left/right notch
+       between the summary row and the details pane on iOS Safari. */
+    html body .admin-match-card.expanded > .admin-match-summary-button:not(#__admin_match_seam_fix__) {
+      border-radius: var(--ui-corner-radius) var(--ui-corner-radius) 0 0 !important;
+      border-bottom-left-radius: 0 !important;
+      border-bottom-right-radius: 0 !important;
+      margin-bottom: 0 !important;
+    }
+
+    html body .admin-match-card.expanded > .admin-match-details:not(#__admin_match_seam_fix__) {
+      border-top-left-radius: 0 !important;
+      border-top-right-radius: 0 !important;
+      margin-top: 0 !important;
+    }
+
 
 
     /* Ranking history chart — positions after every completed match. */
@@ -2701,6 +2718,82 @@
       .ranking-history-latest { min-width: 60px; padding-inline: 8px; }
     }
 
+
+
+    /* ═══════════════════════════════════════════════════════════════
+       FULL MOBILE VIEWPORT BACKGROUND
+       Extends the app surface beneath both iOS safe areas and follows
+       Safari's dynamic visual viewport without exposing black strips.
+    ═══════════════════════════════════════════════════════════════ */
+    :root {
+      --app-viewport-height: 100dvh;
+      --app-screen-background:
+        radial-gradient(ellipse 100% 58% at 50% -13%, rgba(44,139,255,.28), transparent 62%),
+        radial-gradient(ellipse 66% 46% at -8% 68%, rgba(44,214,155,.13), transparent 69%),
+        radial-gradient(ellipse 68% 46% at 108% 78%, rgba(168,88,255,.16), transparent 68%),
+        linear-gradient(180deg, #07101d 0%, #070a12 48%, #04060b 100%);
+    }
+
+    html {
+      min-height: 100%;
+      min-height: 100svh;
+      min-height: 100dvh;
+      background-color: #07101d !important;
+      background-image: var(--app-screen-background) !important;
+      background-repeat: no-repeat !important;
+      background-position: center top !important;
+      background-size: cover !important;
+    }
+
+    body {
+      min-height: 100vh !important;
+      min-height: 100svh !important;
+      min-height: max(100dvh, var(--app-viewport-height)) !important;
+      background: transparent !important;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      z-index: -2;
+      pointer-events: none;
+      left: -2px;
+      right: -2px;
+      top: calc(0px - var(--safe-top) - 32px);
+      bottom: calc(0px - var(--safe-bottom) - 32px);
+      background-color: #07101d;
+      background-image: var(--app-screen-background);
+      background-repeat: no-repeat;
+      background-position: center top;
+      background-size: cover;
+      transform: translateZ(0);
+    }
+
+    #root,
+    .pitch-bg {
+      min-height: 100vh !important;
+      min-height: 100svh !important;
+      min-height: max(100dvh, var(--app-viewport-height)) !important;
+    }
+
+    .pitch-bg {
+      background: transparent !important;
+    }
+
+    @supports (-webkit-touch-callout: none) {
+      html,
+      body,
+      #root,
+      .pitch-bg {
+        min-height: -webkit-fill-available;
+      }
+      body,
+      #root,
+      .pitch-bg {
+        min-height: max(var(--app-viewport-height), 100dvh) !important;
+      }
+    }
+
 </style>
 </head>
 <body>
@@ -2739,6 +2832,24 @@ const db = firebase.database();
 (function() {
   const isStandalone = window.matchMedia?.('(display-mode: standalone)').matches || window.navigator.standalone === true;
   if (isStandalone) document.documentElement.classList.add('is-standalone');
+
+  // Keep the background at least as tall as the current iOS visual viewport.
+  let viewportFrame = 0;
+  const syncViewportHeight = () => {
+    cancelAnimationFrame(viewportFrame);
+    viewportFrame = requestAnimationFrame(() => {
+      const visualHeight = window.visualViewport ? window.visualViewport.height : 0;
+      const height = Math.max(window.innerHeight || 0, document.documentElement.clientHeight || 0, visualHeight || 0);
+      if (height > 0) document.documentElement.style.setProperty('--app-viewport-height', `${Math.ceil(height)}px`);
+    });
+  };
+  syncViewportHeight();
+  window.addEventListener('resize', syncViewportHeight, {passive:true});
+  window.addEventListener('orientationchange', syncViewportHeight, {passive:true});
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', syncViewportHeight, {passive:true});
+    window.visualViewport.addEventListener('scroll', syncViewportHeight, {passive:true});
+  }
   // manifest
   const manifest = {
     name: "Mundial 2026 – Typer",
@@ -3016,22 +3127,22 @@ function generateInitialMatches() {
   matches.push({id:'M70',num:70,phase:'group',group:'K',homeTeamId:'K2',awayTeamId:'K3',date:'2026-06-27T23:30:00Z',city:'Atlanta (USA)'});
   matches.push({id:'M71',num:71,phase:'group',group:'J',homeTeamId:'J2',awayTeamId:'J3',date:'2026-06-28T02:00:00Z',city:'Kansas City (USA)'});
   matches.push({id:'M72',num:72,phase:'group',group:'J',homeTeamId:'J4',awayTeamId:'J1',date:'2026-06-28T02:00:00Z',city:'Dallas (USA)'});
-  matches.push({id:'M73',num:73,phase:'r32',homeTeamId:null,awayTeamId:null,date:'2026-06-28T19:00:00Z',city:'Los Angeles (USA)'});
-  matches.push({id:'M74',num:74,phase:'r32',homeTeamId:null,awayTeamId:null,date:'2026-06-29T20:30:00Z',city:'Boston (USA)'});
-  matches.push({id:'M75',num:75,phase:'r32',homeTeamId:null,awayTeamId:null,date:'2026-06-30T01:00:00Z',city:'Monterrey (Meksyk)'});
-  matches.push({id:'M76',num:76,phase:'r32',homeTeamId:null,awayTeamId:null,date:'2026-06-29T17:00:00Z',city:'Houston (USA)'});
-  matches.push({id:'M77',num:77,phase:'r32',homeTeamId:null,awayTeamId:null,date:'2026-06-30T21:00:00Z',city:'New York/NJ (USA)'});
-  matches.push({id:'M78',num:78,phase:'r32',homeTeamId:null,awayTeamId:null,date:'2026-06-30T17:00:00Z',city:'Dallas (USA)'});
-  matches.push({id:'M79',num:79,phase:'r32',homeTeamId:null,awayTeamId:null,date:'2026-07-01T01:00:00Z',city:'Mexico City (Meksyk)'});
-  matches.push({id:'M80',num:80,phase:'r32',homeTeamId:null,awayTeamId:null,date:'2026-07-01T16:00:00Z',city:'Atlanta (USA)'});
-  matches.push({id:'M81',num:81,phase:'r32',homeTeamId:null,awayTeamId:null,date:'2026-07-02T00:00:00Z',city:'San Francisco (USA)'});
-  matches.push({id:'M82',num:82,phase:'r32',homeTeamId:null,awayTeamId:null,date:'2026-07-01T20:00:00Z',city:'Seattle (USA)'});
-  matches.push({id:'M83',num:83,phase:'r32',homeTeamId:null,awayTeamId:null,date:'2026-07-02T23:00:00Z',city:'Toronto (Kanada)'});
-  matches.push({id:'M84',num:84,phase:'r32',homeTeamId:null,awayTeamId:null,date:'2026-07-02T19:00:00Z',city:'Los Angeles (USA)'});
-  matches.push({id:'M85',num:85,phase:'r32',homeTeamId:null,awayTeamId:null,date:'2026-07-03T03:00:00Z',city:'Vancouver (Kanada)'});
-  matches.push({id:'M86',num:86,phase:'r32',homeTeamId:null,awayTeamId:null,date:'2026-07-03T22:00:00Z',city:'Miami (USA)'});
-  matches.push({id:'M87',num:87,phase:'r32',homeTeamId:null,awayTeamId:null,date:'2026-07-04T01:30:00Z',city:'Kansas City (USA)'});
-  matches.push({id:'M88',num:88,phase:'r32',homeTeamId:null,awayTeamId:null,date:'2026-07-03T18:00:00Z',city:'Dallas (USA)'});
+  matches.push({id:'M73',num:73,phase:'r32',homeTeamId:'A2',awayTeamId:'B1',date:'2026-06-28T19:00:00Z',city:'Los Angeles (USA)'});
+  matches.push({id:'M74',num:74,phase:'r32',homeTeamId:'E1',awayTeamId:'D2',date:'2026-06-29T20:30:00Z',city:'Boston (USA)'});
+  matches.push({id:'M75',num:75,phase:'r32',homeTeamId:'F1',awayTeamId:'C2',date:'2026-06-30T01:00:00Z',city:'Monterrey (Meksyk)'});
+  matches.push({id:'M76',num:76,phase:'r32',homeTeamId:'C1',awayTeamId:'F2',date:'2026-06-29T17:00:00Z',city:'Houston (USA)'});
+  matches.push({id:'M77',num:77,phase:'r32',homeTeamId:'I1',awayTeamId:'F3',date:'2026-06-30T21:00:00Z',city:'New York/NJ (USA)'});
+  matches.push({id:'M78',num:78,phase:'r32',homeTeamId:'E3',awayTeamId:'I4',date:'2026-06-30T17:00:00Z',city:'Dallas (USA)'});
+  matches.push({id:'M79',num:79,phase:'r32',homeTeamId:'A1',awayTeamId:'E4',date:'2026-07-01T01:00:00Z',city:'Mexico City (Meksyk)'});
+  matches.push({id:'M80',num:80,phase:'r32',homeTeamId:'L1',awayTeamId:'K2',date:'2026-07-01T16:00:00Z',city:'Atlanta (USA)'});
+  matches.push({id:'M81',num:81,phase:'r32',homeTeamId:'D1',awayTeamId:'B2',date:'2026-07-02T00:00:00Z',city:'San Francisco (USA)'});
+  matches.push({id:'M82',num:82,phase:'r32',homeTeamId:'G1',awayTeamId:'I2',date:'2026-07-01T20:00:00Z',city:'Seattle (USA)'});
+  matches.push({id:'M83',num:83,phase:'r32',homeTeamId:'K1',awayTeamId:'L2',date:'2026-07-02T23:00:00Z',city:'Toronto (Kanada)'});
+  matches.push({id:'M84',num:84,phase:'r32',homeTeamId:'H1',awayTeamId:'J3',date:'2026-07-02T19:00:00Z',city:'Los Angeles (USA)'});
+  matches.push({id:'M85',num:85,phase:'r32',homeTeamId:'B4',awayTeamId:'J2',date:'2026-07-03T03:00:00Z',city:'Vancouver (Kanada)'});
+  matches.push({id:'M86',num:86,phase:'r32',homeTeamId:'J1',awayTeamId:'H2',date:'2026-07-03T22:00:00Z',city:'Miami (USA)'});
+  matches.push({id:'M87',num:87,phase:'r32',homeTeamId:'K4',awayTeamId:'L3',date:'2026-07-04T01:30:00Z',city:'Kansas City (USA)'});
+  matches.push({id:'M88',num:88,phase:'r32',homeTeamId:'D3',awayTeamId:'G2',date:'2026-07-03T18:00:00Z',city:'Dallas (USA)'});
   matches.push({id:'M89',num:89,phase:'r16',homeTeamId:null,awayTeamId:null,date:'2026-07-04T21:00:00Z',city:'Filadelfia (USA)'});
   matches.push({id:'M90',num:90,phase:'r16',homeTeamId:null,awayTeamId:null,date:'2026-07-04T17:00:00Z',city:'Houston (USA)'});
   matches.push({id:'M91',num:91,phase:'r16',homeTeamId:null,awayTeamId:null,date:'2026-07-05T20:00:00Z',city:'New York/NJ (USA)'});
@@ -3492,15 +3603,15 @@ const MatchCard=React.memo(function MatchCard({match,teams,prediction,result,all
         </div>
         <div className="mt-1">
           {/* flaga+nazwa — wynik/czas — flaga+nazwa */}
-          <div className="flex items-center justify-between gap-2">
-            <div style={{flex:1,minWidth:0,display:'flex',flexDirection:'column',alignItems:'center',gap:5}}>
+          <div className="grid" style={{gridTemplateColumns:'minmax(0,1fr) auto minmax(0,1fr)',alignItems:'center',columnGap:12}}>
+            <div style={{minWidth:0,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:5}}>
               <FlagImg code={home?.flag} size={32} title={home?.name}/>
               <span style={{fontSize:11.5,fontWeight:700,color:'rgba(255,255,255,.85)',textAlign:'center',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',maxWidth:'100%'}}>{home?.name||'TBD'}</span>
             </div>
-            <div style={{padding:'8px 18px',borderRadius:'var(--radius-md)',background:'var(--bg-3)',border:'1px solid var(--border-2)',boxShadow:'var(--hl), 0 2px 8px rgba(0,0,0,.50)',fontFamily:'Bebas Neue,sans-serif',fontSize:26,color:'white',minWidth:78,textAlign:'center',letterSpacing:'0.06em',flexShrink:0}}>
+            <div style={{padding:'8px 18px',borderRadius:'var(--radius-md)',background:'var(--bg-3)',border:'1px solid var(--border-2)',boxShadow:'var(--hl), 0 2px 8px rgba(0,0,0,.50)',fontFamily:'Bebas Neue,sans-serif',fontSize:26,color:'white',minWidth:78,textAlign:'center',letterSpacing:'0.06em',flexShrink:0,justifySelf:'center'}}>
               {result?`${result.home}:${result.away}`:prediction?`${prediction.home}:${prediction.away}`:'vs'}
             </div>
-            <div style={{flex:1,minWidth:0,display:'flex',flexDirection:'column',alignItems:'center',gap:5}}>
+            <div style={{minWidth:0,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:5}}>
               <FlagImg code={away?.flag} size={32} title={away?.name}/>
               <span style={{fontSize:11.5,fontWeight:700,color:'rgba(255,255,255,.85)',textAlign:'center',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',maxWidth:'100%'}}>{away?.name||'TBD'}</span>
             </div>
@@ -3527,23 +3638,22 @@ const MatchCard=React.memo(function MatchCard({match,teams,prediction,result,all
           {activePlayerId&&teamsAssigned&&(
             <>
               <div className="my-3">
-                {/* flaga+nazwa — VS — flaga+nazwa */}
-                <div className="flex items-center justify-between gap-2 mb-3">
-                  <div style={{flex:1,minWidth:0,display:'flex',flexDirection:'column',alignItems:'center',gap:5}}>
-                    <FlagImg code={home.flag} size={30} title={home.name}/>
-                    <span style={{fontSize:12,fontWeight:700,color:'rgba(255,255,255,.85)',textAlign:'center',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',maxWidth:'100%'}}>{home.name}</span>
+                <div style={{display:'grid',gridTemplateColumns:'minmax(0,1fr) auto minmax(0,1fr)',alignItems:'end',columnGap:10,rowGap:8,width:'100%'}}>
+                  <div style={{minWidth:0,display:'flex',flexDirection:'column',alignItems:'center',gap:8}}>
+                    <div style={{width:'100%',minWidth:0,display:'flex',flexDirection:'column',alignItems:'center',gap:5,textAlign:'center'}}>
+                      <FlagImg code={home.flag} size={30} title={home.name}/>
+                      <span style={{display:'block',width:'100%',minWidth:0,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',fontSize:12,fontWeight:700,color:'rgba(255,255,255,.85)'}}>{home.name}</span>
+                    </div>
+                    <ScoreInput value={draft.home} onChange={n=>setDraft(d=>({...d,home:n}))} disabled={locked} label="Gole"/>
                   </div>
-                  <span style={{fontSize:10.5,fontWeight:700,color:'rgba(255,255,255,.32)',flexShrink:0,letterSpacing:'0.06em'}}>VS</span>
-                  <div style={{flex:1,minWidth:0,display:'flex',flexDirection:'column',alignItems:'center',gap:5}}>
-                    <FlagImg code={away.flag} size={30} title={away.name}/>
-                    <span style={{fontSize:12,fontWeight:700,color:'rgba(255,255,255,.85)',textAlign:'center',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',maxWidth:'100%'}}>{away.name}</span>
+                  <span style={{alignSelf:'end',display:'flex',alignItems:'center',justifyContent:'center',height:56,paddingBottom:1,fontFamily:'Bebas Neue,sans-serif',fontSize:28,color:'rgba(255,255,255,.45)'}}>:</span>
+                  <div style={{minWidth:0,display:'flex',flexDirection:'column',alignItems:'center',gap:8}}>
+                    <div style={{width:'100%',minWidth:0,display:'flex',flexDirection:'column',alignItems:'center',gap:5,textAlign:'center'}}>
+                      <FlagImg code={away.flag} size={30} title={away.name}/>
+                      <span style={{display:'block',width:'100%',minWidth:0,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',fontSize:12,fontWeight:700,color:'rgba(255,255,255,.85)'}}>{away.name}</span>
+                    </div>
+                    <ScoreInput value={draft.away} onChange={n=>setDraft(d=>({...d,away:n}))} disabled={locked} label="Gole"/>
                   </div>
-                </div>
-                {/* pola wyniku */}
-                <div className="flex items-center justify-center gap-1">
-                  <ScoreInput value={draft.home} onChange={n=>setDraft(d=>({...d,home:n}))} disabled={locked}/>
-                  <span className="font-display text-2xl" style={{color:'rgba(255,255,255,.45)'}}>:</span>
-                  <ScoreInput value={draft.away} onChange={n=>setDraft(d=>({...d,away:n}))} disabled={locked}/>
                 </div>
               </div>
 
@@ -5252,10 +5362,54 @@ function PlayersManager({open,onClose,players,onAddPlayer}) {
 // ═══════════════════════════════════════════════════════════════
 //  DRABINKA TURNIEJU
 // ═══════════════════════════════════════════════════════════════
+// Oficjalna ścieżka fazy pucharowej FIFA World Cup 2026.
+// Kolejność wizualna jest celowo inna niż kolejność numerów meczów,
+// aby każda para sąsiadujących kart prowadziła do właściwego kolejnego meczu.
+// Pary 1/16 finału i ich pozycje zgodne z drabinką TVP Sport.
+// Układ pozostaje jednokierunkowy: wszystkie pary startują po lewej stronie.
+const TVP_R32_TEAMS = {
+  M73:['A2','B1'],   // RPA – Kanada
+  M74:['E1','D2'],   // Niemcy – Paragwaj
+  M75:['F1','C2'],   // Holandia – Maroko
+  M76:['C1','F2'],   // Brazylia – Japonia
+  M77:['I1','F3'],   // Francja – Szwecja
+  M78:['E3','I4'],   // Wybrzeże Kości Słoniowej – Norwegia
+  M79:['A1','E4'],   // Meksyk – Ekwador
+  M80:['L1','K2'],   // Anglia – DR Konga
+  M81:['D1','B2'],   // USA – Bośnia i Hercegowina
+  M82:['G1','I2'],   // Belgia – Senegal
+  M83:['K1','L2'],   // Portugalia – Chorwacja
+  M84:['H1','J3'],   // Hiszpania – Austria
+  M85:['B4','J2'],   // Szwajcaria – Algieria
+  M86:['J1','H2'],   // Argentyna – Rep. Zielonego Przylądka
+  M87:['K4','L3'],   // Kolumbia – Ghana
+  M88:['D3','G2'],   // Australia – Egipt
+};
+
+// Dokładne przejścia zwycięzców zgodne z kolejnością gałęzi TVP.
+const BRACKET_FEEDS = {
+  M89:[['M74','winner'],['M77','winner']],
+  M90:[['M73','winner'],['M75','winner']],
+  M91:[['M76','winner'],['M78','winner']],
+  M92:[['M79','winner'],['M80','winner']],
+  M93:[['M83','winner'],['M84','winner']],
+  M94:[['M81','winner'],['M82','winner']],
+  M95:[['M86','winner'],['M88','winner']],
+  M96:[['M85','winner'],['M87','winner']],
+  M97:[['M89','winner'],['M90','winner']],
+  M98:[['M93','winner'],['M94','winner']],
+  M99:[['M91','winner'],['M92','winner']],
+  M100:[['M95','winner'],['M96','winner']],
+  M101:[['M97','winner'],['M98','winner']],
+  M102:[['M99','winner'],['M100','winner']],
+  M103:[['M101','loser'],['M102','loser']],
+  M104:[['M101','winner'],['M102','winner']],
+};
+
 const BRACKET_LAYOUT = {
   rounds:[
-    {label:'1/16 finału',ids:['M73','M74','M75','M76','M77','M78','M79','M80','M81','M82','M83','M84','M85','M86','M87','M88']},
-    {label:'1/8 finału',ids:['M89','M90','M91','M92','M93','M94','M95','M96']},
+    {label:'1/16 finału',ids:['M74','M77','M73','M75','M83','M84','M81','M82','M76','M78','M79','M80','M86','M88','M85','M87']},
+    {label:'1/8 finału',ids:['M89','M90','M93','M94','M91','M92','M95','M96']},
     {label:'Ćwierćfinał',ids:['M97','M98','M99','M100']},
     {label:'Półfinał',ids:['M101','M102']},
     {label:'Finał',ids:['M104']},
@@ -5263,14 +5417,40 @@ const BRACKET_LAYOUT = {
 };
 
 const BRACKET_SOURCES = {
-  M89:['Zwycięzca M73','Zwycięzca M74'], M90:['Zwycięzca M75','Zwycięzca M76'],
-  M91:['Zwycięzca M77','Zwycięzca M78'], M92:['Zwycięzca M79','Zwycięzca M80'],
-  M93:['Zwycięzca M81','Zwycięzca M82'], M94:['Zwycięzca M83','Zwycięzca M84'],
-  M95:['Zwycięzca M85','Zwycięzca M86'], M96:['Zwycięzca M87','Zwycięzca M88'],
-  M97:['Zwycięzca M89','Zwycięzca M90'], M98:['Zwycięzca M91','Zwycięzca M92'],
-  M99:['Zwycięzca M93','Zwycięzca M94'], M100:['Zwycięzca M95','Zwycięzca M96'],
-  M101:['Zwycięzca M97','Zwycięzca M98'], M102:['Zwycięzca M99','Zwycięzca M100'],
-  M103:['Przegrany M101','Przegrany M102'], M104:['Zwycięzca M101','Zwycięzca M102'],
+  M73:['2. miejsce grupy A','2. miejsce grupy B'],
+  M74:['1. miejsce grupy E','3. miejsce: A/B/C/D/F'],
+  M75:['1. miejsce grupy F','2. miejsce grupy C'],
+  M76:['1. miejsce grupy C','2. miejsce grupy F'],
+  M77:['1. miejsce grupy I','3. miejsce: C/D/F/G/H'],
+  M78:['2. miejsce grupy E','2. miejsce grupy I'],
+  M79:['1. miejsce grupy A','3. miejsce: C/E/F/H/I'],
+  M80:['1. miejsce grupy L','3. miejsce: E/H/I/J/K'],
+  M81:['1. miejsce grupy D','3. miejsce: B/E/F/I/J'],
+  M82:['1. miejsce grupy G','3. miejsce: A/E/H/I/J'],
+  M83:['2. miejsce grupy K','2. miejsce grupy L'],
+  M84:['1. miejsce grupy H','2. miejsce grupy J'],
+  M85:['1. miejsce grupy B','3. miejsce: E/F/G/I/J'],
+  M86:['1. miejsce grupy J','2. miejsce grupy H'],
+  M87:['1. miejsce grupy K','3. miejsce: D/E/I/J/L'],
+  M88:['2. miejsce grupy D','2. miejsce grupy G'],
+
+  M89:['Zwycięzca M74','Zwycięzca M77'],
+  M90:['Zwycięzca M73','Zwycięzca M75'],
+  M91:['Zwycięzca M76','Zwycięzca M78'],
+  M92:['Zwycięzca M79','Zwycięzca M80'],
+  M93:['Zwycięzca M83','Zwycięzca M84'],
+  M94:['Zwycięzca M81','Zwycięzca M82'],
+  M95:['Zwycięzca M86','Zwycięzca M88'],
+  M96:['Zwycięzca M85','Zwycięzca M87'],
+
+  M97:['Zwycięzca M89','Zwycięzca M90'],
+  M98:['Zwycięzca M93','Zwycięzca M94'],
+  M99:['Zwycięzca M91','Zwycięzca M92'],
+  M100:['Zwycięzca M95','Zwycięzca M96'],
+  M101:['Zwycięzca M97','Zwycięzca M98'],
+  M102:['Zwycięzca M99','Zwycięzca M100'],
+  M103:['Przegrany M101','Przegrany M102'],
+  M104:['Zwycięzca M101','Zwycięzca M102'],
 };
 
 function bracketWinnerSide(result){
@@ -5279,6 +5459,35 @@ function bracketWinnerSide(result){
   if(typeof result.home==='number'&&typeof result.away==='number'&&result.home!==result.away)
     return result.home>result.away?'home':'away';
   return null;
+}
+
+function resolveBracketTeamId(matchId,side,matchesById,results,cache){
+  const key=`${matchId}:${side}`;
+  if(Object.prototype.hasOwnProperty.call(cache,key)) return cache[key];
+
+  const r32=TVP_R32_TEAMS[matchId];
+  if(r32){
+    const id=side==='home'?r32[0]:r32[1];
+    cache[key]=id||null;
+    return cache[key];
+  }
+
+  const feed=BRACKET_FEEDS[matchId];
+  if(feed){
+    const source=feed[side==='home'?0:1];
+    const [sourceId,outcome]=source;
+    const winnerSide=bracketWinnerSide(results[sourceId]);
+    if(winnerSide){
+      const selectedSide=outcome==='loser'?(winnerSide==='home'?'away':'home'):winnerSide;
+      cache[key]=resolveBracketTeamId(sourceId,selectedSide,matchesById,results,cache);
+      return cache[key];
+    }
+  }
+
+  const match=matchesById[matchId];
+  const fallback=match?.[side==='home'?'homeTeamId':'awayTeamId']||null;
+  cache[key]=fallback;
+  return fallback;
 }
 
 function BracketMatchCard({match,teams,result,sourceLabels=['Do ustalenia','Do ustalenia'],style,large=false}){
@@ -5312,6 +5521,16 @@ function BracketMatchCard({match,teams,result,sourceLabels=['Do ustalenia','Do u
 }
 
 function BracketTree({config,matchesById,teams,results}){
+  const resolvedCache={};
+  const resolvedMatchForId=(id)=>{
+    const match=matchesById[id];
+    if(!match) return null;
+    return {
+      ...match,
+      homeTeamId:resolveBracketTeamId(id,'home',matchesById,results,resolvedCache),
+      awayTeamId:resolveBracketTeamId(id,'away',matchesById,results,resolvedCache),
+    };
+  };
   const xs=[0,246,492,738,984];
   const ys=[
     [0,70,140,210,280,350,420,490,560,630,700,770,840,910,980,1050],
@@ -5364,12 +5583,12 @@ function BracketTree({config,matchesById,teams,results}){
           {config.rounds.map((round,idx)=><div key={round.label} className="bracket-round-label" style={{left:xs[idx]}}>{round.label}</div>)}
           <svg className="bracket-connectors bracket-connectors-unified" viewBox={`0 0 ${boardW} ${connectorH}`} preserveAspectRatio="none">{connectorPaths}</svg>
           {config.rounds.map((round,rIdx)=>round.ids.map((id,mIdx)=>{
-            const match=matchesById[id];
+            const match=resolvedMatchForId(id);
             return <BracketMatchCard key={id} match={match} teams={teams} result={results[id]} sourceLabels={BRACKET_SOURCES[id]} style={{left:xs[rIdx],top:40+ys[rIdx][mIdx]}}/>;
           }))}
           <div className="bracket-third-place-label" style={{left:xs[4],top:682}}>Mecz o 3. miejsce</div>
           <BracketMatchCard
-            match={matchesById.M103}
+            match={resolvedMatchForId('M103')}
             teams={teams}
             result={results.M103}
             sourceLabels={BRACKET_SOURCES.M103}
@@ -5387,7 +5606,7 @@ function TournamentBracket({matches,teams,results}){
     <div className="bracket-page">
       <div className="bracket-intro">
         <h2>Drabinka turnieju</h2>
-        <p>Pary i wyniki aktualizują się automatycznie po zapisaniu ich przez administratora. Na telefonie przeciągnij drabinkę poziomo.</p>
+        <p>Układ par i przejścia między rundami są zgodne z drabinką TVP Sport. Na telefonie przeciągnij drabinkę poziomo.</p>
       </div>
       <BracketTree config={BRACKET_LAYOUT} matchesById={matchesById} teams={teams} results={results}/>
     </div>
