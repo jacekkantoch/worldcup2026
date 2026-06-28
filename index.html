@@ -4829,6 +4829,216 @@
       }
     }
 
+
+    /* ═══════════════════════════════════════════════════════════════
+       PROFIL I UŻYTKOWNICY — kompaktowe pływające okno iOS
+       Pozostawia poprzedni ekran widoczny w tle.
+    ═══════════════════════════════════════════════════════════════ */
+    .profile-modal-overlay {
+      background: rgba(2, 6, 14, .20) !important;
+      -webkit-backdrop-filter: blur(2px) saturate(112%) !important;
+      backdrop-filter: blur(2px) saturate(112%) !important;
+    }
+
+    .login-modal-sheet,
+    .login-modal-compact-sheet {
+      align-self: center !important;
+      margin: 0 auto !important;
+      border-radius: 30px !important;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 18% -12%, rgba(255,255,255,.22), transparent 40%),
+        linear-gradient(145deg, rgba(29,40,62,.88), rgba(8,14,26,.80)) !important;
+      border: 1px solid rgba(255,255,255,.20) !important;
+      -webkit-backdrop-filter: blur(34px) saturate(175%) !important;
+      backdrop-filter: blur(34px) saturate(175%) !important;
+      box-shadow:
+        0 28px 90px rgba(0,0,0,.50),
+        0 8px 28px rgba(0,0,0,.28),
+        inset 0 1px 0 rgba(255,255,255,.24) !important;
+    }
+
+    .login-modal-sheet {
+      width: min(calc(100% - 44px), 380px) !important;
+      max-height: min(76dvh, 720px) !important;
+    }
+
+    .login-modal-compact-sheet {
+      width: min(calc(100% - 58px), 340px) !important;
+      max-height: min(72dvh, 620px) !important;
+    }
+
+    .login-modal-sheet > div:first-child {
+      min-height: 58px;
+      padding: 13px 16px !important;
+      background: rgba(255,255,255,.055) !important;
+      border-color: rgba(255,255,255,.10) !important;
+    }
+
+    .login-modal-sheet .login-modal-title {
+      font-size: 17px !important;
+      line-height: 1.12 !important;
+      letter-spacing: -.018em !important;
+    }
+
+    .login-modal-sheet .login-modal-content {
+      padding: 15px 16px 17px !important;
+      overscroll-behavior: contain;
+    }
+
+    .login-modal-compact-sheet .login-modal-content {
+      padding: 13px 15px 16px !important;
+    }
+
+    .login-modal-sheet .login-modal-content > .space-y-4 > :not([hidden]) ~ :not([hidden]) {
+      margin-top: 13px !important;
+    }
+
+    .login-modal-compact-sheet .login-modal-content > .space-y-4 > :not([hidden]) ~ :not([hidden]) {
+      margin-top: 11px !important;
+    }
+
+    @media (max-width: 520px) {
+      .login-modal-sheet {
+        width: min(calc(100% - 38px), 372px) !important;
+        max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - 92px) !important;
+        margin: auto !important;
+        border-radius: 29px !important;
+      }
+
+      .login-modal-compact-sheet {
+        width: min(calc(100% - 52px), 336px) !important;
+        max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - 120px) !important;
+      }
+    }
+
+    @media (max-width: 370px) {
+      .login-modal-sheet {
+        width: calc(100% - 26px) !important;
+      }
+
+      .login-modal-compact-sheet {
+        width: calc(100% - 38px) !important;
+      }
+    }
+
+
+    /* ═══════════════════════════════════════════════════════════════
+       FINALNE POPRAWKI: tekst, filtry i przewijanie na komputerze
+    ═══════════════════════════════════════════════════════════════ */
+
+    /* CUP 2026 ma dokładnie ten sam kolor co FIFA WORLD. */
+    .app-header .title-group h1,
+    .app-header .title-group small {
+      color: var(--label-1) !important;
+      -webkit-text-fill-color: var(--label-1) !important;
+      opacity: 1 !important;
+    }
+
+    /* W kafelkach wyboru drużyn pokazujemy pełne nazwy bez zanikania,
+       wielokropka ani ostrego obcięcia. Tekst może przejść do drugiej linii. */
+    .selection-tile .truncate,
+    .selection-tile.truncate {
+      overflow: visible !important;
+      text-overflow: clip !important;
+      white-space: normal !important;
+      overflow-wrap: anywhere;
+      line-height: 1.15 !important;
+      -webkit-mask-image: none !important;
+      mask-image: none !important;
+    }
+
+    /* Ranking: bez zanikania nazw i statystyk. Wiersze mogą się zawijać,
+       dzięki czemu liczby i opisy są zawsze czytelne. */
+    .leaderboard-player-name,
+    .leaderboard-stats,
+    .leaderboard-stats .rank-stat {
+      overflow: visible !important;
+      text-overflow: clip !important;
+      -webkit-mask-image: none !important;
+      mask-image: none !important;
+    }
+
+    .leaderboard-player-name {
+      white-space: normal !important;
+      overflow-wrap: anywhere;
+    }
+
+    .leaderboard-stats {
+      min-width: 0 !important;
+      flex-wrap: wrap !important;
+    }
+
+    .leaderboard-stats .rank-stat {
+      white-space: nowrap !important;
+      max-width: 100%;
+    }
+
+    @media (max-width: 520px) {
+      .leaderboard-stats .rank-stat {
+        white-space: normal !important;
+        overflow-wrap: anywhere;
+      }
+    }
+
+    /* Poziome listy mają miękkie, symetryczne krawędzie z lewej i prawej.
+       Dodatkowy wewnętrzny odstęp zapobiega wchodzeniu pierwszego elementu
+       bezpośrednio w strefę zanikania. */
+    :root {
+      --horizontal-edge-fade: clamp(16px, 4vw, 26px);
+    }
+
+    .chip-scroll-row,
+    .pill-scroll-safe,
+    .filters-sticky .overflow-x-auto {
+      padding-left: calc(var(--horizontal-edge-fade) + 3px) !important;
+      padding-right: calc(var(--horizontal-edge-fade) + 3px) !important;
+      scroll-padding-left: calc(var(--horizontal-edge-fade) + 3px);
+      scroll-padding-right: calc(var(--horizontal-edge-fade) + 3px);
+      -webkit-mask-image: linear-gradient(
+        to right,
+        transparent 0,
+        #000 var(--horizontal-edge-fade),
+        #000 calc(100% - var(--horizontal-edge-fade)),
+        transparent 100%
+      ) !important;
+      mask-image: linear-gradient(
+        to right,
+        transparent 0,
+        #000 var(--horizontal-edge-fade),
+        #000 calc(100% - var(--horizontal-edge-fade)),
+        transparent 100%
+      ) !important;
+      -webkit-mask-repeat: no-repeat !important;
+      mask-repeat: no-repeat !important;
+      -webkit-mask-size: 100% 100% !important;
+      mask-size: 100% 100% !important;
+    }
+
+    /* Przywrócenie normalnego pionowego przewijania kółkiem myszy
+       i gładzikiem w przeglądarkach komputerowych. */
+    html {
+      overflow-y: auto !important;
+      overscroll-behavior-y: auto !important;
+      scroll-behavior: auto;
+    }
+
+    body,
+    #root,
+    #root > .pitch-bg,
+    .pitch-bg {
+      overflow-y: visible !important;
+      overscroll-behavior-y: auto !important;
+    }
+
+    @media (pointer: fine) {
+      .chip-scroll-row,
+      .pill-scroll-safe,
+      .filters-sticky .overflow-x-auto {
+        touch-action: auto !important;
+      }
+    }
+
 </style>
 </head>
 <body>
@@ -10458,7 +10668,7 @@ function LoginModal({
     title: activePlayer ? "Profil i użytkownicy" : "Zaloguj się",
     maxWidth: isCompactStep ? "max-w-xs" : "max-w-sm",
     panelClassName: `login-modal-sheet${isCompactStep ? " login-modal-compact-sheet" : ""}`,
-    overlayClassName: "bg-stone-950/42 backdrop-blur-[2px]"
+    overlayClassName: "profile-modal-overlay"
   }, /*#__PURE__*/React.createElement("div", {
     className: "space-y-4"
   }, step === 'pick' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("p", {
@@ -11910,5 +12120,44 @@ function Mundial2026() {
 }
 ReactDOM.createRoot(document.getElementById('root')).render(/*#__PURE__*/React.createElement(Mundial2026, null));
 </script>
+
+<script>
+/* Obsługa kółka myszy / gładzika dla poziomo przewijanych filtrów.
+   Gdy lista może przesunąć się w danym kierunku, pionowy ruch kółka
+   przewija ją poziomo. Po dojściu do końca zwykłe przewijanie strony
+   automatycznie działa dalej. */
+(function () {
+  const selector = [
+    '.chip-scroll-row',
+    '.pill-scroll-safe',
+    '.filters-sticky .overflow-x-auto'
+  ].join(',');
+
+  document.addEventListener('wheel', function (event) {
+    const origin = event.target;
+    const row = origin && origin.closest ? origin.closest(selector) : null;
+    if (!row || row.scrollWidth <= row.clientWidth + 1) return;
+
+    const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY)
+      ? event.deltaX
+      : event.deltaY;
+
+    if (!delta) return;
+
+    const maxScrollLeft = Math.max(0, row.scrollWidth - row.clientWidth);
+    const canMoveLeft = delta < 0 && row.scrollLeft > 1;
+    const canMoveRight = delta > 0 && row.scrollLeft < maxScrollLeft - 1;
+
+    if (!canMoveLeft && !canMoveRight) return;
+
+    event.preventDefault();
+    row.scrollLeft = Math.max(
+      0,
+      Math.min(maxScrollLeft, row.scrollLeft + delta)
+    );
+  }, { passive: false });
+})();
+</script>
+
 </body>
 </html>
