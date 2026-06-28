@@ -5473,6 +5473,437 @@
       top: var(--fixed-header-filter-offset, 82px) !important;
     }
 
+
+    /* Panel administratora: mecze jednoliniowe są wyśrodkowane pionowo.
+       Mecze, których nazwy przechodzą do drugiego wiersza, zachowują
+       wyrównanie do góry, aby układ pozostał czytelny. */
+    @media (max-width: 520px) {
+      .admin-panel .admin-match-summary-row:not(.is-multiline) {
+        align-items: center !important;
+      }
+
+      .admin-panel .admin-match-summary-row:not(.is-multiline)
+      .admin-match-summary-main {
+        align-items: center !important;
+      }
+
+      .admin-panel .admin-match-summary-row:not(.is-multiline)
+      .admin-match-summary-teams {
+        align-items: center !important;
+        align-content: center !important;
+      }
+
+      .admin-panel .admin-match-summary-row.is-multiline {
+        align-items: flex-start !important;
+      }
+    }
+
+
+    /* Kolejność w grupach: miękkie zanikanie po obu stronach paska A–L. */
+    .group-order-filter-row {
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-left: 14px !important;
+      padding-right: 14px !important;
+      scroll-padding-left: 14px;
+      scroll-padding-right: 14px;
+      -webkit-mask-image: linear-gradient(
+        to right,
+        transparent 0,
+        #000 12px,
+        #000 calc(100% - 12px),
+        transparent 100%
+      ) !important;
+      mask-image: linear-gradient(
+        to right,
+        transparent 0,
+        #000 12px,
+        #000 calc(100% - 12px),
+        transparent 100%
+      ) !important;
+      -webkit-mask-repeat: no-repeat !important;
+      mask-repeat: no-repeat !important;
+      -webkit-mask-size: 100% 100% !important;
+      mask-size: 100% 100% !important;
+    }
+
+    .group-order-filter-row::-webkit-scrollbar {
+      display: none;
+    }
+
+
+    /* ═══════════════════════════════════════════════════════════════
+       WYRÓWNANIE WSZYSTKICH POZIOMYCH FILTRÓW DO LEWEJ
+       Każdy pasek zaczyna się na tej samej osi co elementy w jego sekcji.
+    ═══════════════════════════════════════════════════════════════ */
+
+    /* Publiczne menu meczów: pierwszy rząd zgodny z rzędem statusów niżej. */
+    .phase-filter-panel .chip-scroll-row {
+      justify-content: flex-start !important;
+      padding-left: 5px !important;
+      padding-right: 14px !important;
+      scroll-padding-left: 5px !important;
+      scroll-padding-right: 14px !important;
+      -webkit-mask-image: linear-gradient(
+        to right,
+        transparent 0,
+        #000 4px,
+        #000 calc(100% - 12px),
+        transparent 100%
+      ) !important;
+      mask-image: linear-gradient(
+        to right,
+        transparent 0,
+        #000 4px,
+        #000 calc(100% - 12px),
+        transparent 100%
+      ) !important;
+    }
+
+    /* Panel administratora: filtry zaczynają się dokładnie jak pole wyszukiwania. */
+    .admin-phase-filters .chip-scroll-row {
+      justify-content: flex-start !important;
+      padding-left: 0 !important;
+      padding-right: 14px !important;
+      scroll-padding-left: 0 !important;
+      scroll-padding-right: 14px !important;
+      -webkit-mask-image: linear-gradient(
+        to right,
+        #000 0,
+        #000 calc(100% - 12px),
+        transparent 100%
+      ) !important;
+      mask-image: linear-gradient(
+        to right,
+        #000 0,
+        #000 calc(100% - 12px),
+        transparent 100%
+      ) !important;
+    }
+
+    /* Tabela „Kolejność w grupach”: litera A równo z tytułem i kolumną GRACZ. */
+    .group-order-filter-row {
+      justify-content: flex-start !important;
+      padding-left: 16px !important;
+      padding-right: 16px !important;
+      scroll-padding-left: 16px !important;
+      scroll-padding-right: 16px !important;
+      -webkit-mask-image: linear-gradient(
+        to right,
+        transparent 0,
+        #000 12px,
+        #000 calc(100% - 12px),
+        transparent 100%
+      ) !important;
+      mask-image: linear-gradient(
+        to right,
+        transparent 0,
+        #000 12px,
+        #000 calc(100% - 12px),
+        transparent 100%
+      ) !important;
+    }
+
+    /* Edycja typów specjalnych w adminie: A równo z nagłówkiem sekcji. */
+    .admin-group-order-filter-row {
+      justify-content: flex-start !important;
+      padding-left: 0 !important;
+      padding-right: 14px !important;
+      scroll-padding-left: 0 !important;
+      scroll-padding-right: 14px !important;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      -webkit-mask-image: linear-gradient(
+        to right,
+        #000 0,
+        #000 calc(100% - 12px),
+        transparent 100%
+      ) !important;
+      mask-image: linear-gradient(
+        to right,
+        #000 0,
+        #000 calc(100% - 12px),
+        transparent 100%
+      ) !important;
+      -webkit-mask-repeat: no-repeat !important;
+      mask-repeat: no-repeat !important;
+      -webkit-mask-size: 100% 100% !important;
+      mask-size: 100% 100% !important;
+    }
+
+    .admin-group-order-filter-row::-webkit-scrollbar {
+      display: none;
+    }
+
+    @media (max-width: 520px) {
+      .phase-filter-panel .chip-scroll-row {
+        padding-left: 5px !important;
+        scroll-padding-left: 5px !important;
+      }
+
+      .admin-phase-filters .chip-scroll-row,
+      .admin-group-order-filter-row {
+        padding-left: 0 !important;
+        scroll-padding-left: 0 !important;
+      }
+
+      .group-order-filter-row {
+        padding-left: 16px !important;
+        scroll-padding-left: 16px !important;
+      }
+    }
+
+
+    /* Ostateczna korekta zanikania: pierwszy element każdego paska
+       pozostaje w pełni widoczny i nie wchodzi w strefę maski. */
+    .phase-filter-panel .chip-scroll-row {
+      -webkit-mask-image: linear-gradient(
+        to right,
+        transparent 0,
+        #000 2px,
+        #000 calc(100% - 10px),
+        transparent 100%
+      ) !important;
+      mask-image: linear-gradient(
+        to right,
+        transparent 0,
+        #000 2px,
+        #000 calc(100% - 10px),
+        transparent 100%
+      ) !important;
+    }
+
+    .group-order-filter-row {
+      -webkit-mask-image: linear-gradient(
+        to right,
+        transparent 0,
+        #000 6px,
+        #000 calc(100% - 10px),
+        transparent 100%
+      ) !important;
+      mask-image: linear-gradient(
+        to right,
+        transparent 0,
+        #000 6px,
+        #000 calc(100% - 10px),
+        transparent 100%
+      ) !important;
+    }
+
+    /* W panelu administratora nie ma zanikania po lewej,
+       ponieważ filtry zaczynają się dokładnie przy krawędzi zawartości. */
+    .admin-phase-filters .chip-scroll-row,
+    .admin-group-order-filter-row {
+      -webkit-mask-image: linear-gradient(
+        to right,
+        #000 0,
+        #000 calc(100% - 10px),
+        transparent 100%
+      ) !important;
+      mask-image: linear-gradient(
+        to right,
+        #000 0,
+        #000 calc(100% - 10px),
+        transparent 100%
+      ) !important;
+    }
+
+
+    /* Panel administratora: subtelne zanikanie po lewej i prawej. */
+    .admin-phase-filters .chip-scroll-row,
+    .admin-group-order-filter-row {
+      -webkit-mask-image: linear-gradient(
+        to right,
+        transparent 0,
+        #000 2px,
+        #000 calc(100% - 10px),
+        transparent 100%
+      ) !important;
+      mask-image: linear-gradient(
+        to right,
+        transparent 0,
+        #000 2px,
+        #000 calc(100% - 10px),
+        transparent 100%
+      ) !important;
+    }
+
+
+    /* Wszystkie poziome paski FILTRÓW: bez widocznej kreski przewijania.
+       Przewijanie palcem, gładzikiem i kółkiem nadal działa. */
+    .chip-scroll-row,
+    .pill-scroll-safe,
+    .group-order-filter-row,
+    .admin-group-order-filter-row,
+    .phase-filter-panel .overflow-x-auto,
+    .admin-phase-filters .overflow-x-auto,
+    .filters-sticky .overflow-x-auto {
+      scrollbar-width: none !important;
+      -ms-overflow-style: none !important;
+    }
+
+    .chip-scroll-row::-webkit-scrollbar,
+    .pill-scroll-safe::-webkit-scrollbar,
+    .group-order-filter-row::-webkit-scrollbar,
+    .admin-group-order-filter-row::-webkit-scrollbar,
+    .phase-filter-panel .overflow-x-auto::-webkit-scrollbar,
+    .admin-phase-filters .overflow-x-auto::-webkit-scrollbar,
+    .filters-sticky .overflow-x-auto::-webkit-scrollbar {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+      background: transparent !important;
+    }
+
+    .chip-scroll-row::-webkit-scrollbar-track,
+    .chip-scroll-row::-webkit-scrollbar-thumb,
+    .pill-scroll-safe::-webkit-scrollbar-track,
+    .pill-scroll-safe::-webkit-scrollbar-thumb,
+    .group-order-filter-row::-webkit-scrollbar-track,
+    .group-order-filter-row::-webkit-scrollbar-thumb,
+    .admin-group-order-filter-row::-webkit-scrollbar-track,
+    .admin-group-order-filter-row::-webkit-scrollbar-thumb,
+    .phase-filter-panel .overflow-x-auto::-webkit-scrollbar-track,
+    .phase-filter-panel .overflow-x-auto::-webkit-scrollbar-thumb,
+    .admin-phase-filters .overflow-x-auto::-webkit-scrollbar-track,
+    .admin-phase-filters .overflow-x-auto::-webkit-scrollbar-thumb,
+    .filters-sticky .overflow-x-auto::-webkit-scrollbar-track,
+    .filters-sticky .overflow-x-auto::-webkit-scrollbar-thumb {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+      background: transparent !important;
+    }
+
+
+    /* Podgląd zwycięzcy po karnych — czytelna kapsułka zamiast [k:XXX]. */
+    .prediction-penalty,
+    .compare-player-penalty {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 4px !important;
+      min-width: 42px !important;
+      width: auto !important;
+      padding: 3px 7px !important;
+      border-radius: 999px !important;
+      background:
+        linear-gradient(145deg, rgba(112,184,255,.20), rgba(112,184,255,.08)) !important;
+      border: 1px solid rgba(140,202,255,.28) !important;
+      color: var(--label-1) !important;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif !important;
+      font-size: 10px !important;
+      font-weight: 800 !important;
+      line-height: 1 !important;
+      letter-spacing: .05em !important;
+      text-align: center !important;
+      white-space: nowrap !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.14) !important;
+      opacity: 1 !important;
+    }
+
+    .prediction-penalty::before,
+    .compare-player-penalty::before {
+      content: "K" !important;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 15px;
+      height: 15px;
+      border-radius: 999px;
+      background: rgba(112,184,255,.28);
+      color: var(--label-1);
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: 0;
+      flex: 0 0 auto;
+    }
+
+    .prediction-penalty:empty,
+    .compare-player-penalty:empty {
+      visibility: hidden !important;
+      padding: 0 !important;
+      border: 0 !important;
+      min-width: 42px !important;
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+
+    .prediction-penalty:empty::before,
+    .compare-player-penalty:empty::before {
+      display: none !important;
+    }
+
+    .prediction-score-grid {
+      grid-template-columns: 44px 50px 28px !important;
+      min-width: 130px !important;
+    }
+
+    html[data-theme="light"] .prediction-penalty,
+    html[data-theme="light"] .compare-player-penalty {
+      background:
+        linear-gradient(145deg, rgba(10,132,255,.14), rgba(10,132,255,.06)) !important;
+      border-color: rgba(10,132,255,.22) !important;
+      color: #15324d !important;
+    }
+
+    html[data-theme="light"] .prediction-penalty::before,
+    html[data-theme="light"] .compare-player-penalty::before {
+      background: rgba(10,132,255,.17) !important;
+      color: #0b5fa8 !important;
+    }
+
+
+    /* Zakładka Mecze: taki sam podgląd zwycięzcy karnych jak w Porównaj. */
+    .match-penalty-badge {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 4px !important;
+      min-width: 42px !important;
+      padding: 3px 7px !important;
+      border-radius: 999px !important;
+      background:
+        linear-gradient(145deg, rgba(112,184,255,.20), rgba(112,184,255,.08)) !important;
+      border: 1px solid rgba(140,202,255,.28) !important;
+      color: var(--label-1) !important;
+      font-size: 10px !important;
+      font-weight: 800 !important;
+      line-height: 1 !important;
+      letter-spacing: .05em !important;
+      white-space: nowrap !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.14) !important;
+      vertical-align: middle;
+    }
+
+    .match-penalty-badge::before {
+      content: "K";
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 15px;
+      height: 15px;
+      border-radius: 999px;
+      background: rgba(112,184,255,.28);
+      color: var(--label-1);
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: 0;
+      flex: 0 0 auto;
+    }
+
+    html[data-theme="light"] .match-penalty-badge {
+      background:
+        linear-gradient(145deg, rgba(10,132,255,.14), rgba(10,132,255,.06)) !important;
+      border-color: rgba(10,132,255,.22) !important;
+      color: #15324d !important;
+    }
+
+    html[data-theme="light"] .match-penalty-badge::before {
+      background: rgba(10,132,255,.17) !important;
+      color: #0b5fa8 !important;
+    }
+
 </style>
 </head>
 <body>
@@ -8312,8 +8743,8 @@ const MatchCard = React.memo(function MatchCard({
   }, "Tw\xF3j typ: ", /*#__PURE__*/React.createElement("strong", {
     className: "font-display text-base"
   }, prediction.home, ":", prediction.away), prediction.penWinner && /*#__PURE__*/React.createElement("span", {
-    className: "text-stone-400 ml-1"
-  }, "(karne: ", (prediction.penWinner === 'home' ? home : away).name, ")"), /*#__PURE__*/React.createElement("span", {
+    className: "match-penalty-badge ml-2"
+  }, (prediction.penWinner === 'home' ? home : away).name.slice(0, 3).toUpperCase()), /*#__PURE__*/React.createElement("span", {
     className: `ml-2 font-bold ${quality === 'exact' ? 'text-[#6080d0]' : quality === 'partial' ? 'text-amber-400' : 'text-stone-400'}`
   }, /*#__PURE__*/React.createElement("span", {
     style: {
@@ -8442,7 +8873,7 @@ const MatchCard = React.memo(function MatchCard({
         fontSize: 11,
         whiteSpace: 'nowrap'
       }
-    }, pp.penWinner ? `[k:${(pp.penWinner === 'home' ? home : away)?.name?.slice(0, 3)}]` : ''), /*#__PURE__*/React.createElement("span", {
+    }, pp.penWinner ? (pp.penWinner === 'home' ? home : away)?.name?.slice(0, 3)?.toUpperCase() : ''), /*#__PURE__*/React.createElement("span", {
       className: "prediction-points",
       style: {
         width: '28px',
@@ -8895,7 +9326,7 @@ function SpecialsAllView({
   }, /*#__PURE__*/React.createElement("div", {
     className: "px-4 py-3 text-sm font-bold tracking-wide text-stone-800 flex items-center justify-between"
   }, /*#__PURE__*/React.createElement("span", null, "Kolejno\u015B\u0107 w grupach")), /*#__PURE__*/React.createElement("div", {
-    className: "flex gap-1 p-2 overflow-x-auto"
+    className: "group-order-filter-row flex gap-1 p-2 overflow-x-auto"
   }, GROUPS.map(g => /*#__PURE__*/React.createElement("button", {
     key: g,
     onClick: () => {
@@ -9721,7 +10152,7 @@ function CompareView({
         style: {
           opacity: pp.penWinner?.length ? 0.8 : 0
         }
-      }, pp.penWinner ? `[k:${penaltyTeam?.name?.slice(0, 3) || ''}]` : ''), /*#__PURE__*/React.createElement("span", {
+      }, pp.penWinner ? (penaltyTeam?.name?.slice(0, 3) || '').toUpperCase() : ''), /*#__PURE__*/React.createElement("span", {
         className: "compare-player-points",
         style: {
           fontWeight: 800,
@@ -10326,7 +10757,7 @@ function AdminPlayerRow({
     className: "font-semibold text-stone-900 text-sm truncate"
   }, player.name), /*#__PURE__*/React.createElement("div", {
     className: "text-[11px] text-stone-500"
-  }, player.pinHash ? 'PIN ustawiony' : 'bez PINu')), !confirm && /*#__PURE__*/React.createElement("button", {
+  }, ''), !confirm && /*#__PURE__*/React.createElement("button", {
     onClick: openConfirm,
     className: "p-2 text-red-500 hover:bg-red-50 rounded-lg",
     title: "Usu\u0144 gracza"
@@ -10777,7 +11208,7 @@ function AdminPanel({
   }, /*#__PURE__*/React.createElement("h4", {
     className: "font-display text-base mb-2"
   }, "Kolejno\u015B\u0107 w grupach"), /*#__PURE__*/React.createElement("div", {
-    className: "flex gap-1 overflow-x-auto pb-2 mb-3"
+    className: "admin-group-order-filter-row flex gap-1 overflow-x-auto pb-2 mb-3"
   }, GROUPS.map(g => /*#__PURE__*/React.createElement("button", {
     key: g,
     onClick: () => {
@@ -12633,6 +13064,66 @@ ReactDOM.createRoot(document.getElementById('root')).render(/*#__PURE__*/React.c
     if (!document.querySelector('.app-header')) schedulePin();
     else pinAppHeader();
   }).observe(document.body, { childList: true, subtree: true });
+})();
+</script>
+
+
+<script>
+/* Automatycznie rozpoznaje, czy nazwy drużyn w panelu administratora
+   zajmują jeden czy dwa wiersze. */
+(function () {
+  function updateAdminMatchAlignment() {
+    document.querySelectorAll('.admin-panel .admin-match-summary-row').forEach(function (row) {
+      var teams = row.querySelector('.admin-match-summary-teams');
+      if (!teams) return;
+
+      var rect = teams.getBoundingClientRect();
+      var style = window.getComputedStyle(teams);
+      var lineHeight = parseFloat(style.lineHeight);
+      if (!Number.isFinite(lineHeight)) {
+        lineHeight = parseFloat(style.fontSize) * 1.2 || 16;
+      }
+
+      var multiline = rect.height > lineHeight * 1.55;
+      row.classList.toggle('is-multiline', multiline);
+    });
+  }
+
+  var scheduled = false;
+  function scheduleUpdate() {
+    if (scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(function () {
+      scheduled = false;
+      updateAdminMatchAlignment();
+    });
+  }
+
+  window.addEventListener('load', scheduleUpdate);
+  window.addEventListener('resize', scheduleUpdate);
+  window.addEventListener('orientationchange', scheduleUpdate);
+
+  if (window.ResizeObserver) {
+    var resizeObserver = new ResizeObserver(scheduleUpdate);
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('.admin-panel .admin-match-summary-teams')
+        .forEach(function (el) { resizeObserver.observe(el); });
+      scheduleUpdate();
+    });
+  }
+
+  new MutationObserver(function (mutations) {
+    var shouldUpdate = mutations.some(function (mutation) {
+      return mutation.type === 'childList' || mutation.type === 'characterData';
+    });
+    if (shouldUpdate) scheduleUpdate();
+  }).observe(document.body, {
+    childList: true,
+    subtree: true,
+    characterData: true
+  });
+
+  scheduleUpdate();
 })();
 </script>
 
