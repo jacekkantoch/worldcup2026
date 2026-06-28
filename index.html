@@ -4413,6 +4413,105 @@
       filter: none !important;
     }
 
+
+
+    /* Ranking — phase points shown in an expandable list */
+    .leaderboard-phase-details {
+      margin-top: 4px;
+    }
+    .leaderboard-phase-summary {
+      list-style: none;
+      min-height: 44px;
+      padding: 10px 13px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      cursor: pointer;
+      user-select: none;
+      color: var(--label-2);
+      background:
+        radial-gradient(circle at 18% -24%, rgba(255,255,255,.14), transparent 42%),
+        linear-gradient(145deg, rgba(28,37,56,.78), rgba(11,16,28,.62));
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.10), 0 8px 18px rgba(0,0,0,.14);
+      transition: background .18s ease, border-color .18s ease, color .18s ease, transform .14s ease, box-shadow .18s ease;
+    }
+    .leaderboard-phase-summary::-webkit-details-marker { display: none; }
+    .leaderboard-phase-summary::marker { display: none; content: ''; }
+    .leaderboard-phase-summary:hover {
+      color: var(--label-1);
+      background:
+        radial-gradient(circle at 18% -24%, rgba(255,255,255,.18), transparent 42%),
+        linear-gradient(145deg, rgba(33,44,66,.84), rgba(13,19,33,.68));
+      border-color: rgba(255,255,255,.20);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.13), 0 10px 22px rgba(0,0,0,.18);
+    }
+    .leaderboard-phase-summary:active { transform: scale(.985); }
+    .leaderboard-phase-summary-label {
+      min-width: 0;
+      flex: 1 1 auto;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .01em;
+    }
+    .leaderboard-phase-chevron {
+      flex: 0 0 auto;
+      color: currentColor;
+      transition: transform .22s var(--ease-spring), color .18s ease;
+    }
+    .leaderboard-phase-details[open] .leaderboard-phase-summary {
+      color: #d9efff;
+      background:
+        radial-gradient(circle at 20% -22%, rgba(255,255,255,.22), transparent 42%),
+        linear-gradient(145deg, rgba(43,79,146,.56), rgba(27,48,101,.48) 58%, rgba(51,39,108,.40));
+      border-color: rgba(112,184,255,.34);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.20), 0 12px 28px rgba(18,57,122,.18);
+    }
+    .leaderboard-phase-details[open] .leaderboard-phase-chevron { transform: rotate(180deg); }
+    .leaderboard-phase-content {
+      padding-top: 9px;
+      animation: leaderboardPhaseOpen .22s var(--ease-out) both;
+    }
+    @keyframes leaderboardPhaseOpen {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    html[data-theme="light"] .leaderboard-phase-summary {
+      color: #5f7188;
+      background: linear-gradient(145deg, rgba(239,245,251,.98), rgba(207,220,235,.94));
+      border-color: rgba(117,145,181,.22);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.92), 0 4px 12px rgba(54,80,111,.10);
+    }
+    html[data-theme="light"] .leaderboard-phase-summary:hover {
+      color: #365c86;
+      background: linear-gradient(145deg, rgba(247,250,253,1), rgba(195,211,230,.97));
+      border-color: rgba(108,150,205,.30);
+    }
+    html[data-theme="light"] .leaderboard-phase-details[open] .leaderboard-phase-summary {
+      color: #075fae !important;
+      -webkit-text-fill-color: #075fae !important;
+      background:
+        radial-gradient(circle at 24% 18%, rgba(255,255,255,.66), transparent 34%),
+        linear-gradient(145deg, rgba(197,220,247,.96), rgba(170,198,239,.92)) !important;
+      border-color: rgba(111,166,233,.58) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.82), 0 8px 18px rgba(58,116,188,.14) !important;
+    }
+    html[data-theme="light"] .leaderboard-phase-details[open] .leaderboard-phase-summary * {
+      color: #075fae !important;
+      -webkit-text-fill-color: #075fae !important;
+    }
+    @media (max-width: 520px) {
+      .leaderboard-phase-details { margin-top: 2px; }
+      .leaderboard-phase-summary {
+        min-height: 42px;
+        padding: 9px 12px;
+        border-radius: 17px;
+      }
+      .leaderboard-phase-summary-label { font-size: 11.5px; }
+      .leaderboard-phase-content { padding-top: 8px; }
+    }
+
 </style>
 </head>
 <body>
@@ -5932,25 +6031,33 @@ function LeaderboardView({players,matches,predictions,results,specialPredictions
                   <div className="leaderboard-total-label text-[10px] uppercase tracking-wider text-stone-500">pkt</div>
                 </div>
               </div>
-              <div className="leaderboard-category-grid grid grid-cols-5 gap-1 text-[11px]">
-                {[
-                  {v:r.gm,max:categoryMaximums.gm,title:'Faza grupowa',done:categoryCompletion.gm,bg:'rgba(13,27,150,.45)',accent:'#93c5fd'},
-                  {v:r.km,max:categoryMaximums.km,title:'Faza pucharowa',star:true,done:categoryCompletion.km,bg:'rgba(7,89,133,.45)',accent:'#7dd3fc'},
-                  {v:r.go,max:categoryMaximums.go,title:'Kolejność w grupach',done:categoryCompletion.go,bg:'rgba(88,28,135,.45)',accent:'#d8b4fe'},
-                  {v:r.podium,max:categoryMaximums.podium,title:'Podium turnieju',done:categoryCompletion.podium,bg:'rgba(146,64,14,.45)',accent:'#fcd34d'},
-                  {v:r.awards,max:categoryMaximums.awards,title:'Nagrody indywidualne',done:categoryCompletion.awards,bg:'rgba(159,18,57,.45)',accent:'#fda4af'},
-                ].map(({v,max,title,star,done,bg,accent})=>(
-                  <div className="leaderboard-category-card" key={title} style={{background:done?`linear-gradient(rgba(0,0,0,.20),rgba(0,0,0,.20)), ${bg}`:bg,border:`1px solid ${accent}30`,borderRadius:16,padding:'7px 3px',textAlign:'center',minHeight:done?88:70,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',transition:'background .18s ease'}}>
-                    <div className="leaderboard-category-score" style={{fontWeight:800,color:done?'rgba(255,255,255,.46)':'white',lineHeight:1.05,whiteSpace:'nowrap'}}>
-                      <span className="leaderboard-category-value" style={{fontSize:15}}>{v}</span>
-                      <span className="leaderboard-category-max" style={{fontSize:9.5,fontWeight:700,color:done?'rgba(255,255,255,.32)':'rgba(255,255,255,.68)'}}> / {max}{star?'*':''}</span>
-                    </div>
-                    <div className="leaderboard-category-title" style={{fontSize:8.2,textTransform:'uppercase',letterSpacing:'0.025em',color:done?'rgba(235,241,255,.34)':accent,marginTop:5,lineHeight:1.12,fontWeight:700,maxWidth:'100%'}}>{title}</div>
-                    {done&&<div className="leaderboard-category-done" style={{fontSize:7.5,fontWeight:900,letterSpacing:'0.075em',color:'#86efac',marginTop:6,lineHeight:1}}>ZAKOŃCZONO</div>}
+              <details className="leaderboard-phase-details">
+                <summary className="leaderboard-phase-summary">
+                  <span className="leaderboard-phase-summary-label">Rozkład punktów</span>
+                  <Icon name="chevdown" size={16} className="leaderboard-phase-chevron"/>
+                </summary>
+                <div className="leaderboard-phase-content">
+                  <div className="leaderboard-category-grid grid grid-cols-5 gap-1 text-[11px]">
+                    {[
+                      {v:r.gm,max:categoryMaximums.gm,title:'Faza grupowa',done:categoryCompletion.gm,bg:'rgba(13,27,150,.45)',accent:'#93c5fd'},
+                      {v:r.km,max:categoryMaximums.km,title:'Faza pucharowa',star:true,done:categoryCompletion.km,bg:'rgba(7,89,133,.45)',accent:'#7dd3fc'},
+                      {v:r.go,max:categoryMaximums.go,title:'Kolejność w grupach',done:categoryCompletion.go,bg:'rgba(88,28,135,.45)',accent:'#d8b4fe'},
+                      {v:r.podium,max:categoryMaximums.podium,title:'Podium turnieju',done:categoryCompletion.podium,bg:'rgba(146,64,14,.45)',accent:'#fcd34d'},
+                      {v:r.awards,max:categoryMaximums.awards,title:'Nagrody indywidualne',done:categoryCompletion.awards,bg:'rgba(159,18,57,.45)',accent:'#fda4af'},
+                    ].map(({v,max,title,star,done,bg,accent})=>(
+                      <div className="leaderboard-category-card" key={title} style={{background:done?`linear-gradient(rgba(0,0,0,.20),rgba(0,0,0,.20)), ${bg}`:bg,border:`1px solid ${accent}30`,borderRadius:16,padding:'7px 3px',textAlign:'center',minHeight:done?88:70,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',transition:'background .18s ease'}}>
+                        <div className="leaderboard-category-score" style={{fontWeight:800,color:done?'rgba(255,255,255,.46)':'white',lineHeight:1.05,whiteSpace:'nowrap'}}>
+                          <span className="leaderboard-category-value" style={{fontSize:15}}>{v}</span>
+                          <span className="leaderboard-category-max" style={{fontSize:9.5,fontWeight:700,color:done?'rgba(255,255,255,.32)':'rgba(255,255,255,.68)'}}> / {max}{star?'*':''}</span>
+                        </div>
+                        <div className="leaderboard-category-title" style={{fontSize:8.2,textTransform:'uppercase',letterSpacing:'0.025em',color:done?'rgba(235,241,255,.34)':accent,marginTop:5,lineHeight:1.12,fontWeight:700,maxWidth:'100%'}}>{title}</div>
+                        {done&&<div className="leaderboard-category-done" style={{fontSize:7.5,fontWeight:900,letterSpacing:'0.075em',color:'#86efac',marginTop:6,lineHeight:1}}>ZAKOŃCZONO</div>}
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-              <div className="leaderboard-footnote" style={{fontSize:8.5,color:'rgba(235,241,255,.48)',marginTop:5,textAlign:'right',lineHeight:1.2}}>* bez bonusów za rzuty karne</div>
+                  <div className="leaderboard-footnote" style={{fontSize:8.5,color:'rgba(235,241,255,.48)',marginTop:5,textAlign:'right',lineHeight:1.2}}>* bez bonusów za rzuty karne</div>
+                </div>
+              </details>
             </div>
           </div>
         );
