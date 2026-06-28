@@ -23,7 +23,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="apple-mobile-web-app-title" content="Mundial 2026"/>
-  <meta name="theme-color" content="#07101d"/>
+  <meta name="theme-color" content="#0d2b4a"/>
   <link rel="manifest" id="pwa-manifest"/>
   <link rel="apple-touch-icon" sizes="180x180" href="./mundial2026-app-icon-v2-180.png"/>
   <link rel="apple-touch-icon-precomposed" sizes="180x180" href="./mundial2026-app-icon-v2-180.png"/>
@@ -2721,9 +2721,10 @@
 
 
     /* ═══════════════════════════════════════════════════════════════
-       FULL MOBILE VIEWPORT BACKGROUND
-       Extends the app surface beneath both iOS safe areas and follows
-       Safari's dynamic visual viewport without exposing black strips.
+       FULL MOBILE VIEWPORT BACKGROUND · iOS Safari / PWA
+       One fixed surface is kept above the document canvas and below
+       the application, so safe areas and Safari viewport changes never
+       expose a differently coloured strip.
     ═══════════════════════════════════════════════════════════════ */
     :root {
       --app-viewport-height: 100dvh;
@@ -2734,50 +2735,80 @@
         linear-gradient(180deg, #07101d 0%, #070a12 48%, #04060b 100%);
     }
 
-    html {
+    html,
+    body {
+      width: 100%;
       min-height: 100%;
+      background-color: #07101d !important;
+    }
+
+    html {
+      min-height: 100vh;
       min-height: 100svh;
       min-height: 100dvh;
-      background-color: #07101d !important;
       background-image: var(--app-screen-background) !important;
       background-repeat: no-repeat !important;
       background-position: center top !important;
-      background-size: cover !important;
+      background-size: 100% var(--app-viewport-height) !important;
+      background-attachment: fixed !important;
     }
 
     body {
+      position: relative;
+      isolation: isolate;
       min-height: 100vh !important;
       min-height: 100svh !important;
-      min-height: max(100dvh, var(--app-viewport-height)) !important;
-      background: transparent !important;
+      min-height: var(--app-viewport-height) !important;
+      background-image: var(--app-screen-background) !important;
+      background-repeat: no-repeat !important;
+      background-position: center top !important;
+      background-size: 100% var(--app-viewport-height) !important;
+      background-attachment: fixed !important;
     }
 
     body::before {
       content: "";
       position: fixed;
-      z-index: -2;
+      z-index: 0;
       pointer-events: none;
-      left: -2px;
-      right: -2px;
-      top: calc(0px - var(--safe-top) - 32px);
-      bottom: calc(0px - var(--safe-bottom) - 32px);
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: var(--app-viewport-height);
+      min-height: 100svh;
       background-color: #07101d;
       background-image: var(--app-screen-background);
       background-repeat: no-repeat;
       background-position: center top;
-      background-size: cover;
+      background-size: 100% 100%;
       transform: translateZ(0);
+      -webkit-transform: translateZ(0);
     }
 
-    #root,
+    #loading,
+    #root {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh !important;
+      min-height: 100svh !important;
+      min-height: var(--app-viewport-height) !important;
+      background: transparent !important;
+    }
+
     .pitch-bg {
       min-height: 100vh !important;
       min-height: 100svh !important;
-      min-height: max(100dvh, var(--app-viewport-height)) !important;
+      min-height: var(--app-viewport-height) !important;
+      background: transparent !important;
     }
 
-    .pitch-bg {
-      background: transparent !important;
+    @supports (height: 100lvh) {
+      html,
+      body,
+      #root,
+      .pitch-bg {
+        min-height: max(100dvh, var(--app-viewport-height)) !important;
+      }
     }
 
     @supports (-webkit-touch-callout: none) {
@@ -2787,10 +2818,15 @@
       .pitch-bg {
         min-height: -webkit-fill-available;
       }
-      body,
-      #root,
-      .pitch-bg {
-        min-height: max(var(--app-viewport-height), 100dvh) !important;
+      body::before {
+        min-height: var(--app-viewport-height);
+      }
+    }
+
+    @media (display-mode: standalone) {
+      body::before {
+        top: calc(-1 * var(--safe-top));
+        height: calc(var(--app-viewport-height) + var(--safe-top) + var(--safe-bottom));
       }
     }
 
@@ -2839,7 +2875,7 @@ const db = firebase.database();
     cancelAnimationFrame(viewportFrame);
     viewportFrame = requestAnimationFrame(() => {
       const visualHeight = window.visualViewport ? window.visualViewport.height : 0;
-      const height = Math.max(window.innerHeight || 0, document.documentElement.clientHeight || 0, visualHeight || 0);
+      const height = visualHeight || window.innerHeight || document.documentElement.clientHeight || 0;
       if (height > 0) document.documentElement.style.setProperty('--app-viewport-height', `${Math.ceil(height)}px`);
     });
   };
