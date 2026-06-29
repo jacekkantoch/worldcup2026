@@ -37,7 +37,7 @@
     ═══════════════════════════════════════════════════════════════ */
     :root {
       --safe-top:    0px;
-      --safe-bottom: 8px;
+      --safe-bottom: 20px;
       /* Liquid Glass system backgrounds (dark) */
       --bg-0: #000000;
       --bg-1: #1C1C1E;
@@ -108,7 +108,7 @@
     /* Header */
     .app-header {
       position: sticky; top: 0; z-index: 30;
-      background: var(--bg-1);
+      background: rgba(28,28,30,0.55);
       border-bottom: 1px solid var(--sep);
       box-shadow: 0 1px 0 rgba(0,0,0,0.5), 0 2px 16px rgba(0,0,0,0.40);
       color: var(--label-1);
@@ -153,7 +153,7 @@
 
     /* Bottom Nav */
     .bottom-nav {
-      position: fixed; bottom: 0; left: 0; right: 0; z-index: 40;
+      position: fixed; bottom: -12px; left: 0; right: 0; z-index: 40;
       background: #141416; border-top: 1px solid var(--sep);
       box-shadow: 0 -1px 0 rgba(255,255,255,0.05), 0 -4px 20px rgba(0,0,0,0.55);
       padding-bottom: var(--safe-bottom);
@@ -169,7 +169,7 @@
     .nav-droplet.dragging { transition: width .18s ease, transform .18s ease; transform: scale(1.06) scaleY(1.03); }
     .bottom-nav button {
       flex: 1 1 0%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
-      padding: 7px 2px 6px; border: none; background: none; cursor: pointer;
+      padding: 11px 2px 9px; border: none; background: none; cursor: pointer;
       color: var(--label-3); font-size: 7.5px; font-weight: 700; letter-spacing: .01em; text-transform: uppercase;
       transition: color .22s var(--ease-out), transform .12s var(--ease-spring);
       position: relative; min-width: 0; z-index: 1; font-family: inherit;
@@ -3101,7 +3101,6 @@
     }
 
     /* Wyśrodkowane etykiety — delikatne zanikanie po obu stronach. */
-    .bottom-nav .nav-label,
     .admin-score-team-name {
       text-overflow: clip !important;
       mask-image: linear-gradient(
@@ -4696,7 +4695,20 @@
   }
 
   html body .allspecials-view .allspecials-group-filter-centered {
-    justify-content: center !important;
+    justify-content: flex-start !important;
+  }
+
+  /* Right-side fade for group filter rows (SPECJALNE & WSZYSCY tabs) */
+  html body .group-order-filter-row {
+    mask-image: linear-gradient(
+      to right,
+      #000 0,
+      #000 calc(100% - 32px),
+      transparent 100%
+    ) !important;
+    mask-repeat: no-repeat !important;
+    mask-size: 100% 100% !important;
+    padding-right: 36px !important;
   }
 </style>
 
@@ -8243,7 +8255,7 @@ function SpecialsAllView({
   }, React.createElement("div", {
     className: "px-4 py-3 text-sm font-bold tracking-wide text-stone-800 flex items-center justify-between"
   }, React.createElement("span", null, "Kolejno\u015B\u0107 w grupach")), React.createElement("div", {
-    className: "group-order-filter-row pill-scroll-safe allspecials-group-filter-centered flex gap-1 p-2 overflow-x-auto justify-center"
+    className: "group-order-filter-row pill-scroll-safe allspecials-group-filter-centered flex gap-1 py-2 pl-4 pr-2 overflow-x-auto"
   }, GROUPS.map(g => React.createElement("button", {
     key: g,
     onClick: () => {
