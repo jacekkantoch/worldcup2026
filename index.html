@@ -23,7 +23,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="apple-mobile-web-app-title" content="FIFA WORLD CUP 2026"/>
-  <meta name="theme-color" content="#111827"/>
+  <meta name="theme-color" content="#0d2b4a"/>
+  <meta name="color-scheme" content="dark"/>
   <link rel="manifest" id="pwa-manifest"/>
   <link rel="apple-touch-icon" sizes="180x180" href="./mundial2026-app-icon-v2-180.png"/>
   <link rel="apple-touch-icon-precomposed" sizes="180x180" href="./mundial2026-app-icon-v2-180.png"/>
@@ -33,6 +34,9 @@
     (function(){
       var theme='dark'; // light mode wyłączony
       document.documentElement.setAttribute('data-theme',theme);
+      // iOS standalone: ustaw tło natychmiast, zanim sparsuje się główny <style>,
+      // żeby przy starcie z ekranu głównego nie mignęła biała plansza.
+      document.documentElement.style.backgroundColor = '#05070d';
     })();
   </script>
   <style>
@@ -97,8 +101,8 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'DM Sans', system-ui, sans-serif;
-      padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px));
-      min-height: 100dvh;
+      padding-bottom: calc(84px + var(--safe-bottom));
+      min-height: 100vh;
       background:
         radial-gradient(ellipse 80% 30% at 50% 0%,  rgba(10,132,255,0.07) 0%, transparent 65%),
         radial-gradient(ellipse 50% 25% at 10% 100%, rgba(48,209,88,0.05)  0%, transparent 60%),
@@ -260,6 +264,21 @@
       box-shadow: 0 0 0 3px rgba(10,132,255,0.22) !important; outline: none;
     }
     select option { background: var(--bg-2); color: var(--label-1); }
+    /* iOS Safari: każdy input <16px wywołuje auto-zoom przy fokusie i rozjeżdża layout.
+       Wymuszamy 16px wyłącznie na iOS (inne przeglądarki zachowują oryginalny rozmiar). */
+    @supports (-webkit-touch-callout: none) {
+      input[type="text"],
+      input[type="password"],
+      input[type="search"],
+      input[type="email"],
+      input[type="tel"],
+      input[type="url"],
+      input:not([type]),
+      textarea,
+      select {
+        font-size: 16px !important;
+      }
+    }
     .rounded-xl  { border-radius: var(--radius-md) !important; }
     .rounded-2xl { border-radius: var(--radius-lg) !important; }
     .rounded-lg  { border-radius: var(--radius-sm) !important; }
@@ -455,7 +474,7 @@
     body {
       position: relative;
       isolation: isolate;
-      padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+      padding-bottom: calc(106px + var(--safe-bottom));
       background:
         radial-gradient(ellipse 100% 58% at 50% -13%, rgba(44,139,255,.28), transparent 62%),
         radial-gradient(ellipse 66% 46% at -8% 68%, rgba(44,214,155,.13), transparent 69%),
@@ -528,15 +547,12 @@
 
     /* Floating glass header */
     .app-header {
-      top: 0;
-      left: 0;
-      right: 0;
-      width: 100%;
-      margin: 0;
-      padding: calc(env(safe-area-inset-top, 0px) + 12px) 16px 12px;
-      border: none;
-      border-bottom: 1px solid rgba(255,255,255,.14);
-      border-radius: 0;
+      top: calc(var(--safe-top) + 8px);
+      width: min(760px, calc(100% - 20px));
+      margin: 10px auto 0;
+      padding: 10px 11px 10px 12px;
+      border: 1px solid rgba(255,255,255,.20);
+      border-radius: 26px;
       background:
         radial-gradient(circle at 20% -20%, rgba(255,255,255,.24), transparent 42%),
         linear-gradient(145deg, rgba(27,37,58,.69), rgba(12,17,29,.46));
@@ -589,7 +605,7 @@
       padding: 18px 12px 118px;
     }
     .filters-sticky {
-      top: calc(env(safe-area-inset-top, 0px) + 68px);
+      top: calc(var(--safe-top) + 84px);
       z-index: 20;
       background:
         radial-gradient(circle at 18% -20%, rgba(255,255,255,.20), transparent 42%),
@@ -643,15 +659,14 @@
 
     /* Floating liquid tab bar */
     .bottom-nav {
-      left: 0;
-      right: 0;
-      bottom: 0;
-      width: 100%;
-      margin: 0;
-      padding-bottom: env(safe-area-inset-bottom, 0px);
-      border: none;
-      border-top: 1px solid rgba(255,255,255,.12);
-      border-radius: 0;
+      left: 10px;
+      right: 10px;
+      bottom: calc(5px + var(--safe-bottom));
+      width: min(740px, calc(100% - 20px));
+      margin: 0 auto;
+      padding-bottom: 0;
+      border: 1px solid rgba(255,255,255,.20);
+      border-radius: 28px;
       overflow: hidden;
       background:
         radial-gradient(circle at 20% -30%, rgba(255,255,255,.22), transparent 44%),
@@ -996,13 +1011,13 @@
       .match-card { border-radius: 26px !important; }
     }
     @media (max-width: 520px) {
-      .app-header { padding: calc(env(safe-area-inset-top, 0px) + 10px) 12px 10px; border-radius: 0; }
+      .app-header { width: calc(100% - 14px); margin-top: 7px; border-radius: 23px; }
       .login-btn { max-width: 105px; padding-left: 10px; padding-right: 10px; }
       .players-btn { width: 36px; height: 36px; }
       .app-content { padding-left: 9px; padding-right: 9px; }
-      .bottom-nav { left: 0; right: 0; width: 100%; bottom: 0; border-radius: 0; }
+      .bottom-nav { left: 7px; right: 7px; width: calc(100% - 14px); bottom: calc(3px + var(--safe-bottom)); border-radius: 25px; }
       .bottom-nav button { min-height: 55px; }
-      .filters-sticky { top: calc(env(safe-area-inset-top, 0px) + 62px); }
+      .filters-sticky { top: calc(var(--safe-top) + 78px); }
     }
     @media (max-width: 380px) {
       .app-header .logo-icon { width: 38px; height: 38px; border-radius: 13px; }
@@ -8417,341 +8432,6 @@
   </style>
 
 
-
-
-  <style id="safari-safe-layout-final">
-    /*
-      Ostateczna geometria Safari/PWA.
-      Wysokość nagłówka, filtrów i dolnej nawigacji jest mierzona przez JS,
-      więc treść nie opiera się na stałych wartościach zależnych od urządzenia.
-    */
-    :root {
-      --app-header-gap: 12px;
-      --sticky-panel-gap: 14px;
-      --fixed-header-content-offset: 92px;
-      --fixed-header-filter-offset: 92px;
-      --filters-sticky-height: 0px;
-      --bottom-nav-clearance: 116px;
-    }
-
-    html {
-      min-height: 100%;
-      min-height: -webkit-fill-available;
-      min-height: 100dvh;
-      scroll-padding-top: calc(
-        var(--fixed-header-filter-offset, 92px) +
-        var(--filters-sticky-height, 0px) +
-        var(--sticky-panel-gap, 14px)
-      );
-    }
-
-    body,
-    #loading,
-    #root,
-    #root > .pitch-bg,
-    .pitch-bg {
-      min-height: 100vh !important;
-      min-height: 100svh !important;
-      min-height: 100dvh !important;
-    }
-
-    /* Jeden przewidywalny nagłówek. Safe area jest zawarta w jego paddingu. */
-    html body .app-header,
-    html[data-theme="light"] body .app-header,
-    html[data-theme="dark"] body .app-header {
-      position: fixed !important;
-      inset: 0 0 auto 0 !important;
-      top: 0 !important;
-      left: 0 !important;
-      right: 0 !important;
-      width: 100% !important;
-      max-width: none !important;
-      margin: 0 !important;
-      transform: none !important;
-      -webkit-transform: none !important;
-      border-radius: 0 !important;
-      z-index: 1000 !important;
-    }
-
-    /* Treść zaczyna się poniżej faktycznej dolnej krawędzi nagłówka. */
-    html body .app-content {
-      padding-top: var(--fixed-header-content-offset, 92px) !important;
-      padding-bottom: calc(
-        var(--bottom-nav-clearance, 116px) +
-        max(env(safe-area-inset-bottom, 0px), var(--app-viewport-bottom, 0px))
-      ) !important;
-    }
-
-    /* Filtry przyklejają się dopiero pod nagłówkiem, z zachowaniem odstępu. */
-    html body .filters-sticky {
-      position: sticky !important;
-      top: var(--fixed-header-filter-offset, 92px) !important;
-      z-index: 900 !important;
-      isolation: isolate;
-      overflow: clip;
-      scroll-margin-top: var(--fixed-header-filter-offset, 92px);
-    }
-
-    /* Większy, jednoznaczny odstęp między panelem filtrów a pierwszym meczem. */
-    html body .matches-view {
-      gap: max(var(--ui-section-gap, 14px), var(--sticky-panel-gap, 14px)) !important;
-    }
-
-    html body .matches-view > .phase-filter-panel + * {
-      margin-top: 2px !important;
-    }
-
-    /* Nie pokazuj kart prześwitujących przez przyklejony panel filtrów. */
-    html:not([data-theme="light"]) body .matches-view .filters-sticky {
-      background:
-        radial-gradient(circle at 18% -20%, rgba(255,255,255,.16), transparent 42%),
-        linear-gradient(145deg, rgba(24,31,47,.97), rgba(10,15,26,.97)) !important;
-    }
-
-    html[data-theme="light"] body .matches-view .filters-sticky {
-      background:
-        radial-gradient(circle at 18% -20%, rgba(255,255,255,.98), transparent 42%),
-        linear-gradient(145deg, rgba(255,255,255,.97), rgba(242,242,247,.97)) !important;
-    }
-
-    @media (max-width: 520px) {
-      :root {
-        --app-header-gap: 10px;
-        --sticky-panel-gap: 12px;
-      }
-
-      html body .app-content {
-        padding-left: 9px !important;
-        padding-right: 9px !important;
-      }
-    }
-
-    @supports not (height: 100dvh) {
-      body,
-      #loading,
-      #root,
-      #root > .pitch-bg,
-      .pitch-bg {
-        min-height: -webkit-fill-available !important;
-      }
-    }
-  </style>
-
-
-  <style id="uniform-card-spacing-and-ios-top-chrome">
-    /* Jeden rytm pionowy dla wszystkich głównych kafelków. */
-    :root {
-      --ui-card-gap: 14px;
-      --ui-section-gap: var(--ui-card-gap);
-      --sticky-panel-gap: var(--ui-card-gap);
-      --app-header-chrome-color: #111827;
-      --app-header-surface-final:
-        radial-gradient(circle at 20% -20%, rgba(255,255,255,.18), transparent 42%),
-        linear-gradient(145deg, rgba(27,37,58,.985), rgba(12,17,29,.985));
-    }
-
-    html[data-theme="light"] {
-      --app-header-chrome-color: #f2f2f7;
-      --app-header-surface-final:
-        radial-gradient(circle at 20% -20%, rgba(255,255,255,.98), transparent 42%),
-        linear-gradient(145deg, rgba(255,255,255,.985), rgba(242,242,247,.985));
-    }
-
-    /* Safari używa koloru dokumentu za status barem / Dynamic Island. */
-    html,
-    body {
-      background-color: var(--app-header-chrome-color) !important;
-    }
-
-    /* Oddzielna warstwa pod bezpiecznym obszarem iPhone'a. Nagłówek ma
-       z-index 1000, więc pasek pozostaje pod jego interaktywną zawartością. */
-    html::before {
-      content: "";
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: calc(env(safe-area-inset-top, 0px) + 1px);
-      background: var(--app-header-surface-final);
-      pointer-events: none;
-      z-index: 999;
-      transform: translateZ(0);
-      -webkit-transform: translateZ(0);
-    }
-
-    html body .app-header,
-    html[data-theme="dark"] body .app-header,
-    html[data-theme="light"] body .app-header {
-      background: var(--app-header-surface-final) !important;
-      background-color: var(--app-header-chrome-color) !important;
-    }
-
-    .tab-view {
-      width: 100%;
-    }
-
-    .tab-card-stack {
-      display: flex !important;
-      flex-direction: column !important;
-      gap: var(--ui-card-gap) !important;
-    }
-
-    .tab-card-stack > :not([hidden]) {
-      margin-top: 0 !important;
-      margin-bottom: 0 !important;
-    }
-
-    .tab-card-stack > :not([hidden]) ~ :not([hidden]) {
-      margin-top: 0 !important;
-    }
-
-    /* Stosy kart zagnieżdżone w panelach zachowują dokładnie ten sam odstęp. */
-    .admin-panel > :is(.space-y-2, .space-y-3, .space-y-4),
-    .specials-view > :is(.space-y-2, .space-y-3, .space-y-4),
-    .allspecials-view > :is(.space-y-2, .space-y-3, .space-y-4),
-    .leaderboard-view > :is(.space-y-2, .space-y-3, .space-y-4),
-    .compare-view > :is(.space-y-2, .space-y-3, .space-y-4),
-    .matches-view > :is(.space-y-2, .space-y-3, .space-y-4),
-    .mine-match-list {
-      display: flex !important;
-      flex-direction: column !important;
-      gap: var(--ui-card-gap) !important;
-    }
-
-    .admin-panel > :is(.space-y-2, .space-y-3, .space-y-4) > :not([hidden]),
-    .specials-view > :is(.space-y-2, .space-y-3, .space-y-4) > :not([hidden]),
-    .allspecials-view > :is(.space-y-2, .space-y-3, .space-y-4) > :not([hidden]),
-    .leaderboard-view > :is(.space-y-2, .space-y-3, .space-y-4) > :not([hidden]),
-    .compare-view > :is(.space-y-2, .space-y-3, .space-y-4) > :not([hidden]),
-    .matches-view > :is(.space-y-2, .space-y-3, .space-y-4) > :not([hidden]),
-    .mine-match-list > :not([hidden]) {
-      margin-top: 0 !important;
-      margin-bottom: 0 !important;
-    }
-
-    /* Panel filtrów w Mecze jest jednym z kafelków, więc ma ten sam rytm
-       jak każda następna karta, również gdy pozostaje przyklejony. */
-    html body .matches-view {
-      gap: var(--ui-card-gap) !important;
-    }
-
-    html body .matches-view > .phase-filter-panel + * {
-      margin-top: 0 !important;
-    }
-
-    @media (max-width: 520px) {
-      :root {
-        --ui-card-gap: 12px;
-      }
-    }
-
-    @supports (padding-top: constant(safe-area-inset-top)) {
-      html::before {
-        height: calc(constant(safe-area-inset-top) + 1px);
-      }
-    }
-  </style>
-
-
-  <style id="safari-bottom-content-underlay-final">
-    /*
-      Safari edge-to-edge: dokument ma wysokość pełnego layout viewportu,
-      a nie wyłącznie widocznego obszaru nad paskiem narzędzi. Safari może
-      dzięki temu nałożyć swój dolny interfejs na stronę i pokazać ją pod szkłem.
-      Elementy aplikacji pozostają odsunięte nad paskiem, aby nadal były klikalne.
-    */
-    :root {
-      --app-layout-viewport-height: 100lvh;
-      --app-page-canvas-color: #05070d;
-      --app-page-canvas:
-        radial-gradient(ellipse 100% 58% at 50% -13%, rgba(44,139,255,.28), transparent 62%),
-        radial-gradient(ellipse 66% 46% at -8% 68%, rgba(44,214,155,.13), transparent 69%),
-        radial-gradient(ellipse 68% 46% at 108% 78%, rgba(168,88,255,.16), transparent 68%),
-        linear-gradient(180deg, #07101d 0%, #070a12 48%, #04060b 100%);
-    }
-
-    html[data-theme="light"] {
-      --app-page-canvas-color: #eef3f9;
-      --app-page-canvas:
-        radial-gradient(ellipse 100% 58% at 50% -13%, rgba(92,166,255,.20), transparent 62%),
-        radial-gradient(ellipse 66% 46% at -8% 68%, rgba(70,214,164,.10), transparent 69%),
-        radial-gradient(ellipse 68% 46% at 108% 78%, rgba(168,110,255,.11), transparent 68%),
-        linear-gradient(180deg, #f7faff 0%, #eef3f9 52%, #e9eef5 100%);
-    }
-
-    /* Kolor canvasu jest kolorem strony, nie nagłówka. Górny safe area nadal
-       dostaje powierzchnię nagłówka z reguły html::before. */
-    html,
-    body {
-      background-color: var(--app-page-canvas-color) !important;
-    }
-
-    html:not(.is-standalone),
-    html:not(.is-standalone) body {
-      background-image: var(--app-page-canvas) !important;
-      background-repeat: no-repeat !important;
-      background-position: center top !important;
-      background-size: 100% max(100dvh, var(--app-layout-viewport-height, 100lvh)) !important;
-    }
-
-    html:not(.is-standalone),
-    html:not(.is-standalone) body,
-    html:not(.is-standalone) #loading,
-    html:not(.is-standalone) #root,
-    html:not(.is-standalone) #root > .pitch-bg,
-    html:not(.is-standalone) .pitch-bg {
-      min-height: max(100dvh, var(--app-layout-viewport-height, 100lvh)) !important;
-    }
-
-    /* Pełnoekranowa powierzchnia dokumentu jest renderowana także w części
-       przykrytej przez dolny toolbar Safari. */
-    html:not(.is-standalone) body::before {
-      height: max(100dvh, var(--app-layout-viewport-height, 100lvh)) !important;
-      min-height: max(100dvh, var(--app-layout-viewport-height, 100lvh)) !important;
-      background: var(--app-page-canvas) !important;
-      background-size: 100% max(100dvh, var(--app-layout-viewport-height, 100lvh)) !important;
-    }
-
-    /* Dodatkowe przedłużenie canvasu pod dolną krawędź. Jest nieinteraktywne,
-       ale przez półprzezroczysty pasek Safari wygląda jak dalsza część strony. */
-    html:not(.is-standalone) body::after {
-      content: "";
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: calc(0px - max(var(--app-viewport-bottom, 0px), 96px));
-      height: calc(max(var(--app-viewport-bottom, 0px), 96px) + 180px);
-      background: var(--app-page-canvas);
-      background-position: center bottom;
-      background-size: 100% max(100dvh, var(--app-layout-viewport-height, 100lvh));
-      pointer-events: none;
-      z-index: 0;
-      transform: translateZ(0);
-      -webkit-transform: translateZ(0);
-    }
-
-    /* Nie dodajemy już pustego miejsca odpowiadającego paskowi Safari.
-       Zostaje tylko zapas potrzebny na własną dolną nawigację aplikacji. */
-    html:not(.is-standalone) body .app-content {
-      padding-bottom: calc(var(--bottom-nav-clearance, 116px) + 20px) !important;
-    }
-
-    /* Stopka/lista może przewijać się do obszaru przykrywanego przez Safari,
-       lecz przyciski własnej nawigacji pozostają nad nim. */
-    html:not(.is-standalone) body .bottom-nav {
-      bottom: 3px !important;
-    }
-
-    @supports not (height: 100lvh) {
-      html:not(.is-standalone),
-      html:not(.is-standalone) body,
-      html:not(.is-standalone) #root,
-      html:not(.is-standalone) .pitch-bg {
-        min-height: calc(var(--app-viewport-height, 100vh) + var(--app-viewport-bottom, 0px)) !important;
-      }
-    }
-  </style>
-
 </head>
 <body>
   <div id="loading">
@@ -8803,9 +8483,7 @@ const db = firebase.database();
       const bottom = vv ? Math.max(0, layoutHeight - top - vv.height) : 0;
 
       if (height > 0) {
-        const layoutViewportHeight = Math.max(height + top + bottom, layoutHeight, height);
         document.documentElement.style.setProperty('--app-viewport-height', `${Math.ceil(height)}px`);
-        document.documentElement.style.setProperty('--app-layout-viewport-height', `${Math.ceil(layoutViewportHeight)}px`);
         document.documentElement.style.setProperty('--app-viewport-top', `${Math.round(top)}px`);
         document.documentElement.style.setProperty('--app-viewport-bottom', `${Math.round(bottom)}px`);
       }
@@ -8871,12 +8549,12 @@ const db = firebase.database();
     const el = document.getElementById('loading-slow');
     if (el) el.style.display = 'block';
   }, 4000);
-  // Mobile-safe cleanup: this single-file build does not register a blob service worker.
+  // Service worker: cache-first dla zasobów statycznych (offline + szybki start na słabym łączu).
+  // Dane z Firebase nadal idą przez sieć (sw.js ich nie cache'uje), więc wyniki są zawsze aktualne.
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.getRegistrations().then(registrations => registrations.forEach(registration => registration.unregister())).catch(() => {});
-  }
-  if ('caches' in window) {
-    caches.keys().then(keys => Promise.all(keys.filter(k => k.startsWith('mundial2026-')).map(k => caches.delete(k)))).catch(() => {});
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    });
   }
 })();
 
@@ -10744,7 +10422,7 @@ function ScoreInput({
     value: num === null ? '' : num,
     onChange: e => {
       const v = e.target.value;
-      if (v === '') onChange(null);else set(parseInt(v) || 0);
+      if (v === '') { onChange(null); } else { const n = parseInt(v, 10); set(Number.isNaN(n) ? 0 : Math.min(99, Math.max(0, n))); }
     },
     disabled: disabled,
     min: "0",
@@ -11982,7 +11660,7 @@ function MatchesView({
   const hasMoreMatches = compactDevice && visibleCount < filtered.length;
   const filterBtns = PHASE_FILTER_TABS;
   return /*#__PURE__*/React.createElement("div", {
-    className: "tab-card-stack matches-view space-y-3"
+    className: "matches-view space-y-3"
   }, /*#__PURE__*/React.createElement("div", {
     className: "phase-filter-panel bg-white border border-[#b0bce8] rounded-xl p-3 filters-sticky shadow-sm"
   }, /*#__PURE__*/React.createElement("div", {
@@ -12128,7 +11806,7 @@ function SpecialsView({
     className: "text-center text-sm text-stone-600 bg-amber-50 border border-amber-200 rounded-lg p-4 mt-4 app-note app-note--warning app-note--center"
   }, "Wybierz uczestnika na g\xF3rze ekranu");
   return /*#__PURE__*/React.createElement("div", {
-    className: "tab-card-stack specials-view space-y-4"
+    className: "specials-view space-y-4"
   }, (tournamentLocked || specialsLocked) && /*#__PURE__*/React.createElement("div", {
     className: "bg-[#0d1b5e] text-white rounded-lg p-3 text-sm flex items-center gap-2 mb-3 app-note app-note--danger app-note--compact"
   }, /*#__PURE__*/React.createElement(Icon, {
@@ -12374,7 +12052,7 @@ function SpecialsAllView({
     return name && name !== id ? name.slice(0, 3).toUpperCase() : '???';
   };
   return /*#__PURE__*/React.createElement("div", {
-    className: "tab-card-stack allspecials-view space-y-3"
+    className: "allspecials-view space-y-3"
   }, /*#__PURE__*/React.createElement("div", {
     className: "bg-blue-50 border border-blue-200 rounded-xl p-3 text-xs text-blue-900 allspecials-note app-note app-note--info app-note--compact"
   }, "Typy specjalne wszystkich uczestnik\xF3w \u2014 widoczne dla ka\u017Cdego."), /*#__PURE__*/React.createElement("div", {
@@ -12590,7 +12268,7 @@ function LeaderboardView({
     className: "text-center text-stone-600 bg-stone-100 border border-stone-200 rounded-lg p-6"
   }, "Brak graczy.");
   return /*#__PURE__*/React.createElement("div", {
-    className: "tab-card-stack leaderboard-view space-y-2"
+    className: "leaderboard-view space-y-2"
   }, /*#__PURE__*/React.createElement("div", {
     className: "leaderboard-header rounded-xl p-4"
   }, /*#__PURE__*/React.createElement("h3", {
@@ -12818,7 +12496,7 @@ function MyPredictionsView({
   }, "Wybierz uczestnika na g\xF3rze ekranu");
   const totalPts = rows.reduce((s, r) => s + (r.points || 0), 0);
   return /*#__PURE__*/React.createElement("div", {
-    className: "tab-card-stack my-predictions-view space-y-3"
+    className: "space-y-3"
   }, /*#__PURE__*/React.createElement("div", {
     className: "my-predictions-banner bg-gradient-to-br from-[#1a1a3a] to-[#0d1b5e] text-white rounded-xl p-4"
   }, /*#__PURE__*/React.createElement("h3", {
@@ -12843,10 +12521,10 @@ function MyPredictionsView({
   }, "Pkt")))), rows.length === 0 && /*#__PURE__*/React.createElement("div", {
     className: "text-center text-stone-500 py-12 bg-white border border-stone-200 rounded-lg app-note app-note--info app-note--center"
   }, "Nie masz jeszcze typ\xF3w. Przejd\u017A do zak\u0142adki ", /*#__PURE__*/React.createElement("strong", null, "Mecze"), "."), /*#__PURE__*/React.createElement("div", {
-    className: "mine-match-list",
     style: {
       display: 'flex',
-      flexDirection: 'column'
+      flexDirection: 'column',
+      gap: 3
     }
   }, rows.map(({
     match,
@@ -13002,7 +12680,7 @@ function CompareView({
     className: "text-center text-stone-500 py-12 app-note app-note--info app-note--center"
   }, "Dodaj graczy, \u017Ceby por\xF3wnywa\u0107 typy.");
   return /*#__PURE__*/React.createElement("div", {
-    className: "tab-card-stack compare-view space-y-3"
+    className: "compare-view space-y-3"
   }, /*#__PURE__*/React.createElement("div", {
     className: "phase-filter-panel bg-white border border-[#b0bce8] rounded-xl p-3 filters-sticky shadow-sm"
   }, /*#__PURE__*/React.createElement("div", {
@@ -14203,7 +13881,7 @@ function AdminPanel({
     l: 'Dane'
   }];
   return /*#__PURE__*/React.createElement("div", {
-    className: "tab-card-stack admin-panel space-y-3"
+    className: "admin-panel space-y-3"
   }, /*#__PURE__*/React.createElement("div", {
     className: "admin-panel-banner bg-stone-900 text-white rounded-xl p-3 flex items-center justify-between"
   }, /*#__PURE__*/React.createElement("div", {
@@ -15251,7 +14929,7 @@ function TournamentBracket({
 }) {
   const matchesById = useMemo(() => Object.fromEntries(matches.map(m => [m.id, m])), [matches]);
   return /*#__PURE__*/React.createElement("div", {
-    className: "tab-card-stack bracket-page"
+    className: "bracket-page"
   }, /*#__PURE__*/React.createElement("div", {
     className: "bracket-intro"
   }, /*#__PURE__*/React.createElement("h2", null, "Drabinka turnieju"), /*#__PURE__*/React.createElement("p", null, "Przeci\u0105gnij drabink\u0119 poziomo, aby zobaczy\u0107 kolejne etapy.")), /*#__PURE__*/React.createElement(BracketTree, {
@@ -15533,7 +15211,7 @@ function Mundial2026() {
       localStorage.setItem('wc2026:theme', theme);
     } catch (e) {}
     const themeMeta = document.querySelector('meta[name="theme-color"]');
-    if (themeMeta) themeMeta.setAttribute('content', theme === 'light' ? '#f2f2f7' : '#111827');
+    if (themeMeta) themeMeta.setAttribute('content', theme === 'light' ? '#f2f2f7' : '#0d2b4a');
     const statusMeta = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
     if (statusMeta) statusMeta.setAttribute('content', theme === 'light' ? 'default' : 'black-translucent');
   }, [theme]);
@@ -16002,107 +15680,61 @@ ReactDOM.createRoot(document.getElementById('root')).render(/*#__PURE__*/React.c
 
 
 <script>
-/*
-  Dynamiczna geometria stałych elementów dla Safari i PWA.
-  Mierzymy faktyczną dolną krawędź nagłówka zamiast zakładać jego wysokość.
-*/
+/* Safari/iOS potrafi po zmianie motywu ponownie przeliczyć pozycję
+   elementu z backdrop-filter. Wymuszamy fixed także bez przeładowania. */
 (function () {
-  var root = document.documentElement;
-  var frame = 0;
-  var headerObserver = null;
-  var filterObserver = null;
-  var navObserver = null;
-  var observedHeader = null;
-  var observedFilter = null;
-  var observedNav = null;
-
-  function cssNumber(name, fallback) {
-    var value = parseFloat(getComputedStyle(root).getPropertyValue(name));
-    return Number.isFinite(value) ? value : fallback;
-  }
-
-  function observeElement(observer, previous, next) {
-    if (!observer || previous === next) return next;
-    if (previous) observer.unobserve(previous);
-    if (next) observer.observe(next);
-    return next;
-  }
-
-  function updateLayoutGeometry() {
+  function pinAppHeader() {
     var header = document.querySelector('.app-header');
-    var filters = document.querySelector('.matches-view .filters-sticky');
-    var bottomNav = document.querySelector('.bottom-nav');
+    if (!header) return false;
 
-    observedHeader = observeElement(headerObserver, observedHeader, header);
-    observedFilter = observeElement(filterObserver, observedFilter, filters);
-    observedNav = observeElement(navObserver, observedNav, bottomNav);
+    header.style.setProperty('position', 'fixed', 'important');
+    header.style.setProperty('top', 'calc(env(safe-area-inset-top, 0px) + 7px)', 'important');
+    header.style.setProperty('left', '50%', 'important');
+    header.style.setProperty('right', 'auto', 'important');
+    header.style.setProperty('margin', '0', 'important');
+    header.style.setProperty('transform', 'translate3d(-50%, 0, 0)', 'important');
+    header.style.setProperty('-webkit-transform', 'translate3d(-50%, 0, 0)', 'important');
+    header.style.setProperty('z-index', '1000', 'important');
 
-    if (header) {
-      var headerRect = header.getBoundingClientRect();
-      var headerGap = cssNumber('--app-header-gap', 12);
-      var headerBottom = Math.max(0, Math.ceil(headerRect.bottom));
-      var contentOffset = headerBottom + headerGap;
-
-      root.style.setProperty('--fixed-header-content-offset', contentOffset + 'px');
-      root.style.setProperty('--fixed-header-filter-offset', contentOffset + 'px');
-    }
-
-    if (filters) {
-      var filterHeight = Math.max(0, Math.ceil(filters.getBoundingClientRect().height));
-      root.style.setProperty('--filters-sticky-height', filterHeight + 'px');
-    } else {
-      root.style.setProperty('--filters-sticky-height', '0px');
-    }
-
-    if (bottomNav) {
-      var navRect = bottomNav.getBoundingClientRect();
-      var viewportHeight = window.visualViewport
-        ? window.visualViewport.height
-        : (window.innerHeight || document.documentElement.clientHeight || 0);
-      var spaceBelowNav = Math.max(0, viewportHeight - navRect.bottom);
-      var navClearance = Math.ceil(navRect.height + spaceBelowNav + 18);
-      root.style.setProperty('--bottom-nav-clearance', navClearance + 'px');
-    }
+    var height = Math.ceil(header.getBoundingClientRect().height || 64);
+    document.documentElement.style.setProperty(
+      '--fixed-header-content-offset',
+      'calc(' + (height + 24) + 'px + env(safe-area-inset-top, 0px))'
+    );
+    document.documentElement.style.setProperty(
+      '--fixed-header-filter-offset',
+      'calc(' + (height + 14) + 'px + env(safe-area-inset-top, 0px))'
+    );
+    return true;
   }
 
-  function scheduleLayoutGeometry() {
-    cancelAnimationFrame(frame);
-    frame = requestAnimationFrame(updateLayoutGeometry);
+  var pinScheduled = false;
+  function schedulePin() {
+    if (pinScheduled) return;
+    pinScheduled = true;
+    requestAnimationFrame(function () {
+      pinScheduled = false;
+      if (!pinAppHeader()) {
+        setTimeout(pinAppHeader, 80);
+      }
+    });
   }
 
-  if (window.ResizeObserver) {
-    headerObserver = new ResizeObserver(scheduleLayoutGeometry);
-    filterObserver = new ResizeObserver(scheduleLayoutGeometry);
-    navObserver = new ResizeObserver(scheduleLayoutGeometry);
-  }
-
-  scheduleLayoutGeometry();
-  window.addEventListener('load', scheduleLayoutGeometry, { once: true });
-  window.addEventListener('resize', scheduleLayoutGeometry, { passive: true });
-  window.addEventListener('orientationchange', function () {
-    scheduleLayoutGeometry();
-    setTimeout(scheduleLayoutGeometry, 250);
-  }, { passive: true });
-  window.addEventListener('pageshow', scheduleLayoutGeometry, { passive: true });
+  schedulePin();
+  window.addEventListener('load', schedulePin, { once: true });
+  window.addEventListener('resize', schedulePin);
+  window.addEventListener('orientationchange', schedulePin);
 
   if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', scheduleLayoutGeometry, { passive: true });
-    window.visualViewport.addEventListener('scroll', scheduleLayoutGeometry, { passive: true });
+    window.visualViewport.addEventListener('resize', schedulePin);
   }
 
-  if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(scheduleLayoutGeometry).catch(function () {});
-  }
-
-  new MutationObserver(scheduleLayoutGeometry).observe(document.documentElement, {
+  new MutationObserver(schedulePin).observe(document.documentElement, {
     attributes: true,
     attributeFilter: ['data-theme', 'class']
   });
 
-  new MutationObserver(scheduleLayoutGeometry).observe(document.body, {
-    childList: true,
-    subtree: true
-  });
+  new MutationObserver(schedulePin).observe(document.body, { childList: true, subtree: true });
 })();
 </script>
 
