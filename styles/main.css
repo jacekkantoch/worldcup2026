@@ -2426,14 +2426,14 @@
     }
     .compare-view .compare-player-score {
       display: grid !important;
-      grid-template-columns: 44px 42px 28px;
+      grid-template-columns: 44px 70px 28px;
       column-gap: 8px;
       align-items: center;
       justify-items: end;
       justify-content: end;
-      width: 122px;
-      min-width: 122px;
-      flex: 0 0 122px;
+      width: 150px;
+      min-width: 150px;
+      flex: 0 0 150px;
       text-align: right;
       font-variant-numeric: tabular-nums;
     }
@@ -2452,11 +2452,11 @@
     }
     @media (max-width: 380px) {
       .compare-view .compare-player-score {
-        grid-template-columns: 40px 34px 26px;
+        grid-template-columns: 40px 58px 26px;
         column-gap: 5px;
-        width: 110px;
-        min-width: 110px;
-        flex-basis: 110px;
+        width: 132px;
+        min-width: 132px;
+        flex-basis: 132px;
       }
       .compare-view .compare-player-row {
         padding-left: 9px !important;
@@ -2565,14 +2565,14 @@
     .prediction-score-grid,
     .compare-view .compare-player-score {
       display: grid !important;
-      grid-template-columns: 44px 42px 28px !important;
+      grid-template-columns: 44px 70px 28px !important;
       column-gap: 8px !important;
       align-items: center !important;
       justify-items: end !important;
       justify-content: end !important;
-      width: 122px !important;
-      min-width: 122px !important;
-      flex: 0 0 122px !important;
+      width: 150px !important;
+      min-width: 150px !important;
+      flex: 0 0 150px !important;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
       font-size: 13px !important;
       font-variant-numeric: tabular-nums !important;
@@ -2609,11 +2609,11 @@
     @media (max-width: 380px) {
       .prediction-score-grid,
       .compare-view .compare-player-score {
-        grid-template-columns: 40px 34px 26px !important;
+        grid-template-columns: 40px 58px 26px !important;
         column-gap: 5px !important;
-        width: 110px !important;
-        min-width: 110px !important;
-        flex-basis: 110px !important;
+        width: 132px !important;
+        min-width: 132px !important;
+        flex-basis: 132px !important;
       }
       .prediction-row,
       .compare-view .compare-player-row {
@@ -2808,7 +2808,7 @@
     @media (max-width: 520px) {
       .app-header .title-group h1 {
         font-size: 17px !important;
-        letter-spacing: .05em !important;
+        letter-spacing: .02em !important;
       }
     }
     @media (max-width: 380px) {
@@ -3347,25 +3347,24 @@
       display: inline-flex !important;
       align-items: center !important;
       justify-content: center !important;
-      gap: 4px !important;
-      min-width: 42px !important;
-      padding: 3px 7px !important;
-      border-radius: 999px !important;
-      background:
-        linear-gradient(145deg, rgba(112,184,255,.20), rgba(112,184,255,.08)) !important;
-      border: 1px solid rgba(140,202,255,.28) !important;
-      color: var(--label-1) !important;
-      font-size: 10px !important;
+      gap: 0 !important;
+      min-width: 0 !important;
+      padding: 0 !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      border: 0 !important;
+      color: rgba(214, 229, 255, .82) !important;
+      font-size: 11px !important;
       font-weight: 800 !important;
       line-height: 1 !important;
-      letter-spacing: .05em !important;
+      letter-spacing: .02em !important;
       white-space: nowrap !important;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.14) !important;
+      box-shadow: none !important;
       vertical-align: middle;
     }
 
     .match-penalty-badge::before {
-      content: "K";
+      content: "karne:";
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -3385,7 +3384,7 @@
     .prediction-penalty::before,
     .compare-player-penalty::before,
     .match-penalty-badge::before {
-      content: "K" !important;
+      content: "karne:" !important;
       display: inline-block !important;
       width: auto !important;
       height: auto !important;
@@ -3395,6 +3394,7 @@
       font-size: 10px !important;
       font-weight: 900 !important;
       letter-spacing: .02em !important;
+      margin-right: 4px !important;
       flex: 0 0 auto !important;
     }
 
@@ -4681,4 +4681,80 @@ html body .bracket-page .bracket-champion {
 
 html body .bracket-page .bracket-placeholder {
   color: rgba(183, 211, 235, .42) !important;
+}
+
+
+/* Matches: rozwinięta karta zachowuje kolor zwiniętej karty. */
+html:not([data-theme="light"]) body .matches-view .match-card.expanded {
+  background: var(--tab-match-surface-soft) !important;
+  background-image: var(--tab-match-surface-soft) !important;
+}
+
+html:not([data-theme="light"]) body .matches-view .match-card.expanded > button:first-child,
+html:not([data-theme="light"]) body .matches-view .match-card.expanded > button:first-child:hover,
+html:not([data-theme="light"]) body .matches-view .match-card.expanded > button:first-child:focus,
+html:not([data-theme="light"]) body .matches-view .match-card.expanded > button:first-child:active,
+html:not([data-theme="light"]) body .matches-view .match-card.expanded > div:last-child {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+
+/* Score input number alignment */
+html body .score-input-shell .score-value-input,
+html body .admin-score-controls .score-value-input {
+  width: 68px !important;
+  height: 58px !important;
+  min-height: 58px !important;
+  padding: 0 !important;
+  font-family: 'Bebas Neue', sans-serif !important;
+  font-size: 34px !important;
+  line-height: 58px !important;
+  letter-spacing: 0 !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+  font-variant-numeric: tabular-nums !important;
+  appearance: textfield !important;
+  -webkit-appearance: none !important;
+}
+
+html body .score-input-shell > button,
+html body .admin-score-controls > div > div:last-child > button {
+  height: 58px !important;
+  min-height: 58px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 26px !important;
+  line-height: 1 !important;
+}
+
+
+/* Align prediction list headings with player rows */
+html body .prediction-list-title,
+html body .compare-view .compare-player-list-title {
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+}
+
+@media (max-width: 380px) {
+  html body .prediction-list-title,
+  html body .compare-view .compare-player-list-title {
+    padding-left: 9px !important;
+    padding-right: 9px !important;
+  }
+}
+
+
+/* Hide bracket horizontal scrollbar */
+html body .bracket-scroll {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+html body .bracket-scroll::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }

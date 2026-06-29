@@ -277,6 +277,19 @@ function phaseBadgeLabel(match) {
 }
 const PHASE_ORDER = ['group', 'r32', 'r16', 'qf', 'sf', 'third', 'final'];
 const PHASE_RANK = Object.fromEntries(PHASE_ORDER.map((phase, index) => [phase, index]));
+function getLatestResultPhase(matches, results) {
+  let latest = 'all';
+  let latestRank = -1;
+  for (const match of matches || []) {
+    if (!results?.[match.id]) continue;
+    const rank = PHASE_RANK[match.phase] ?? -1;
+    if (rank > latestRank) {
+      latest = match.phase;
+      latestRank = rank;
+    }
+  }
+  return latest;
+}
 // HOST_CITIES replaced by real match data
 const STAR_PLAYERS = ['Kylian Mbappé', 'Erling Haaland', 'Harry Kane', 'Vinícius Júnior', 'Jude Bellingham', 'Lamine Yamal', 'Lionel Messi', 'Cristiano Ronaldo', 'Robert Lewandowski', 'Phil Foden', 'Bukayo Saka', 'Florian Wirtz', 'Pedri', 'Rodri', 'Mohammed Kudus', 'Julián Álvarez', 'Lautaro Martínez', 'Rafael Leão', 'Bruno Fernandes', 'Federico Valverde', 'Antoine Griezmann', 'Ousmane Dembélé', 'Bernardo Silva', 'Victor Osimhen', 'Mohamed Salah', 'Son Heung-min', 'Takefusa Kubo'];
 const FB = {
@@ -2734,7 +2747,8 @@ const MatchCard = React.memo(function MatchCard({
       textAlign: 'center',
       letterSpacing: '0.06em',
       flexShrink: 0,
-      justifySelf: 'center'
+      justifySelf: 'center',
+      transform: 'translateY(-10px)'
     }
   }, result ? `${result.home}:${result.away}` : prediction ? `${prediction.home}:${prediction.away}` : 'vs'), React.createElement("div", {
     style: {
@@ -3087,6 +3101,8 @@ function MatchesView({
   const [phaseFilter, setPhaseFilter] = useState('all');
   const [groupFilter, setGroupFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
+  const autoPhaseFilterRef = useRef('all');
+  const phaseFilterTouchedRef = useRef(false);
   const [expandedId, setExpandedId] = useState(null);
   const [compactDevice, setCompactDevice] = useState(() => typeof window !== "undefined" && (window.innerWidth <= 700 || window.matchMedia("(pointer: coarse)").matches));
   useEffect(() => {
@@ -3097,7 +3113,17 @@ function MatchesView({
   }, []);
   const [visibleCount, setVisibleCount] = useState(() => compactDevice ? 18 : Number.MAX_SAFE_INTEGER);
   const handleToggleMatch = useCallback(id => setExpandedId(prev => prev === id ? null : id), []);
+  const defaultResultPhase = useMemo(() => getLatestResultPhase(matches, results), [matches, results]);
+  useEffect(() => {
+    if (defaultResultPhase === 'all') return;
+    const canAutoSelect = !phaseFilterTouchedRef.current || phaseFilter === autoPhaseFilterRef.current;
+    if (!canAutoSelect) return;
+    autoPhaseFilterRef.current = defaultResultPhase;
+    if (phaseFilter !== defaultResultPhase) setPhaseFilter(defaultResultPhase);
+    setGroupFilter('all');
+  }, [defaultResultPhase, phaseFilter]);
   const handlePhaseFilter = useCallback(phase => {
+    phaseFilterTouchedRef.current = true;
     setPhaseFilter(phase);
   }, []);
   const filtered = useMemo(() => {
@@ -3948,6 +3974,8 @@ function CompareView({
   const [phaseFilter, setPhaseFilter] = useState('all');
   const [groupFilter, setGroupFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
+  const autoPhaseFilterRef = useRef('all');
+  const phaseFilterTouchedRef = useRef(false);
   const [expandedMatches, setExpandedMatches] = useState(() => new Set());
   const toggleMatchDetails = useCallback(matchId => {
     setExpandedMatches(prev => {
@@ -3956,6 +3984,15 @@ function CompareView({
       return next;
     });
   }, []);
+  const defaultResultPhase = useMemo(() => getLatestResultPhase(matches, results), [matches, results]);
+  useEffect(() => {
+    if (defaultResultPhase === 'all') return;
+    const canAutoSelect = !phaseFilterTouchedRef.current || phaseFilter === autoPhaseFilterRef.current;
+    if (!canAutoSelect) return;
+    autoPhaseFilterRef.current = defaultResultPhase;
+    if (phaseFilter !== defaultResultPhase) setPhaseFilter(defaultResultPhase);
+    setGroupFilter('all');
+  }, [defaultResultPhase, phaseFilter]);
   const filtered = useMemo(() => {
     return matches.filter(m => {
       if (phaseFilter !== 'all' && m.phase !== phaseFilter) return false;
@@ -3982,6 +4019,7 @@ function CompareView({
   }, PHASE_FILTER_TABS.map(t => React.createElement("button", {
     key: t.k,
     onClick: () => {
+      phaseFilterTouchedRef.current = true;
       setPhaseFilter(t.k);
     },
     className: `selection-tile${phaseFilter === t.k ? ' is-selected' : ''} shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold`
@@ -5081,6 +5119,8 @@ function AdminPanel({
   const [tab, setTab] = useState('results');
   const [matchSearch, setMatchSearch] = useState('');
   const [mPhase, setMPhase] = useState('all');
+  const autoMPhaseRef = useRef('all');
+  const mPhaseTouchedRef = useRef(false);
   const [editingId, setEditingId] = useState(null);
   const [importText, setImportText] = useState('');
   const [importErr, setImportErr] = useState('');
@@ -5090,6 +5130,14 @@ function AdminPanel({
   const [resetBusy, setResetBusy] = useState(false);
   const fileRef = useRef(null);
   const teamOptions = useMemo(() => Object.values(teams).sort((a, b) => a.group.localeCompare(b.group) || a.name.localeCompare(b.name)), [teams]);
+  const defaultResultPhase = useMemo(() => getLatestResultPhase(matches, results), [matches, results]);
+  useEffect(() => {
+    if (defaultResultPhase === 'all') return;
+    const canAutoSelect = !mPhaseTouchedRef.current || mPhase === autoMPhaseRef.current;
+    if (!canAutoSelect) return;
+    autoMPhaseRef.current = defaultResultPhase;
+    if (mPhase !== defaultResultPhase) setMPhase(defaultResultPhase);
+  }, [defaultResultPhase, mPhase]);
   const filteredMatches = useMemo(() => {
     const q = matchSearch.trim().toLowerCase();
     return matches.filter(m => {
@@ -5242,6 +5290,7 @@ function AdminPanel({
   }, PHASE_FILTER_TABS.map(t => React.createElement("button", {
     key: t.k,
     onClick: () => {
+      mPhaseTouchedRef.current = true;
       setMPhase(t.k);
     },
     className: `selection-tile${mPhase === t.k ? ' is-selected' : ''} shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold`
@@ -5254,6 +5303,9 @@ function AdminPanel({
     editing: editingId === m.id,
     onToggleEdit: () => setEditingId(editingId === m.id ? null : m.id),
     onSave: payload => {
+      autoMPhaseRef.current = m.phase;
+      mPhaseTouchedRef.current = false;
+      setMPhase(m.phase);
       onSaveResult(m.id, payload);
       setEditingId(null);
     },
