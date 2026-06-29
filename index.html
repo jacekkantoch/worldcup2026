@@ -8432,6 +8432,54 @@
   </style>
 
 
+
+
+  <style id="iphone-safari-unified-top-scroll">
+    /*
+      iPhone Safari: każda zakładka zachowuje się jak Drabinka.
+      Treść przewija się pod pływającym nagłówkiem aż do samej góry
+      ekranu. Panele filtrów nie zatrzymują się pod nagłówkiem.
+    */
+    .top-scroll-guard {
+      display: none !important;
+    }
+
+    @supports (-webkit-touch-callout: none) {
+      html body .app-header {
+        z-index: 1000 !important;
+      }
+
+      /* Zachowuje miejsce pod stałym nagłówkiem na początku strony,
+         ale podczas przewijania cała zawartość może przejść pod nim. */
+      html body .app-content {
+        padding-top: var(--fixed-header-content-offset, 96px) !important;
+        overflow: visible !important;
+      }
+
+      /* Wszystkie filtry przewijają się razem z treścią — tak jak
+         elementy Drabinki — zamiast przyklejać się pod nagłówkiem. */
+      html body .filters-sticky {
+        position: relative !important;
+        top: auto !important;
+        inset-block-start: auto !important;
+        z-index: 20 !important;
+      }
+
+      /* Transform na całej zakładce powoduje artefakty warstw w Safari.
+         Na iPhonie pozostaje lekkie przenikanie bez przesuwania warstwy. */
+      .tab-view {
+        transform: none !important;
+        -webkit-transform: none !important;
+        animation: iosTabFadeIn .22s ease-out both !important;
+      }
+
+      @keyframes iosTabFadeIn {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+      }
+    }
+  </style>
+
 </head>
 <body>
   <div id="loading">
@@ -15696,14 +15744,24 @@ ReactDOM.createRoot(document.getElementById('root')).render(/*#__PURE__*/React.c
     header.style.setProperty('-webkit-transform', 'translate3d(-50%, 0, 0)', 'important');
     header.style.setProperty('z-index', '1000', 'important');
 
-    var height = Math.ceil(header.getBoundingClientRect().height || 64);
+    var rect = header.getBoundingClientRect();
+    var height = Math.ceil(rect.height || 64);
+    /* rect.bottom jest liczone względem aktualnego visual viewportu.
+       To działa poprawnie zarówno przy rozwiniętych, jak i zwiniętych
+       paskach Safari, bez podwójnego dodawania safe-area. */
+    var viewportBottom = Math.ceil(rect.bottom || (height + 7));
+
+    document.documentElement.style.setProperty(
+      '--fixed-header-viewport-bottom',
+      viewportBottom + 'px'
+    );
     document.documentElement.style.setProperty(
       '--fixed-header-content-offset',
-      'calc(' + (height + 24) + 'px + env(safe-area-inset-top, 0px))'
+      (viewportBottom + 16) + 'px'
     );
     document.documentElement.style.setProperty(
       '--fixed-header-filter-offset',
-      'calc(' + (height + 14) + 'px + env(safe-area-inset-top, 0px))'
+      (viewportBottom + 8) + 'px'
     );
     return true;
   }
@@ -15727,6 +15785,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(/*#__PURE__*/React.c
 
   if (window.visualViewport) {
     window.visualViewport.addEventListener('resize', schedulePin);
+    window.visualViewport.addEventListener('scroll', schedulePin);
   }
 
   new MutationObserver(schedulePin).observe(document.documentElement, {
