@@ -37,7 +37,7 @@
     ═══════════════════════════════════════════════════════════════ */
     :root {
       --safe-top:    0px;
-      --safe-bottom: 4px;
+      --safe-bottom: 8px;
       /* Liquid Glass system backgrounds (dark) */
       --bg-0: #000000;
       --bg-1: #1C1C1E;
@@ -169,7 +169,7 @@
     .nav-droplet.dragging { transition: width .18s ease, transform .18s ease; transform: scale(1.06) scaleY(1.03); }
     .bottom-nav button {
       flex: 1 1 0%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
-      padding: 11px 2px 9px; border: none; background: none; cursor: pointer;
+      padding: 7px 2px 6px; border: none; background: none; cursor: pointer;
       color: var(--label-3); font-size: 7.5px; font-weight: 700; letter-spacing: .01em; text-transform: uppercase;
       transition: color .22s var(--ease-out), transform .12s var(--ease-spring);
       position: relative; min-width: 0; z-index: 1; font-family: inherit;
@@ -4335,14 +4335,6 @@
       display: flex !important;
       flex-direction: column !important;
       gap: var(--banner-gap) !important;
-    }
-
-    /* sticky wymaga display:block na rodzicu — flex blokuje sticky na desktopie */
-    .matches-view {
-      display: block !important;
-    }
-    .matches-view > * + * {
-      margin-top: var(--banner-gap) !important;
     }
 
     .matches-view > *,
