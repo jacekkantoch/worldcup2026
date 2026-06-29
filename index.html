@@ -4692,6 +4692,47 @@
 </style>
 
 <!-- fixed-filter-banner-like-nav removed: filter now in normal flow with sticky -->
+
+  <style id="bottom-nav-lower-position">
+    /* Dolne menu obniżone o ok. 10 px względem poprzedniej pozycji. */
+    html body .bottom-nav {
+      bottom: calc(var(--safe-bottom) - 17px) !important;
+    }
+  </style>
+
+
+  <style id="admin-group-filter-right-fade">
+    /* Panel admina → Wyniki specjalne → Kolejność w grupach:
+       delikatne zanikanie po prawej oraz niewidoczny pasek przewijania. */
+    html body .admin-group-order-filter-row {
+      -webkit-mask-image: linear-gradient(
+        to right,
+        #000 0,
+        #000 calc(100% - 32px),
+        transparent 100%
+      ) !important;
+      mask-image: linear-gradient(
+        to right,
+        #000 0,
+        #000 calc(100% - 32px),
+        transparent 100%
+      ) !important;
+      -webkit-mask-repeat: no-repeat !important;
+      mask-repeat: no-repeat !important;
+      -webkit-mask-size: 100% 100% !important;
+      mask-size: 100% 100% !important;
+      padding-right: 36px !important;
+      scrollbar-width: none !important;
+      -ms-overflow-style: none !important;
+    }
+
+    html body .admin-group-order-filter-row::-webkit-scrollbar {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+    }
+  </style>
+
 </head>
 <body>
   <div id="loading">
