@@ -23,7 +23,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="apple-mobile-web-app-title" content="FIFA WORLD CUP 2026"/>
-  <meta name="theme-color" content="#0d2b4a"/>
+  <meta name="theme-color" content="#111827"/>
   <link rel="manifest" id="pwa-manifest"/>
   <link rel="apple-touch-icon" sizes="180x180" href="./mundial2026-app-icon-v2-180.png"/>
   <link rel="apple-touch-icon-precomposed" sizes="180x180" href="./mundial2026-app-icon-v2-180.png"/>
@@ -8537,6 +8537,221 @@
     }
   </style>
 
+
+  <style id="uniform-card-spacing-and-ios-top-chrome">
+    /* Jeden rytm pionowy dla wszystkich głównych kafelków. */
+    :root {
+      --ui-card-gap: 14px;
+      --ui-section-gap: var(--ui-card-gap);
+      --sticky-panel-gap: var(--ui-card-gap);
+      --app-header-chrome-color: #111827;
+      --app-header-surface-final:
+        radial-gradient(circle at 20% -20%, rgba(255,255,255,.18), transparent 42%),
+        linear-gradient(145deg, rgba(27,37,58,.985), rgba(12,17,29,.985));
+    }
+
+    html[data-theme="light"] {
+      --app-header-chrome-color: #f2f2f7;
+      --app-header-surface-final:
+        radial-gradient(circle at 20% -20%, rgba(255,255,255,.98), transparent 42%),
+        linear-gradient(145deg, rgba(255,255,255,.985), rgba(242,242,247,.985));
+    }
+
+    /* Safari używa koloru dokumentu za status barem / Dynamic Island. */
+    html,
+    body {
+      background-color: var(--app-header-chrome-color) !important;
+    }
+
+    /* Oddzielna warstwa pod bezpiecznym obszarem iPhone'a. Nagłówek ma
+       z-index 1000, więc pasek pozostaje pod jego interaktywną zawartością. */
+    html::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: calc(env(safe-area-inset-top, 0px) + 1px);
+      background: var(--app-header-surface-final);
+      pointer-events: none;
+      z-index: 999;
+      transform: translateZ(0);
+      -webkit-transform: translateZ(0);
+    }
+
+    html body .app-header,
+    html[data-theme="dark"] body .app-header,
+    html[data-theme="light"] body .app-header {
+      background: var(--app-header-surface-final) !important;
+      background-color: var(--app-header-chrome-color) !important;
+    }
+
+    .tab-view {
+      width: 100%;
+    }
+
+    .tab-card-stack {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: var(--ui-card-gap) !important;
+    }
+
+    .tab-card-stack > :not([hidden]) {
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+    }
+
+    .tab-card-stack > :not([hidden]) ~ :not([hidden]) {
+      margin-top: 0 !important;
+    }
+
+    /* Stosy kart zagnieżdżone w panelach zachowują dokładnie ten sam odstęp. */
+    .admin-panel > :is(.space-y-2, .space-y-3, .space-y-4),
+    .specials-view > :is(.space-y-2, .space-y-3, .space-y-4),
+    .allspecials-view > :is(.space-y-2, .space-y-3, .space-y-4),
+    .leaderboard-view > :is(.space-y-2, .space-y-3, .space-y-4),
+    .compare-view > :is(.space-y-2, .space-y-3, .space-y-4),
+    .matches-view > :is(.space-y-2, .space-y-3, .space-y-4),
+    .mine-match-list {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: var(--ui-card-gap) !important;
+    }
+
+    .admin-panel > :is(.space-y-2, .space-y-3, .space-y-4) > :not([hidden]),
+    .specials-view > :is(.space-y-2, .space-y-3, .space-y-4) > :not([hidden]),
+    .allspecials-view > :is(.space-y-2, .space-y-3, .space-y-4) > :not([hidden]),
+    .leaderboard-view > :is(.space-y-2, .space-y-3, .space-y-4) > :not([hidden]),
+    .compare-view > :is(.space-y-2, .space-y-3, .space-y-4) > :not([hidden]),
+    .matches-view > :is(.space-y-2, .space-y-3, .space-y-4) > :not([hidden]),
+    .mine-match-list > :not([hidden]) {
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+    }
+
+    /* Panel filtrów w Mecze jest jednym z kafelków, więc ma ten sam rytm
+       jak każda następna karta, również gdy pozostaje przyklejony. */
+    html body .matches-view {
+      gap: var(--ui-card-gap) !important;
+    }
+
+    html body .matches-view > .phase-filter-panel + * {
+      margin-top: 0 !important;
+    }
+
+    @media (max-width: 520px) {
+      :root {
+        --ui-card-gap: 12px;
+      }
+    }
+
+    @supports (padding-top: constant(safe-area-inset-top)) {
+      html::before {
+        height: calc(constant(safe-area-inset-top) + 1px);
+      }
+    }
+  </style>
+
+
+  <style id="safari-bottom-content-underlay-final">
+    /*
+      Safari edge-to-edge: dokument ma wysokość pełnego layout viewportu,
+      a nie wyłącznie widocznego obszaru nad paskiem narzędzi. Safari może
+      dzięki temu nałożyć swój dolny interfejs na stronę i pokazać ją pod szkłem.
+      Elementy aplikacji pozostają odsunięte nad paskiem, aby nadal były klikalne.
+    */
+    :root {
+      --app-layout-viewport-height: 100lvh;
+      --app-page-canvas-color: #05070d;
+      --app-page-canvas:
+        radial-gradient(ellipse 100% 58% at 50% -13%, rgba(44,139,255,.28), transparent 62%),
+        radial-gradient(ellipse 66% 46% at -8% 68%, rgba(44,214,155,.13), transparent 69%),
+        radial-gradient(ellipse 68% 46% at 108% 78%, rgba(168,88,255,.16), transparent 68%),
+        linear-gradient(180deg, #07101d 0%, #070a12 48%, #04060b 100%);
+    }
+
+    html[data-theme="light"] {
+      --app-page-canvas-color: #eef3f9;
+      --app-page-canvas:
+        radial-gradient(ellipse 100% 58% at 50% -13%, rgba(92,166,255,.20), transparent 62%),
+        radial-gradient(ellipse 66% 46% at -8% 68%, rgba(70,214,164,.10), transparent 69%),
+        radial-gradient(ellipse 68% 46% at 108% 78%, rgba(168,110,255,.11), transparent 68%),
+        linear-gradient(180deg, #f7faff 0%, #eef3f9 52%, #e9eef5 100%);
+    }
+
+    /* Kolor canvasu jest kolorem strony, nie nagłówka. Górny safe area nadal
+       dostaje powierzchnię nagłówka z reguły html::before. */
+    html,
+    body {
+      background-color: var(--app-page-canvas-color) !important;
+    }
+
+    html:not(.is-standalone),
+    html:not(.is-standalone) body {
+      background-image: var(--app-page-canvas) !important;
+      background-repeat: no-repeat !important;
+      background-position: center top !important;
+      background-size: 100% max(100dvh, var(--app-layout-viewport-height, 100lvh)) !important;
+    }
+
+    html:not(.is-standalone),
+    html:not(.is-standalone) body,
+    html:not(.is-standalone) #loading,
+    html:not(.is-standalone) #root,
+    html:not(.is-standalone) #root > .pitch-bg,
+    html:not(.is-standalone) .pitch-bg {
+      min-height: max(100dvh, var(--app-layout-viewport-height, 100lvh)) !important;
+    }
+
+    /* Pełnoekranowa powierzchnia dokumentu jest renderowana także w części
+       przykrytej przez dolny toolbar Safari. */
+    html:not(.is-standalone) body::before {
+      height: max(100dvh, var(--app-layout-viewport-height, 100lvh)) !important;
+      min-height: max(100dvh, var(--app-layout-viewport-height, 100lvh)) !important;
+      background: var(--app-page-canvas) !important;
+      background-size: 100% max(100dvh, var(--app-layout-viewport-height, 100lvh)) !important;
+    }
+
+    /* Dodatkowe przedłużenie canvasu pod dolną krawędź. Jest nieinteraktywne,
+       ale przez półprzezroczysty pasek Safari wygląda jak dalsza część strony. */
+    html:not(.is-standalone) body::after {
+      content: "";
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: calc(0px - max(var(--app-viewport-bottom, 0px), 96px));
+      height: calc(max(var(--app-viewport-bottom, 0px), 96px) + 180px);
+      background: var(--app-page-canvas);
+      background-position: center bottom;
+      background-size: 100% max(100dvh, var(--app-layout-viewport-height, 100lvh));
+      pointer-events: none;
+      z-index: 0;
+      transform: translateZ(0);
+      -webkit-transform: translateZ(0);
+    }
+
+    /* Nie dodajemy już pustego miejsca odpowiadającego paskowi Safari.
+       Zostaje tylko zapas potrzebny na własną dolną nawigację aplikacji. */
+    html:not(.is-standalone) body .app-content {
+      padding-bottom: calc(var(--bottom-nav-clearance, 116px) + 20px) !important;
+    }
+
+    /* Stopka/lista może przewijać się do obszaru przykrywanego przez Safari,
+       lecz przyciski własnej nawigacji pozostają nad nim. */
+    html:not(.is-standalone) body .bottom-nav {
+      bottom: 3px !important;
+    }
+
+    @supports not (height: 100lvh) {
+      html:not(.is-standalone),
+      html:not(.is-standalone) body,
+      html:not(.is-standalone) #root,
+      html:not(.is-standalone) .pitch-bg {
+        min-height: calc(var(--app-viewport-height, 100vh) + var(--app-viewport-bottom, 0px)) !important;
+      }
+    }
+  </style>
+
 </head>
 <body>
   <div id="loading">
@@ -8588,7 +8803,9 @@ const db = firebase.database();
       const bottom = vv ? Math.max(0, layoutHeight - top - vv.height) : 0;
 
       if (height > 0) {
+        const layoutViewportHeight = Math.max(height + top + bottom, layoutHeight, height);
         document.documentElement.style.setProperty('--app-viewport-height', `${Math.ceil(height)}px`);
+        document.documentElement.style.setProperty('--app-layout-viewport-height', `${Math.ceil(layoutViewportHeight)}px`);
         document.documentElement.style.setProperty('--app-viewport-top', `${Math.round(top)}px`);
         document.documentElement.style.setProperty('--app-viewport-bottom', `${Math.round(bottom)}px`);
       }
@@ -11765,7 +11982,7 @@ function MatchesView({
   const hasMoreMatches = compactDevice && visibleCount < filtered.length;
   const filterBtns = PHASE_FILTER_TABS;
   return /*#__PURE__*/React.createElement("div", {
-    className: "matches-view space-y-3"
+    className: "tab-card-stack matches-view space-y-3"
   }, /*#__PURE__*/React.createElement("div", {
     className: "phase-filter-panel bg-white border border-[#b0bce8] rounded-xl p-3 filters-sticky shadow-sm"
   }, /*#__PURE__*/React.createElement("div", {
@@ -11911,7 +12128,7 @@ function SpecialsView({
     className: "text-center text-sm text-stone-600 bg-amber-50 border border-amber-200 rounded-lg p-4 mt-4 app-note app-note--warning app-note--center"
   }, "Wybierz uczestnika na g\xF3rze ekranu");
   return /*#__PURE__*/React.createElement("div", {
-    className: "specials-view space-y-4"
+    className: "tab-card-stack specials-view space-y-4"
   }, (tournamentLocked || specialsLocked) && /*#__PURE__*/React.createElement("div", {
     className: "bg-[#0d1b5e] text-white rounded-lg p-3 text-sm flex items-center gap-2 mb-3 app-note app-note--danger app-note--compact"
   }, /*#__PURE__*/React.createElement(Icon, {
@@ -12157,7 +12374,7 @@ function SpecialsAllView({
     return name && name !== id ? name.slice(0, 3).toUpperCase() : '???';
   };
   return /*#__PURE__*/React.createElement("div", {
-    className: "allspecials-view space-y-3"
+    className: "tab-card-stack allspecials-view space-y-3"
   }, /*#__PURE__*/React.createElement("div", {
     className: "bg-blue-50 border border-blue-200 rounded-xl p-3 text-xs text-blue-900 allspecials-note app-note app-note--info app-note--compact"
   }, "Typy specjalne wszystkich uczestnik\xF3w \u2014 widoczne dla ka\u017Cdego."), /*#__PURE__*/React.createElement("div", {
@@ -12373,7 +12590,7 @@ function LeaderboardView({
     className: "text-center text-stone-600 bg-stone-100 border border-stone-200 rounded-lg p-6"
   }, "Brak graczy.");
   return /*#__PURE__*/React.createElement("div", {
-    className: "leaderboard-view space-y-2"
+    className: "tab-card-stack leaderboard-view space-y-2"
   }, /*#__PURE__*/React.createElement("div", {
     className: "leaderboard-header rounded-xl p-4"
   }, /*#__PURE__*/React.createElement("h3", {
@@ -12601,7 +12818,7 @@ function MyPredictionsView({
   }, "Wybierz uczestnika na g\xF3rze ekranu");
   const totalPts = rows.reduce((s, r) => s + (r.points || 0), 0);
   return /*#__PURE__*/React.createElement("div", {
-    className: "space-y-3"
+    className: "tab-card-stack my-predictions-view space-y-3"
   }, /*#__PURE__*/React.createElement("div", {
     className: "my-predictions-banner bg-gradient-to-br from-[#1a1a3a] to-[#0d1b5e] text-white rounded-xl p-4"
   }, /*#__PURE__*/React.createElement("h3", {
@@ -12626,10 +12843,10 @@ function MyPredictionsView({
   }, "Pkt")))), rows.length === 0 && /*#__PURE__*/React.createElement("div", {
     className: "text-center text-stone-500 py-12 bg-white border border-stone-200 rounded-lg app-note app-note--info app-note--center"
   }, "Nie masz jeszcze typ\xF3w. Przejd\u017A do zak\u0142adki ", /*#__PURE__*/React.createElement("strong", null, "Mecze"), "."), /*#__PURE__*/React.createElement("div", {
+    className: "mine-match-list",
     style: {
       display: 'flex',
-      flexDirection: 'column',
-      gap: 3
+      flexDirection: 'column'
     }
   }, rows.map(({
     match,
@@ -12785,7 +13002,7 @@ function CompareView({
     className: "text-center text-stone-500 py-12 app-note app-note--info app-note--center"
   }, "Dodaj graczy, \u017Ceby por\xF3wnywa\u0107 typy.");
   return /*#__PURE__*/React.createElement("div", {
-    className: "compare-view space-y-3"
+    className: "tab-card-stack compare-view space-y-3"
   }, /*#__PURE__*/React.createElement("div", {
     className: "phase-filter-panel bg-white border border-[#b0bce8] rounded-xl p-3 filters-sticky shadow-sm"
   }, /*#__PURE__*/React.createElement("div", {
@@ -13986,7 +14203,7 @@ function AdminPanel({
     l: 'Dane'
   }];
   return /*#__PURE__*/React.createElement("div", {
-    className: "admin-panel space-y-3"
+    className: "tab-card-stack admin-panel space-y-3"
   }, /*#__PURE__*/React.createElement("div", {
     className: "admin-panel-banner bg-stone-900 text-white rounded-xl p-3 flex items-center justify-between"
   }, /*#__PURE__*/React.createElement("div", {
@@ -15034,7 +15251,7 @@ function TournamentBracket({
 }) {
   const matchesById = useMemo(() => Object.fromEntries(matches.map(m => [m.id, m])), [matches]);
   return /*#__PURE__*/React.createElement("div", {
-    className: "bracket-page"
+    className: "tab-card-stack bracket-page"
   }, /*#__PURE__*/React.createElement("div", {
     className: "bracket-intro"
   }, /*#__PURE__*/React.createElement("h2", null, "Drabinka turnieju"), /*#__PURE__*/React.createElement("p", null, "Przeci\u0105gnij drabink\u0119 poziomo, aby zobaczy\u0107 kolejne etapy.")), /*#__PURE__*/React.createElement(BracketTree, {
@@ -15316,7 +15533,7 @@ function Mundial2026() {
       localStorage.setItem('wc2026:theme', theme);
     } catch (e) {}
     const themeMeta = document.querySelector('meta[name="theme-color"]');
-    if (themeMeta) themeMeta.setAttribute('content', theme === 'light' ? '#f2f2f7' : '#0d2b4a');
+    if (themeMeta) themeMeta.setAttribute('content', theme === 'light' ? '#f2f2f7' : '#111827');
     const statusMeta = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
     if (statusMeta) statusMeta.setAttribute('content', theme === 'light' ? 'default' : 'black-translucent');
   }, [theme]);
