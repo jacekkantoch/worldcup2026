@@ -116,7 +116,7 @@
         radial-gradient(ellipse 50% 25% at 90% 100%, rgba(48,209,88,0.03)  0%, transparent 60%),
         rgba(0,0,0,0.35),
         var(--bg-0);
-      background-attachment: fixed;
+      background-attachment: scroll;
       color: var(--label-1);
     }
 
@@ -463,7 +463,7 @@
         radial-gradient(ellipse 66% 46% at -8% 68%, rgba(44,214,155,.13), transparent 69%),
         radial-gradient(ellipse 68% 46% at 108% 78%, rgba(168,88,255,.16), transparent 68%),
         linear-gradient(180deg, #07101d 0%, #070a12 48%, #04060b 100%);
-      background-attachment: fixed;
+      background-attachment: scroll;
     }
 
     .pitch-bg {
@@ -979,6 +979,12 @@
       .login-btn { max-width: 92px; }
     }
     @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
       .pitch-bg::before,
       .pitch-bg::after { animation: none !important; }
       .match-card:hover { transform: none; }
@@ -2397,7 +2403,7 @@
         linear-gradient(145deg, rgba(30,39,58,.72), rgba(13,18,30,.56));
       color: var(--label-1);
       box-shadow: var(--shadow-sm), var(--hl), var(--shadow-glow);
-      backdrop-filter: blur(24px) saturate(170%);
+      backdrop-filter: blur(14px) saturate(150%);
     }
     .leaderboard-header p {
       color: var(--label-2) !important;
@@ -3996,7 +4002,7 @@
       background: var(--tab-match-surface-soft) !important;
       background-color: transparent !important;
       box-shadow: var(--tab-match-shadow) !important;
-      backdrop-filter: blur(24px) saturate(160%) !important;
+      backdrop-filter: blur(14px) saturate(145%) !important;
     }
 
     /* Filtry w porównaniu i panelu administratora odpowiadają filtrom z Meczy. */
@@ -4245,7 +4251,7 @@
 
     /* Zachowujemy wyłącznie półprzezroczysty gradient i rozmycie tła. */
     html body .bracket-page :is(.bracket-intro, .bracket-section) {
-      backdrop-filter: blur(24px) saturate(160%) !important;
+      backdrop-filter: blur(14px) saturate(145%) !important;
     }
 
     html body .bracket-page :is(.bracket-match, .bracket-final-card, .bracket-champion) {
@@ -4572,8 +4578,8 @@
   <style id="top-header-liquid-glass-depth">
     html body .app-header {
       background: linear-gradient(160deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%), rgba(14,20,35,0.55) !important;
-      backdrop-filter: blur(30px) saturate(180%) !important;
-      -webkit-backdrop-filter: blur(30px) saturate(180%) !important;
+      backdrop-filter: blur(12px) saturate(150%) !important;
+      -webkit-backdrop-filter: blur(12px) saturate(150%) !important;
       border-bottom: 1px solid rgba(255,255,255,0.12) !important;
       box-shadow: 0 1px 0 rgba(255,255,255,0.10), 0 4px 24px rgba(0,0,0,0.40) !important;
     }
@@ -6430,13 +6436,17 @@ function useFirebaseState(path, defaultValue) {
     };
   }, [path]);
   const updateValue = useCallback(async next => {
-    const resolved = typeof next === 'function' ? next(valueRef.current) : next;
+    const previous = valueRef.current;
+    const resolved = typeof next === 'function' ? next(previous) : next;
     valueRef.current = resolved;
     setValue(resolved);
     try {
       await db.ref(path).set(resolved);
     } catch (e) {
+      valueRef.current = previous;
+      setValue(previous);
       console.error('Firebase write error:', path, e);
+      throw e;
     }
   }, [path]);
   // Zapis pojedynczego klucza – nie nadpisuje całej kolekcji, więc
@@ -6453,7 +6463,10 @@ function useFirebaseState(path, defaultValue) {
     try {
       await db.ref(`${path}/${childKey}`).set(childValue);
     } catch (e) {
+      valueRef.current = cur;
+      setValue(cur);
       console.error('Firebase child write error:', path, childKey, e);
+      throw e;
     }
   }, [path]);
   const removeChild = useCallback(async childKey => {
@@ -6468,7 +6481,10 @@ function useFirebaseState(path, defaultValue) {
     try {
       await db.ref(`${path}/${childKey}`).remove();
     } catch (e) {
+      valueRef.current = cur;
+      setValue(cur);
       console.error('Firebase child remove error:', path, childKey, e);
+      throw e;
     }
   }, [path]);
   return [value, updateValue, loaded, writeChild, removeChild];
@@ -7223,7 +7239,7 @@ function TeamPicker({
     className: "absolute z-40 left-0 right-0 mt-2 max-h-64 overflow-y-auto rounded-2xl border border-stone-200 shadow-xl p-1.5",
     style: {
       background: 'linear-gradient(145deg, rgba(31,40,59,.97), rgba(10,15,26,.96))',
-      backdropFilter: 'blur(24px) saturate(180%)'
+      backdropFilter: 'blur(14px) saturate(150%)'
     }
   }, React.createElement("button", {
     type: "button",
@@ -11246,6 +11262,8 @@ function BottomNav({
   });
   const suppressClick = useRef(false);
   const moveFrame = useRef(0);
+  const selectTimer = useRef(0);
+  const lastSelectAt = useRef(0);
   const activeIdx = Math.max(0, tabs.findIndex(t => t.k === activeTab));
   const visualIdx = dragging && previewIdx !== null ? previewIdx : activeIdx;
 
@@ -11339,6 +11357,31 @@ function BottomNav({
       moveFrame.current = 0;
     });
   };
+  const commitSelect = useCallback(tabKey => {
+    if (!tabKey || tabKey === activeTab) return;
+    const run = () => onSelect(tabKey);
+    if (React.startTransition) React.startTransition(run);else run();
+  }, [activeTab, onSelect]);
+  const requestSelect = useCallback(tabKey => {
+    if (!tabKey || tabKey === activeTab) return;
+    const minGap = 180;
+    const now = Date.now();
+    const wait = Math.max(0, minGap - (now - lastSelectAt.current));
+    if (selectTimer.current) {
+      clearTimeout(selectTimer.current);
+      selectTimer.current = 0;
+    }
+    if (wait === 0) {
+      lastSelectAt.current = now;
+      commitSelect(tabKey);
+      return;
+    }
+    selectTimer.current = setTimeout(() => {
+      lastSelectAt.current = Date.now();
+      selectTimer.current = 0;
+      commitSelect(tabKey);
+    }, wait);
+  }, [activeTab, commitSelect]);
   const finishPointer = (e, commit) => {
     if (moveFrame.current) {
       cancelAnimationFrame(moveFrame.current);
@@ -11367,7 +11410,7 @@ function BottomNav({
     if (moved && commit && tabs[idx]) {
       const p = positionFor(idx);
       if (p) setDrop(p);
-      if (tabs[idx].k !== activeTab) onSelect(tabs[idx].k);
+      if (tabs[idx].k !== activeTab) requestSelect(tabs[idx].k);
       // Klik generowany po przeciągnięciu nie może cofnąć wyboru.
       setTimeout(() => {
         suppressClick.current = false;
@@ -11386,16 +11429,17 @@ function BottomNav({
       e.stopPropagation();
       return;
     }
+    if (tabKey === activeTab) return;
     const _dropEl = trackRef.current && trackRef.current.querySelector('.nav-droplet');
     if (_dropEl) {
-      _dropEl.classList.remove('squishing');
-      void _dropEl.offsetWidth; // force reflow — restartuje animację
       _dropEl.classList.add('squishing');
+      setTimeout(() => _dropEl.classList.remove('squishing'), 180);
     }
-    onSelect(tabKey);
+    requestSelect(tabKey);
   };
   useEffect(() => () => {
     if (moveFrame.current) cancelAnimationFrame(moveFrame.current);
+    if (selectTimer.current) clearTimeout(selectTimer.current);
   }, []);
   const visualTab = tabs[visualIdx];
   const isAdminVisual = visualTab && visualTab.k === 'admin';
@@ -11547,40 +11591,48 @@ function Mundial2026() {
       return n;
     });
   }, [setPlayers, activePlayer, setActivePlayer, setPredictions, setSpecialPredictions]);
-  const handleSavePrediction = useCallback((matchId, payload, pin, onErr, onSuccess) => {
+  const handleSavePrediction = useCallback(async (matchId, payload, pin, onErr, onSuccess) => {
     if (!activePlayer) return;
     const pl = (Array.isArray(players) ? players : []).find(p => p.id === activePlayer);
     if (pl && pl.pinHash && hashPin(pin) !== pl.pinHash) {
       onErr && onErr('Błędny PIN');
       return;
     }
-    setPredictionChild(`${activePlayer}:${matchId}`, payload);
-    onSuccess && onSuccess();
+    try {
+      await setPredictionChild(`${activePlayer}:${matchId}`, payload);
+      onSuccess && onSuccess();
+    } catch (e) {
+      onErr && onErr('Nie udało się zapisać. Sprawdź połączenie.');
+    }
   }, [activePlayer, players, setPredictionChild]);
-  const handleSaveSpecial = useCallback((playerId, payload, pin, onErr, onSuccess) => {
+  const handleSaveSpecial = useCallback(async (playerId, payload, pin, onErr, onSuccess) => {
     const pl = (Array.isArray(players) ? players : []).find(p => p.id === playerId);
     if (pl && pl.pinHash && hashPin(pin) !== pl.pinHash) {
       onErr && onErr('Błędny PIN');
       return;
     }
-    setSpecialChild(playerId, payload);
-    onSuccess && onSuccess();
+    try {
+      await setSpecialChild(playerId, payload);
+      onSuccess && onSuccess();
+    } catch (e) {
+      onErr && onErr('Nie udało się zapisać. Sprawdź połączenie.');
+    }
   }, [players, setSpecialChild]);
-  const handleSaveResult = useCallback((matchId, payload) => {
-    setResultChild(matchId, payload);
+  const handleSaveResult = useCallback(async (matchId, payload) => {
+    await setResultChild(matchId, payload);
   }, [setResultChild]);
-  const handleDeleteResult = useCallback(matchId => {
-    removeResultChild(matchId);
+  const handleDeleteResult = useCallback(async matchId => {
+    await removeResultChild(matchId);
   }, [removeResultChild]);
-  const handleUpdateTeam = useCallback((idOrMatchId, nameOrHomeId, flagOrAwayId) => {
+  const handleUpdateTeam = useCallback(async (idOrMatchId, nameOrHomeId, flagOrAwayId) => {
     if (idOrMatchId.startsWith('M')) {
-      setMatches(prev => (prev || []).map(m => m.id === idOrMatchId ? {
+      await setMatches(prev => (prev || []).map(m => m.id === idOrMatchId ? {
         ...m,
         homeTeamId: nameOrHomeId,
         awayTeamId: flagOrAwayId
       } : m));
     } else {
-      setTeams(prev => ({
+      await setTeams(prev => ({
         ...(prev || {}),
         [idOrMatchId]: {
           ...(prev || {})[idOrMatchId],
@@ -11612,8 +11664,9 @@ function Mundial2026() {
       groupOrders: {}
     });
     await setScoringSettings(DEFAULT_POINTS);
+    await setPhaseLocks({});
     setActivePlayer('');
-  }, [setPlayers, setTeams, setMatches, setPredictions, setResults, setSpecialPredictions, setSpecialResults, setScoringSettings, setActivePlayer]);
+  }, [setPlayers, setTeams, setMatches, setPredictions, setResults, setSpecialPredictions, setSpecialResults, setScoringSettings, setPhaseLocks, setActivePlayer]);
   const compareOn = !!(phaseLocks && phaseLocks['compareVisible']);
   useEffect(() => {
     if (!compareOn && !adminUnlocked && (activeTab === 'compare' || activeTab === 'allspecials')) setActiveTab('matches');
@@ -11689,13 +11742,21 @@ function Mundial2026() {
   const onSaveSpecialCb = useCallback((id, p, pin, onErr) => {
     handleSaveSpecial(id, p, pin, onErr, () => showToast('Typy specjalne zapisane'));
   }, [handleSaveSpecial, showToast]);
-  const onSaveResultCb = useCallback((id, p) => {
-    handleSaveResult(id, p);
-    showToast('Wynik zapisany');
+  const onSaveResultCb = useCallback(async (id, p) => {
+    try {
+      await handleSaveResult(id, p);
+      showToast('Wynik zapisany');
+    } catch (e) {
+      showToast('Nie udało się zapisać wyniku');
+    }
   }, [handleSaveResult, showToast]);
-  const onUpdateTeamCb = useCallback((id, a, b) => {
-    handleUpdateTeam(id, a, b);
-    showToast(id.startsWith('M') ? 'Para meczu zapisana' : 'Drużyna zapisana');
+  const onUpdateTeamCb = useCallback(async (id, a, b) => {
+    try {
+      await handleUpdateTeam(id, a, b);
+      showToast(id.startsWith('M') ? 'Para meczu zapisana' : 'Drużyna zapisana');
+    } catch (e) {
+      showToast('Nie udało się zapisać zmian');
+    }
   }, [handleUpdateTeam, showToast]);
   useEffect(() => {
     const h = e => {
@@ -11718,7 +11779,7 @@ function Mundial2026() {
     className: "min-h-screen pitch-bg"
   }, React.createElement("header", {
     className: "app-header",
-    style: {background: "linear-gradient(160deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%), rgba(14,20,35,0.55)", backdropFilter: "blur(30px) saturate(180%)", WebkitBackdropFilter: "blur(30px) saturate(180%)", borderBottom: "1px solid rgba(255,255,255,0.12)", boxShadow: "0 1px 0 rgba(255,255,255,0.10), 0 4px 24px rgba(0,0,0,0.40)"}
+    style: {background: "linear-gradient(160deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%), rgba(14,20,35,0.55)", backdropFilter: "blur(12px) saturate(150%)", WebkitBackdropFilter: "blur(12px) saturate(150%)", borderBottom: "1px solid rgba(255,255,255,0.12)", boxShadow: "0 1px 0 rgba(255,255,255,0.10), 0 4px 24px rgba(0,0,0,0.40)"}
   }, React.createElement("div", {
     className: "logo"
   }, React.createElement("div", {
@@ -11998,16 +12059,18 @@ ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(
     });
   }
 
-  new MutationObserver(function (mutations) {
-    var shouldUpdate = mutations.some(function (mutation) {
-      return mutation.type === 'childList' || mutation.type === 'characterData';
+  if (document.body) {
+    new MutationObserver(function (mutations) {
+      var shouldUpdate = mutations.some(function (mutation) {
+        return mutation.type === 'childList' || mutation.type === 'characterData';
+      });
+      if (shouldUpdate) scheduleUpdate();
+    }).observe(document.body, {
+      childList: true,
+      subtree: true,
+      characterData: true
     });
-    if (shouldUpdate) scheduleUpdate();
-  }).observe(document.body, {
-    childList: true,
-    subtree: true,
-    characterData: true
-  });
+  }
 
   scheduleUpdate();
 })();
