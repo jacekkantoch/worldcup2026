@@ -8417,6 +8417,126 @@
   </style>
 
 
+
+
+  <style id="safari-safe-layout-final">
+    /*
+      Ostateczna geometria Safari/PWA.
+      Wysokość nagłówka, filtrów i dolnej nawigacji jest mierzona przez JS,
+      więc treść nie opiera się na stałych wartościach zależnych od urządzenia.
+    */
+    :root {
+      --app-header-gap: 12px;
+      --sticky-panel-gap: 14px;
+      --fixed-header-content-offset: 92px;
+      --fixed-header-filter-offset: 92px;
+      --filters-sticky-height: 0px;
+      --bottom-nav-clearance: 116px;
+    }
+
+    html {
+      min-height: 100%;
+      min-height: -webkit-fill-available;
+      min-height: 100dvh;
+      scroll-padding-top: calc(
+        var(--fixed-header-filter-offset, 92px) +
+        var(--filters-sticky-height, 0px) +
+        var(--sticky-panel-gap, 14px)
+      );
+    }
+
+    body,
+    #loading,
+    #root,
+    #root > .pitch-bg,
+    .pitch-bg {
+      min-height: 100vh !important;
+      min-height: 100svh !important;
+      min-height: 100dvh !important;
+    }
+
+    /* Jeden przewidywalny nagłówek. Safe area jest zawarta w jego paddingu. */
+    html body .app-header,
+    html[data-theme="light"] body .app-header,
+    html[data-theme="dark"] body .app-header {
+      position: fixed !important;
+      inset: 0 0 auto 0 !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      width: 100% !important;
+      max-width: none !important;
+      margin: 0 !important;
+      transform: none !important;
+      -webkit-transform: none !important;
+      border-radius: 0 !important;
+      z-index: 1000 !important;
+    }
+
+    /* Treść zaczyna się poniżej faktycznej dolnej krawędzi nagłówka. */
+    html body .app-content {
+      padding-top: var(--fixed-header-content-offset, 92px) !important;
+      padding-bottom: calc(
+        var(--bottom-nav-clearance, 116px) +
+        max(env(safe-area-inset-bottom, 0px), var(--app-viewport-bottom, 0px))
+      ) !important;
+    }
+
+    /* Filtry przyklejają się dopiero pod nagłówkiem, z zachowaniem odstępu. */
+    html body .filters-sticky {
+      position: sticky !important;
+      top: var(--fixed-header-filter-offset, 92px) !important;
+      z-index: 900 !important;
+      isolation: isolate;
+      overflow: clip;
+      scroll-margin-top: var(--fixed-header-filter-offset, 92px);
+    }
+
+    /* Większy, jednoznaczny odstęp między panelem filtrów a pierwszym meczem. */
+    html body .matches-view {
+      gap: max(var(--ui-section-gap, 14px), var(--sticky-panel-gap, 14px)) !important;
+    }
+
+    html body .matches-view > .phase-filter-panel + * {
+      margin-top: 2px !important;
+    }
+
+    /* Nie pokazuj kart prześwitujących przez przyklejony panel filtrów. */
+    html:not([data-theme="light"]) body .matches-view .filters-sticky {
+      background:
+        radial-gradient(circle at 18% -20%, rgba(255,255,255,.16), transparent 42%),
+        linear-gradient(145deg, rgba(24,31,47,.97), rgba(10,15,26,.97)) !important;
+    }
+
+    html[data-theme="light"] body .matches-view .filters-sticky {
+      background:
+        radial-gradient(circle at 18% -20%, rgba(255,255,255,.98), transparent 42%),
+        linear-gradient(145deg, rgba(255,255,255,.97), rgba(242,242,247,.97)) !important;
+    }
+
+    @media (max-width: 520px) {
+      :root {
+        --app-header-gap: 10px;
+        --sticky-panel-gap: 12px;
+      }
+
+      html body .app-content {
+        padding-left: 9px !important;
+        padding-right: 9px !important;
+      }
+    }
+
+    @supports not (height: 100dvh) {
+      body,
+      #loading,
+      #root,
+      #root > .pitch-bg,
+      .pitch-bg {
+        min-height: -webkit-fill-available !important;
+      }
+    }
+  </style>
+
 </head>
 <body>
   <div id="loading">
@@ -15665,63 +15785,107 @@ ReactDOM.createRoot(document.getElementById('root')).render(/*#__PURE__*/React.c
 
 
 <script>
-/* Safari/iOS potrafi po zmianie motywu ponownie przeliczyć pozycję
-   elementu z backdrop-filter. Wymuszamy fixed także bez przeładowania. */
+/*
+  Dynamiczna geometria stałych elementów dla Safari i PWA.
+  Mierzymy faktyczną dolną krawędź nagłówka zamiast zakładać jego wysokość.
+*/
 (function () {
-  function pinAppHeader() {
+  var root = document.documentElement;
+  var frame = 0;
+  var headerObserver = null;
+  var filterObserver = null;
+  var navObserver = null;
+  var observedHeader = null;
+  var observedFilter = null;
+  var observedNav = null;
+
+  function cssNumber(name, fallback) {
+    var value = parseFloat(getComputedStyle(root).getPropertyValue(name));
+    return Number.isFinite(value) ? value : fallback;
+  }
+
+  function observeElement(observer, previous, next) {
+    if (!observer || previous === next) return next;
+    if (previous) observer.unobserve(previous);
+    if (next) observer.observe(next);
+    return next;
+  }
+
+  function updateLayoutGeometry() {
     var header = document.querySelector('.app-header');
-    if (!header) return false;
+    var filters = document.querySelector('.matches-view .filters-sticky');
+    var bottomNav = document.querySelector('.bottom-nav');
 
-    header.style.setProperty('position', 'fixed', 'important');
-    header.style.setProperty('top', '0', 'important');
-    header.style.setProperty('left', '0', 'important');
-    header.style.setProperty('right', '0', 'important');
-    header.style.setProperty('width', '100%', 'important');
-    header.style.setProperty('border-radius', '0', 'important');
-    header.style.setProperty('margin', '0', 'important');
-    header.style.removeProperty('transform');
-    header.style.removeProperty('-webkit-transform');
-    header.style.setProperty('z-index', '1000', 'important');
+    observedHeader = observeElement(headerObserver, observedHeader, header);
+    observedFilter = observeElement(filterObserver, observedFilter, filters);
+    observedNav = observeElement(navObserver, observedNav, bottomNav);
 
-    var height = Math.ceil(header.getBoundingClientRect().height || 64);
-    document.documentElement.style.setProperty(
-      '--fixed-header-content-offset',
-      height + 'px'
-    );
-    document.documentElement.style.setProperty(
-      '--fixed-header-filter-offset',
-      height + 'px'
-    );
-    return true;
+    if (header) {
+      var headerRect = header.getBoundingClientRect();
+      var headerGap = cssNumber('--app-header-gap', 12);
+      var headerBottom = Math.max(0, Math.ceil(headerRect.bottom));
+      var contentOffset = headerBottom + headerGap;
+
+      root.style.setProperty('--fixed-header-content-offset', contentOffset + 'px');
+      root.style.setProperty('--fixed-header-filter-offset', contentOffset + 'px');
+    }
+
+    if (filters) {
+      var filterHeight = Math.max(0, Math.ceil(filters.getBoundingClientRect().height));
+      root.style.setProperty('--filters-sticky-height', filterHeight + 'px');
+    } else {
+      root.style.setProperty('--filters-sticky-height', '0px');
+    }
+
+    if (bottomNav) {
+      var navRect = bottomNav.getBoundingClientRect();
+      var viewportHeight = window.visualViewport
+        ? window.visualViewport.height
+        : (window.innerHeight || document.documentElement.clientHeight || 0);
+      var spaceBelowNav = Math.max(0, viewportHeight - navRect.bottom);
+      var navClearance = Math.ceil(navRect.height + spaceBelowNav + 18);
+      root.style.setProperty('--bottom-nav-clearance', navClearance + 'px');
+    }
   }
 
-  var pinScheduled = false;
-  function schedulePin() {
-    if (pinScheduled) return;
-    pinScheduled = true;
-    requestAnimationFrame(function () {
-      pinScheduled = false;
-      if (!pinAppHeader()) {
-        setTimeout(pinAppHeader, 80);
-      }
-    });
+  function scheduleLayoutGeometry() {
+    cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(updateLayoutGeometry);
   }
 
-  schedulePin();
-  window.addEventListener('load', schedulePin, { once: true });
-  window.addEventListener('resize', schedulePin);
-  window.addEventListener('orientationchange', schedulePin);
+  if (window.ResizeObserver) {
+    headerObserver = new ResizeObserver(scheduleLayoutGeometry);
+    filterObserver = new ResizeObserver(scheduleLayoutGeometry);
+    navObserver = new ResizeObserver(scheduleLayoutGeometry);
+  }
+
+  scheduleLayoutGeometry();
+  window.addEventListener('load', scheduleLayoutGeometry, { once: true });
+  window.addEventListener('resize', scheduleLayoutGeometry, { passive: true });
+  window.addEventListener('orientationchange', function () {
+    scheduleLayoutGeometry();
+    setTimeout(scheduleLayoutGeometry, 250);
+  }, { passive: true });
+  window.addEventListener('pageshow', scheduleLayoutGeometry, { passive: true });
 
   if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', schedulePin);
+    window.visualViewport.addEventListener('resize', scheduleLayoutGeometry, { passive: true });
+    window.visualViewport.addEventListener('scroll', scheduleLayoutGeometry, { passive: true });
   }
 
-  new MutationObserver(schedulePin).observe(document.documentElement, {
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(scheduleLayoutGeometry).catch(function () {});
+  }
+
+  new MutationObserver(scheduleLayoutGeometry).observe(document.documentElement, {
     attributes: true,
     attributeFilter: ['data-theme', 'class']
   });
 
-  new MutationObserver(schedulePin).observe(document.body, { childList: true, subtree: true });
+  new MutationObserver(scheduleLayoutGeometry).observe(document.body, {
+    childList: true,
+    subtree: true
+  });
 })();
 </script>
 
