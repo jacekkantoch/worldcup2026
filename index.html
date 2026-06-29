@@ -23,7 +23,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="apple-mobile-web-app-title" content="FIFA WORLD CUP 2026"/>
-  <meta name="theme-color" content="#07101d"/>
+  <meta name="theme-color" content="#0d2b4a"/>
   <meta name="color-scheme" content="dark"/>
   <link rel="manifest" id="pwa-manifest"/>
   <link rel="apple-touch-icon" sizes="180x180" href="./mundial2026-app-icon-v2-180.png"/>
@@ -36,7 +36,7 @@
       document.documentElement.setAttribute('data-theme',theme);
       // iOS standalone: ustaw tło natychmiast, zanim sparsuje się główny <style>,
       // żeby przy starcie z ekranu głównego nie mignęła biała plansza.
-      document.documentElement.style.backgroundColor = '#05070d';
+      document.documentElement.style.backgroundColor = "#05070d";
     })();
   </script>
   <style>
@@ -48,6 +48,8 @@
     :root {
       --safe-top:    env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 20px);
+      --safe-left:   env(safe-area-inset-left, 0px);
+      --safe-right:  env(safe-area-inset-right, 0px);
       /* iOS 26 System Backgrounds (dark) */
       --bg-0: #000000;
       --bg-1: #1C1C1E;
@@ -99,8 +101,30 @@
     button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
     html, body { overscroll-behavior: none; -webkit-overflow-scrolling: touch; margin: 0; padding: 0; }
 
+    /* ── iOS 26 Safari hardening ─────────────────────────────────────
+       Fixes specific to Safari on iOS 26: prevent text auto-resize on
+       rotation, smooth font rendering, block double-tap-to-zoom on the
+       whole UI while keeping vertical scroll, and respect horizontal
+       safe areas (landscape / notch). */
+    html {
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'DM Sans', system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      /* Block the iOS double-tap zoom gesture across the app shell while
+         still allowing normal vertical panning. Scroll containers below
+         override this with their own touch-action where needed. */
+      touch-action: manipulation;
+      padding-left: var(--safe-left);
+      padding-right: var(--safe-right);
+    }
+    /* Never let the soft keyboard / focus zoom shift fixed chrome. */
+    .bottom-nav, .app-header { padding-left: var(--safe-left); padding-right: var(--safe-right); }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "DM Sans", system-ui, sans-serif;
       padding-bottom: calc(84px + var(--safe-bottom));
       min-height: 100vh;
       background:
@@ -136,7 +160,7 @@
       box-shadow: 0 2px 10px rgba(0,0,0,0.55);
     }
     .app-header .title-group { min-width: 0; }
-    .app-header .title-group h1 { margin: 0; font-family: 'Bebas Neue', sans-serif; font-size: 20px; font-weight: 400; letter-spacing: .06em; line-height: 1; color: var(--label-1); white-space: nowrap; }
+    .app-header .title-group h1 { margin: 0; font-family: "Bebas Neue", sans-serif; font-size: 20px; font-weight: 400; letter-spacing: .06em; line-height: 1; color: var(--label-1); white-space: nowrap; }
     .player-row { display: flex; align-items: center; gap: 8px; }
 
     .login-btn {
@@ -237,7 +261,7 @@
     #loading { display: flex; align-items: center; justify-content: center; min-height: 100vh; flex-direction: column; gap: 18px; background: var(--bg-0); }
     .loading-icon { width: 72px; height: 72px; background: linear-gradient(145deg, #fff 0%, #e4edff 100%); border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 40px; line-height: 1; box-shadow: 0 4px 20px rgba(0,0,0,0.60); animation: iconPulse 2.4s ease-in-out infinite; }
     @keyframes iconPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
-    .loading-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: .14em; color: var(--label-1); }
+    .loading-title { font-family: "Bebas Neue", sans-serif; font-size: 1.8rem; letter-spacing: .14em; color: var(--label-1); }
     .loading-sub   { font-size: .75rem; color: var(--label-3); letter-spacing: .06em; font-weight: 600; }
     .spinner { width: 36px; height: 36px; border: 2.5px solid rgba(255,255,255,.10); border-top-color: var(--accent-green); border-right-color: var(--accent); border-radius: 50%; animation: spin 0.9s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
@@ -308,7 +332,7 @@
     ::selection { background: rgba(10,132,255,0.32); color: white; }
     .filters-sticky { position: sticky; top: 58px; z-index: 10; }
     .hidden { display: none; }
-    .font-display { font-family: 'Bebas Neue', 'Arial Narrow', sans-serif; letter-spacing: .04em; }
+    .font-display { font-family: "Bebas Neue", "Arial Narrow", sans-serif; letter-spacing: .04em; }
     input[type=number]::-webkit-inner-spin-button,
     input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
     input[type=number] { -moz-appearance: textfield; }
@@ -573,7 +597,7 @@
       text-shadow: 0 2px 8px rgba(0,0,0,.35);
     }
     .app-header .title-group h1 {
-      font-family: 'Bebas Neue', sans-serif;
+      font-family: "Bebas Neue", sans-serif;
       font-size: 20px;
       font-weight: 400;
       letter-spacing: .06em;
@@ -1251,7 +1275,7 @@
       justify-content: center;
       height: 56px;
       padding-bottom: 1px;
-      font-family: 'Bebas Neue', sans-serif;
+      font-family: "Bebas Neue", sans-serif;
       font-size: 28px;
       color: var(--label-3);
     }
@@ -1835,7 +1859,7 @@
     }
     .bracket-score {
       text-align: center;
-      font-family: 'Bebas Neue', sans-serif;
+      font-family: "Bebas Neue", sans-serif;
       font-size: 16px;
       line-height: 1;
       color: inherit;
@@ -2733,292 +2757,80 @@
     .theme-toggle-btn:active { transform: scale(.92); }
     .theme-toggle-btn .inline-block { display: block; }
 
-    html[data-theme="light"] {
-      color-scheme: light;
-      --bg-0: #edf3fa;
-      --bg-1: rgba(255,255,255,.84);
-      --bg-2: rgba(247,250,254,.92);
-      --bg-3: rgba(229,236,246,.96);
-      --bg-4: rgba(215,225,239,.98);
+    
 
-      --glass-1:
-        radial-gradient(circle at 18% -12%, rgba(255,255,255,.98), transparent 44%),
-        linear-gradient(145deg, rgba(255,255,255,.92), rgba(239,245,252,.82));
-      --glass-2:
-        radial-gradient(circle at 18% -12%, rgba(255,255,255,1), transparent 44%),
-        linear-gradient(145deg, rgba(255,255,255,.98), rgba(231,239,249,.90));
-      --glass-3:
-        radial-gradient(circle at 18% -12%, rgba(255,255,255,1), transparent 44%),
-        linear-gradient(145deg, rgba(255,255,255,1), rgba(220,231,245,.94));
-      --glass-4:
-        linear-gradient(145deg, rgba(255,255,255,1), rgba(207,220,237,.96));
+    
+    
+    
+    
 
-      --border-1: rgba(39,68,103,.11);
-      --border-2: rgba(39,68,103,.17);
-      --border-3: rgba(39,68,103,.25);
-      --hl: inset 0 1px 0 rgba(255,255,255,.92), inset 0 -1px 0 rgba(30,62,100,.035);
-      --hl2: inset 0 1px 0 rgba(255,255,255,1), inset 0 -1px 0 rgba(30,62,100,.055);
-      --sep: rgba(35,60,90,.12);
+    
+    
+    
+    
+    
+    
 
-      --label-1: rgba(14,28,46,.96);
-      --label-2: rgba(31,50,74,.68);
-      --label-3: rgba(45,65,91,.44);
-      --label-4: rgba(45,65,91,.24);
+    
+    
+    
+    
 
-      --accent: #0a78e8;
-      --accent-strong: #0068d7;
-      --accent-green: #179b4b;
-      --accent-red: #d93832;
-      --accent-orange: #d77900;
-      --accent-yellow: #a76500;
-      --accent-purple: #8b45c6;
-      --gold: #b87500;
+    
+    
+    
 
-      --shadow-sm: 0 8px 28px rgba(53,78,110,.10), 0 2px 7px rgba(53,78,110,.08);
-      --shadow-md: 0 16px 46px rgba(53,78,110,.14), 0 4px 14px rgba(53,78,110,.10);
-      --shadow-lg: 0 28px 80px rgba(43,65,94,.22), 0 8px 24px rgba(43,65,94,.13);
-      --shadow-glow: 0 0 0 1px rgba(255,255,255,.50), 0 16px 50px rgba(41,119,199,.08);
+    
+    
+    
+    
 
-      --app-screen-background:
-        radial-gradient(ellipse 100% 58% at 50% -13%, rgba(74,166,255,.22), transparent 62%),
-        radial-gradient(ellipse 68% 48% at -8% 70%, rgba(67,211,166,.12), transparent 69%),
-        radial-gradient(ellipse 70% 48% at 108% 78%, rgba(172,116,238,.12), transparent 68%),
-        linear-gradient(180deg, #f2f2f7 0%, #f5f5fa 48%, #efeff4 100%);
-      background-color: #f2f2f7 !important;
-    }
+    
+    
+    
+    
+    
+    
+    
+    
 
-    html[data-theme="light"],
-    html[data-theme="light"] body {
-      background-color: #f2f2f7 !important;
-      color: var(--label-1) !important;
-    }
-    html[data-theme="light"] body::before {
-      background-color: #f2f2f7 !important;
-      background-image: none !important;
-    }
-    html[data-theme="light"] .pitch-bg::before {
-      background: radial-gradient(circle at 65% 35%, rgba(63,166,255,.24), rgba(10,132,255,.06) 46%, transparent 73%);
-      opacity: .42;
-    }
-    html[data-theme="light"] .pitch-bg::after {
-      background: radial-gradient(circle at 34% 40%, rgba(172,99,226,.18), rgba(48,209,88,.055) 48%, transparent 73%);
-      opacity: .38;
-    }
+    
+    
+    
 
-    html[data-theme="light"] .app-header {
-      background:
-        radial-gradient(circle at 20% -20%, rgba(255,255,255,.98), transparent 44%),
-        linear-gradient(145deg, rgba(255,255,255,.90), rgba(231,240,251,.78)) !important;
-      color: var(--label-1) !important;
-      box-shadow: 0 18px 48px rgba(61,88,121,.14), inset 0 1px 0 rgba(255,255,255,1) !important;
-    }
-    html[data-theme="light"] .app-header .title-group h1 { color: var(--label-1) !important; }
-    html[data-theme="light"] .login-btn,
-    html[data-theme="light"] .players-btn,
-    html[data-theme="light"] .theme-toggle-btn {
-      background: linear-gradient(145deg, rgba(255,255,255,.98), rgba(226,236,248,.88)) !important;
-      color: var(--label-1) !important;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,1), 0 5px 15px rgba(60,86,117,.10) !important;
-    }
-    html[data-theme="light"] .theme-toggle-btn {
-      color: #b06b00 !important;
-      background: linear-gradient(145deg, rgba(255,251,225,.98), rgba(255,231,153,.74)) !important;
-    }
-    html[data-theme="light"] .profile-avatar {
-      background: rgba(35,88,145,.08) !important;
-      color: var(--label-1) !important;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.9) !important;
-    }
-    html[data-theme="light"] .profile-menu-btn.is-authenticated .profile-avatar {
-      background: linear-gradient(145deg, rgba(72,169,244,.30), rgba(107,93,224,.22)) !important;
-      color: #103c68 !important;
-    }
+    
+    
+    
+    
 
-    html[data-theme="light"] .bottom-nav {
-      background:
-        radial-gradient(circle at 20% -30%, rgba(255,255,255,1), transparent 46%),
-        linear-gradient(145deg, rgba(255,255,255,.93), rgba(225,235,248,.86)) !important;
-      box-shadow: 0 20px 56px rgba(53,78,110,.18), inset 0 1px 0 rgba(255,255,255,1) !important;
-    }
-    html[data-theme="light"] .nav-droplet,
-    html[data-theme="light"] .nav-droplet.dragging {
-      background: linear-gradient(145deg, rgba(75,165,246,.25), rgba(54,109,225,.15)) !important;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.75) !important;
-    }
-    html[data-theme="light"] .bottom-nav button { color: rgba(38,61,88,.50) !important; }
-    html[data-theme="light"] .bottom-nav button.active svg { color: #075fae !important; filter: none !important; }
+    
+    
+    
+    
 
-    html[data-theme="light"] .glass,
-    html[data-theme="light"] .match-card,
-    html[data-theme="light"] section.bg-white,
-    html[data-theme="light"] div.bg-white,
-    html[data-theme="light"] .install-banner,
-    html[data-theme="light"] .leaderboard-header,
-    html[data-theme="light"] .bracket-intro,
-    html[data-theme="light"] .bracket-section,
-    html[data-theme="light"] .admin-match-card {
-      background: var(--glass-1) !important;
-      color: var(--label-1) !important;
-      box-shadow: var(--shadow-sm), var(--hl), var(--shadow-glow) !important;
-    }
-    html[data-theme="light"] .glass-strong,
-    html[data-theme="light"] .match-card.expanded,
-    html[data-theme="light"] .filters-sticky {
-      background: var(--glass-2) !important;
-      color: var(--label-1) !important;
-      box-shadow: var(--shadow-md), var(--hl2) !important;
-    }
-    html[data-theme="light"] .filters-sticky {
-      background:
-        radial-gradient(circle at 18% -20%, rgba(255,255,255,1), transparent 44%),
-        linear-gradient(145deg, rgba(255,255,255,.94), rgba(228,238,249,.90)) !important;
-    }
+    
+    
+    
 
-    html[data-theme="light"] input,
-    html[data-theme="light"] select,
-    html[data-theme="light"] textarea {
-      background: linear-gradient(145deg, rgba(255,255,255,.98), rgba(235,241,249,.94)) !important;
-      color: var(--label-1) !important;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,1), inset 0 0 0 1px rgba(35,64,100,.08) !important;
-    }
-    html[data-theme="light"] input::placeholder,
-    html[data-theme="light"] textarea::placeholder { color: var(--label-3) !important; }
-    html[data-theme="light"] input:focus,
-    html[data-theme="light"] select:focus,
-    html[data-theme="light"] textarea:focus {
-      background: #fff !important;
-      box-shadow: 0 0 0 4px rgba(10,120,232,.14), inset 0 1px 0 rgba(255,255,255,1) !important;
-    }
-    html[data-theme="light"] select option { background: #fff !important; color: var(--label-1) !important; }
+    
+    
+    
+    
 
-    html[data-theme="light"] .bg-stone-50,
-    html[data-theme="light"] .bg-stone-50\/50 { background: rgba(236,242,249,.82) !important; }
-    html[data-theme="light"] .bg-stone-100 { background: rgba(224,233,244,.88) !important; }
-    html[data-theme="light"] .text-stone-900,
-    html[data-theme="light"] .text-stone-800,
-    html[data-theme="light"] .text-stone-700 { color: var(--label-1) !important; }
-    html[data-theme="light"] .text-stone-600,
-    html[data-theme="light"] .text-stone-500 { color: var(--label-2) !important; }
-    html[data-theme="light"] .text-stone-400,
-    html[data-theme="light"] .text-stone-300 { color: var(--label-3) !important; }
-    html[data-theme="light"] th { color: var(--label-2) !important; }
-    html[data-theme="light"] td { color: var(--label-1) !important; }
-    html[data-theme="light"] tr:hover { background: rgba(28,76,128,.045) !important; }
+    
+    
 
-    html[data-theme="light"] .selection-tile {
-      background: linear-gradient(145deg, rgba(255,255,255,.96), rgba(232,240,249,.88)) !important;
-      color: var(--label-2) !important;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,1), 0 3px 10px rgba(54,80,111,.08) !important;
-    }
-    html[data-theme="light"] .selection-tile:hover {
-      background: linear-gradient(145deg, rgba(255,255,255,1), rgba(219,231,246,.94)) !important;
-      color: var(--label-1) !important;
-    }
-    html[data-theme="light"] .selection-tile.is-selected,
-    html[data-theme="light"] .selection-tile.is-selected:hover {
-      background: linear-gradient(145deg, rgba(43,151,235,.88), rgba(49,93,218,.82)) !important;
-      color: #fff !important;
-    }
+    
+    
+    
+    
+    
+    
+    
+    
 
-    html[data-theme="light"] .match-card [style*="color: white"],
-    html[data-theme="light"] .match-card [style*="color:white"],
-    html[data-theme="light"] .match-card [style*="rgba(255, 255, 255"],
-    html[data-theme="light"] .match-card [style*="rgba(255,255,255"],
-    html[data-theme="light"] .admin-match-card [style*="rgba(255, 255, 255"],
-    html[data-theme="light"] .admin-match-card [style*="rgba(255,255,255"] {
-      color: var(--label-2) !important;
-    }
-    html[data-theme="light"] .match-card > button [style*="Bebas Neue"] { color: var(--label-1) !important; }
-    html[data-theme="light"] .match-card span[style*="text-transform: uppercase"] { color: #184f82 !important; }
-    html[data-theme="light"] .admin-match-details { background: rgba(239,244,250,.78) !important; }
-
-    html[data-theme="light"] .bg-blue-50,
-    html[data-theme="light"] [class*="bg-sky-"],
-    html[data-theme="light"] [class*="bg-blue-"] {
-      background: linear-gradient(145deg, rgba(50,147,238,.15), rgba(63,112,229,.07)) !important;
-    }
-    html[data-theme="light"] .bg-emerald-50,
-    html[data-theme="light"] .bg-\[\#e6f4ec\],
-    html[data-theme="light"] .bg-\[\#e8f4ee\] {
-      background: linear-gradient(145deg, rgba(39,174,82,.14), rgba(39,174,82,.06)) !important;
-    }
-    html[data-theme="light"] .bg-amber-50,
-    html[data-theme="light"] .bg-amber-100,
-    html[data-theme="light"] [class*="bg-amber-50"],
-    html[data-theme="light"] [class*="bg-amber-100"] {
-      background: linear-gradient(145deg, rgba(245,172,38,.16), rgba(239,134,30,.07)) !important;
-    }
-    html[data-theme="light"] .bg-red-50 {
-      background: linear-gradient(145deg, rgba(223,66,57,.13), rgba(213,49,79,.055)) !important;
-    }
-
-    html[data-theme="light"] .fixed.inset-0.z-50 > .absolute.inset-0 {
-      background: rgba(42,57,77,.24) !important;
-      -webkit-backdrop-filter: blur(16px) saturate(115%);
-      backdrop-filter: blur(16px) saturate(115%);
-    }
-    html[data-theme="light"] .fixed.inset-0.z-50 > .relative {
-      background:
-        radial-gradient(circle at 16% -10%, rgba(255,255,255,1), transparent 42%),
-        linear-gradient(145deg, rgba(255,255,255,.98), rgba(231,239,249,.96)) !important;
-      color: var(--label-1) !important;
-      box-shadow: 0 34px 90px rgba(45,66,93,.28), inset 0 1px 0 rgba(255,255,255,1) !important;
-    }
-    html[data-theme="light"] .fixed.inset-0.z-50 > .relative > div:first-child {
-      background: rgba(233,240,248,.70) !important;
-    }
-
-    html[data-theme="light"] .toast-bar {
-      background: linear-gradient(145deg, rgba(255,255,255,.98), rgba(224,235,248,.96)) !important;
-      color: var(--label-1) !important;
-      box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255,255,255,1) !important;
-    }
-    html[data-theme="light"] #loading {
-      background:
-        radial-gradient(circle at 50% 14%, rgba(63,157,246,.20), transparent 40%),
-        radial-gradient(circle at 15% 85%, rgba(48,209,88,.09), transparent 36%),
-        radial-gradient(circle at 85% 82%, rgba(171,94,226,.10), transparent 36%),
-        #f2f2f7 !important;
-      color: var(--label-1) !important;
-    }
-    html[data-theme="light"] .loading-title { color: var(--label-1) !important; }
-    html[data-theme="light"] .loading-sub { color: var(--label-3) !important; }
-
-    html[data-theme="light"] .leaderboard-header {
-      background:
-        radial-gradient(circle at 18% -22%, rgba(255,255,255,1), transparent 44%),
-        linear-gradient(145deg, rgba(255,255,255,.96), rgba(226,236,248,.88)) !important;
-    }
-    html[data-theme="light"] .leaderboard-header p { color: var(--label-2) !important; }
-
-    html[data-theme="light"] .bracket-match,
-    html[data-theme="light"] .bracket-final-card {
-      background: linear-gradient(145deg, rgba(255,255,255,.98), rgba(229,237,247,.92)) !important;
-      color: var(--label-1) !important;
-    }
-    html[data-theme="light"] body .bracket-page .bracket-intro:not(#__light_bracket__),
-    html[data-theme="light"] body .bracket-page .bracket-section:not(#__light_bracket__) {
-      border-color: rgba(37,68,104,.14) !important;
-    }
-    html[data-theme="light"] body .bracket-page .bracket-match:not(#__light_bracket__),
-    html[data-theme="light"] body .bracket-page .bracket-final-card:not(#__light_bracket__) {
-      border-color: rgba(37,68,104,.18) !important;
-    }
-    html[data-theme="light"] body .bracket-page .bracket-match.is-finished:not(#__light_bracket__),
-    html[data-theme="light"] body .bracket-page .bracket-final-card.is-finished:not(#__light_bracket__) {
-      border-color: rgba(21,111,194,.27) !important;
-    }
-    html[data-theme="light"] body .bracket-page .bracket-match-head:not(#__light_bracket__) {
-      border-bottom-color: rgba(37,68,104,.10) !important;
-    }
-    html[data-theme="light"] body .bracket-page .bracket-team-row + .bracket-team-row:not(#__light_bracket__) {
-      border-top-color: rgba(37,68,104,.08) !important;
-    }
-    html[data-theme="light"] .bracket-connectors path { stroke: rgba(45,84,126,.34) !important; }
-    html[data-theme="light"] .bracket-team-row.is-winner { background: rgba(34,126,218,.10) !important; }
-
-    html[data-theme="light"] ::-webkit-scrollbar-thumb { background: rgba(45,78,113,.22); }
-    html[data-theme="light"] ::selection { background: rgba(36,132,224,.24); color: #10243c; }
+    
+    
 
     @media (max-width: 520px) {
       .theme-toggle-btn { width: 36px; height: 36px; min-width: 36px; border-radius: 999px; }
@@ -3028,170 +2840,52 @@
 
 
     /* Light mode — slightly deeper surfaces for clearer separation */
-    html[data-theme="light"] {
-      --bg-1: rgba(239,244,250,.96);
-      --bg-2: rgba(226,235,245,.97);
-      --bg-3: rgba(211,223,237,.98);
-      --bg-4: rgba(197,211,228,.99);
+    
 
-      --glass-1:
-        radial-gradient(circle at 18% -12%, rgba(255,255,255,.94), transparent 44%),
-        linear-gradient(145deg, rgba(246,249,253,.97), rgba(218,229,241,.95));
-      --glass-2:
-        radial-gradient(circle at 18% -12%, rgba(255,255,255,.98), transparent 44%),
-        linear-gradient(145deg, rgba(239,245,251,.98), rgba(207,220,235,.96));
-      --glass-3:
-        radial-gradient(circle at 18% -12%, rgba(255,255,255,1), transparent 44%),
-        linear-gradient(145deg, rgba(232,240,248,.99), rgba(194,210,229,.97));
-      --glass-4: linear-gradient(145deg, rgba(225,235,245,1), rgba(181,200,223,.98));
+    
 
-      --border-1: rgba(39,68,103,.18);
-      --border-2: rgba(39,68,103,.25);
-      --border-3: rgba(39,68,103,.34);
-      --sep: rgba(35,60,90,.18);
+    
 
-      --shadow-sm: 0 9px 28px rgba(53,78,110,.15), 0 2px 8px rgba(53,78,110,.11);
-      --shadow-md: 0 16px 46px rgba(53,78,110,.19), 0 4px 14px rgba(53,78,110,.13);
-      --shadow-glow: 0 0 0 1px rgba(255,255,255,.35), 0 16px 50px rgba(41,119,199,.10);
-    }
+    
 
-    html[data-theme="light"] .app-header {
-      background:
-        radial-gradient(circle at 20% -20%, rgba(255,255,255,.95), transparent 44%),
-        linear-gradient(145deg, rgba(239,245,251,.96), rgba(207,220,236,.92)) !important;
-      box-shadow: 0 18px 48px rgba(61,88,121,.19), inset 0 1px 0 rgba(255,255,255,.92) !important;
-    }
+    
 
-    html[data-theme="light"] .bottom-nav {
-      background:
-        radial-gradient(circle at 20% -30%, rgba(255,255,255,.96), transparent 46%),
-        linear-gradient(145deg, rgba(236,243,250,.97), rgba(202,216,233,.93)) !important;
-      box-shadow: 0 20px 56px rgba(53,78,110,.23), inset 0 1px 0 rgba(255,255,255,.92) !important;
-    }
+    
 
-    html[data-theme="light"] .login-btn,
-    html[data-theme="light"] .players-btn,
-    html[data-theme="light"] .theme-toggle-btn {
-      background: linear-gradient(145deg, rgba(241,246,251,.98), rgba(204,218,235,.94)) !important;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.92), 0 5px 15px rgba(60,86,117,.15) !important;
-    }
+    
 
-    html[data-theme="light"] .theme-toggle-btn {
-      background: linear-gradient(145deg, rgba(255,247,205,.98), rgba(241,211,116,.82)) !important;
-    }
+    
 
-    html[data-theme="light"] .filters-sticky {
-      background:
-        radial-gradient(circle at 18% -20%, rgba(255,255,255,.94), transparent 44%),
-        linear-gradient(145deg, rgba(236,243,250,.97), rgba(205,219,235,.94)) !important;
-    }
+    
 
-    html[data-theme="light"] input,
-    html[data-theme="light"] select,
-    html[data-theme="light"] textarea {
-      background: linear-gradient(145deg, rgba(239,245,251,.99), rgba(211,222,235,.97)) !important;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.92), inset 0 0 0 1px rgba(35,64,100,.13) !important;
-    }
+    
+    
+    
 
-    html[data-theme="light"] .selection-tile {
-      background: linear-gradient(145deg, rgba(239,245,251,.98), rgba(207,220,235,.95)) !important;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.92), 0 4px 12px rgba(54,80,111,.13) !important;
-    }
-
-    html[data-theme="light"] .selection-tile:hover {
-      background: linear-gradient(145deg, rgba(247,250,253,1), rgba(195,211,230,.97)) !important;
-    }
-
-    html[data-theme="light"] .bg-stone-50,
-    html[data-theme="light"] .bg-stone-50\/50 { background: rgba(220,229,240,.92) !important; }
-    html[data-theme="light"] .bg-stone-100 { background: rgba(204,216,231,.94) !important; }
-    html[data-theme="light"] .admin-match-details { background: rgba(218,228,240,.92) !important; }
-
-    html[data-theme="light"] .fixed.inset-0.z-50 > .relative {
-      background:
-        radial-gradient(circle at 16% -10%, rgba(255,255,255,.94), transparent 42%),
-        linear-gradient(145deg, rgba(239,245,251,.99), rgba(205,218,234,.97)) !important;
-    }
+    
 
 
     /* Light mode — replace remaining white text with black */
-    html[data-theme="light"] .text-white,
-    html[data-theme="light"] .text-stone-50,
-    html[data-theme="light"] .text-stone-100,
-    html[data-theme="light"] [style*="color: white"],
-    html[data-theme="light"] [style*="color:white"],
-    html[data-theme="light"] [style*="color: #fff"],
-    html[data-theme="light"] [style*="color:#fff"],
-    html[data-theme="light"] [style*="color: #ffffff"],
-    html[data-theme="light"] [style*="color:#ffffff"],
-    html[data-theme="light"] [style*="color: rgb(255"],
-    html[data-theme="light"] [style*="color:rgb(255"],
-    html[data-theme="light"] [style*="color: rgba(255, 255, 255"],
-    html[data-theme="light"] [style*="color:rgba(255, 255, 255"],
-    html[data-theme="light"] [style*="color: rgba(255,255,255"],
-    html[data-theme="light"] [style*="color:rgba(255,255,255"] {
-      color: #050505 !important;
-      text-shadow: none !important;
-    }
+    
 
-    html[data-theme="light"] .selection-tile.is-selected,
-    html[data-theme="light"] .selection-tile.is-selected:hover {
-      color: #050505 !important;
-      text-shadow: none !important;
-    }
+    
 
-    html[data-theme="light"] .bottom-nav button.active {
-      color: #075fae !important;
-      text-shadow: none !important;
-    }
+    
 
-    html[data-theme="light"] .bottom-nav button.active .nav-label {
-      color: #050505 !important;
-      text-shadow: none !important;
-    }
+    
 
-    html[data-theme="light"] .bg-\[\#0d1b5e\],
-    html[data-theme="light"] .bg-\[\#162570\],
-    html[data-theme="light"] [class*="bg-[#0d1b5e]"],
-    html[data-theme="light"] [class*="bg-[#162570]"],
-    html[data-theme="light"] [class*="from-[#1a1a3a]"][class*="to-[#0d1b5e]"],
-    html[data-theme="light"] [class*="from-[#0d1b5e]"][class*="to-[#162570]"] {
-      color: #ffffff !important;
-      -webkit-text-fill-color: #ffffff !important;
-    }
-    html[data-theme="light"] .bg-red-600,
-    html[data-theme="light"] .bg-red-700,
-    html[data-theme="light"] .bg-stone-900,
-    html[data-theme="light"] .bg-stone-800,
-    html[data-theme="light"] .bg-emerald-500 {
-      color: #050505 !important;
-    }
+    
+    
 
-    html[data-theme="light"] .install-banner button,
-    html[data-theme="light"] .toast-bar,
-    html[data-theme="light"] .fixed.inset-0.z-50 > .relative {
-      color: #050505 !important;
-    }
+    
 
 
 
     /* Light mode fixes — stronger contrast and clearer state feedback */
-    html[data-theme="light"] .compare-view .compare-match-card {
-      background: linear-gradient(145deg, rgba(224,232,242,.96), rgba(210,220,234,.92)) !important;
-      border: 1px solid rgba(96,117,145,.28) !important;
-      box-shadow: 0 10px 24px rgba(89,109,139,.12) !important;
-    }
-    html[data-theme="light"] .compare-view .compare-match-toggle {
-      background: rgba(248,251,255,.78) !important;
-      border-color: rgba(96,117,145,.22) !important;
-    }
-    html[data-theme="light"] .compare-view .compare-player-row.compare-player-row-empty {
-      background: rgba(245,248,252,.88) !important;
-      border-color: rgba(105,124,150,.16) !important;
-    }
-    html[data-theme="light"] .compare-view .compare-player-row {
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.10);
-    }
+    
+    
+    
+    
 
 
     /* Compare tab — expanded predictions use the same list styling as the
@@ -3268,235 +2962,58 @@
         padding-right: 9px !important;
       }
     }
-    html[data-theme="light"] .compare-view .compare-match-card [style*="rgba(255,255,255,.4)"],
-    html[data-theme="light"] .compare-view .compare-match-card [style*="rgba(255, 255, 255, .4)"],
-    html[data-theme="light"] .compare-view .compare-match-card [style*="rgba(255,255,255,.35)"],
-    html[data-theme="light"] .compare-view .compare-match-card [style*="rgba(255,255,255,.3)"],
-    html[data-theme="light"] .compare-view .compare-match-card [style*="rgba(255,255,255,.25)"],
-    html[data-theme="light"] .compare-view .compare-match-card [style*="rgba(255,255,255,.52)"],
-    html[data-theme="light"] .compare-view .compare-match-card [style*="rgba(255,255,255,.78)"],
-    html[data-theme="light"] .compare-view .compare-match-card [style*="color:white"],
-    html[data-theme="light"] .compare-view .compare-match-card [style*="color: white"] {
-      color: #12263f !important;
-      -webkit-text-fill-color: #12263f !important;
-    }
+    
 
-    html[data-theme="light"] .admin-panel-banner {
-      background: linear-gradient(135deg, rgba(214,224,237,.96), rgba(191,204,221,.92)) !important;
-      border: 1px solid rgba(105,124,150,.28) !important;
-      color: #10243c !important;
-      box-shadow: 0 10px 24px rgba(76,98,127,.12) !important;
-    }
-    html[data-theme="light"] .admin-panel-banner * {
-      color: #10243c !important;
-      -webkit-text-fill-color: #10243c !important;
-    }
-    html[data-theme="light"] .admin-panel-banner button {
-      background: rgba(255,255,255,.72) !important;
-      border: 1px solid rgba(105,124,150,.22) !important;
-      box-shadow: none !important;
-    }
-    html[data-theme="light"] .admin-match-details {
-      background: linear-gradient(145deg, rgba(228,236,246,.96), rgba(214,224,236,.94)) !important;
-      border-top-color: rgba(105,124,150,.20) !important;
-    }
-    html[data-theme="light"] .admin-match-details .score-value-input {
-      color: #10243c !important;
-      -webkit-text-fill-color: #10243c !important;
-    }
-    html[data-theme="light"] .admin-match-details [style*="rgba(255,255,255,.85)"],
-    html[data-theme="light"] .admin-match-details [style*="rgba(255, 255, 255, .85)"],
-    html[data-theme="light"] .admin-match-details [style*="rgba(255,255,255,.45)"],
-    html[data-theme="light"] .admin-match-details [style*="rgba(255, 255, 255, .45)"],
-    html[data-theme="light"] .admin-match-details [style*="color:white"],
-    html[data-theme="light"] .admin-match-details [style*="color: white"] {
-      color: #10243c !important;
-      -webkit-text-fill-color: #10243c !important;
-    }
+    
+    
+    
+    
+    
+    
 
-    html[data-theme="light"] .match-points-badge.exact {
-      background: rgba(34,197,94,.22) !important;
-      border-color: rgba(21,128,61,.42) !important;
-      color: #157f3d !important;
-      -webkit-text-fill-color: #157f3d !important;
-    }
-    html[data-theme="light"] .match-points-badge.partial {
-      background: rgba(245,158,11,.22) !important;
-      border-color: rgba(180,83,9,.40) !important;
-      color: #b45309 !important;
-      -webkit-text-fill-color: #b45309 !important;
-    }
-    html[data-theme="light"] .match-points-badge.miss {
-      background: rgba(239,68,68,.18) !important;
-      border-color: rgba(185,28,28,.34) !important;
-      color: #b91c1c !important;
-      -webkit-text-fill-color: #b91c1c !important;
-    }
-    html[data-theme="light"] .rank-stat-exact {
-      color: #157f3d !important;
-      -webkit-text-fill-color: #157f3d !important;
-    }
-    html[data-theme="light"] .rank-stat-partial {
-      color: #b45309 !important;
-      -webkit-text-fill-color: #b45309 !important;
-    }
-    html[data-theme="light"] .rank-stat-miss {
-      color: #b91c1c !important;
-      -webkit-text-fill-color: #b91c1c !important;
-    }
+    
+    
+    
+    
+    
+    
 
-    html[data-theme="light"] .all-special-status-correct {
-      color: #166534 !important;
-      -webkit-text-fill-color: #166534 !important;
-      background: rgba(34,197,94,.15) !important;
-      border-radius: 999px;
-      padding: 3px 8px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 34px;
-    }
-    html[data-theme="light"] .all-special-status-wrong {
-      color: #b91c1c !important;
-      -webkit-text-fill-color: #b91c1c !important;
-      background: rgba(239,68,68,.14) !important;
-      border-radius: 999px;
-      padding: 3px 8px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 34px;
-    }
-    html[data-theme="light"] .all-special-status-neutral {
-      color: #334155 !important;
-      -webkit-text-fill-color: #334155 !important;
-      background: rgba(148,163,184,.12) !important;
-      border-radius: 999px;
-      padding: 3px 8px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 34px;
-    }
-    html[data-theme="light"] .specials-view .selection-tile.is-correct,
-    html[data-theme="light"] .specials-view .selection-tile.is-correct:hover {
-      background: rgba(34,197,94,.18) !important;
-      border-color: rgba(21,128,61,.38) !important;
-      color: #166534 !important;
-    }
-    html[data-theme="light"] .specials-view .selection-tile.is-wrong,
-    html[data-theme="light"] .specials-view .selection-tile.is-wrong:hover {
-      background: rgba(239,68,68,.15) !important;
-      border-color: rgba(185,28,28,.32) !important;
-      color: #b91c1c !important;
-    }
-    html[data-theme="light"] .specials-view .table-card,
-    html[data-theme="light"] .allspecials-view .table-card {
-      background: rgba(247,250,253,.96) !important;
-      border-color: rgba(105,124,150,.18) !important;
-    }
-    html[data-theme="light"] .allspecials-view thead tr,
-    html[data-theme="light"] .specials-view thead tr {
-      background: rgba(232,239,247,.95) !important;
-    }
-    html[data-theme="light"] .allspecials-view tbody tr:nth-child(even) {
-      background: rgba(248,251,255,.58) !important;
-    }
-    html[data-theme="light"] .allspecials-view tbody tr:hover {
-      background: rgba(225,235,246,.72) !important;
-    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
   
 
     /* Light mode — karta wyniku końcowego w rozwiniętym meczu */
-    html[data-theme="light"] .match-final-result-card {
-      background: linear-gradient(145deg, rgba(225,234,245,.98), rgba(205,217,232,.96)) !important;
-      border: 1px solid rgba(86,108,138,.28) !important;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.78), 0 10px 24px rgba(73,94,123,.12) !important;
-      color: #10243c !important;
-    }
-    html[data-theme="light"] .match-final-result-card > div,
-    html[data-theme="light"] .match-final-result-card span,
-    html[data-theme="light"] .match-final-result-card strong {
-      color: #10243c;
-      -webkit-text-fill-color: currentColor;
-    }
-    html[data-theme="light"] .match-final-result-card .text-stone-400 {
-      color: #60738c !important;
-      -webkit-text-fill-color: #60738c !important;
-    }
-    html[data-theme="light"] .match-final-result-card .text-amber-300,
-    html[data-theme="light"] .match-final-result-card .text-amber-400 {
-      color: #b45309 !important;
-      -webkit-text-fill-color: #b45309 !important;
-    }
-    html[data-theme="light"] .match-final-result-card [style*="#4ade80"] {
-      color: #15803d !important;
-      -webkit-text-fill-color: #15803d !important;
-    }
-    html[data-theme="light"] .match-final-result-card [style*="#fbbf24"] {
-      color: #b45309 !important;
-      -webkit-text-fill-color: #b45309 !important;
-    }
-    html[data-theme="light"] .match-final-result-card [style*="#f87171"] {
-      color: #b91c1c !important;
-      -webkit-text-fill-color: #b91c1c !important;
-    }
-    html[data-theme="light"] .match-final-result-card .border-stone-700 {
-      border-color: rgba(86,108,138,.22) !important;
-    }
+    
+    
+    
+    
+    
+    
+    
+    
 
   
 
     /* Ranking status colours match point colours used in the other tabs. */
-    html:not([data-theme="light"]) .rank-stat-exact {
-      color: #4ade80 !important;
-      -webkit-text-fill-color: #4ade80 !important;
-    }
-    html:not([data-theme="light"]) .rank-stat-partial {
-      color: #fbbf24 !important;
-      -webkit-text-fill-color: #fbbf24 !important;
-    }
-    html:not([data-theme="light"]) .rank-stat-miss {
-      color: #f87171 !important;
-      -webkit-text-fill-color: #f87171 !important;
-    }
+    
+    
+    
 
     /* Light mode: leaderboard place badges in the same blue glass style as other primary accents */
-    html[data-theme="light"] .leaderboard-position-badge {
-      background:
-        radial-gradient(circle at 26% 18%, rgba(255,255,255,.42), transparent 34%),
-        linear-gradient(145deg, #79c8ff 0%, #2f8cff 56%, #5e63f2 100%) !important;
-      border: 1px solid rgba(173,223,255,.72) !important;
-      border-radius: 999px !important;
-      color: #f8fcff !important;
-      -webkit-text-fill-color: #f8fcff !important;
-      text-shadow: 0 1px 8px rgba(34,111,232,.24);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.42),
-        inset 0 -1px 0 rgba(255,255,255,.10),
-        0 8px 18px rgba(36,132,224,.20),
-        0 0 0 1px rgba(86,166,255,.08) !important;
-    }
+    
 
     /* Final light-mode admin text correction */
-    html[data-theme="light"] .admin-match-details .admin-score-team-name,
-    html[data-theme="light"] .admin-match-details .admin-score-team-name span {
-      color: #10243c !important;
-      -webkit-text-fill-color: #10243c !important;
-      opacity: 1 !important;
-    }
-    html[data-theme="light"] .admin-match-details .admin-score-team,
-    html[data-theme="light"] .admin-match-details .admin-score-side,
-    html[data-theme="light"] .admin-match-details .admin-score-separator {
-      color: #10243c !important;
-      -webkit-text-fill-color: #10243c !important;
-    }
-    html[data-theme="light"] .admin-match-details .admin-score-controls label,
-    html[data-theme="light"] .admin-match-details .admin-score-controls span {
-      color: #334155 !important;
-      -webkit-text-fill-color: #334155 !important;
-    }
+    
+    
+    
 
     /* Przełącznik motywu — jedna spójna definicja (Fix 10: konsolidacja potrójnej deklaracji) */
     .theme-toggle-btn.theme-switch {
@@ -3573,22 +3090,10 @@
     .theme-switch.is-dark .theme-switch-icon-moon { color: #dbe5ff !important; opacity: .48 !important; }
     .theme-switch.is-dark .theme-switch-icon-sun { color: #d29a00 !important; opacity: .78 !important; }
 
-    html[data-theme="light"] .theme-toggle-btn.theme-switch {
-      background: linear-gradient(180deg, rgba(231,238,246,.96), rgba(219,228,239,.92)) !important;
-      border-color: rgba(104,125,150,.20) !important;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.80), 0 8px 18px rgba(95,114,140,.14) !important;
-    }
-    html[data-theme="light"] .theme-toggle-btn.theme-switch:hover {
-      background: linear-gradient(180deg, rgba(236,242,249,.98), rgba(223,231,241,.94)) !important;
-    }
-    html[data-theme="light"] .theme-switch.is-light .theme-switch-thumb {
-      color: #694800 !important;
-      -webkit-text-fill-color: #694800 !important;
-    }
-    html[data-theme="light"] .theme-switch.is-dark .theme-switch-thumb {
-      color: #e9efff !important;
-      -webkit-text-fill-color: #e9efff !important;
-    }
+    
+    
+    
+    
 
     @media (max-width: 420px) {
       .theme-toggle-btn.theme-switch {
@@ -3603,132 +3108,25 @@
     }
 
         /* Stronger Liquid Glass for LIGHT MODE only */
-    html[data-theme="light"] {
-      --glass-1:
-        radial-gradient(circle at 16% -16%, rgba(255,255,255,.96), transparent 42%),
-        linear-gradient(145deg, rgba(255,255,255,.70), rgba(234,242,251,.58)) !important;
-      --glass-2:
-        radial-gradient(circle at 16% -16%, rgba(255,255,255,.98), transparent 42%),
-        linear-gradient(145deg, rgba(255,255,255,.78), rgba(228,238,250,.64)) !important;
-      --glass-3:
-        radial-gradient(circle at 16% -16%, rgba(255,255,255,1), transparent 42%),
-        linear-gradient(145deg, rgba(255,255,255,.86), rgba(223,235,248,.74)) !important;
-      --shadow-sm: 0 14px 36px rgba(53,78,110,.10), 0 4px 14px rgba(53,78,110,.06) !important;
-      --shadow-md: 0 18px 52px rgba(53,78,110,.14), 0 6px 18px rgba(53,78,110,.08) !important;
-      --shadow-lg: 0 28px 80px rgba(43,65,94,.18), 0 10px 30px rgba(43,65,94,.10) !important;
-      --shadow-glow: 0 0 0 1px rgba(255,255,255,.56), 0 18px 54px rgba(41,119,199,.08) !important;
-    }
+    
 
-    html[data-theme="light"] .app-header,
-    html[data-theme="light"] .bottom-nav,
-    html[data-theme="light"] .glass,
-    html[data-theme="light"] .glass-strong,
-    html[data-theme="light"] .match-card,
-    html[data-theme="light"] .match-card.expanded,
-    html[data-theme="light"] .filters-sticky,
-    html[data-theme="light"] section.bg-white,
-    html[data-theme="light"] div.bg-white,
-    html[data-theme="light"] .install-banner,
-    html[data-theme="light"] .leaderboard-header,
-    html[data-theme="light"] .bracket-intro,
-    html[data-theme="light"] .bracket-section,
-    html[data-theme="light"] .admin-match-card,
-    html[data-theme="light"] .modal,
-    html[data-theme="light"] .modal-sheet,
-    html[data-theme="light"] .players-sheet,
-    html[data-theme="light"] .auth-sheet {
-      -webkit-backdrop-filter: blur(30px) saturate(185%) !important;
-      backdrop-filter: blur(30px) saturate(185%) !important;
-      border: 1px solid rgba(39,68,103,.11) !important;
-      box-shadow: var(--shadow-sm), var(--hl), var(--shadow-glow) !important;
-    }
+    
 
-    html[data-theme="light"] .glass-strong,
-    html[data-theme="light"] .match-card.expanded,
-    html[data-theme="light"] .filters-sticky,
-    html[data-theme="light"] .modal-sheet,
-    html[data-theme="light"] .players-sheet,
-    html[data-theme="light"] .auth-sheet {
-      -webkit-backdrop-filter: blur(34px) saturate(190%) !important;
-      backdrop-filter: blur(34px) saturate(190%) !important;
-      border-color: rgba(39,68,103,.13) !important;
-      box-shadow: var(--shadow-md), var(--hl2), var(--shadow-glow) !important;
-    }
+    
 
-    html[data-theme="light"] .app-header {
-      background:
-        radial-gradient(circle at 18% -22%, rgba(255,255,255,.98), transparent 44%),
-        linear-gradient(145deg, rgba(255,255,255,.76), rgba(229,239,251,.60)) !important;
-      box-shadow: 0 18px 48px rgba(61,88,121,.10), inset 0 1px 0 rgba(255,255,255,.98), 0 0 0 1px rgba(255,255,255,.38) !important;
-    }
+    
 
-    html[data-theme="light"] .bottom-nav {
-      background:
-        radial-gradient(circle at 20% -30%, rgba(255,255,255,.98), transparent 46%),
-        linear-gradient(145deg, rgba(255,255,255,.74), rgba(224,235,248,.62)) !important;
-      box-shadow: 0 22px 60px rgba(53,78,110,.14), inset 0 1px 0 rgba(255,255,255,.98), 0 0 0 1px rgba(255,255,255,.42) !important;
-    }
+    
 
-    html[data-theme="light"] .glass,
-    html[data-theme="light"] .match-card,
-    html[data-theme="light"] section.bg-white,
-    html[data-theme="light"] div.bg-white,
-    html[data-theme="light"] .install-banner,
-    html[data-theme="light"] .leaderboard-header,
-    html[data-theme="light"] .bracket-intro,
-    html[data-theme="light"] .bracket-section,
-    html[data-theme="light"] .admin-match-card {
-      background: var(--glass-1) !important;
-    }
+    
 
-    html[data-theme="light"] .glass-strong,
-    html[data-theme="light"] .match-card.expanded,
-    html[data-theme="light"] .filters-sticky {
-      background: var(--glass-2) !important;
-    }
+    
 
-    html[data-theme="light"] .login-btn,
-    html[data-theme="light"] .players-btn,
-    html[data-theme="light"] .theme-toggle-btn,
-    html[data-theme="light"] input,
-    html[data-theme="light"] select,
-    html[data-theme="light"] textarea {
-      -webkit-backdrop-filter: blur(24px) saturate(175%) !important;
-      backdrop-filter: blur(24px) saturate(175%) !important;
-      background: linear-gradient(145deg, rgba(255,255,255,.78), rgba(229,238,249,.62)) !important;
-      border-color: rgba(39,68,103,.11) !important;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.96), 0 6px 18px rgba(60,86,117,.08) !important;
-    }
+    
 
-    html[data-theme="light"] .glass,
-    html[data-theme="light"] .glass-strong,
-    html[data-theme="light"] .match-card,
-    html[data-theme="light"] .match-card.expanded,
-    html[data-theme="light"] .filters-sticky,
-    html[data-theme="light"] .app-header,
-    html[data-theme="light"] .bottom-nav,
-    html[data-theme="light"] .admin-match-card {
-      position: relative;
-      overflow: hidden;
-    }
+    
 
-    html[data-theme="light"] .glass::before,
-    html[data-theme="light"] .glass-strong::before,
-    html[data-theme="light"] .match-card::before,
-    html[data-theme="light"] .match-card.expanded::before,
-    html[data-theme="light"] .filters-sticky::before,
-    html[data-theme="light"] .app-header::before,
-    html[data-theme="light"] .bottom-nav::before,
-    html[data-theme="light"] .admin-match-card::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.34), rgba(255,255,255,0) 34%),
-        radial-gradient(circle at 18% 0%, rgba(255,255,255,.30), transparent 34%);
-      opacity: .95;
-    }
+    
 
 
     /* =============================================================
@@ -3737,34 +3135,16 @@
        on every glass surface. Header, tab bar and sticky filters are
        positioning components, so their original positioning must win.
     ============================================================= */
-    html[data-theme="light"] .app-header {
-      position: sticky !important;
-      z-index: 30 !important;
-    }
+    
 
-    html[data-theme="light"] .bottom-nav {
-      position: fixed !important;
-      z-index: 40 !important;
-    }
+    
 
-    html[data-theme="light"] .filters-sticky {
-      position: sticky !important;
-      z-index: 20 !important;
-    }
+    
 
     /* Keep the decorative highlight below interactive content. */
-    html[data-theme="light"] .app-header::before,
-    html[data-theme="light"] .bottom-nav::before,
-    html[data-theme="light"] .filters-sticky::before {
-      z-index: 0;
-    }
+    
 
-    html[data-theme="light"] .app-header > *,
-    html[data-theme="light"] .bottom-nav > *,
-    html[data-theme="light"] .filters-sticky > * {
-      position: relative;
-      z-index: 1;
-    }
+    
 
   
 
@@ -3881,46 +3261,16 @@
     .prediction-row-pending .prediction-points,
     .prediction-row-pending .compare-player-points { color: var(--label-3) !important; -webkit-text-fill-color: var(--label-3) !important; }
 
-    html[data-theme="light"] .prediction-list-wrap,
-    html[data-theme="light"] .compare-view .compare-player-list {
-      border-top-color: rgba(39,68,103,.11) !important;
-    }
-    html[data-theme="light"] .prediction-list-title,
-    html[data-theme="light"] .compare-view .compare-player-list-title {
-      color: #64748b !important;
-      -webkit-text-fill-color: #64748b !important;
-    }
-    html[data-theme="light"] .prediction-row,
-    html[data-theme="light"] .compare-view .compare-player-row {
-      color: #10243c !important;
-      -webkit-text-fill-color: #10243c !important;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.40), 0 2px 7px rgba(53,78,110,.045) !important;
-    }
-    html[data-theme="light"] .prediction-row-exact {
-      background: rgba(34,197,94,.22) !important;
-      border-color: rgba(21,128,61,.42) !important;
-    }
-    html[data-theme="light"] .prediction-row-partial {
-      background: rgba(245,158,11,.22) !important;
-      border-color: rgba(180,83,9,.40) !important;
-    }
-    html[data-theme="light"] .prediction-row-miss {
-      background: rgba(239,68,68,.18) !important;
-      border-color: rgba(185,28,28,.34) !important;
-    }
-    html[data-theme="light"] .prediction-row-empty,
-    html[data-theme="light"] .prediction-row-pending {
-      background: rgba(230,238,248,.76) !important;
-      border-color: rgba(39,68,103,.10) !important;
-      color: #64748b !important;
-      -webkit-text-fill-color: #64748b !important;
-    }
-    html[data-theme="light"] .prediction-row-exact .prediction-points,
-    html[data-theme="light"] .prediction-row-exact .compare-player-points { color: #157f3d !important; -webkit-text-fill-color: #157f3d !important; }
-    html[data-theme="light"] .prediction-row-partial .prediction-points,
-    html[data-theme="light"] .prediction-row-partial .compare-player-points { color: #b45309 !important; -webkit-text-fill-color: #b45309 !important; }
-    html[data-theme="light"] .prediction-row-miss .prediction-points,
-    html[data-theme="light"] .prediction-row-miss .compare-player-points { color: #b91c1c !important; -webkit-text-fill-color: #b91c1c !important; }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     @media (max-width: 380px) {
       .prediction-score-grid,
@@ -4110,7 +3460,7 @@
     }
     .app-header .title-group h1 {
       margin: 0;
-      font-family: 'Bebas Neue', sans-serif;
+      font-family: "Bebas Neue", sans-serif;
       font-size: 20px;
       font-weight: 400;
       letter-spacing: .06em;
@@ -4151,96 +3501,24 @@
       font-weight: 700;
       letter-spacing: .01em;
     }
-    html[data-theme="light"] .allspecials-note {
-      background: linear-gradient(145deg, rgba(87,168,244,.18), rgba(107,131,238,.10)) !important;
-      border-color: rgba(84,146,226,.28) !important;
-      color: #3b6fa8 !important;
-      -webkit-text-fill-color: #3b6fa8 !important;
-      font-weight: 700;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.66), 0 4px 12px rgba(77,120,168,.08);
-    }
+    
 
 
 
     /* Light mode: white text on all dark-blue surfaces */
-    html[data-theme="light"] .bg-\[\#0d1b5e\],
-    html[data-theme="light"] .bg-\[\#162570\],
-    html[data-theme="light"] [class*="bg-[#0d1b5e]"],
-    html[data-theme="light"] [class*="bg-[#162570]"],
-    html[data-theme="light"] [class*="from-[#1a1a3a]"][class*="to-[#0d1b5e]"],
-    html[data-theme="light"] [class*="from-[#0d1b5e]"][class*="to-[#162570]"] {
-      color: #ffffff !important;
-      -webkit-text-fill-color: #ffffff !important;
-    }
-    html[data-theme="light"] .bg-\[\#0d1b5e\] *,
-    html[data-theme="light"] .bg-\[\#162570\] *,
-    html[data-theme="light"] [class*="bg-[#0d1b5e]"] *,
-    html[data-theme="light"] [class*="bg-[#162570]"] *,
-    html[data-theme="light"] [class*="from-[#1a1a3a]"][class*="to-[#0d1b5e]"] *,
-    html[data-theme="light"] [class*="from-[#0d1b5e]"][class*="to-[#162570]"] * {
-      color: #ffffff !important;
-      -webkit-text-fill-color: #ffffff !important;
-    }
+    
+    
 
 
 
     /* Light mode — unified blue styling for all selectable menus */
-    html[data-theme="light"] .selection-tile {
-      color: #5f7188 !important;
-      -webkit-text-fill-color: #5f7188 !important;
-      border-color: rgba(133,160,196,.22) !important;
-    }
-    html[data-theme="light"] .selection-tile:hover {
-      color: #365c86 !important;
-      -webkit-text-fill-color: #365c86 !important;
-      border-color: rgba(108,150,205,.30) !important;
-    }
-    html[data-theme="light"] .selection-tile.is-selected,
-    html[data-theme="light"] .selection-tile.is-selected:hover,
-    html[data-theme="light"] .selection-tile[aria-pressed="true"] {
-      background:
-        radial-gradient(circle at 24% 18%, rgba(255,255,255,.66), transparent 34%),
-        linear-gradient(145deg, rgba(197,220,247,.96), rgba(170,198,239,.92)) !important;
-      border-color: rgba(111,166,233,.58) !important;
-      color: #075fae !important;
-      -webkit-text-fill-color: #075fae !important;
-      text-shadow: none !important;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.82),
-        inset 0 -1px 0 rgba(255,255,255,.20),
-        0 8px 18px rgba(58,116,188,.14),
-        0 0 0 1px rgba(104,162,233,.10) !important;
-    }
-    html[data-theme="light"] .selection-tile.is-selected *,
-    html[data-theme="light"] .selection-tile.is-selected:hover *,
-    html[data-theme="light"] .selection-tile[aria-pressed="true"] * {
-      color: #075fae !important;
-      -webkit-text-fill-color: #075fae !important;
-      text-shadow: none !important;
-    }
-    html[data-theme="light"] .selection-tile.is-selected .player-choice-avatar,
-    html[data-theme="light"] .selection-tile[aria-pressed="true"] .player-choice-avatar,
-    html[data-theme="light"] .player-choice.is-selected .player-choice-avatar {
-      background: linear-gradient(145deg, rgba(132,190,248,.40), rgba(102,145,232,.30)) !important;
-      border-color: rgba(126,185,246,.58) !important;
-      color: #075fae !important;
-      -webkit-text-fill-color: #075fae !important;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.56), 0 4px 12px rgba(58,116,188,.12) !important;
-    }
-    html[data-theme="light"] .bottom-nav button.active,
-    html[data-theme="light"] .bottom-nav button.active .nav-label,
-    html[data-theme="light"] .bottom-nav button.active * {
-      color: #075fae !important;
-      -webkit-text-fill-color: #075fae !important;
-      text-shadow: none !important;
-    }
-    html[data-theme="light"] .bottom-nav button.active svg,
-    html[data-theme="light"] .bottom-nav button.active svg.nav-icon {
-      stroke: #075fae !important;
-      color: #075fae !important;
-      fill: currentColor !important;
-      filter: none !important;
-    }
+    
+    
+    
+    
+    
+    
+    
 
 
 
@@ -4267,7 +3545,7 @@
       transition: background .18s ease, border-color .18s ease, color .18s ease, transform .14s ease, box-shadow .18s ease;
     }
     .leaderboard-phase-summary::-webkit-details-marker { display: none; }
-    .leaderboard-phase-summary::marker { display: none; content: ''; }
+    .leaderboard-phase-summary::marker { display: none; content: ""; }
     .leaderboard-phase-summary:hover {
       color: var(--label-1);
       background:
@@ -4306,30 +3584,10 @@
       from { opacity: 0; transform: translateY(-5px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    html[data-theme="light"] .leaderboard-phase-summary {
-      color: #5f7188;
-      background: linear-gradient(145deg, rgba(239,245,251,.98), rgba(207,220,235,.94));
-      border-color: rgba(117,145,181,.22);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.92), 0 4px 12px rgba(54,80,111,.10);
-    }
-    html[data-theme="light"] .leaderboard-phase-summary:hover {
-      color: #365c86;
-      background: linear-gradient(145deg, rgba(247,250,253,1), rgba(195,211,230,.97));
-      border-color: rgba(108,150,205,.30);
-    }
-    html[data-theme="light"] .leaderboard-phase-details[open] .leaderboard-phase-summary {
-      color: #075fae !important;
-      -webkit-text-fill-color: #075fae !important;
-      background:
-        radial-gradient(circle at 24% 18%, rgba(255,255,255,.66), transparent 34%),
-        linear-gradient(145deg, rgba(197,220,247,.96), rgba(170,198,239,.92)) !important;
-      border-color: rgba(111,166,233,.58) !important;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.82), 0 8px 18px rgba(58,116,188,.14) !important;
-    }
-    html[data-theme="light"] .leaderboard-phase-details[open] .leaderboard-phase-summary * {
-      color: #075fae !important;
-      -webkit-text-fill-color: #075fae !important;
-    }
+    
+    
+    
+    
     @media (max-width: 520px) {
       .leaderboard-phase-details { margin-top: 2px; }
       .leaderboard-phase-summary {
@@ -4342,11 +3600,7 @@
     }
 
 
-    html[data-theme="light"] .leaderboard-footnote {
-      color: #5f7188 !important;
-      -webkit-text-fill-color: #5f7188 !important;
-      opacity: 1 !important;
-    }
+    
 
 
 
@@ -4360,9 +3614,7 @@
       border-top-right-radius: 0 !important;
       border-top-color: rgba(255,255,255,.08) !important;
     }
-    html[data-theme="light"] .profile-choice-actions {
-      border-top-color: rgba(89,126,172,.12) !important;
-    }
+    
 
 
 
@@ -4400,13 +3652,7 @@
       background: rgba(255,255,255,.14) !important;
       border-color: rgba(255,255,255,.25) !important;
     }
-    html[data-theme="light"] .profile-choice-cancel {
-      background: rgba(225,235,247,.92) !important;
-      border-color: rgba(103,132,168,.24) !important;
-      color: #365c86 !important;
-      -webkit-text-fill-color: #365c86 !important;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.80) !important;
-    }
+    
 
 
 
@@ -5173,6 +4419,74 @@
       }
     }
 
+    /* ═══════════════════════════════════════════════════════════════
+       FULL-WIDTH TOP BAR — nagłówek rozciągnięty od krawędzi do krawędzi
+       Zastępuje pływającą "kapsułkę": pełna szerokość, dosunięty do góry,
+       bez bocznych marginesów i bez zaokrągleń u góry. Umieszczone na
+       końcu kaskady, aby nadpisać wcześniejsze reguły szerokości/radiusa.
+    ═══════════════════════════════════════════════════════════════ */
+    .app-header {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      transform: none !important;
+      margin: 0 !important;
+      border-radius: 0 !important;
+      /* górna krawędź dosunięta do notcha, treść poniżej safe-area */
+      padding-top: calc(var(--safe-top) + 13px) !important;
+      padding-bottom: 13px !important;
+      padding-left: calc(var(--safe-left) + 16px) !important;
+      padding-right: calc(var(--safe-right) + 16px) !important;
+      border-bottom: 1px solid var(--sep) !important;
+    }
+
+    html.is-standalone .app-header,
+    html:not(.is-standalone) .app-header {
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      transform: none !important;
+      margin: 0 !important;
+      border-radius: 0 !important;
+    }
+
+    @media (display-mode: standalone) {
+      .app-header {
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        transform: none !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        padding-top: calc(env(safe-area-inset-top, 0px) + 13px) !important;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .app-header {
+        border-radius: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-top: 0 !important;
+      }
+    }
+
+    /* treść tuż pod pełnym paskiem — paski filtrów wyrównane do jego dołu */
+    .filters-sticky {
+      top: calc(var(--safe-top) + 72px) !important;
+    }
+    html.is-standalone .filters-sticky{
+      top: calc(env(safe-area-inset-top, 0px) + 72px) !important;
+    }
+    @media (display-mode: standalone) {
+      .filters-sticky {
+        top: calc(env(safe-area-inset-top, 0px) + 72px) !important;
+      }
+    }
+
 
     /* Kafelki rozkładu punktów — zaokrąglenia zgodne z resztą aplikacji. */
     .leaderboard-category-card {
@@ -5212,112 +4526,31 @@
        Jasny motyw wcześniej przywracał position: sticky, przez co
        nagłówek wracał do układu strony i powstawała duża pusta przestrzeń.
     ═══════════════════════════════════════════════════════════════ */
-    html[data-theme="light"] .app-header {
-      position: fixed !important;
-      top: 7px !important;
-      left: 50% !important;
-      right: auto !important;
-      width: min(760px, calc(100% - 20px)) !important;
-      min-height: 64px !important;
-      margin: 0 !important;
-      transform: translateX(-50%) !important;
-      display: flex !important;
-      align-items: center !important;
-      justify-content: space-between !important;
-      visibility: visible !important;
-      opacity: 1 !important;
-      z-index: 70 !important;
-    }
+    
 
-    html[data-theme="light"] .app-header .logo {
-      display: flex !important;
-      flex: 1 1 auto !important;
-      align-items: center !important;
-      min-width: 0 !important;
-      visibility: visible !important;
-      opacity: 1 !important;
-    }
+    
 
-    html[data-theme="light"] .app-header .logo-icon,
-    html[data-theme="light"] .app-header .title-group,
-    html[data-theme="light"] .app-header .title-group h1,
-    html[data-theme="light"] .app-header .title-group small {
-      visibility: visible !important;
-      opacity: 1 !important;
-    }
+    
 
-    html[data-theme="light"] .app-header .title-group h1,
-    html[data-theme="light"] .app-header .title-group small {
-      color: var(--label-1) !important;
-      -webkit-text-fill-color: var(--label-1) !important;
-    }
+    
 
-    html[data-theme="light"] .app-header .player-row {
-      display: flex !important;
-      flex: 0 0 auto !important;
-      align-items: center !important;
-    }
+    
 
     /* Nagłówek jest fixed, więc nie zajmuje już miejsca w układzie.
        Zostawiamy tylko jeden, kontrolowany odstęp nad treścią. */
-    html[data-theme="light"] .app-content {
-      padding-top: 96px !important;
-    }
+    
 
-    html[data-theme="light"] .filters-sticky {
-      position: sticky !important;
-      top: 86px !important;
-      z-index: 20 !important;
-    }
+    
 
-    html[data-theme="light"].is-standalone .app-header {
-      top: calc(env(safe-area-inset-top, 0px) + 7px) !important;
-    }
+    
 
-    html[data-theme="light"].is-standalone .app-content {
-      padding-top: calc(96px + env(safe-area-inset-top, 0px)) !important;
-    }
+    
 
-    html[data-theme="light"].is-standalone .filters-sticky {
-      top: calc(env(safe-area-inset-top, 0px) + 86px) !important;
-    }
+    
 
-    @media (display-mode: standalone) {
-      html[data-theme="light"] .app-header {
-        top: calc(env(safe-area-inset-top, 0px) + 7px) !important;
-      }
+    
 
-      html[data-theme="light"] .app-content {
-        padding-top: calc(96px + env(safe-area-inset-top, 0px)) !important;
-      }
-
-      html[data-theme="light"] .filters-sticky {
-        top: calc(env(safe-area-inset-top, 0px) + 86px) !important;
-      }
-    }
-
-    @media (max-width: 520px) {
-      html[data-theme="light"] .app-header {
-        width: calc(100% - 14px) !important;
-        min-height: 62px !important;
-      }
-
-      html[data-theme="light"] .app-content {
-        padding-top: 90px !important;
-      }
-
-      html[data-theme="light"] .filters-sticky {
-        top: 80px !important;
-      }
-
-      html[data-theme="light"].is-standalone .app-content {
-        padding-top: calc(90px + env(safe-area-inset-top, 0px)) !important;
-      }
-
-      html[data-theme="light"].is-standalone .filters-sticky {
-        top: calc(env(safe-area-inset-top, 0px) + 80px) !important;
-      }
-    }
+    
 
 
     /* Menu filtrów: zakładki wyrównane bliżej lewej krawędzi. */
@@ -5426,20 +4659,22 @@
     /* Ostateczne wymuszenie stałego nagłówka w obu motywach,
        także po zmianie motywu bez przeładowania strony. */
     html body .app-header,
-    html[data-theme="light"] body .app-header,
     html[data-theme="dark"] body .app-header {
       position: fixed !important;
-      inset-block-start: calc(env(safe-area-inset-top, 0px) + 7px) !important;
-      inset-inline-start: 50% !important;
-      inset-inline-end: auto !important;
-      top: calc(env(safe-area-inset-top, 0px) + 7px) !important;
-      left: 50% !important;
-      right: auto !important;
+      inset-block-start: 0 !important;
+      inset-inline-start: 0 !important;
+      inset-inline-end: 0 !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      width: 100% !important;
+      max-width: 100% !important;
       margin: 0 !important;
-      transform: translate3d(-50%, 0, 0) !important;
-      -webkit-transform: translate3d(-50%, 0, 0) !important;
+      border-radius: 0 !important;
+      transform: none !important;
+      -webkit-transform: none !important;
       z-index: 1000 !important;
-      will-change: transform;
+      will-change: auto;
     }
 
     html body .app-content {
@@ -5816,19 +5051,9 @@
       min-width: 130px !important;
     }
 
-    html[data-theme="light"] .prediction-penalty,
-    html[data-theme="light"] .compare-player-penalty {
-      background:
-        linear-gradient(145deg, rgba(10,132,255,.14), rgba(10,132,255,.06)) !important;
-      border-color: rgba(10,132,255,.22) !important;
-      color: #15324d !important;
-    }
+    
 
-    html[data-theme="light"] .prediction-penalty::before,
-    html[data-theme="light"] .compare-player-penalty::before {
-      background: rgba(10,132,255,.17) !important;
-      color: #0b5fa8 !important;
-    }
+    
 
 
     /* Zakładka Mecze: taki sam podgląd zwycięzcy karnych jak w Porównaj. */
@@ -5869,17 +5094,9 @@
       flex: 0 0 auto;
     }
 
-    html[data-theme="light"] .match-penalty-badge {
-      background:
-        linear-gradient(145deg, rgba(10,132,255,.14), rgba(10,132,255,.06)) !important;
-      border-color: rgba(10,132,255,.22) !important;
-      color: #15324d !important;
-    }
+    
 
-    html[data-theme="light"] .match-penalty-badge::before {
-      background: rgba(10,132,255,.17) !important;
-      color: #0b5fa8 !important;
-    }
+    
 
 
     /* Poprawione kapsułki karnych — prostsze, lżejsze i bardziej spójne. */
@@ -5944,26 +5161,9 @@
       display: none !important;
     }
 
-    html[data-theme="light"] .prediction-penalty,
-    html[data-theme="light"] .compare-player-penalty,
-    html[data-theme="light"] .match-penalty-badge {
-      background: linear-gradient(
-        145deg,
-        rgba(66, 132, 212, .16),
-        rgba(66, 132, 212, .08)
-      ) !important;
-      border-color: rgba(66, 132, 212, .18) !important;
-      color: #23405f !important;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.45),
-        0 1px 3px rgba(35, 64, 95, .06) !important;
-    }
+    
 
-    html[data-theme="light"] .prediction-penalty::before,
-    html[data-theme="light"] .compare-player-penalty::before,
-    html[data-theme="light"] .match-penalty-badge::before {
-      color: #3a6ca0 !important;
-    }
+    
 
 
     /* ═══════════════════════════════════════════════════════════════
@@ -6281,27 +5481,9 @@
       min-width: 142px !important;
     }
 
-    html[data-theme="light"] .prediction-penalty,
-    html[data-theme="light"] .compare-player-penalty,
-    html[data-theme="light"] .match-penalty-badge {
-      background: linear-gradient(
-        145deg,
-        rgba(74, 128, 204, .15),
-        rgba(74, 128, 204, .08)
-      ) !important;
-      border-color: rgba(74, 128, 204, .16) !important;
-      color: #26415f !important;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.42),
-        0 1px 3px rgba(35, 64, 95, .05) !important;
-    }
+    
 
-    html[data-theme="light"] .prediction-penalty::before,
-    html[data-theme="light"] .compare-player-penalty::before,
-    html[data-theme="light"] .match-penalty-badge::before {
-      color: #5275a2 !important;
-      border-right-color: rgba(82, 117, 162, .20) !important;
-    }
+    
 
 
     /* Kapsułki karnych: tylko trzyliterowy skrót drużyny. */
@@ -6526,27 +5708,9 @@
       background: none !important;
     }
 
-    html[data-theme="light"] .prediction-penalty,
-    html[data-theme="light"] .compare-player-penalty,
-    html[data-theme="light"] .match-penalty-badge {
-      background: rgba(133, 160, 205, 0.34) !important;
-      border: none !important;
-      box-shadow: none !important;
-      filter: none !important;
-      text-shadow: none !important;
-      backdrop-filter: none !important;
-      -webkit-backdrop-filter: none !important;
-      color: #2c3d58 !important;
-    }
+    
 
-    html[data-theme="light"] .prediction-penalty::before,
-    html[data-theme="light"] .compare-player-penalty::before,
-    html[data-theme="light"] .match-penalty-badge::before {
-      background: none !important;
-      box-shadow: none !important;
-      filter: none !important;
-      text-shadow: none !important;
-    }
+    
 
 
     /* Zakładka Mecze — wymuszony płaski styl 2D kapsułek karnych. */
@@ -6574,18 +5738,7 @@
       text-shadow: none !important;
     }
 
-    html[data-theme="light"] .matches-view .match-penalty-badge,
-    html[data-theme="light"] .match-card .match-penalty-badge {
-      background: rgba(133, 160, 205, 0.34) !important;
-      background-image: none !important;
-      border: none !important;
-      box-shadow: none !important;
-      filter: none !important;
-      text-shadow: none !important;
-      backdrop-filter: none !important;
-      -webkit-backdrop-filter: none !important;
-      color: #2c3d58 !important;
-    }
+    
 
 
     /* Przełączniki blokad faz — po najechaniu tylko delikatne przyciemnienie,
@@ -6615,9 +5768,7 @@
       pointer-events: none;
     }
 
-    html[data-theme="light"] .phase-lock-toggle.is-off:hover {
-      background: #c5cbd6 !important;
-    }
+    
 
 
     /* Pola formularzy — bez chwilowej białej/czarnej otoczki po kliknięciu.
@@ -6657,35 +5808,14 @@
       box-shadow: none !important;
     }
 
-    html[data-theme="light"] input:focus,
-    html[data-theme="light"] input:focus-visible,
-    html[data-theme="light"] textarea:focus,
-    html[data-theme="light"] textarea:focus-visible,
-    html[data-theme="light"] select:focus,
-    html[data-theme="light"] select:focus-visible,
-    html[data-theme="light"] [contenteditable="true"]:focus,
-    html[data-theme="light"] [contenteditable="true"]:focus-visible {
-      outline: none !important;
-      box-shadow: none !important;
-      -webkit-box-shadow: none !important;
-    }
+    
 
 
     /* Light mode: górny nagłówek ma dokładnie tę samą szerokość
        co wewnętrzna zawartość aplikacji poniżej. */
-    html[data-theme="light"] body .app-header {
-      width: min(
-        var(--app-shell-max, 736px),
-        calc(100% - (var(--app-shell-gutter, 12px) * 2))
-      ) !important;
-      max-width: var(--app-shell-max, 736px) !important;
-    }
+    
 
-    @media (max-width: 520px) {
-      html[data-theme="light"] body .app-header {
-        width: calc(100% - (var(--app-shell-gutter, 12px) * 2)) !important;
-      }
-    }
+    
 
 
     /* ═══════════════════════════════════════════════════════════════
@@ -6861,91 +5991,23 @@
        LIGHT MODE — CLEAN FLAT (bez cieni, poświat i blurów)
        Zostawione: gradienty, kolory, obramowania
     ═══════════════════════════════════════════════════════════════ */
-    html[data-theme="light"] {
-      /* Wyzerowanie zmiennych cieni – zapobiega ich użyciu przez var() */
-      --shadow-sm:   none;
-      --shadow-md:   none;
-      --shadow-lg:   none;
-      --shadow-glow: none;
-      --hl:  none;
-      --hl2: none;
-    }
+    
 
     /* Usunięcie box-shadow i backdrop-filter ze wszystkich elementów light mode */
-    html[data-theme="light"] .nav-droplet,
-    html[data-theme="light"] .glass,
-    html[data-theme="light"] .glass-strong,
-    html[data-theme="light"] .match-card,
-    html[data-theme="light"] .match-card.expanded,
-    html[data-theme="light"] .filters-sticky,
-    html[data-theme="light"] .login-btn,
-    html[data-theme="light"] .players-btn,
-    html[data-theme="light"] .theme-toggle-btn,
-    html[data-theme="light"] .selection-tile,
-    html[data-theme="light"] .selection-tile:hover,
-    html[data-theme="light"] .leaderboard-position-badge,
-    html[data-theme="light"] .leaderboard-header,
-    html[data-theme="light"] .profile-avatar,
-    html[data-theme="light"] .profile-menu-btn.is-authenticated .profile-avatar,
-    html[data-theme="light"] section.bg-white,
-    html[data-theme="light"] div.bg-white,
-    html[data-theme="light"] .install-banner,
-    html[data-theme="light"] .bracket-intro,
-    html[data-theme="light"] .bracket-section,
-    html[data-theme="light"] .bracket-match,
-    html[data-theme="light"] .bracket-final-card,
-    html[data-theme="light"] .admin-match-card,
-    html[data-theme="light"] .admin-match-details,
-    html[data-theme="light"] .admin-panel-banner,
-    html[data-theme="light"] .admin-panel-banner button,
-    html[data-theme="light"] .modal,
-    html[data-theme="light"] .modal-sheet,
-    html[data-theme="light"] .players-sheet,
-    html[data-theme="light"] .auth-sheet,
-    html[data-theme="light"] .toast-bar,
-    html[data-theme="light"] .match-final-result-card,
-    html[data-theme="light"] .match-points-badge,
-    html[data-theme="light"] .compare-view .compare-match-card,
-    html[data-theme="light"] input,
-    html[data-theme="light"] select,
-    html[data-theme="light"] textarea,
-    html[data-theme="light"] .fixed.inset-0.z-50 > .relative,
-    html[data-theme="light"] .theme-toggle-btn.theme-switch {
-      box-shadow: none !important;
-      -webkit-backdrop-filter: none !important;
-      backdrop-filter: none !important;
-    }
+    
 
     /* Overlay modalu – tylko lekkie przyciemnienie, bez blura */
-    html[data-theme="light"] .fixed.inset-0.z-50 > .absolute.inset-0 {
-      -webkit-backdrop-filter: none !important;
-      backdrop-filter: none !important;
-      background: rgba(42,57,77,.18) !important;
-    }
+    
 
     /* Focus ring – jedyne dozwolone box-shadow w light mode */
-    html[data-theme="light"] input:focus,
-    html[data-theme="light"] select:focus,
-    html[data-theme="light"] textarea:focus {
-      box-shadow: 0 0 0 2px rgba(10,120,232,.32) !important;
-    }
+    
 
     /* Żadnych text-shadow w light mode */
-    html[data-theme="light"] * {
-      text-shadow: none !important;
-    }
+    
 
     /* Rozmycie tła pod nagłówkiem i bottom nav — jak w dark mode */
-    html[data-theme="light"] .app-header {
-      -webkit-backdrop-filter: blur(28px) saturate(160%) !important;
-      backdrop-filter: blur(28px) saturate(160%) !important;
-      box-shadow: none !important;
-    }
-    html[data-theme="light"] .bottom-nav {
-      -webkit-backdrop-filter: blur(28px) saturate(160%) !important;
-      backdrop-filter: blur(28px) saturate(160%) !important;
-      box-shadow: none !important;
-    }
+    
+    
 
 </style>
 
@@ -7001,31 +6063,11 @@
       box-shadow: none !important;
     }
 
-    html[data-theme="light"] .match-card.expanded,
-    html[data-theme="light"] .admin-match-card.expanded {
-      background: var(--glass-1) !important;
-      border-color: rgba(39,68,103,.11) !important;
-      box-shadow: var(--shadow-sm), var(--hl), var(--shadow-glow) !important;
-    }
+    
 
-    html[data-theme="light"] .profile-choice-shell.is-open .profile-choice-trigger,
-    html[data-theme="light"] .profile-choice-shell.is-open .profile-choice-trigger:focus,
-    html[data-theme="light"] .profile-choice-shell.is-open .profile-choice-trigger:active {
-      background: linear-gradient(145deg, rgba(255,255,255,.78), rgba(229,238,249,.62)) !important;
-      border-color: rgba(39,68,103,.11) !important;
-      color: var(--label-1) !important;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.96), 0 6px 18px rgba(60,86,117,.08) !important;
-      text-shadow: none !important;
-    }
+    
 
-    html[data-theme="light"] .compare-match-toggle[aria-expanded="true"],
-    html[data-theme="light"] .compare-match-toggle[aria-expanded="true"]:focus,
-    html[data-theme="light"] .compare-match-toggle[aria-expanded="true"]:active {
-      background: rgba(248,251,255,.78) !important;
-      border-color: rgba(96,117,145,.22) !important;
-      color: inherit !important;
-      box-shadow: none !important;
-    }
+    
   </style>
 
 
@@ -7180,58 +6222,13 @@
     }
 
     /* Jasny motyw */
-    html[data-theme="light"] .match-card.expanded,
-    html[data-theme="light"] .admin-match-card.expanded {
-      background: var(--glass-1) !important;
-      border-color: rgba(39,68,103,.11) !important;
-      box-shadow: var(--shadow-sm), var(--hl), var(--shadow-glow) !important;
-    }
-    html[data-theme="light"] .profile-choice-shell.is-open {
-      border-color: rgba(39,68,103,.11) !important;
-      background: linear-gradient(145deg, rgba(255,255,255,.78), rgba(229,238,249,.62)) !important;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.96), 0 6px 18px rgba(60,86,117,.08) !important;
-    }
-    html[data-theme="light"] .profile-choice-shell.is-open .profile-choice-trigger,
-    html[data-theme="light"] .profile-choice-shell.is-open .profile-choice-trigger:hover,
-    html[data-theme="light"] .profile-choice-shell.is-open .profile-choice-trigger:focus,
-    html[data-theme="light"] .profile-choice-shell.is-open .profile-choice-trigger:active,
-    html[data-theme="light"] .profile-choice-shell.is-open .profile-choice-actions {
-      background: transparent !important;
-      border: 0 !important;
-      box-shadow: none !important;
-      color: var(--label-1) !important;
-    }
-    html[data-theme="light"] .leaderboard-phase-details {
-      border-color: rgba(117,145,181,.22) !important;
-      background: linear-gradient(145deg, rgba(239,245,251,.98), rgba(207,220,235,.94)) !important;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.92), 0 4px 12px rgba(54,80,111,.10) !important;
-    }
-    html[data-theme="light"] .leaderboard-phase-details > .leaderboard-phase-summary,
-    html[data-theme="light"] .leaderboard-phase-details > .leaderboard-phase-summary:hover,
-    html[data-theme="light"] .leaderboard-phase-details > .leaderboard-phase-summary:focus,
-    html[data-theme="light"] .leaderboard-phase-details > .leaderboard-phase-summary:active,
-    html[data-theme="light"] .leaderboard-phase-details[open] > .leaderboard-phase-summary,
-    html[data-theme="light"] .leaderboard-phase-details[open] > .leaderboard-phase-summary:hover,
-    html[data-theme="light"] .leaderboard-phase-details[open] > .leaderboard-phase-summary:focus,
-    html[data-theme="light"] .leaderboard-phase-details[open] > .leaderboard-phase-summary:active {
-      background: transparent !important;
-      border: 0 !important;
-      box-shadow: none !important;
-      color: #5f7188 !important;
-      -webkit-text-fill-color: #5f7188 !important;
-    }
-    html[data-theme="light"] .leaderboard-phase-details[open] > .leaderboard-phase-summary * {
-      color: #5f7188 !important;
-      -webkit-text-fill-color: #5f7188 !important;
-    }
-    html[data-theme="light"] .compare-match-toggle[aria-expanded="true"],
-    html[data-theme="light"] .compare-match-toggle[aria-expanded="true"]:hover,
-    html[data-theme="light"] .compare-match-toggle[aria-expanded="true"]:focus,
-    html[data-theme="light"] .compare-match-toggle[aria-expanded="true"]:active {
-      border-color: transparent !important;
-      background: transparent !important;
-      box-shadow: none !important;
-    }
+    
+    
+    
+    
+    
+    
+    
   </style>
 
 
@@ -7267,11 +6264,7 @@
       outline: 0 !important;
     }
 
-    html[data-theme="light"] body .match-card,
-    html[data-theme="light"] body .match-card.expanded {
-      background: var(--glass-1) !important;
-      border-color: rgba(39,68,103,.11) !important;
-    }
+    
   </style>
 
 
@@ -7281,151 +6274,46 @@
       granatowo-grafitowej palety co zakładka „Mecze”. Kolor pozostaje
       akcentem zaznaczeń i komunikatów, a nie tłem całych banerów.
     */
-    html:not([data-theme="light"]) {
-      --tab-match-surface:
-        radial-gradient(circle at 18% -18%, rgba(255,255,255,.145), transparent 43%),
-        linear-gradient(145deg, rgba(27,35,52,.76), rgba(12,17,28,.62));
-      --tab-match-surface-soft:
-        radial-gradient(circle at 18% -22%, rgba(255,255,255,.105), transparent 44%),
-        linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.025));
-      --tab-match-surface-inner: rgba(255,255,255,.045);
-      --tab-match-shadow:
-        inset 0 1px 0 rgba(255,255,255,.115),
-        0 10px 30px rgba(0,0,0,.20),
-        0 0 0 1px rgba(255,255,255,.018);
-    }
+    
 
     /* Główne bannery i podsumowania zakładek. */
-    html:not([data-theme="light"]) .leaderboard-header,
-    html:not([data-theme="light"]) .my-predictions-banner,
-    html:not([data-theme="light"]) .specials-score-banner,
-    html:not([data-theme="light"]) .admin-panel-banner,
-    html:not([data-theme="light"]) .bracket-intro,
-    html:not([data-theme="light"]) .bracket-section {
-      background: var(--tab-match-surface) !important;
-      background-color: transparent !important;
-      color: var(--label-1) !important;
-      box-shadow: var(--tab-match-shadow) !important;
-      -webkit-backdrop-filter: blur(26px) saturate(165%) !important;
-      backdrop-filter: blur(26px) saturate(165%) !important;
-    }
+    
 
-    html:not([data-theme="light"]) .leaderboard-header *,
-    html:not([data-theme="light"]) .my-predictions-banner *,
-    html:not([data-theme="light"]) .specials-score-banner *,
-    html:not([data-theme="light"]) .admin-panel-banner *,
-    html:not([data-theme="light"]) .bracket-intro * {
-      color: var(--label-1) !important;
-    }
+    
 
-    html:not([data-theme="light"]) .leaderboard-header p,
-    html:not([data-theme="light"]) .my-predictions-banner [class*="text-stone-300"],
-    html:not([data-theme="light"]) .specials-score-banner [class*="text-[#a0b4e8]"],
-    html:not([data-theme="light"]) .specials-score-banner [class*="text-[#c8d4f4]"],
-    html:not([data-theme="light"]) .bracket-intro p {
-      color: var(--label-2) !important;
-      -webkit-text-fill-color: var(--label-2) !important;
-    }
+    
 
     /* Zwykłe karty we wszystkich widokach mają tę samą powierzchnię co mecze. */
-    html:not([data-theme="light"]) .leaderboard-card,
-    html:not([data-theme="light"]) .compare-match-card,
-    html:not([data-theme="light"]) .table-card,
-    html:not([data-theme="light"]) .admin-tabs-shell,
-    html:not([data-theme="light"]) .admin-phase-filters,
-    html:not([data-theme="light"]) .admin-match-card,
-    html:not([data-theme="light"]) .specials-view > section,
-    html:not([data-theme="light"]) .allspecials-view > .table-card {
-      background: var(--tab-match-surface-soft) !important;
-      background-color: transparent !important;
-      box-shadow: var(--tab-match-shadow) !important;
-      -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
-      backdrop-filter: blur(24px) saturate(160%) !important;
-    }
+    
 
     /* Filtry w porównaniu i panelu administratora odpowiadają filtrom z Meczy. */
-    html:not([data-theme="light"]) .compare-view .filters-sticky,
-    html:not([data-theme="light"]) .admin-phase-filters,
-    html:not([data-theme="light"]) .phase-filter-panel {
-      background:
-        radial-gradient(circle at 18% -20%, rgba(255,255,255,.16), transparent 42%),
-        linear-gradient(145deg, rgba(28,36,54,.74), rgba(14,19,31,.60)) !important;
-      box-shadow: var(--shadow-md), var(--hl2), 0 0 0 1px rgba(0,0,0,.10) !important;
-    }
+    
 
     /* Ranking: usuń wielobarwne tła kategorii, pozostawiając czytelne dane. */
-    html:not([data-theme="light"]) .leaderboard-category-card {
-      background: var(--tab-match-surface-inner) !important;
-      background-image: none !important;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.07) !important;
-    }
+    
 
-    html:not([data-theme="light"]) .leaderboard-phase-details {
-      background: rgba(255,255,255,.035) !important;
-      background-image: none !important;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.065) !important;
-    }
+    
 
     /* Porównanie: neutralne tło karty i rozwijanej listy. */
-    html:not([data-theme="light"]) .compare-match-card {
-      background: var(--tab-match-surface-soft) !important;
-    }
-    html:not([data-theme="light"]) .compare-match-toggle,
-    html:not([data-theme="light"]) .compare-match-toggle[aria-expanded="true"] {
-      background: rgba(255,255,255,.032) !important;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.045) !important;
-    }
-    html:not([data-theme="light"]) .compare-player-list {
-      background: transparent !important;
-    }
+    
+    
+    
 
     /* Tabele i ich nagłówki nie tworzą jaśniejszych, obcych pasów. */
-    html:not([data-theme="light"]) .table-card > div:first-child,
-    html:not([data-theme="light"]) .table-card thead tr,
-    html:not([data-theme="light"]) .specials-view thead tr,
-    html:not([data-theme="light"]) .allspecials-view thead tr {
-      background: rgba(255,255,255,.035) !important;
-      background-image: none !important;
-    }
+    
 
     /* Drabinka: karty meczów są neutralne, zgodne z kartami w Mecze. */
-    html:not([data-theme="light"]) .bracket-match,
-    html:not([data-theme="light"]) .bracket-final-card {
-      background: var(--tab-match-surface-soft) !important;
-      background-color: transparent !important;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.075), 0 7px 20px rgba(0,0,0,.14) !important;
-    }
-    html:not([data-theme="light"]) .bracket-match-head {
-      background: rgba(255,255,255,.025) !important;
-    }
-    html:not([data-theme="light"]) .bracket-team-row.is-winner {
-      background: rgba(112,184,255,.095) !important;
-    }
-    html:not([data-theme="light"]) .bracket-champion {
-      background: rgba(255,255,255,.05) !important;
-      color: var(--label-1) !important;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.07) !important;
-    }
+    
+    
+    
+    
 
     /* Panel admina: wnętrza sekcji pozostają neutralne; semantyczne komunikaty
        zachowują własny żółty/czerwony/zielony akcent. */
-    html:not([data-theme="light"]) .admin-panel .bg-white:not(.app-note),
-    html:not([data-theme="light"]) .admin-panel .bg-stone-50:not(.app-note),
-    html:not([data-theme="light"]) .admin-panel .bg-stone-50\/50:not(.app-note) {
-      background: var(--tab-match-surface-soft) !important;
-      background-color: transparent !important;
-    }
+    
 
     /* Brak efektu zmiany tła podczas najechania na nieinteraktywne powierzchnie. */
-    html:not([data-theme="light"]) .leaderboard-header:hover,
-    html:not([data-theme="light"]) .my-predictions-banner:hover,
-    html:not([data-theme="light"]) .specials-score-banner:hover,
-    html:not([data-theme="light"]) .admin-panel-banner:hover,
-    html:not([data-theme="light"]) .bracket-intro:hover,
-    html:not([data-theme="light"]) .bracket-section:hover {
-      background: var(--tab-match-surface) !important;
-      transform: none !important;
-    }
+    
   </style>
 
 
@@ -7436,9 +6324,7 @@
       i rozmycie backdrop-filter, usuwamy natomiast cień, poświatę,
       wewnętrzne refleksy oraz unoszenie dające efekt 3D.
     */
-    html:not([data-theme="light"]) {
-      --tab-match-shadow: none !important;
-    }
+    
 
     html body :is(
       .glass,
@@ -7525,15 +6411,7 @@
 
     /* Jasny motyw dodawał osobną warstwę błysku na szkle — wyłączamy ją,
        pozostawiając właściwy gradient powierzchni i rozmycie tła. */
-    html[data-theme="light"] body :is(
-      .glass,
-      .glass-strong,
-      .match-card,
-      .filters-sticky,
-      .app-header,
-      .bottom-nav,
-      .admin-match-card
-    ):not(#__flat_background_banner_light_override__)::before,
+    
     html body .app-note:not(#__flat_background_banner_note_override__)::after {
       content: none !important;
       display: none !important;
@@ -7667,105 +6545,32 @@
 
   <style id="light-specials-lock-note-fix">
     /* Light mode — komunikat blokady typów specjalnych nie może być ciemnym paskiem. */
-    html[data-theme="light"] .specials-view .app-note.app-note--danger {
-      background: linear-gradient(145deg, rgba(255,250,250,.96), rgba(246,241,243,.90)) !important;
-      border-color: rgba(255,105,97,.24) !important;
-      color: #9a4a47 !important;
-      --note-color: #9a4a47 !important;
-      --note-border: rgba(255,105,97,.24) !important;
-      box-shadow: none !important;
-    }
+    
 
-    html[data-theme="light"] .specials-view .app-note.app-note--danger:hover,
-    html[data-theme="light"] .specials-view .app-note.app-note--danger:active,
-    html[data-theme="light"] .specials-view .app-note.app-note--danger:focus,
-    html[data-theme="light"] .specials-view .app-note.app-note--danger:focus-visible,
-    html[data-theme="light"] .specials-view .app-note.app-note--danger:focus-within {
-      background: linear-gradient(145deg, rgba(255,250,250,.96), rgba(246,241,243,.90)) !important;
-      border-color: rgba(255,105,97,.24) !important;
-      color: #9a4a47 !important;
-      --note-color: #9a4a47 !important;
-      --note-border: rgba(255,105,97,.24) !important;
-      box-shadow: none !important;
-    }
+    
 
-    html[data-theme="light"] .specials-view .app-note.app-note--danger span,
-    html[data-theme="light"] .specials-view .app-note.app-note--danger p,
-    html[data-theme="light"] .specials-view .app-note.app-note--danger strong,
-    html[data-theme="light"] .specials-view .app-note.app-note--danger em,
-    html[data-theme="light"] .specials-view .app-note.app-note--danger svg {
-      color: #9a4a47 !important;
-      stroke: currentColor !important;
-      -webkit-text-fill-color: #9a4a47 !important;
-    }
+    
 
-    html[data-theme="light"] .specials-view .app-note.app-note--danger .text-amber-400 {
-      color: #d88937 !important;
-    }
+    
   </style>
 
   <style id="light-mode-static-info-banners">
     /* Light mode — zwykłe banery informacyjne są całkowicie statyczne.
        Banery zawierające akcje zachowują klikalne przyciski. */
-    html[data-theme="light"] body .app-note:not(.app-note--with-actions) {
-      pointer-events: none !important;
-      cursor: default !important;
-      transition: none !important;
-      animation: none !important;
-      transform: none !important;
-      filter: none !important;
-      opacity: 1 !important;
-      -webkit-tap-highlight-color: transparent !important;
-    }
+    
 
-    html[data-theme="light"] body .app-note:not(.app-note--with-actions):hover,
-    html[data-theme="light"] body .app-note:not(.app-note--with-actions):active,
-    html[data-theme="light"] body .app-note:not(.app-note--with-actions):focus,
-    html[data-theme="light"] body .app-note:not(.app-note--with-actions):focus-visible,
-    html[data-theme="light"] body .app-note:not(.app-note--with-actions):focus-within {
-      cursor: default !important;
-      transition: none !important;
-      animation: none !important;
-      transform: none !important;
-      filter: none !important;
-      opacity: 1 !important;
-      outline: none !important;
-      box-shadow: none !important;
-      -webkit-box-shadow: none !important;
-      text-shadow: none !important;
-    }
+    
 
-    html[data-theme="light"] body .app-note:not(.app-note--with-actions)::before,
-    html[data-theme="light"] body .app-note:not(.app-note--with-actions)::after {
-      pointer-events: none !important;
-      transition: none !important;
-      animation: none !important;
-      transform: none !important;
-      filter: none !important;
-    }
+    
   </style>
 
   <style id="light-mode-background-darken-fix">
     /* Light mode — delikatnie przyciemnione tło całego ekranu. */
-    html[data-theme="light"] {
-      --bg-0: #f2f2f7;
-      --app-screen-background:
-        radial-gradient(ellipse 100% 58% at 50% -13%, rgba(74,166,255,.18), transparent 60%),
-        radial-gradient(ellipse 68% 48% at -8% 70%, rgba(67,211,166,.09), transparent 67%),
-        radial-gradient(ellipse 70% 48% at 108% 78%, rgba(172,116,238,.10), transparent 66%),
-        linear-gradient(180deg, #f2f2f7 0%, #f5f5fa 48%, #efeff4 100%);
-      background-color: #f2f2f7 !important;
-    }
+    
 
-    html[data-theme="light"],
-    html[data-theme="light"] body {
-      background-color: #f2f2f7 !important;
-    }
+    
 
-    html[data-theme="light"] body::before {
-      background-color: #f2f2f7 !important;
-      background-image: none !important;
-    }
+    
   </style>
 
 
@@ -7794,17 +6599,9 @@
       box-shadow: none !important;
     }
 
-    html[data-theme="light"] .compare-view .compare-match-toggle[aria-expanded="true"],
-    html[data-theme="light"] .compare-view .compare-match-toggle[aria-expanded="true"]:hover,
-    html[data-theme="light"] .compare-view .compare-match-toggle[aria-expanded="true"]:focus,
-    html[data-theme="light"] .compare-view .compare-match-toggle[aria-expanded="true"]:active {
-      border-color: rgba(96,117,145,.22) !important;
-      background: rgba(248,251,255,.78) !important;
-    }
+    
 
-    html[data-theme="light"] .compare-view .compare-match-toggle[aria-expanded="true"] + .compare-player-list {
-      border-top: 1px solid rgba(96,117,145,.18) !important;
-    }
+    
   </style>
 
   <style id="light-mode-unified-palette">
@@ -7819,615 +6616,170 @@
      */
 
     /* ── Tokeny iOS 26 (light) ──────────────────────────────────── */
-    html[data-theme="light"] {
-      color-scheme: light;
-
-      /* System Backgrounds */
-      --bg-0: #f2f2f7;
-      --bg-1: rgba(255,255,255,.80);
-      --bg-2: rgba(242,242,247,.85);
-      --bg-3: rgba(232,232,240,.90);
-      --bg-4: rgba(220,220,230,.94);
-
-      /* Liquid Glass surfaces — semi-transparentne, blur robi resztę */
-      --glass-1: linear-gradient(160deg, rgba(255,255,255,.90) 0%, rgba(245,245,250,.80) 100%);
-      --glass-2: linear-gradient(160deg, rgba(255,255,255,.94) 0%, rgba(245,245,250,.86) 100%);
-      --glass-3: linear-gradient(160deg, rgba(255,255,255,.97) 0%, rgba(242,242,247,.90) 100%);
-      --glass-4: linear-gradient(160deg, rgba(255,255,255,1)   0%, rgba(240,240,248,.94) 100%);
-
-      /* Borders — iOS separator */
-      --border-1: rgba(60,60,67,.12);
-      --border-2: rgba(60,60,67,.18);
-      --border-3: rgba(60,60,67,.28);
-      --hl:  inset 0 1px 0 rgba(255,255,255,.80), inset 0 -1px 0 rgba(0,0,0,.04);
-      --hl2: inset 0 1px 0 rgba(255,255,255,.90), inset 0 -1px 0 rgba(0,0,0,.06);
-      --sep: rgba(60,60,67,.18);
-
-      /* Labels — iOS 26 light */
-      --label-1: rgba(0,0,0,.88);
-      --label-2: rgba(60,60,67,.60);
-      --label-3: rgba(60,60,67,.30);
-      --label-4: rgba(60,60,67,.16);
-
-      /* Accents — iOS 26 light */
-      --accent:        #007AFF;
-      --accent-strong: #0062CC;
-      --accent-green:  #34C759;
-      --accent-red:    #FF3B30;
-      --accent-orange: #FF9500;
-      --accent-yellow: #FFCC00;
-      --accent-purple: #AF52DE;
-      --gold:          #FF9500;
-
-      /* Shadows — subtelne, jasne */
-      --shadow-sm:   0 4px 16px rgba(0,0,0,.08), 0 1px 4px rgba(0,0,0,.05);
-      --shadow-md:   0 8px 28px rgba(0,0,0,.10), 0 2px 8px rgba(0,0,0,.06);
-      --shadow-lg:   0 16px 48px rgba(0,0,0,.14), 0 4px 12px rgba(0,0,0,.08);
-      --shadow-glow: inset 0 1px 0 rgba(255,255,255,.80);
-    }
+    
 
     /* ── Tło aplikacji — jak dark mode, tylko jasne blamy ──────── */
-    html[data-theme="light"],
-    html[data-theme="light"] body {
-      background-color: #f2f2f7 !important;
-      color: rgba(0,0,0,.88) !important;
-    }
-    html[data-theme="light"] body {
-      background:
-        radial-gradient(ellipse 80% 30%  at 50%   0%,  rgba(0,122,255,.06)   0%, transparent 65%),
-        radial-gradient(ellipse 50% 25%  at 10% 100%,  rgba(52,199,89,.04)   0%, transparent 60%),
-        radial-gradient(ellipse 50% 25%  at 90% 100%,  rgba(88,86,214,.03)   0%, transparent 60%),
-        #f2f2f7 !important;
-      background-attachment: fixed !important;
-    }
-    html[data-theme="light"] body::before {
-      display: none !important;
-    }
-    html[data-theme="light"] .pitch-bg::before,
-    html[data-theme="light"] .pitch-bg::after { display: none !important; }
+    
+    
+    
+    
 
     /* ── Nagłówek — floating glass, jak dark mode ───────────────── */
-    html[data-theme="light"] .app-header {
-      background:
-        radial-gradient(circle at 20% -20%, rgba(255,255,255,.95), transparent 42%),
-        linear-gradient(145deg, rgba(255,255,255,.84), rgba(242,242,247,.74)) !important;
-      border: 1px solid rgba(60,60,67,.14) !important;
-      -webkit-backdrop-filter: blur(34px) saturate(190%) !important;
-      backdrop-filter: blur(34px) saturate(190%) !important;
-      box-shadow: 0 8px 24px rgba(0,0,0,.08), var(--hl) !important;
-      color: rgba(0,0,0,.88) !important;
-    }
-    html[data-theme="light"] .app-header .title-group h1 {
-      color: rgba(0,0,0,.88) !important;
-    }
+    
+    
 
     /* ── Przyciski nagłówka ─────────────────────────────────────── */
-    html[data-theme="light"] .login-btn,
-    html[data-theme="light"] .players-btn {
-      background:
-        radial-gradient(circle at 25% 0%, rgba(255,255,255,.80), transparent 44%),
-        rgba(120,120,128,.12) !important;
-      border: 1px solid rgba(60,60,67,.16) !important;
-      -webkit-backdrop-filter: blur(18px) saturate(160%) !important;
-      backdrop-filter: blur(18px) saturate(160%) !important;
-      box-shadow: var(--hl) !important;
-      color: rgba(0,0,0,.88) !important;
-    }
-    html[data-theme="light"] .login-btn:hover,
-    html[data-theme="light"] .players-btn:hover {
-      background:
-        radial-gradient(circle at 25% 0%, rgba(255,255,255,.90), transparent 44%),
-        rgba(120,120,128,.18) !important;
-    }
+    
+    
 
     /* ── Dolna nawigacja — floating glass, jak dark mode ───────── */
-    html[data-theme="light"] .bottom-nav {
-      background:
-        radial-gradient(circle at 20% -30%, rgba(255,255,255,.92), transparent 44%),
-        linear-gradient(145deg, rgba(255,255,255,.82), rgba(242,242,247,.72)) !important;
-      border: 1px solid rgba(60,60,67,.14) !important;
-      -webkit-backdrop-filter: blur(34px) saturate(190%) !important;
-      backdrop-filter: blur(34px) saturate(190%) !important;
-      box-shadow: 0 8px 24px rgba(0,0,0,.08), var(--hl) !important;
-    }
-    html[data-theme="light"] .bottom-nav button {
-      color: rgba(60,60,67,.50) !important;
-    }
-    html[data-theme="light"] .bottom-nav button.active {
-      color: #007AFF !important;
-    }
-    html[data-theme="light"] .bottom-nav button.active svg {
-      stroke: #007AFF !important;
-    }
-    html[data-theme="light"] .nav-droplet,
-    html[data-theme="light"] .nav-droplet.dragging {
-      background: rgba(0,122,255,.12) !important;
-      border: 1px solid rgba(0,122,255,.26) !important;
-      box-shadow: none !important;
-    }
+    
+    
+    
+    
+    
 
     /* ── Glass — karty, sekcje, panele ─────────────────────────── */
-    html[data-theme="light"] .glass,
-    html[data-theme="light"] .match-card,
-    html[data-theme="light"] body .match-card,
-    html[data-theme="light"] section.bg-white,
-    html[data-theme="light"] div.bg-white,
-    html[data-theme="light"] .install-banner,
-    html[data-theme="light"] .leaderboard-header,
-    html[data-theme="light"] .bracket-intro,
-    html[data-theme="light"] .bracket-section,
-    html[data-theme="light"] .admin-match-card,
-    html[data-theme="light"] .bracket-match,
-    html[data-theme="light"] .bracket-final-card {
-      background: var(--glass-1) !important;
-      border: 1px solid rgba(60,60,67,.12) !important;
-      -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
-      backdrop-filter: blur(20px) saturate(160%) !important;
-      box-shadow: var(--shadow-sm), var(--hl) !important;
-      color: rgba(0,0,0,.88) !important;
-    }
-    html[data-theme="light"] .glass-strong,
-    html[data-theme="light"] .match-card.expanded {
-      background: var(--glass-2) !important;
-      border: 1px solid rgba(60,60,67,.16) !important;
-      -webkit-backdrop-filter: blur(26px) saturate(175%) !important;
-      backdrop-filter: blur(26px) saturate(175%) !important;
-      box-shadow: var(--shadow-md), var(--hl2) !important;
-    }
+    
+    
 
     /* ── Panel filtrów ─────────────────────────────────────────── */
-    html[data-theme="light"] .filters-sticky {
-      background:
-        radial-gradient(circle at 18% -20%, rgba(255,255,255,.90), transparent 42%),
-        linear-gradient(145deg, rgba(255,255,255,.82), rgba(242,242,247,.74)) !important;
-      border: 1px solid rgba(60,60,67,.14) !important;
-      -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
-      backdrop-filter: blur(28px) saturate(180%) !important;
-      box-shadow: var(--shadow-md), var(--hl2) !important;
-    }
+    
 
     /* ── Kafelki (selection-tile) ──────────────────────────────── */
-    html[data-theme="light"] .selection-tile {
-      background: rgba(120,120,128,.12) !important;
-      border: 1px solid rgba(60,60,67,.10) !important;
-      box-shadow: none !important;
-      color: rgba(60,60,67,.70) !important;
-    }
-    html[data-theme="light"] .selection-tile:hover {
-      background: rgba(120,120,128,.18) !important;
-      color: rgba(0,0,0,.88) !important;
-    }
-    html[data-theme="light"] .selection-tile.is-selected,
-    html[data-theme="light"] .selection-tile.is-selected:hover {
-      background: #007AFF !important;
-      border-color: rgba(0,122,255,.50) !important;
-      color: #ffffff !important;
-      text-shadow: none !important;
-      box-shadow: 0 2px 8px rgba(0,122,255,.24) !important;
-    }
+    
+    
+    
 
     /* ── Inputy ────────────────────────────────────────────────── */
-    html[data-theme="light"] input,
-    html[data-theme="light"] select,
-    html[data-theme="light"] textarea {
-      background: rgba(118,118,128,.12) !important;
-      border: 1px solid rgba(60,60,67,.14) !important;
-      box-shadow: none !important;
-      color: rgba(0,0,0,.88) !important;
-    }
-    html[data-theme="light"] input::placeholder,
-    html[data-theme="light"] textarea::placeholder {
-      color: rgba(60,60,67,.40) !important;
-    }
-    html[data-theme="light"] input:focus,
-    html[data-theme="light"] select:focus,
-    html[data-theme="light"] textarea:focus {
-      background: rgba(255,255,255,.90) !important;
-      border-color: #007AFF !important;
-      box-shadow: 0 0 0 3px rgba(0,122,255,.16) !important;
-    }
-    html[data-theme="light"] select option {
-      background: #ffffff !important;
-      color: rgba(0,0,0,.88) !important;
-    }
+    
+    
+    
+    
 
     /* ── Modał ──────────────────────────────────────────────────── */
-    html[data-theme="light"] .fixed.inset-0.z-50 > .absolute.inset-0 {
-      background: rgba(0,0,0,.20) !important;
-      -webkit-backdrop-filter: blur(12px) saturate(140%) !important;
-      backdrop-filter: blur(12px) saturate(140%) !important;
-    }
-    html[data-theme="light"] .fixed.inset-0.z-50 > .relative {
-      background:
-        radial-gradient(circle at 16% -10%, rgba(255,255,255,.96), transparent 42%),
-        linear-gradient(145deg, rgba(255,255,255,.92), rgba(242,242,247,.86)) !important;
-      border: 1px solid rgba(60,60,67,.14) !important;
-      -webkit-backdrop-filter: blur(34px) saturate(190%) !important;
-      backdrop-filter: blur(34px) saturate(190%) !important;
-      box-shadow: var(--shadow-lg), var(--hl) !important;
-      color: rgba(0,0,0,.88) !important;
-    }
-    html[data-theme="light"] .fixed.inset-0.z-50 > .relative > div:first-child {
-      background: rgba(120,120,128,.08) !important;
-      border-bottom: 1px solid rgba(60,60,67,.12) !important;
-    }
+    
+    
+    
 
     /* ── Toast ──────────────────────────────────────────────────── */
-    html[data-theme="light"] .toast-bar {
-      background:
-        radial-gradient(circle at 20% -20%, rgba(255,255,255,.92), transparent 42%),
-        linear-gradient(145deg, rgba(255,255,255,.86), rgba(242,242,247,.78)) !important;
-      border: 1px solid rgba(60,60,67,.14) !important;
-      -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
-      backdrop-filter: blur(28px) saturate(180%) !important;
-      box-shadow: var(--shadow-md), var(--hl) !important;
-      color: rgba(0,0,0,.88) !important;
-    }
+    
 
     /* ── Tła pomocnicze ────────────────────────────────────────── */
-    html[data-theme="light"] .bg-stone-50,
-    html[data-theme="light"] .bg-stone-50\/50 {
-      background: rgba(120,120,128,.08) !important;
-    }
-    html[data-theme="light"] .bg-stone-100 {
-      background: rgba(120,120,128,.14) !important;
-    }
-    html[data-theme="light"] .admin-match-details {
-      background: rgba(120,120,128,.08) !important;
-      border-top: 1px solid rgba(60,60,67,.10) !important;
-      box-shadow: none !important;
-    }
+    
+    
+    
 
     /* ── Tła kontekstowe (info/sukces/błąd/ostrzeżenie) ─────────── */
-    html[data-theme="light"] .bg-blue-50,
-    html[data-theme="light"] [class*="bg-sky-"],
-    html[data-theme="light"] [class*="bg-blue-"] {
-      background: rgba(0,122,255,.08) !important;
-    }
-    html[data-theme="light"] .bg-emerald-50,
-    html[data-theme="light"] .bg-\[#e6f4ec\],
-    html[data-theme="light"] .bg-\[#e8f4ee\] {
-      background: rgba(52,199,89,.10) !important;
-    }
-    html[data-theme="light"] .bg-amber-50,
-    html[data-theme="light"] .bg-amber-100,
-    html[data-theme="light"] [class*="bg-amber-50"],
-    html[data-theme="light"] [class*="bg-amber-100"] {
-      background: rgba(255,149,0,.10) !important;
-    }
-    html[data-theme="light"] .bg-red-50 {
-      background: rgba(255,59,48,.08) !important;
-    }
+    
+    
+    
+    
 
     /* ── Tabele ─────────────────────────────────────────────────── */
-    html[data-theme="light"] th { color: rgba(60,60,67,.60) !important; }
-    html[data-theme="light"] td { color: rgba(0,0,0,.88) !important; }
-    html[data-theme="light"] tr:hover {
-      background: rgba(0,122,255,.04) !important;
-    }
-    html[data-theme="light"] .specials-view .table-card,
-    html[data-theme="light"] .allspecials-view .table-card {
-      background: var(--glass-1) !important;
-      border-color: rgba(60,60,67,.12) !important;
-    }
-    html[data-theme="light"] .allspecials-view thead tr,
-    html[data-theme="light"] .specials-view thead tr {
-      background: rgba(120,120,128,.10) !important;
-    }
-    html[data-theme="light"] .allspecials-view tbody tr:nth-child(even) {
-      background: rgba(120,120,128,.05) !important;
-    }
-    html[data-theme="light"] .allspecials-view tbody tr:hover {
-      background: rgba(0,122,255,.06) !important;
-    }
+    
+    
+    
+    
+    
+    
+    
 
     /* ── Odznaki punktów ────────────────────────────────────────── */
-    html[data-theme="light"] .match-points-badge.exact {
-      background: rgba(52,199,89,.14) !important;
-      border-color: rgba(52,199,89,.34) !important;
-      color: #1a8c3a !important;
-    }
-    html[data-theme="light"] .match-points-badge.partial {
-      background: rgba(255,149,0,.14) !important;
-      border-color: rgba(255,149,0,.32) !important;
-      color: #c47200 !important;
-    }
-    html[data-theme="light"] .match-points-badge.miss {
-      background: rgba(255,59,48,.12) !important;
-      border-color: rgba(255,59,48,.28) !important;
-      color: #cc2018 !important;
-    }
-    html[data-theme="light"] .rank-stat-exact  { color: #1a8c3a !important; }
-    html[data-theme="light"] .rank-stat-partial { color: #c47200 !important; }
-    html[data-theme="light"] .rank-stat-miss    { color: #cc2018 !important; }
+    
+    
+    
+    
+    
+    
 
     /* ── Wiersze typów graczy ───────────────────────────────────── */
-    html[data-theme="light"] .prediction-row-empty,
-    html[data-theme="light"] .prediction-row-pending {
-      background: rgba(120,120,128,.08) !important;
-      border-color: rgba(60,60,67,.08) !important;
-    }
+    
 
     /* ── Typy specjalne — statusy ───────────────────────────────── */
-    html[data-theme="light"] .all-special-status-correct {
-      color: #1a8c3a !important;
-      background: rgba(52,199,89,.14) !important;
-    }
-    html[data-theme="light"] .all-special-status-wrong {
-      color: #cc2018 !important;
-      background: rgba(255,59,48,.12) !important;
-    }
-    html[data-theme="light"] .all-special-status-neutral {
-      color: rgba(60,60,67,.70) !important;
-      background: rgba(120,120,128,.12) !important;
-    }
-    html[data-theme="light"] .specials-view .selection-tile.is-correct,
-    html[data-theme="light"] .specials-view .selection-tile.is-correct:hover {
-      background: rgba(52,199,89,.14) !important;
-      border-color: rgba(52,199,89,.32) !important;
-      color: #1a8c3a !important;
-    }
-    html[data-theme="light"] .specials-view .selection-tile.is-wrong,
-    html[data-theme="light"] .specials-view .selection-tile.is-wrong:hover {
-      background: rgba(255,59,48,.12) !important;
-      border-color: rgba(255,59,48,.26) !important;
-      color: #cc2018 !important;
-    }
+    
+    
+    
+    
+    
 
     /* ── Admin ──────────────────────────────────────────────────── */
-    html[data-theme="light"] .admin-panel-banner {
-      background: rgba(120,120,128,.10) !important;
-      border: 1px solid rgba(60,60,67,.14) !important;
-      color: rgba(0,0,0,.88) !important;
-      box-shadow: none !important;
-    }
-    html[data-theme="light"] .admin-panel-banner * {
-      color: rgba(0,0,0,.88) !important;
-    }
-    html[data-theme="light"] .admin-panel-banner button {
-      background: rgba(255,255,255,.60) !important;
-      border: 1px solid rgba(60,60,67,.16) !important;
-      box-shadow: none !important;
-    }
-    html[data-theme="light"] .admin-match-details .admin-score-team-name,
-    html[data-theme="light"] .admin-match-details .admin-score-team,
-    html[data-theme="light"] .admin-match-details .admin-score-side,
-    html[data-theme="light"] .admin-match-details .admin-score-separator,
-    html[data-theme="light"] .admin-match-details .score-value-input {
-      color: rgba(0,0,0,.88) !important;
-    }
+    
+    
+    
+    
 
     /* ── Karta wyniku końcowego ─────────────────────────────────── */
-    html[data-theme="light"] .match-final-result-card {
-      background: rgba(120,120,128,.10) !important;
-      border: 1px solid rgba(60,60,67,.14) !important;
-      box-shadow: none !important;
-      color: rgba(0,0,0,.88) !important;
-    }
-    html[data-theme="light"] .match-final-result-card > div,
-    html[data-theme="light"] .match-final-result-card span,
-    html[data-theme="light"] .match-final-result-card strong {
-      color: rgba(0,0,0,.88) !important;
-    }
-    html[data-theme="light"] .match-final-result-card .text-stone-400 {
-      color: rgba(60,60,67,.45) !important;
-    }
-    html[data-theme="light"] .match-final-result-card .text-amber-300,
-    html[data-theme="light"] .match-final-result-card .text-amber-400 {
-      color: #c47200 !important;
-    }
-    html[data-theme="light"] .match-final-result-card [style*="#4ade80"] { color: #1a8c3a !important; }
-    html[data-theme="light"] .match-final-result-card [style*="#fbbf24"] { color: #c47200 !important; }
-    html[data-theme="light"] .match-final-result-card [style*="#f87171"] { color: #cc2018 !important; }
-    html[data-theme="light"] .match-final-result-card .border-stone-700 {
-      border-color: rgba(60,60,67,.14) !important;
-    }
+    
+    
+    
+    
+    
+    
+    
+    
 
     /* ── Klasyfikacja ───────────────────────────────────────────── */
-    html[data-theme="light"] .leaderboard-position-badge {
-      background: linear-gradient(145deg, rgba(0,122,255,.88), rgba(0,80,210,.80)) !important;
-      border: 1px solid rgba(0,122,255,.36) !important;
-      box-shadow: 0 2px 8px rgba(0,122,255,.20) !important;
-      color: #ffffff !important;
-      text-shadow: none !important;
-    }
-    html[data-theme="light"] .leaderboard-phase-summary,
-    html[data-theme="light"] .leaderboard-phase-details {
-      background: var(--glass-1) !important;
-      border-color: rgba(60,60,67,.12) !important;
-      box-shadow: var(--shadow-sm), var(--hl) !important;
-    }
-    html[data-theme="light"] .leaderboard-phase-summary:hover {
-      background: var(--glass-2) !important;
-    }
-    html[data-theme="light"] .leaderboard-phase-details[open] .leaderboard-phase-details-body {
-      background: rgba(120,120,128,.06) !important;
-    }
-    html[data-theme="light"] .leaderboard-header p {
-      color: rgba(60,60,67,.60) !important;
-    }
+    
+    
+    
+    
+    
 
     /* ── Porównanie ─────────────────────────────────────────────── */
-    html[data-theme="light"] .compare-view .compare-match-card {
-      background: var(--glass-1) !important;
-      border: 1px solid rgba(60,60,67,.12) !important;
-      box-shadow: var(--shadow-sm), var(--hl) !important;
-    }
-    html[data-theme="light"] .compare-view .compare-match-toggle,
-    html[data-theme="light"] .compare-match-toggle[aria-expanded="true"],
-    html[data-theme="light"] .compare-view .compare-match-toggle[aria-expanded="true"] {
-      background: rgba(120,120,128,.08) !important;
-      border-color: rgba(60,60,67,.10) !important;
-    }
-    html[data-theme="light"] .compare-view .compare-player-row.compare-player-row-empty {
-      background: rgba(120,120,128,.08) !important;
-      border-color: rgba(60,60,67,.08) !important;
-    }
+    
+    
+    
 
     /* ── Bracket ────────────────────────────────────────────────── */
-    html[data-theme="light"] .bracket-connectors path {
-      stroke: rgba(60,60,67,.28) !important;
-    }
-    html[data-theme="light"] .bracket-team-row.is-winner {
-      background: rgba(0,122,255,.10) !important;
-    }
-    html[data-theme="light"] body .bracket-page .bracket-match.is-finished,
-    html[data-theme="light"] body .bracket-page .bracket-final-card.is-finished {
-      border-color: rgba(0,122,255,.26) !important;
-    }
-    html[data-theme="light"] body .bracket-page .bracket-match-head {
-      border-bottom-color: rgba(60,60,67,.10) !important;
-    }
-    html[data-theme="light"] body .bracket-page .bracket-team-row + .bracket-team-row {
-      border-top-color: rgba(60,60,67,.08) !important;
-    }
-    html[data-theme="light"] body .bracket-page .bracket-section,
-    html[data-theme="light"] body .bracket-page .bracket-intro {
-      border-color: rgba(60,60,67,.14) !important;
-    }
+    
+    
+    
+    
+    
+    
 
     /* ── Profile / avatar ───────────────────────────────────────── */
-    html[data-theme="light"] .profile-avatar {
-      background: rgba(120,120,128,.14) !important;
-      border: 1px solid rgba(60,60,67,.16) !important;
-      color: rgba(60,60,67,.70) !important;
-      box-shadow: none !important;
-    }
-    html[data-theme="light"] .profile-menu-btn.is-authenticated .profile-avatar {
-      background: rgba(0,122,255,.16) !important;
-      color: rgba(0,0,0,.88) !important;
-    }
+    
+    
 
     /* ── Kolory tekstowe ────────────────────────────────────────── */
-    html[data-theme="light"] .text-white,
-    html[data-theme="light"] .text-stone-50,
-    html[data-theme="light"] .text-stone-100,
-    html[data-theme="light"] [style*="color: white"],
-    html[data-theme="light"] [style*="color:white"],
-    html[data-theme="light"] [style*="color: #fff"],
-    html[data-theme="light"] [style*="color:#fff"],
-    html[data-theme="light"] [style*="color: rgba(255, 255, 255"],
-    html[data-theme="light"] [style*="color:rgba(255, 255, 255"],
-    html[data-theme="light"] [style*="color: rgba(255,255,255"],
-    html[data-theme="light"] [style*="color:rgba(255,255,255"] {
-      color: rgba(0,0,0,.88) !important;
-      text-shadow: none !important;
-    }
-    html[data-theme="light"] .text-stone-900,
-    html[data-theme="light"] .text-stone-800,
-    html[data-theme="light"] .text-stone-700 { color: rgba(0,0,0,.88) !important; }
-    html[data-theme="light"] .text-stone-600,
-    html[data-theme="light"] .text-stone-500 { color: rgba(60,60,67,.60) !important; }
-    html[data-theme="light"] .text-stone-400,
-    html[data-theme="light"] .text-stone-300 { color: rgba(60,60,67,.40) !important; }
-    html[data-theme="light"] .match-card [style*="color: white"],
-    html[data-theme="light"] .match-card [style*="color:white"],
-    html[data-theme="light"] .match-card [style*="rgba(255, 255, 255"],
-    html[data-theme="light"] .match-card [style*="rgba(255,255,255"],
-    html[data-theme="light"] .admin-match-card [style*="rgba(255, 255, 255"],
-    html[data-theme="light"] .admin-match-card [style*="rgba(255,255,255"] {
-      color: rgba(60,60,67,.70) !important;
-    }
-    html[data-theme="light"] .match-card > button [style*="Bebas Neue"] {
-      color: rgba(0,0,0,.88) !important;
-    }
-    html[data-theme="light"] .match-card span[style*="text-transform: uppercase"] {
-      color: #007AFF !important;
-    }
-    html[data-theme="light"] .compare-view .compare-match-card [style*="rgba(255,255,255"],
-    html[data-theme="light"] .compare-view .compare-match-card [style*="color:white"],
-    html[data-theme="light"] .compare-view .compare-match-card [style*="color: white"] {
-      color: rgba(0,0,0,.88) !important;
-    }
-    html[data-theme="light"] .selection-tile.is-selected,
-    html[data-theme="light"] .selection-tile.is-selected:hover {
-      color: #ffffff !important;
-    }
-    html[data-theme="light"] .bg-\[#0d1b5e\],
-    html[data-theme="light"] .bg-\[#162570\],
-    html[data-theme="light"] [class*="bg-[#0d1b5e]"],
-    html[data-theme="light"] [class*="bg-[#162570]"] { color: #ffffff !important; }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     /* ── Zerowanie text-shadow wszędzie ─────────────────────────── */
-    html[data-theme="light"] * { text-shadow: none !important; }
+    
 
     /* ── Scrollbar + zaznaczenie ────────────────────────────────── */
-    html[data-theme="light"] ::-webkit-scrollbar-thumb {
-      background: rgba(60,60,67,.22);
-    }
-    html[data-theme="light"] ::selection {
-      background: rgba(0,122,255,.20);
-      color: rgba(0,0,0,.88);
-    }
+    
+    
 
     /* ── Ekran ładowania ────────────────────────────────────────── */
-    html[data-theme="light"] #loading {
-      background: #f2f2f7 !important;
-      color: rgba(0,0,0,.88) !important;
-    }
-    html[data-theme="light"] .loading-title { color: rgba(0,0,0,.88) !important; }
-    html[data-theme="light"] .loading-sub   { color: rgba(60,60,67,.55) !important; }
+    
+    
+    
     /* ── Komunikaty app-note — jasne tło w light mode ───────────── */
-    html[data-theme="light"] .app-note {
-      background:
-        rgba(255,255,255,.82) !important;
-      border: 1px solid rgba(60,60,67,.14) !important;
-      box-shadow: none !important;
-      -webkit-backdrop-filter: blur(16px) saturate(150%) !important;
-      backdrop-filter: blur(16px) saturate(150%) !important;
-      color: rgba(0,0,0,.80) !important;
-      --note-color: rgba(0,0,0,.80) !important;
-    }
-    html[data-theme="light"] .app-note--info {
-      background: rgba(0,122,255,.08) !important;
-      border-color: rgba(0,122,255,.22) !important;
-      --note-color: #004fcc !important;
-      color: #004fcc !important;
-    }
-    html[data-theme="light"] .app-note--danger {
-      background: rgba(255,59,48,.08) !important;
-      border-color: rgba(255,59,48,.22) !important;
-      --note-color: #c0180e !important;
-      color: #c0180e !important;
-    }
-    html[data-theme="light"] .app-note--warning {
-      background: rgba(255,149,0,.10) !important;
-      border-color: rgba(255,149,0,.24) !important;
-      --note-color: #a05400 !important;
-      color: #a05400 !important;
-    }
-    html[data-theme="light"] .app-note--success {
-      background: rgba(52,199,89,.10) !important;
-      border-color: rgba(52,199,89,.24) !important;
-      --note-color: #167a34 !important;
-      color: #167a34 !important;
-    }
-    html[data-theme="light"] .app-note p,
-    html[data-theme="light"] .app-note > span,
-    html[data-theme="light"] .app-note > strong,
-    html[data-theme="light"] .app-note > em,
-    html[data-theme="light"] .app-note > div > p,
-    html[data-theme="light"] .app-note > div > span,
-    html[data-theme="light"] .app-note > div > strong {
-      color: inherit !important;
-    }
-    html[data-theme="light"] .app-note svg {
-      color: inherit !important;
-      stroke: currentColor !important;
-    }
-    html[data-theme="light"] .app-note strong { color: inherit !important; }
-    html[data-theme="light"] .app-note::after { display: none !important; }
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     /* Tekst na niebieskim tle (is-selected, badge pozycji) — zawsze biały */
-    html[data-theme="light"] .selection-tile.is-selected *,
-    html[data-theme="light"] .selection-tile.is-selected span,
-    html[data-theme="light"] .selection-tile.is-selected strong {
-      color: #ffffff !important;
-    }
-    html[data-theme="light"] .leaderboard-position-badge,
-    html[data-theme="light"] .leaderboard-position-badge * {
-      color: #ffffff !important;
-    }
+    
+    
 
   </style>
 
@@ -8436,80 +6788,60 @@
 
   <style id="iphone-safari-unified-top-scroll">
     /*
-      Jednolity sposób przewijania we wszystkich zakładkach:
-      filtry są zwykłą częścią treści i nie nakładają się na pierwszą kartę.
-      Treść może podczas przewijania przechodzić pod stałym nagłówkiem.
+      iPhone Safari: każda zakładka zachowuje się jak Drabinka.
+      Treść przewija się pod pływającym nagłówkiem aż do samej góry
+      ekranu. Panele filtrów nie zatrzymują się pod nagłówkiem.
     */
     .top-scroll-guard {
       display: none !important;
     }
 
-    /*
-      Nieprzezroczysta osłona nad pływającym nagłówkiem.
-      W Safari position:fixed jest liczony od górnej krawędzi visualViewport,
-      która może znajdować się poniżej paska statusu. Ujemny offset rozciąga
-      osłonę aż do fizycznej góry ekranu, więc przewijane filtry nie pojawiają
-      się nad nagłówkiem ani pod zegarem / Dynamic Island.
-    */
-    body::after {
-      content: "";
-      position: fixed;
-      left: 0;
-      right: 0;
-      top: calc(-1 * var(--app-viewport-top, 0px));
-      height: calc(var(--app-viewport-top, 0px) + 19px);
-      background: #07101d;
-      pointer-events: none;
-      z-index: 999;
-      transform: translateZ(0);
-      -webkit-transform: translateZ(0);
-    }
-
-    html[data-theme="light"] body::after {
-      background: #f2f2f7;
-    }
-
-    html body .app-header {
-      z-index: 1000 !important;
-    }
-
-    /* Odstęp początkowy wynika wyłącznie z wysokości nagłówka.
-       Nie jest już liczony z pozycji visualViewport Safari. */
-    html body .app-content {
-      padding-top: var(--fixed-header-content-offset, 96px) !important;
-      overflow: visible !important;
-    }
-
-    /* Ostateczne wyłączenie sticky we wszystkich zakładkach i motywach.
-       position: static przywraca panelom normalne miejsce w układzie flex. */
-    html body .filters-sticky,
-    html[data-theme="light"] body .filters-sticky,
-    html[data-theme="dark"] body .filters-sticky {
-      position: static !important;
-      inset: auto !important;
-      top: auto !important;
-      right: auto !important;
-      bottom: auto !important;
-      left: auto !important;
-      z-index: auto !important;
-      transform: none !important;
-      -webkit-transform: none !important;
-    }
-
-    /* Stabilizuje wysokość półprzezroczystych paneli filtrów w Safari,
-       aby następna karta zawsze zaczynała się dopiero pod panelem. */
-    .phase-filter-panel,
-    .admin-phase-filters {
-      position: relative !important;
-      display: block !important;
-      height: auto !important;
-      min-height: 0 !important;
-      overflow: visible !important;
-      isolation: isolate;
-    }
-
     @supports (-webkit-touch-callout: none) {
-      /* Transform całej zakładki potrafi tworzyć błędne warstwy w iOS Safari. */
+      html body .app-header {
+        z-index: 1000 !important;
+      }
+
+      /* Zachowuje miejsce pod stałym nagłówkiem na początku strony,
+         ale podczas przewijania cała zawartość może przejść pod nim. */
+      html body .app-content {
+        padding-top: var(--fixed-header-content-offset, 96px) !important;
+        overflow: visible !important;
+      }
+
+      /* Pasek filtrów przykleja się tuż pod stałym nagłówkiem podczas
+         przewijania; lista meczów przejeżdża pod nim. position: sticky
+         działa tylko, gdy element ORAZ wszyscy jego przodkowie nie mają
+         backdrop-filter / transform / overflow != visible — dlatego niżej
+         czyścimy całą gałąź. */
+      html body .filters-sticky {
+        position: -webkit-sticky !important;
+        position: sticky !important;
+        top: var(--fixed-header-filter-offset, 82px) !important;
+        inset-block-start: var(--fixed-header-filter-offset, 82px) !important;
+        z-index: 900 !important;
+        /* backdrop-filter psuje sticky w Safari — pełne, matowe tło zamiast rozmycia. */
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+        background: var(--bg-1) !important;
+      }
+      /* Przodkowie paska nie mogą tworzyć warstwy kompozycji ani obcinać. */
+      html body #root,
+      html body .pitch-bg,
+      html body .app-content,
+      html body .tab-view,
+      html body .matches-view,
+      html body .matches-view > div {
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+        filter: none !important;
+        transform: none !important;
+        -webkit-transform: none !important;
+        perspective: none !important;
+        overflow: visible !important;
+        will-change: auto !important;
+      }
+
+      /* Animacja zakładki nie może używać transform (łamie sticky u dzieci). */
       .tab-view {
         transform: none !important;
         -webkit-transform: none !important;
@@ -8560,6 +6892,32 @@ const db = firebase.database();
 (function () {
   const isStandalone = window.matchMedia?.('(display-mode: standalone)').matches || window.navigator.standalone === true;
   if (isStandalone) document.documentElement.classList.add('is-standalone');
+
+  // ── iOS 26: block pinch-zoom on the app chrome ──────────────────
+  // Safari ignores user-scalable=no, so suppress the multi-touch zoom
+  // gestures directly. Passive:false is required to call preventDefault.
+  ['gesturestart', 'gesturechange', 'gestureend'].forEach(function (evt) {
+    document.addEventListener(evt, function (e) { e.preventDefault(); }, { passive: false });
+  });
+  // Suppress the legacy double-tap-to-zoom that touch-action can miss.
+  let __lastTouchEnd = 0;
+  document.addEventListener('touchend', function (e) {
+    const now = Date.now();
+    if (now - __lastTouchEnd <= 320) e.preventDefault();
+    __lastTouchEnd = now;
+  }, { passive: false });
+
+  // ── Lightweight haptics (no-op where unsupported) ───────────────
+  window.haptic = function (pattern) {
+    try { if (navigator.vibrate) navigator.vibrate(pattern || 8); } catch (_) {}
+  };
+  // Subtle tap feedback on primary interactive elements.
+  document.addEventListener('click', function (e) {
+    if (e.target.closest('button, a, [role="button"], .selection-tile, .bottom-nav button')) {
+      window.haptic(8);
+    }
+  }, { passive: true });
+
 
   // Keep the background at least as tall as the current iOS visual viewport.
   let viewportFrame = 0;
@@ -15284,28 +13642,16 @@ function Mundial2026() {
     } catch (e) {}
     setActivePlayerState(id);
   }, []);
-  const [theme, setTheme] = useState('dark');
-  const toggleTheme = useCallback(() => {
-    // Opóźnienie o 1 klatkę: React setState jest synchroniczne, ale
-    // przeglądarka musi zdążyć przetworzyć re-render z nową klasą
-    // zanim zmieni się data-theme (które resetuje transition).
-    // requestAnimationFrame gwarantuje kolejność: klasę CSS zmieniamy
-    // w tym samym render-cycle, a motyw (data-theme) w następnej klatce.
-    requestAnimationFrame(() => {
-      setTheme(current => current === 'dark' ? 'light' : 'dark');
-    });
-  }, []);
+  // Motyw aplikacji jest na stałe ciemny (light mode usunięty).
+  const theme = 'dark';
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    document.documentElement.style.colorScheme = theme;
-    try {
-      localStorage.setItem('wc2026:theme', theme);
-    } catch (e) {}
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.documentElement.style.colorScheme = 'dark';
     const themeMeta = document.querySelector('meta[name="theme-color"]');
-    if (themeMeta) themeMeta.setAttribute('content', theme === 'light' ? '#f2f2f7' : '#07101d');
+    if (themeMeta) themeMeta.setAttribute('content', '#0d2b4a');
     const statusMeta = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
-    if (statusMeta) statusMeta.setAttribute('content', theme === 'light' ? 'default' : 'black-translucent');
-  }, [theme]);
+    if (statusMeta) statusMeta.setAttribute('content', 'black-translucent');
+  }, []);
   const [activeTab, setActiveTab] = useState('matches');
 
   // Po każdej zmianie głównej zakładki wróć na samą górę strony.
@@ -15779,35 +14125,35 @@ ReactDOM.createRoot(document.getElementById('root')).render(/*#__PURE__*/React.c
     if (!header) return false;
 
     header.style.setProperty('position', 'fixed', 'important');
-    header.style.setProperty('top', 'calc(env(safe-area-inset-top, 0px) + 7px)', 'important');
-    header.style.setProperty('left', '50%', 'important');
-    header.style.setProperty('right', 'auto', 'important');
+    header.style.setProperty('top', '0', 'important');
+    header.style.setProperty('left', '0', 'important');
+    header.style.setProperty('right', '0', 'important');
+    header.style.setProperty('width', '100%', 'important');
+    header.style.setProperty('max-width', '100%', 'important');
     header.style.setProperty('margin', '0', 'important');
-    header.style.setProperty('transform', 'translate3d(-50%, 0, 0)', 'important');
-    header.style.setProperty('-webkit-transform', 'translate3d(-50%, 0, 0)', 'important');
+    header.style.setProperty('border-radius', '0', 'important');
+    header.style.setProperty('transform', 'none', 'important');
+    header.style.setProperty('-webkit-transform', 'none', 'important');
     header.style.setProperty('z-index', '1000', 'important');
 
-    var computed = window.getComputedStyle(header);
-    var height = Math.ceil(header.offsetHeight || parseFloat(computed.height) || 64);
-    var cssTop = parseFloat(computed.top);
-    if (!Number.isFinite(cssTop)) cssTop = 7;
-
-    /* Nie używamy rect.bottom: w iOS Safari zawiera on przesunięcie
-       visualViewport i podczas zwijania pasków potrafił dodawać setki px. */
-    var headerFlowBottom = Math.ceil(Math.max(0, cssTop) + height);
-    var contentOffset = headerFlowBottom + 16;
+    var rect = header.getBoundingClientRect();
+    var height = Math.ceil(rect.height || 64);
+    /* rect.bottom jest liczone względem aktualnego visual viewportu.
+       To działa poprawnie zarówno przy rozwiniętych, jak i zwiniętych
+       paskach Safari, bez podwójnego dodawania safe-area. */
+    var viewportBottom = Math.ceil(rect.bottom || (height + 7));
 
     document.documentElement.style.setProperty(
       '--fixed-header-viewport-bottom',
-      headerFlowBottom + 'px'
+      viewportBottom + 'px'
     );
     document.documentElement.style.setProperty(
       '--fixed-header-content-offset',
-      contentOffset + 'px'
+      (viewportBottom + 16) + 'px'
     );
     document.documentElement.style.setProperty(
       '--fixed-header-filter-offset',
-      contentOffset + 'px'
+      (viewportBottom + 8) + 'px'
     );
     return true;
   }
@@ -15831,6 +14177,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(/*#__PURE__*/React.c
 
   if (window.visualViewport) {
     window.visualViewport.addEventListener('resize', schedulePin);
+    window.visualViewport.addEventListener('scroll', schedulePin);
   }
 
   new MutationObserver(schedulePin).observe(document.documentElement, {
