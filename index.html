@@ -17,37 +17,28 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
   <noscript><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" /></noscript>
 
-  <!-- PWA -->
   <meta name="application-name" content="FIFA WORLD CUP 2026"/>
-  <meta name="mobile-web-app-capable" content="yes"/>
-  <meta name="apple-mobile-web-app-capable" content="yes"/>
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-  <meta name="apple-mobile-web-app-title" content="FIFA WORLD CUP 2026"/>
   <meta name="theme-color" content="#0d2b4a"/>
   <meta name="color-scheme" content="dark"/>
-  <link rel="manifest" id="pwa-manifest"/>
-  <link rel="apple-touch-icon" sizes="180x180" href="./mundial2026-app-icon-v2-180.png"/>
   <link rel="icon" type="image/png" sizes="32x32" href="./mundial2026-app-icon-v2-32.png"/>
   <link rel="icon" type="image/png" sizes="192x192" href="./mundial2026-app-icon-v2-192.png"/>
   <script>
     (function(){
       var theme='dark'; // light mode wyłączony
       document.documentElement.setAttribute('data-theme',theme);
-      // iOS standalone: ustaw tło natychmiast, zanim sparsuje się główny <style>,
-      // żeby przy starcie z ekranu głównego nie mignęła biała plansza.
       document.documentElement.style.backgroundColor = '#05070d';
     })();
   </script>
   <style>
     /* ═══════════════════════════════════════════════════════════════
-       iOS 26 · MATTE 2D LIQUID GLASS · Mundial 2026
+       MATTE 2D LIQUID GLASS · Mundial 2026
        Dark mode system colors · No blur · Solid matte surfaces
        Liquid = smooth gradients + organic shapes + fluid transitions
     ═══════════════════════════════════════════════════════════════ */
     :root {
-      --safe-top:    env(safe-area-inset-top, 0px);
-      --safe-bottom: env(safe-area-inset-bottom, 20px);
-      /* iOS 26 System Backgrounds (dark) */
+      --safe-top:    0px;
+      --safe-bottom: 20px;
+      /* Liquid Glass system backgrounds (dark) */
       --bg-0: #000000;
       --bg-1: #1C1C1E;
       --bg-2: #2C2C2E;
@@ -67,12 +58,12 @@
       --hl2: inset 0 1px 0 rgba(255,255,255,0.15);
       /* Separators */
       --sep: rgba(84,84,88,0.45);
-      /* iOS 26 System Labels (dark) */
+      /* Liquid Glass labels (dark) */
       --label-1: rgba(255,255,255,1.00);
       --label-2: rgba(235,235,245,0.60);
       --label-3: rgba(235,235,245,0.30);
       --label-4: rgba(235,235,245,0.16);
-      /* iOS 26 Accent Colors (dark mode) */
+      /* Liquid Glass accent colors (dark mode) */
       --accent:        #0A84FF;
       --accent-green:  #30D158;
       --accent-red:    #FF453A;
@@ -95,11 +86,10 @@
     }
 
     *, *::before, *::after { box-sizing: border-box; }
-    button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
-    html, body { overscroll-behavior: none; -webkit-overflow-scrolling: touch; margin: 0; padding: 0; }
+    html, body { overscroll-behavior: none; margin: 0; padding: 0; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'DM Sans', system-ui, sans-serif;
+      font-family: 'DM Sans', system-ui, sans-serif;
       padding-bottom: calc(84px + var(--safe-bottom));
       min-height: 100vh;
       background:
@@ -183,7 +173,6 @@
       color: var(--label-3); font-size: 7.5px; font-weight: 700; letter-spacing: .01em; text-transform: uppercase;
       transition: color .22s var(--ease-out), transform .12s var(--ease-spring);
       position: relative; min-width: 0; z-index: 1; font-family: inherit;
-      -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent;
     }
 
     .bottom-nav button:active { transform: scale(.90); }
@@ -261,21 +250,6 @@
       box-shadow: 0 0 0 3px rgba(10,132,255,0.22) !important; outline: none;
     }
     select option { background: var(--bg-2); color: var(--label-1); }
-    /* iOS Safari: każdy input <16px wywołuje auto-zoom przy fokusie i rozjeżdża layout.
-       Wymuszamy 16px wyłącznie na iOS (inne przeglądarki zachowują oryginalny rozmiar). */
-    @supports (-webkit-touch-callout: none) {
-      input[type="text"],
-      input[type="password"],
-      input[type="search"],
-      input[type="email"],
-      input[type="tel"],
-      input[type="url"],
-      input:not([type]),
-      textarea,
-      select {
-        font-size: 16px !important;
-      }
-    }
 
     .rounded-full { border-radius: 999px !important; }
     .bg-amber-50 { background: rgba(255,159,10,0.12) !important; }
@@ -297,20 +271,15 @@
     tr:hover { background: rgba(255,255,255,0.04); }
     th { color: var(--label-2) !important; border-color: var(--sep) !important; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
     td { border-color: var(--sep) !important; color: var(--label-1) !important; }
-    ::-webkit-scrollbar { width: 3px; height: 3px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 3px; }
     ::selection { background: rgba(10,132,255,0.32); color: white; }
-    .filters-sticky { position: sticky; top: 58px; z-index: 10; }
+    .filters-sticky { position: sticky; top: var(--header-height, 80px); z-index: 20; }
     .hidden { display: none; }
 
-    input[type=number]::-webkit-inner-spin-button,
-    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
     input[type=number] { -moz-appearance: textfield; }
 
     .space-y-1\.5 > div { box-shadow: none !important; }
     span[style*="monospace"] { color: var(--label-1) !important; }
-    button { background-color: transparent; -webkit-appearance: none; appearance: none; }
+    button { background-color: transparent; appearance: none; }
     .hover\:bg-white\/10:hover  { background: rgba(255,255,255,0.08) !important; }
     .hover\:bg-white\/15:hover  { background: rgba(255,255,255,0.12) !important; }
     button:hover,[role="button"]:hover { background-color: rgba(255,255,255,0.06) !important; }
@@ -525,7 +494,6 @@
     .filters-sticky,
     section.bg-white,
     .install-banner {
-      -webkit-backdrop-filter: blur(28px) saturate(175%);
       backdrop-filter: blur(28px) saturate(175%);
     }
 
@@ -551,7 +519,6 @@
       background:
         radial-gradient(circle at 20% -20%, rgba(255,255,255,.24), transparent 42%),
         linear-gradient(145deg, rgba(27,37,58,.69), rgba(12,17,29,.46));
-      -webkit-backdrop-filter: blur(34px) saturate(190%);
       backdrop-filter: blur(34px) saturate(190%);
       box-shadow: 0 20px 60px rgba(0,0,0,.30), inset 0 1px 0 rgba(255,255,255,.24), inset 0 -1px 0 rgba(255,255,255,.05);
     }
@@ -574,7 +541,6 @@
         radial-gradient(circle at 25% 0%, rgba(255,255,255,.19), transparent 44%),
         rgba(255,255,255,.075);
       border-color: rgba(255,255,255,.17);
-      -webkit-backdrop-filter: blur(18px) saturate(170%);
       backdrop-filter: blur(18px) saturate(170%);
       box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 5px 16px rgba(0,0,0,.16);
     }
@@ -593,14 +559,14 @@
       padding: 18px 12px 118px;
     }
     .filters-sticky {
-      top: calc(var(--safe-top) + 84px);
+      position: sticky;
+      top: var(--header-height, 80px);
       z-index: 20;
       background:
         radial-gradient(circle at 18% -20%, rgba(255,255,255,.20), transparent 42%),
         linear-gradient(145deg, rgba(28,36,54,.75), rgba(14,19,31,.60)) !important;
       border: 1px solid rgba(255,255,255,.18) !important;
       box-shadow: var(--shadow-md), var(--hl2), 0 0 0 1px rgba(0,0,0,.12) !important;
-      -webkit-backdrop-filter: blur(32px) saturate(190%);
       backdrop-filter: blur(32px) saturate(190%);
     }
 
@@ -609,7 +575,6 @@
       background: var(--glass-1) !important;
       border-color: var(--border-1) !important;
       border-radius: 24px !important;
-      -webkit-backdrop-filter: blur(26px) saturate(175%);
       backdrop-filter: blur(26px) saturate(175%);
       box-shadow: var(--shadow-sm), var(--hl), var(--shadow-glow) !important;
       transform: translateZ(0);
@@ -655,7 +620,6 @@
       background:
         radial-gradient(circle at 20% -30%, rgba(255,255,255,.22), transparent 44%),
         linear-gradient(145deg, rgba(25,33,49,.72), rgba(10,14,24,.58));
-      -webkit-backdrop-filter: blur(34px) saturate(190%);
       backdrop-filter: blur(34px) saturate(190%);
       box-shadow: 0 24px 70px rgba(0,0,0,.44), inset 0 1px 0 rgba(255,255,255,.24), inset 0 -1px 0 rgba(255,255,255,.045);
     }
@@ -745,7 +709,6 @@
       color: var(--label-1) !important;
       border: 1px solid rgba(255,255,255,.16) !important;
       box-shadow: inset 0 1px 0 rgba(255,255,255,.12), inset 0 0 0 1px rgba(0,0,0,.05) !important;
-      -webkit-backdrop-filter: blur(18px) saturate(160%);
       backdrop-filter: blur(18px) saturate(160%);
     }
     input:hover,
@@ -760,7 +723,6 @@
     }
 
     button {
-      -webkit-tap-highlight-color: transparent;
     }
     button:not(:disabled) {
       transition: transform .18s var(--ease-out), background .18s ease, border-color .18s ease, box-shadow .18s ease, opacity .18s ease !important;
@@ -847,7 +809,6 @@
     span.rounded,
     span.rounded-lg,
     span.rounded-full {
-      -webkit-backdrop-filter: blur(12px) saturate(160%);
       backdrop-filter: blur(12px) saturate(160%);
     }
 
@@ -857,10 +818,10 @@
     input,
     select,
     textarea {
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "DM Sans", system-ui, sans-serif;
+      font-family: "DM Sans", system-ui, sans-serif;
     }
     .font-display {
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "DM Sans", system-ui, sans-serif;
+      font-family: "DM Sans", system-ui, sans-serif;
       font-weight: 780;
       letter-spacing: -.025em;
     }
@@ -888,7 +849,6 @@
     /* Modal glass sheet */
     .fixed.inset-0.z-50 > .absolute.inset-0 {
       background: rgba(2,4,10,.52) !important;
-      -webkit-backdrop-filter: blur(18px) saturate(130%);
       backdrop-filter: blur(18px) saturate(130%);
     }
     .fixed.inset-0.z-50 > .relative {
@@ -896,7 +856,6 @@
         radial-gradient(circle at 16% -10%, rgba(255,255,255,.22), transparent 40%),
         linear-gradient(145deg, rgba(31,40,59,.84), rgba(10,15,26,.75)) !important;
       border: 1px solid rgba(255,255,255,.22) !important;
-      -webkit-backdrop-filter: blur(38px) saturate(190%);
       backdrop-filter: blur(38px) saturate(190%);
       box-shadow: 0 35px 110px rgba(0,0,0,.60), inset 0 1px 0 rgba(255,255,255,.25) !important;
     }
@@ -910,7 +869,6 @@
         radial-gradient(circle at 22% 0%, rgba(255,255,255,.25), transparent 44%),
         linear-gradient(145deg, rgba(44,58,84,.86), rgba(14,20,33,.80));
       border-color: rgba(255,255,255,.24);
-      -webkit-backdrop-filter: blur(28px) saturate(180%);
       backdrop-filter: blur(28px) saturate(180%);
       box-shadow: var(--shadow-lg), var(--hl2), 0 0 34px rgba(44,139,255,.18);
     }
@@ -935,7 +893,6 @@
       border-right-color: #9e7cff;
     }
 
-    ::-webkit-scrollbar-thumb { background: rgba(178,214,255,.24); }
     ::selection { background: rgba(54,145,255,.42); }
     :focus-visible {
       outline: 2px solid rgba(112,184,255,.92);
@@ -963,14 +920,12 @@
         filter: blur(48px);
       }
       .match-card {
-        -webkit-backdrop-filter: blur(14px) saturate(150%);
         backdrop-filter: blur(14px) saturate(150%);
       }
       .glass,
       .glass-strong,
       section.bg-white,
       .install-banner {
-        -webkit-backdrop-filter: blur(18px) saturate(155%);
         backdrop-filter: blur(18px) saturate(155%);
       }
     }
@@ -984,7 +939,6 @@
       .install-banner,
       .app-header,
       .bottom-nav {
-        -webkit-backdrop-filter: none !important;
         backdrop-filter: none !important;
       }
     }
@@ -1000,7 +954,7 @@
       .app-content { padding-left: 9px; padding-right: 9px; }
       .bottom-nav { left: 7px; right: 7px; width: calc(100% - 14px); bottom: calc(3px + var(--safe-bottom)); border-radius: 25px; }
       .bottom-nav button { min-height: 55px; }
-      .filters-sticky { top: calc(var(--safe-top) + 78px); }
+
     }
     @media (max-width: 380px) {
       .app-header .logo-icon { width: 38px; height: 38px; border-radius: 13px; }
@@ -1038,7 +992,6 @@
       padding: 4px 2px;
       overflow-x: auto;
       overflow-y: visible;
-      -webkit-overflow-scrolling: touch;
     }
     .chip-scroll-row.tight {
       padding-top: 6px;
@@ -1675,7 +1628,6 @@
     .bracket-scroll {
       overflow-x: auto;
       overflow-y: hidden;
-      -webkit-overflow-scrolling: touch;
       padding: 4px 2px 12px;
       scroll-snap-type: x proximity;
     }
@@ -1845,21 +1797,18 @@
     td.all-special-status-correct,
     .all-special-status-correct {
       color: #4ade80 !important;
-      -webkit-text-fill-color: #4ade80 !important;
       font-weight: 800 !important;
     }
     span.all-special-status-wrong,
     td.all-special-status-wrong,
     .all-special-status-wrong {
       color: #f87171 !important;
-      -webkit-text-fill-color: #f87171 !important;
       font-weight: 800 !important;
     }
     span.all-special-status-neutral,
     td.all-special-status-neutral,
     .all-special-status-neutral {
       color: rgba(255,255,255,.90) !important;
-      -webkit-text-fill-color: rgba(255,255,255,.90) !important;
     }
 
     /* ═══════════════════════════════════════════════════════════════
@@ -1961,56 +1910,9 @@
       }
     }
 
-    /* iOS standalone safe-area lift for the floating bottom navigation. */
-    :root {
-      --standalone-bottom-safe: max(env(safe-area-inset-bottom, 0px), 20px);
-    }
-
-    html.is-standalone body {
-      padding-bottom: calc(126px + var(--standalone-bottom-safe)) !important;
-    }
-
-    @media (display-mode: standalone) {
-      body {
-        padding-bottom: calc(126px + var(--standalone-bottom-safe)) !important;
-      }
-      .bottom-nav {
-        bottom: calc(var(--standalone-bottom-safe) + 10px) !important;
-      }
-    }
-
-    /* iOS standalone safe-area spacing for the floating top header. */
-    :root {
-      --standalone-top-safe: max(env(safe-area-inset-top, 0px), 20px);
-    }
-
-    html.is-standalone {
-      scroll-padding-top: calc(var(--standalone-top-safe) + 96px);
-    }
-
-    html.is-standalone .toast-bar {
-      top: calc(var(--standalone-top-safe) + 78px) !important;
-    }
-
-    @media (display-mode: standalone) {
-      html {
-        scroll-padding-top: calc(var(--standalone-top-safe) + 96px);
-      }
-      .app-header {
-        margin-top: calc(var(--standalone-top-safe) + 7px) !important;
-        top: calc(var(--standalone-top-safe) + 7px) !important;
-      }
-      .filters-sticky {
-        top: calc(var(--standalone-top-safe) + 88px) !important;
-      }
-      .toast-bar {
-        top: calc(var(--standalone-top-safe) + 78px) !important;
-      }
-    }
-
     /* ═══════════════════════════════════════════════════════════════
        UNIFIED APP GEOMETRY — single border width and corner radius
-       One 30 px radius is used everywhere for the softer, more spacious iOS 26 geometry. CSS automatically scales
+       One 30 px radius is used everywhere for the softer, more spacious Liquid Glass geometry. CSS automatically scales
        it down to half the element height/width, so compact controls
        become fully rounded pills/circles without separate magic values.
     ═══════════════════════════════════════════════════════════════ */
@@ -2179,11 +2081,9 @@
       padding: 9px 3px 10px !important;
       margin: -6px 0 2px !important;
       scroll-padding-inline: 3px;
-      -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
     }
 
-    .pill-scroll-safe::-webkit-scrollbar {
       display: none;
     }
 
@@ -2192,7 +2092,7 @@
       transform-origin: center;
     }
 
-    /* Final radius-clipping hardening — on iOS Safari translucent layers,
+    /* Final radius-clipping hardening for translucent layers,
        hover/pressed fills and inner bands can visually escape rounded shells.
        Clip those surfaces to the parent radius everywhere this pattern appears. */
     .glass,
@@ -2219,7 +2119,6 @@
       overflow: hidden !important;
       isolation: isolate;
       background-clip: padding-box;
-      -webkit-mask-image: -webkit-radial-gradient(white, black);
               mask-image: radial-gradient(white, black);
     }
 
@@ -2250,7 +2149,6 @@
     .match-card > button:first-child,
     .deferred-card,
     .selection-tile {
-      -webkit-mask-image: -webkit-radial-gradient(white, black);
               mask-image: radial-gradient(white, black);
     }
 
@@ -2267,7 +2165,6 @@
       border-radius: 0 0 var(--ui-corner-radius) var(--ui-corner-radius) !important;
       overflow: hidden !important;
       background-clip: padding-box;
-      -webkit-mask-image: -webkit-radial-gradient(white, black);
               mask-image: radial-gradient(white, black);
     }
 
@@ -2295,7 +2192,6 @@
       border-radius: var(--ui-corner-radius) var(--ui-corner-radius) 0 0 !important;
       overflow: hidden;
       background-clip: padding-box;
-      -webkit-mask-image: -webkit-radial-gradient(white, black);
               mask-image: radial-gradient(white, black);
     }
 
@@ -2310,12 +2206,9 @@
       overflow-y: hidden !important;
       touch-action: pan-x;
       overscroll-behavior-inline: contain;
-      -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
     }
 
-    .filters-sticky .chip-scroll-row::-webkit-scrollbar,
-    .filters-sticky .pill-scroll-safe::-webkit-scrollbar {
       display: none;
     }
 
@@ -2443,7 +2336,6 @@
       overflow: hidden !important;
       isolation: isolate;
       background-clip: padding-box;
-      -webkit-mask-image: -webkit-radial-gradient(white, black);
               mask-image: radial-gradient(white, black);
     }
 
@@ -2462,14 +2354,13 @@
       overflow: hidden !important;
       margin-top: 0 !important;
       background-clip: padding-box;
-      -webkit-mask-image: -webkit-radial-gradient(white, black);
               mask-image: radial-gradient(white, black);
     }
 
     /* Admin expanded-card seam fix: the generic rounded-card header selector
        has higher specificity, so force the summary button to keep only its
        top corners when the editor is open. This removes the left/right notch
-       between the summary row and the details pane on iOS Safari. */
+       between the summary row and the details pane. */
     html body .admin-match-card.expanded > .admin-match-summary-button:not(#__admin_match_seam_fix__) {
       border-radius: var(--ui-corner-radius) var(--ui-corner-radius) 0 0 !important;
       border-bottom-left-radius: 0 !important;
@@ -2490,121 +2381,10 @@
         linear-gradient(145deg, rgba(30,39,58,.72), rgba(13,18,30,.56));
       color: var(--label-1);
       box-shadow: var(--shadow-sm), var(--hl), var(--shadow-glow);
-      -webkit-backdrop-filter: blur(24px) saturate(170%);
       backdrop-filter: blur(24px) saturate(170%);
     }
     .leaderboard-header p {
       color: var(--label-2) !important;
-    }
-
-    /* ═══════════════════════════════════════════════════════════════
-       FULL MOBILE VIEWPORT BACKGROUND · iOS Safari / PWA
-       One fixed surface is kept above the document canvas and below
-       the application, so safe areas and Safari viewport changes never
-       expose a differently coloured strip.
-    ═══════════════════════════════════════════════════════════════ */
-    :root {
-      --app-viewport-height: 100dvh;
-      --app-screen-background:
-        radial-gradient(ellipse 100% 58% at 50% -13%, rgba(44,139,255,.28), transparent 62%),
-        radial-gradient(ellipse 66% 46% at -8% 68%, rgba(44,214,155,.13), transparent 69%),
-        radial-gradient(ellipse 68% 46% at 108% 78%, rgba(168,88,255,.16), transparent 68%),
-        linear-gradient(180deg, #07101d 0%, #070a12 48%, #04060b 100%);
-    }
-
-    html,
-    body {
-      width: 100%;
-      min-height: 100%;
-      background-color: #07101d !important;
-    }
-
-    html {
-      min-height: 100vh;
-      min-height: 100svh;
-      min-height: 100dvh;
-      background-image: var(--app-screen-background) !important;
-      background-repeat: no-repeat !important;
-      background-position: center top !important;
-      background-size: 100% var(--app-viewport-height) !important;
-      background-attachment: fixed !important;
-    }
-
-    body {
-      position: relative;
-      isolation: isolate;
-      min-height: 100vh !important;
-      min-height: 100svh !important;
-      min-height: var(--app-viewport-height) !important;
-      background-image: var(--app-screen-background) !important;
-      background-repeat: no-repeat !important;
-      background-position: center top !important;
-      background-size: 100% var(--app-viewport-height) !important;
-      background-attachment: fixed !important;
-    }
-
-    body::before {
-      content: "";
-      position: fixed;
-      z-index: 0;
-      pointer-events: none;
-      left: 0;
-      top: 0;
-      width: 100vw;
-      height: var(--app-viewport-height);
-      min-height: 100svh;
-      background-color: #07101d;
-      background-image: var(--app-screen-background);
-      background-repeat: no-repeat;
-      background-position: center top;
-      background-size: 100% 100%;
-      transform: translateZ(0);
-      -webkit-transform: translateZ(0);
-    }
-
-    #loading,
-    #root {
-      position: relative;
-      z-index: 1;
-      min-height: 100vh !important;
-      min-height: 100svh !important;
-      min-height: var(--app-viewport-height) !important;
-      background: transparent !important;
-    }
-
-    .pitch-bg {
-      min-height: 100vh !important;
-      min-height: 100svh !important;
-      min-height: var(--app-viewport-height) !important;
-      background: transparent !important;
-    }
-
-    @supports (height: 100lvh) {
-      html,
-      body,
-      #root,
-      .pitch-bg {
-        min-height: max(100dvh, var(--app-viewport-height)) !important;
-      }
-    }
-
-    @supports (-webkit-touch-callout: none) {
-      html,
-      body,
-      #root,
-      .pitch-bg {
-        min-height: -webkit-fill-available;
-      }
-      body::before {
-        min-height: var(--app-viewport-height);
-      }
-    }
-
-    @media (display-mode: standalone) {
-      body::before {
-        top: calc(-1 * var(--safe-top));
-        height: calc(var(--app-viewport-height) + var(--safe-top) + var(--safe-bottom));
-      }
     }
 
     /* ═══════════════════════════════════════════════════════════════
@@ -2702,15 +2482,12 @@
     /* Ranking status colours match point colours used in the other tabs. */
     html:not([data-theme="light"]) .rank-stat-exact {
       color: #4ade80 !important;
-      -webkit-text-fill-color: #4ade80 !important;
     }
     html:not([data-theme="light"]) .rank-stat-partial {
       color: #fbbf24 !important;
-      -webkit-text-fill-color: #fbbf24 !important;
     }
     html:not([data-theme="light"]) .rank-stat-miss {
       color: #f87171 !important;
-      -webkit-text-fill-color: #f87171 !important;
     }
 
     /* Light mode: leaderboard place badges in the same blue glass style as other primary accents */
@@ -2752,7 +2529,6 @@
       line-height: 1.2 !important;
       text-transform: uppercase !important;
       color: var(--label-3) !important;
-      -webkit-text-fill-color: var(--label-3) !important;
     }
     .prediction-row,
     .compare-view .compare-player-row {
@@ -2833,15 +2609,15 @@
       opacity: .8;
     }
     .prediction-row-exact .prediction-points,
-    .prediction-row-exact .compare-player-points { color: #4ade80 !important; -webkit-text-fill-color: #4ade80 !important; }
+    .prediction-row-exact .compare-player-points { color: #4ade80 !important; }
     .prediction-row-partial .prediction-points,
-    .prediction-row-partial .compare-player-points { color: #fbbf24 !important; -webkit-text-fill-color: #fbbf24 !important; }
+    .prediction-row-partial .compare-player-points { color: #fbbf24 !important; }
     .prediction-row-miss .prediction-points,
-    .prediction-row-miss .compare-player-points { color: #f87171 !important; -webkit-text-fill-color: #f87171 !important; }
+    .prediction-row-miss .compare-player-points { color: #f87171 !important; }
     .prediction-row-empty .prediction-empty-label,
     .prediction-row-empty .compare-player-points,
     .prediction-row-pending .prediction-points,
-    .prediction-row-pending .compare-player-points { color: var(--label-3) !important; -webkit-text-fill-color: var(--label-3) !important; }
+    .prediction-row-pending .compare-player-points { color: var(--label-3) !important; }
 
     @media (max-width: 380px) {
       .prediction-score-grid,
@@ -3063,7 +2839,6 @@
     /* Better contrast for the public specials notice */
     .allspecials-note {
       color: #9dd2ff !important;
-      -webkit-text-fill-color: #9dd2ff !important;
       font-weight: 700;
       letter-spacing: .01em;
     }
@@ -3094,7 +2869,6 @@
       box-shadow: inset 0 1px 0 rgba(255,255,255,.10), 0 8px 18px rgba(0,0,0,.14);
       transition: background .18s ease, border-color .18s ease, color .18s ease, transform .14s ease, box-shadow .18s ease;
     }
-    .leaderboard-phase-summary::-webkit-details-marker { display: none; }
     .leaderboard-phase-summary::marker { display: none; content: ''; }
     .leaderboard-phase-summary:hover {
       color: var(--label-1);
@@ -3178,13 +2952,11 @@
       background: rgba(180,0,0,.18);
       border: 1px solid rgba(255,105,97,.34);
       color: #ff8b86;
-      -webkit-text-fill-color: #ff8b86;
     }
     .profile-choice-cancel {
       background: rgba(255,255,255,.09) !important;
       border-color: rgba(255,255,255,.18) !important;
       color: var(--label-1) !important;
-      -webkit-text-fill-color: var(--label-1) !important;
       box-shadow: inset 0 1px 0 rgba(255,255,255,.08) !important;
     }
     .profile-choice-cancel:hover {
@@ -3298,105 +3070,6 @@
     }
 
     /* ═══════════════════════════════════════════════════════════════
-       EDGE-TO-EDGE VIEWPORT FIX · iOS Safari + installed PWA
-       Uses the real visible viewport height, removes doubled body
-       padding and leaves scroll space above the floating navigation.
-    ═══════════════════════════════════════════════════════════════ */
-    :root {
-      --app-viewport-height: 100dvh;
-      --app-viewport-top: 0px;
-      --app-viewport-bottom: 0px;
-      --app-browser-bottom-space: max(env(safe-area-inset-bottom, 0px), var(--app-viewport-bottom));
-    }
-
-    html {
-      width: 100%;
-      min-height: 100%;
-      overflow-x: hidden;
-    }
-
-    body {
-      width: 100%;
-      min-height: var(--app-viewport-height) !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      overflow-x: hidden;
-    }
-
-    #loading,
-    #root,
-    #root > .pitch-bg,
-    .pitch-bg {
-      min-height: var(--app-viewport-height) !important;
-    }
-
-    /* Override the earlier max(100dvh, …) rule. On iOS it can select
-       the larger layout viewport and make the bottom appear clipped. */
-    @supports (height: 100dvh) {
-      html,
-      body,
-      #loading,
-      #root,
-      #root > .pitch-bg,
-      .pitch-bg {
-        min-height: var(--app-viewport-height) !important;
-      }
-    }
-
-    body::before {
-      top: 0 !important;
-      bottom: auto !important;
-      width: 100% !important;
-      height: var(--app-viewport-height) !important;
-      min-height: var(--app-viewport-height) !important;
-    }
-
-    /* The last card can always be scrolled completely above the
-       floating bottom bar, including the iPhone home-indicator inset. */
-    .app-content {
-      padding-bottom: calc(124px + var(--app-browser-bottom-space)) !important;
-    }
-
-    /* In normal Safari the browser already excludes its own toolbars
-       from the visual viewport, so do not add the standalone insets. */
-
-    html:not(.is-standalone) .filters-sticky {
-      top: 78px !important;
-    }
-    html:not(.is-standalone) .bottom-nav {
-      bottom: 3px !important;
-    }
-
-    /* Installed PWA: draw edge-to-edge, while keeping controls clear
-       of the Dynamic Island/status bar and home indicator. */
-
-    html.is-standalone .filters-sticky {
-      top: calc(env(safe-area-inset-top, 0px) + 88px) !important;
-    }
-    html.is-standalone .bottom-nav {
-      bottom: calc(env(safe-area-inset-bottom, 0px) + 7px) !important;
-    }
-    html.is-standalone .app-content {
-      padding-bottom: calc(124px + max(env(safe-area-inset-bottom, 0px), 20px)) !important;
-    }
-
-    @media (display-mode: standalone) {
-      .app-header {
-        top: calc(env(safe-area-inset-top, 0px) + 7px) !important;
-        margin-top: calc(env(safe-area-inset-top, 0px) + 7px) !important;
-      }
-      .filters-sticky {
-        top: calc(env(safe-area-inset-top, 0px) + 88px) !important;
-      }
-      .bottom-nav {
-        bottom: calc(env(safe-area-inset-bottom, 0px) + 7px) !important;
-      }
-      .app-content {
-        padding-bottom: calc(124px + max(env(safe-area-inset-bottom, 0px), 20px)) !important;
-      }
-    }
-
-    /* ═══════════════════════════════════════════════════════════════
        SOFT OVERFLOW FADE
        Zamiast wielokropka lub ostrego ucięcia tekst łagodnie zanika.
     ═══════════════════════════════════════════════════════════════ */
@@ -3417,21 +3090,13 @@
     .leaderboard-player-name,
     .leaderboard-stats .rank-stat {
       text-overflow: clip !important;
-      -webkit-mask-image: linear-gradient(
-        to right,
-        #000 0,
-        #000 calc(100% - var(--overflow-fade)),
-        transparent 100%
-      );
       mask-image: linear-gradient(
         to right,
         #000 0,
         #000 calc(100% - var(--overflow-fade)),
         transparent 100%
       );
-      -webkit-mask-repeat: no-repeat;
       mask-repeat: no-repeat;
-      -webkit-mask-size: 100% 100%;
       mask-size: 100% 100%;
     }
 
@@ -3439,13 +3104,6 @@
     .bottom-nav .nav-label,
     .admin-score-team-name {
       text-overflow: clip !important;
-      -webkit-mask-image: linear-gradient(
-        to right,
-        transparent 0,
-        #000 var(--overflow-fade-small),
-        #000 calc(100% - var(--overflow-fade-small)),
-        transparent 100%
-      );
       mask-image: linear-gradient(
         to right,
         transparent 0,
@@ -3453,29 +3111,19 @@
         #000 calc(100% - var(--overflow-fade-small)),
         transparent 100%
       );
-      -webkit-mask-repeat: no-repeat;
       mask-repeat: no-repeat;
-      -webkit-mask-size: 100% 100%;
       mask-size: 100% 100%;
     }
 
     /* Poziome rzędy przewijane również sugerują dalszą zawartość zanikiem. */
     .chip-scroll-row {
-      -webkit-mask-image: linear-gradient(
-        to right,
-        #000 0,
-        #000 calc(100% - var(--overflow-fade)),
-        transparent 100%
-      );
       mask-image: linear-gradient(
         to right,
         #000 0,
         #000 calc(100% - var(--overflow-fade)),
         transparent 100%
       );
-      -webkit-mask-repeat: no-repeat;
       mask-repeat: no-repeat;
-      -webkit-mask-size: 100% 100%;
       mask-size: 100% 100%;
       padding-right: calc(var(--overflow-fade) + 4px);
     }
@@ -3494,7 +3142,6 @@
       overflow: visible !important;
       text-overflow: clip !important;
       white-space: nowrap !important;
-      -webkit-mask-image: none !important;
       mask-image: none !important;
     }
     .app-header .title-group h1 {
@@ -3530,12 +3177,11 @@
     }
 
     /* ═══════════════════════════════════════════════════════════════
-       PROFIL I UŻYTKOWNICY — kompaktowe pływające okno iOS
+       PROFIL I UŻYTKOWNICY — kompaktowe pływające okno
        Pozostawia poprzedni ekran widoczny w tle.
     ═══════════════════════════════════════════════════════════════ */
     .profile-modal-overlay {
       background: rgba(2, 6, 14, .20) !important;
-      -webkit-backdrop-filter: blur(2px) saturate(112%) !important;
       backdrop-filter: blur(2px) saturate(112%) !important;
     }
 
@@ -3549,7 +3195,6 @@
         radial-gradient(circle at 18% -12%, rgba(255,255,255,.22), transparent 40%),
         linear-gradient(145deg, rgba(29,40,62,.88), rgba(8,14,26,.80)) !important;
       border: 1px solid rgba(255,255,255,.20) !important;
-      -webkit-backdrop-filter: blur(34px) saturate(175%) !important;
       backdrop-filter: blur(34px) saturate(175%) !important;
       box-shadow:
         0 28px 90px rgba(0,0,0,.50),
@@ -3629,7 +3274,6 @@
     .app-header .title-group h1,
     .app-header .title-group small {
       color: var(--label-1) !important;
-      -webkit-text-fill-color: var(--label-1) !important;
       opacity: 1 !important;
     }
 
@@ -3642,7 +3286,6 @@
       white-space: normal !important;
       overflow-wrap: anywhere;
       line-height: 1.15 !important;
-      -webkit-mask-image: none !important;
       mask-image: none !important;
     }
 
@@ -3653,7 +3296,6 @@
     .leaderboard-stats .rank-stat {
       overflow: visible !important;
       text-overflow: clip !important;
-      -webkit-mask-image: none !important;
       mask-image: none !important;
     }
 
@@ -3690,685 +3332,6 @@
       padding-right: calc(var(--horizontal-edge-fade) + 3px) !important;
       scroll-padding-left: calc(var(--horizontal-edge-fade) + 3px);
       scroll-padding-right: calc(var(--horizontal-edge-fade) + 3px);
-      -webkit-mask-image: linear-gradient(
-        to right,
-        transparent 0,
-        #000 var(--horizontal-edge-fade),
-        #000 calc(100% - var(--horizontal-edge-fade)),
-        transparent 100%
-      ) !important;
-      mask-image: linear-gradient(
-        to right,
-        transparent 0,
-        #000 var(--horizontal-edge-fade),
-        #000 calc(100% - var(--horizontal-edge-fade)),
-        transparent 100%
-      ) !important;
-      -webkit-mask-repeat: no-repeat !important;
-      mask-repeat: no-repeat !important;
-      -webkit-mask-size: 100% 100% !important;
-      mask-size: 100% 100% !important;
-    }
-
-    /* Przywrócenie normalnego pionowego przewijania kółkiem myszy
-       i gładzikiem w przeglądarkach komputerowych. */
-    html {
-      overflow-y: auto !important;
-      overscroll-behavior-y: auto !important;
-      scroll-behavior: auto;
-    }
-
-    body,
-    #root,
-    #root > .pitch-bg,
-    .pitch-bg {
-      overflow-y: visible !important;
-      overscroll-behavior-y: auto !important;
-    }
-
-    @media (pointer: fine) {
-      .chip-scroll-row,
-      .pill-scroll-safe,
-      .filters-sticky .overflow-x-auto {
-        touch-action: auto !important;
-      }
-    }
-
-    /* Panel administratora: pełne napisy bez efektu zanikania. */
-    .admin-panel .truncate,
-    .admin-panel .admin-match-summary-teams,
-    .admin-panel .admin-score-team-name {
-      -webkit-mask-image: none !important;
-      mask-image: none !important;
-      text-overflow: clip !important;
-    }
-
-    .admin-panel .truncate {
-      overflow: visible !important;
-      white-space: normal !important;
-      overflow-wrap: anywhere;
-      word-break: normal;
-    }
-
-    .admin-panel .admin-match-summary-teams,
-    .admin-panel .admin-score-team-name {
-      overflow: visible !important;
-      white-space: normal !important;
-      overflow-wrap: anywhere;
-    }
-
-    /* Nazwy drużyn w wierszu meczu mogą przejść do następnej linii. */
-    .admin-panel .admin-match-summary-main,
-    .admin-panel .admin-match-summary-teams {
-      min-width: 0;
-    }
-
-    .admin-panel .admin-match-summary-teams > span {
-      max-width: 100%;
-      align-items: flex-start;
-    }
-
-    @media (max-width: 520px) {
-      .admin-panel .admin-match-summary-row {
-        align-items: flex-start !important;
-      }
-
-      .admin-panel .admin-match-summary-teams {
-        row-gap: 4px;
-      }
-    }
-
-    /* Wyrównanie przewijanych filtrów faz — oba rzędy zaczynają się
-       w tym samym miejscu i są lekko przesunięte w prawo. */
-    .phase-filter-panel .chip-scroll-row,
-    .admin-phase-filters .chip-scroll-row {
-      justify-content: flex-start !important;
-      padding-left: 36px !important;
-      padding-right: 28px !important;
-      scroll-padding-left: 36px !important;
-      scroll-padding-right: 28px !important;
-    }
-
-    @media (max-width: 520px) {
-      .phase-filter-panel .chip-scroll-row,
-      .admin-phase-filters .chip-scroll-row {
-        padding-left: 30px !important;
-        padding-right: 24px !important;
-        scroll-padding-left: 30px !important;
-        scroll-padding-right: 24px !important;
-      }
-    }
-
-    /* Delikatniejsze zanikanie w filtrach i dolnym menu. */
-    :root {
-      --horizontal-edge-fade: clamp(10px, 2.4vw, 16px) !important;
-      --overflow-fade-small: clamp(6px, 1.8vw, 10px) !important;
-    }
-
-    .chip-scroll-row,
-    .pill-scroll-safe,
-    .filters-sticky .overflow-x-auto {
-      -webkit-mask-image: linear-gradient(
-        to right,
-        transparent 0,
-        #000 var(--horizontal-edge-fade),
-        #000 calc(100% - var(--horizontal-edge-fade)),
-        transparent 100%
-      ) !important;
-      mask-image: linear-gradient(
-        to right,
-        transparent 0,
-        #000 var(--horizontal-edge-fade),
-        #000 calc(100% - var(--horizontal-edge-fade)),
-        transparent 100%
-      ) !important;
-    }
-
-    .bottom-nav .nav-label {
-      -webkit-mask-image: linear-gradient(
-        to right,
-        transparent 0,
-        #000 var(--overflow-fade-small),
-        #000 calc(100% - var(--overflow-fade-small)),
-        transparent 100%
-      ) !important;
-      mask-image: linear-gradient(
-        to right,
-        transparent 0,
-        #000 var(--overflow-fade-small),
-        #000 calc(100% - var(--overflow-fade-small)),
-        transparent 100%
-      ) !important;
-    }
-
-    /* Górny panel pozostaje zawsze na ekranie — tak jak dolne menu. */
-    .app-header {
-      position: fixed !important;
-      left: 50% !important;
-      right: auto !important;
-      transform: translateX(-50%) !important;
-      margin: 0 !important;
-      z-index: 70 !important;
-    }
-
-    /* Miejsce na stały nagłówek, aby nie zasłaniał treści strony. */
-    .app-content {
-      padding-top: 104px !important;
-    }
-
-    html:not(.is-standalone) .app-header {
-      top: 7px !important;
-      margin-top: 0 !important;
-    }
-
-    html.is-standalone .app-header {
-      top: calc(env(safe-area-inset-top, 0px) + 7px) !important;
-      margin-top: 0 !important;
-    }
-
-    @media (display-mode: standalone) {
-      .app-header {
-        top: calc(env(safe-area-inset-top, 0px) + 7px) !important;
-        margin-top: 0 !important;
-      }
-
-      .app-content {
-        padding-top: calc(104px + env(safe-area-inset-top, 0px)) !important;
-      }
-    }
-
-    @media (max-width: 520px) {
-      .app-content {
-        padding-top: 96px !important;
-      }
-
-      html.is-standalone .app-content {
-        padding-top: calc(96px + env(safe-area-inset-top, 0px)) !important;
-      }
-    }
-
-    /* Kafelki rozkładu punktów — zaokrąglenia zgodne z resztą aplikacji. */
-    .leaderboard-category-card {
-      border-radius: 26px !important;
-      overflow: hidden;
-      background-clip: padding-box;
-    }
-
-    @media (max-width: 520px) {
-      .leaderboard-category-card {
-        border-radius: 23px !important;
-      }
-    }
-
-    @media (max-width: 370px) {
-      .leaderboard-category-card {
-        border-radius: 21px !important;
-      }
-    }
-
-    /* iPhone/Safari: brak automatycznego powiększania po wejściu w pole.
-       Safari powiększa formularz, gdy tekst pola ma mniej niż 16 px. */
-    @supports (-webkit-touch-callout: none) {
-      @media (max-width: 700px) {
-        input,
-        select,
-        textarea {
-          font-size: 16px !important;
-        }
-      }
-    }
-
-    /* ═══════════════════════════════════════════════════════════════
-       LIGHT MODE — poprawa stałego nagłówka i odstępów
-       Jasny motyw wcześniej przywracał position: sticky, przez co
-       nagłówek wracał do układu strony i powstawała duża pusta przestrzeń.
-    ═══════════════════════════════════════════════════════════════ */
-
-    /* Nagłówek jest fixed, więc nie zajmuje już miejsca w układzie.
-       Zostawiamy tylko jeden, kontrolowany odstęp nad treścią. */
-
-    /* Menu filtrów: zakładki wyrównane bliżej lewej krawędzi. */
-    .phase-filter-panel .chip-scroll-row,
-    .admin-phase-filters .chip-scroll-row {
-      justify-content: flex-start !important;
-      padding-left: 12px !important;
-      scroll-padding-left: 12px !important;
-    }
-
-    @media (max-width: 520px) {
-      .phase-filter-panel .chip-scroll-row,
-      .admin-phase-filters .chip-scroll-row {
-        padding-left: 10px !important;
-        scroll-padding-left: 10px !important;
-      }
-    }
-
-    /* ═══════════════════════════════════════════════════════════════
-       JEDNOLITE ZAOKRĄGLENIA
-       Wszystkie elementy mają bazowo 30 px. Przy elementach niższych
-       lub węższych przeglądarka automatycznie ogranicza promień do
-       połowy wymiaru, dzięki czemu powstaje pełna kapsułka lub okrąg.
-    ═══════════════════════════════════════════════════════════════ */
-    :root {
-      --radius-sm: 30px !important;
-      --radius-md: 30px !important;
-      --radius-lg: 30px !important;
-      --radius-xl: 30px !important;
-      --unified-radius: 30px;
-    }
-
-    .app-header,
-    .bottom-nav,
-    .nav-droplet,
-    .filters-sticky,
-    .glass,
-    .glass-strong,
-    .install-banner,
-    .match-card,
-    .admin-match-card,
-    .leaderboard-card,
-    .leaderboard-header,
-    .leaderboard-category-card,
-    .compare-match-card,
-    .selection-tile,
-    .login-modal-sheet,
-    .login-modal-compact-sheet,
-    .login-btn,
-    .players-btn,
-    .match-points-badge,
-    input,
-    select,
-    textarea,
-    button,
-    [role="button"],
-    .rounded,
-    .rounded-sm,
-    .rounded-md,
-    .rounded-lg,
-    .rounded-xl,
-    .rounded-2xl,
-    .rounded-3xl,
-    .rounded-full,
-    [class*="rounded-"],
-    [class~="rounded"] {
-      border-radius: var(--unified-radius) !important;
-    }
-
-    /* Elementy z osobno ustawionymi narożnikami również korzystają z 30 px. */
-    .rounded-t,
-    .rounded-b,
-    .rounded-l,
-    .rounded-r,
-    .rounded-tl,
-    .rounded-tr,
-    .rounded-bl,
-    .rounded-br,
-    [class*="rounded-t-"],
-    [class*="rounded-b-"],
-    [class*="rounded-l-"],
-    [class*="rounded-r-"],
-    [class*="rounded-tl-"],
-    [class*="rounded-tr-"],
-    [class*="rounded-bl-"],
-    [class*="rounded-br-"] {
-      border-radius: var(--unified-radius) !important;
-    }
-
-    /* Małe kwadraty, ikonki i kapsułki pozostają w pełni zaokrąglone.
-       999 px daje ten sam efekt co połowa ich wymiaru. */
-    .logo-icon,
-    .players-btn,
-    .match-points-badge,
-    .nav-droplet,
-    .rounded-full,
-    [aria-label*="Zamknij"],
-    [aria-label*="zamknij"] {
-      border-radius: 999px !important;
-    }
-
-    /* Ostateczne wymuszenie stałego nagłówka w obu motywach,
-       także po zmianie motywu bez przeładowania strony. */
-    html body .app-header,
-    html[data-theme="dark"] body .app-header {
-      position: fixed !important;
-      inset-block-start: calc(env(safe-area-inset-top, 0px) + 7px) !important;
-      inset-inline-start: 50% !important;
-      inset-inline-end: auto !important;
-      top: calc(env(safe-area-inset-top, 0px) + 7px) !important;
-      left: 50% !important;
-      right: auto !important;
-      margin: 0 !important;
-      transform: translate3d(-50%, 0, 0) !important;
-      -webkit-transform: translate3d(-50%, 0, 0) !important;
-      z-index: 1000 !important;
-      will-change: transform;
-    }
-
-    html body .app-content {
-      padding-top: var(--fixed-header-content-offset, 96px) !important;
-    }
-
-    html body .filters-sticky {
-      top: var(--fixed-header-filter-offset, 82px) !important;
-    }
-
-    /* Panel administratora: mecze jednoliniowe są wyśrodkowane pionowo.
-       Mecze, których nazwy przechodzą do drugiego wiersza, zachowują
-       wyrównanie do góry, aby układ pozostał czytelny. */
-    @media (max-width: 520px) {
-      .admin-panel .admin-match-summary-row:not(.is-multiline) {
-        align-items: center !important;
-      }
-
-      .admin-panel .admin-match-summary-row:not(.is-multiline)
-      .admin-match-summary-main {
-        align-items: center !important;
-      }
-
-      .admin-panel .admin-match-summary-row:not(.is-multiline)
-      .admin-match-summary-teams {
-        align-items: center !important;
-        align-content: center !important;
-      }
-
-      .admin-panel .admin-match-summary-row.is-multiline {
-        align-items: flex-start !important;
-      }
-    }
-
-    /* Kolejność w grupach: miękkie zanikanie po obu stronach paska A–L. */
-    .group-order-filter-row {
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-      padding-left: 14px !important;
-      padding-right: 14px !important;
-      scroll-padding-left: 14px;
-      scroll-padding-right: 14px;
-      -webkit-mask-image: linear-gradient(
-        to right,
-        transparent 0,
-        #000 12px,
-        #000 calc(100% - 12px),
-        transparent 100%
-      ) !important;
-      mask-image: linear-gradient(
-        to right,
-        transparent 0,
-        #000 12px,
-        #000 calc(100% - 12px),
-        transparent 100%
-      ) !important;
-      -webkit-mask-repeat: no-repeat !important;
-      mask-repeat: no-repeat !important;
-      -webkit-mask-size: 100% 100% !important;
-      mask-size: 100% 100% !important;
-    }
-
-    .group-order-filter-row::-webkit-scrollbar {
-      display: none;
-    }
-
-    /* ═══════════════════════════════════════════════════════════════
-       WYRÓWNANIE WSZYSTKICH POZIOMYCH FILTRÓW DO LEWEJ
-       Każdy pasek zaczyna się na tej samej osi co elementy w jego sekcji.
-    ═══════════════════════════════════════════════════════════════ */
-
-    /* Publiczne menu meczów: pierwszy rząd zgodny z rzędem statusów niżej. */
-    .phase-filter-panel .chip-scroll-row {
-      justify-content: flex-start !important;
-      padding-left: 5px !important;
-      padding-right: 14px !important;
-      scroll-padding-left: 5px !important;
-      scroll-padding-right: 14px !important;
-      -webkit-mask-image: linear-gradient(
-        to right,
-        transparent 0,
-        #000 4px,
-        #000 calc(100% - 12px),
-        transparent 100%
-      ) !important;
-      mask-image: linear-gradient(
-        to right,
-        transparent 0,
-        #000 4px,
-        #000 calc(100% - 12px),
-        transparent 100%
-      ) !important;
-    }
-
-    /* Panel administratora: filtry zaczynają się dokładnie jak pole wyszukiwania. */
-    .admin-phase-filters .chip-scroll-row {
-      justify-content: flex-start !important;
-      padding-left: 0 !important;
-      padding-right: 14px !important;
-      scroll-padding-left: 0 !important;
-      scroll-padding-right: 14px !important;
-      -webkit-mask-image: linear-gradient(
-        to right,
-        #000 0,
-        #000 calc(100% - 12px),
-        transparent 100%
-      ) !important;
-      mask-image: linear-gradient(
-        to right,
-        #000 0,
-        #000 calc(100% - 12px),
-        transparent 100%
-      ) !important;
-    }
-
-    /* Tabela „Kolejność w grupach”: litera A równo z tytułem i kolumną GRACZ. */
-    .group-order-filter-row {
-      justify-content: flex-start !important;
-      padding-left: 16px !important;
-      padding-right: 16px !important;
-      scroll-padding-left: 16px !important;
-      scroll-padding-right: 16px !important;
-      -webkit-mask-image: linear-gradient(
-        to right,
-        transparent 0,
-        #000 12px,
-        #000 calc(100% - 12px),
-        transparent 100%
-      ) !important;
-      mask-image: linear-gradient(
-        to right,
-        transparent 0,
-        #000 12px,
-        #000 calc(100% - 12px),
-        transparent 100%
-      ) !important;
-    }
-
-    /* Edycja typów specjalnych w adminie: A równo z nagłówkiem sekcji. */
-    .admin-group-order-filter-row {
-      justify-content: flex-start !important;
-      padding-left: 0 !important;
-      padding-right: 14px !important;
-      scroll-padding-left: 0 !important;
-      scroll-padding-right: 14px !important;
-      scrollbar-width: none;
-      -webkit-overflow-scrolling: touch;
-      -webkit-mask-image: linear-gradient(
-        to right,
-        #000 0,
-        #000 calc(100% - 12px),
-        transparent 100%
-      ) !important;
-      mask-image: linear-gradient(
-        to right,
-        #000 0,
-        #000 calc(100% - 12px),
-        transparent 100%
-      ) !important;
-      -webkit-mask-repeat: no-repeat !important;
-      mask-repeat: no-repeat !important;
-      -webkit-mask-size: 100% 100% !important;
-      mask-size: 100% 100% !important;
-    }
-
-    .admin-group-order-filter-row::-webkit-scrollbar {
-      display: none;
-    }
-
-    @media (max-width: 520px) {
-      .phase-filter-panel .chip-scroll-row {
-        padding-left: 5px !important;
-        scroll-padding-left: 5px !important;
-      }
-
-      .admin-phase-filters .chip-scroll-row,
-      .admin-group-order-filter-row {
-        padding-left: 0 !important;
-        scroll-padding-left: 0 !important;
-      }
-
-      .group-order-filter-row {
-        padding-left: 16px !important;
-        scroll-padding-left: 16px !important;
-      }
-    }
-
-    /* Ostateczna korekta zanikania: pierwszy element każdego paska
-       pozostaje w pełni widoczny i nie wchodzi w strefę maski. */
-    .phase-filter-panel .chip-scroll-row {
-      -webkit-mask-image: linear-gradient(
-        to right,
-        transparent 0,
-        #000 2px,
-        #000 calc(100% - 10px),
-        transparent 100%
-      ) !important;
-      mask-image: linear-gradient(
-        to right,
-        transparent 0,
-        #000 2px,
-        #000 calc(100% - 10px),
-        transparent 100%
-      ) !important;
-    }
-
-    .group-order-filter-row {
-      -webkit-mask-image: linear-gradient(
-        to right,
-        transparent 0,
-        #000 6px,
-        #000 calc(100% - 10px),
-        transparent 100%
-      ) !important;
-      mask-image: linear-gradient(
-        to right,
-        transparent 0,
-        #000 6px,
-        #000 calc(100% - 10px),
-        transparent 100%
-      ) !important;
-    }
-
-    /* W panelu administratora nie ma zanikania po lewej,
-       ponieważ filtry zaczynają się dokładnie przy krawędzi zawartości. */
-
-    /* Panel administratora: subtelne zanikanie po lewej i prawej. */
-    .admin-phase-filters .chip-scroll-row,
-    .admin-group-order-filter-row {
-      -webkit-mask-image: linear-gradient(
-        to right,
-        transparent 0,
-        #000 2px,
-        #000 calc(100% - 10px),
-        transparent 100%
-      ) !important;
-      mask-image: linear-gradient(
-        to right,
-        transparent 0,
-        #000 2px,
-        #000 calc(100% - 10px),
-        transparent 100%
-      ) !important;
-    }
-
-    /* Wszystkie poziome paski FILTRÓW: bez widocznej kreski przewijania.
-       Przewijanie palcem, gładzikiem i kółkiem nadal działa. */
-    .chip-scroll-row,
-    .pill-scroll-safe,
-    .group-order-filter-row,
-    .admin-group-order-filter-row,
-    .phase-filter-panel .overflow-x-auto,
-    .admin-phase-filters .overflow-x-auto,
-    .filters-sticky .overflow-x-auto {
-      scrollbar-width: none !important;
-      -ms-overflow-style: none !important;
-    }
-
-    .chip-scroll-row::-webkit-scrollbar,
-    .pill-scroll-safe::-webkit-scrollbar,
-    .group-order-filter-row::-webkit-scrollbar,
-    .admin-group-order-filter-row::-webkit-scrollbar,
-    .phase-filter-panel .overflow-x-auto::-webkit-scrollbar,
-    .admin-phase-filters .overflow-x-auto::-webkit-scrollbar,
-    .filters-sticky .overflow-x-auto::-webkit-scrollbar {
-      display: none !important;
-      width: 0 !important;
-      height: 0 !important;
-      background: transparent !important;
-    }
-
-    .chip-scroll-row::-webkit-scrollbar-track,
-    .chip-scroll-row::-webkit-scrollbar-thumb,
-    .pill-scroll-safe::-webkit-scrollbar-track,
-    .pill-scroll-safe::-webkit-scrollbar-thumb,
-    .group-order-filter-row::-webkit-scrollbar-track,
-    .group-order-filter-row::-webkit-scrollbar-thumb,
-    .admin-group-order-filter-row::-webkit-scrollbar-track,
-    .admin-group-order-filter-row::-webkit-scrollbar-thumb,
-    .phase-filter-panel .overflow-x-auto::-webkit-scrollbar-track,
-    .phase-filter-panel .overflow-x-auto::-webkit-scrollbar-thumb,
-    .admin-phase-filters .overflow-x-auto::-webkit-scrollbar-track,
-    .admin-phase-filters .overflow-x-auto::-webkit-scrollbar-thumb,
-    .filters-sticky .overflow-x-auto::-webkit-scrollbar-track,
-    .filters-sticky .overflow-x-auto::-webkit-scrollbar-thumb {
-      display: none !important;
-      width: 0 !important;
-      height: 0 !important;
-      background: transparent !important;
-    }
-
-    /* Podgląd zwycięzcy po karnych — czytelna kapsułka zamiast [k:XXX]. */
-    .prediction-penalty,
-    .compare-player-penalty {
-      display: inline-flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      gap: 4px !important;
-      min-width: 42px !important;
-      width: auto !important;
-      padding: 3px 7px !important;
-      border-radius: 999px !important;
-      background:
-        linear-gradient(145deg, rgba(112,184,255,.20), rgba(112,184,255,.08)) !important;
-      border: 1px solid rgba(140,202,255,.28) !important;
-      color: var(--label-1) !important;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif !important;
-      font-size: 10px !important;
-      font-weight: 800 !important;
-      line-height: 1 !important;
-      letter-spacing: .05em !important;
-      text-align: center !important;
-      white-space: nowrap !important;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.14) !important;
-      opacity: 1 !important;
-    }
-
-    .prediction-penalty::before,
-    .compare-player-penalty::before {
-      content: "K" !important;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 15px;
-      height: 15px;
-      border-radius: 999px;
-      background: rgba(112,184,255,.28);
       color: var(--label-1);
       font-size: 9px;
       font-weight: 900;
@@ -4479,537 +3442,6 @@
     .phase-filter-panel .overflow-x-auto,
     .admin-phase-filters .overflow-x-auto,
     .filters-sticky .overflow-x-auto {
-      -webkit-mask-image: linear-gradient(
-        to right,
-        #000 0,
-        #000 calc(100% - var(--filter-right-fade)),
-        transparent 100%
-      ) !important;
-      mask-image: linear-gradient(
-        to right,
-        #000 0,
-        #000 calc(100% - var(--filter-right-fade)),
-        transparent 100%
-      ) !important;
-      -webkit-mask-repeat: no-repeat !important;
-      mask-repeat: no-repeat !important;
-      -webkit-mask-size: 100% 100% !important;
-      mask-size: 100% 100% !important;
-    }
-
-    /* Takie samo zanikanie po prawej również dla pasków grup A–L. */
-    .group-order-filter-row,
-    .admin-group-order-filter-row {
-      -webkit-mask-image: linear-gradient(
-        to right,
-        #000 0,
-        #000 calc(100% - var(--filter-right-fade)),
-        transparent 100%
-      ) !important;
-      mask-image: linear-gradient(
-        to right,
-        #000 0,
-        #000 calc(100% - var(--filter-right-fade)),
-        transparent 100%
-      ) !important;
-    }
-
-    /* ═══════════════════════════════════════════════════════════════
-       JEDNOLITE ODSTĘPY MIĘDZY SEKCJAMI WE WSZYSTKICH ZAKŁADKACH
-    ═══════════════════════════════════════════════════════════════ */
-    :root {
-      --tab-section-gap: 14px;
-    }
-
-    /* Główne kontenery wszystkich zakładek. */
-    .matches-view,
-    .specials-view,
-    .allspecials-view,
-    .leaderboard-view,
-    .compare-view,
-    .bracket-page,
-    .admin-panel {
-      --tw-space-y-reverse: 0 !important;
-    }
-
-    /* Usunięcie różnych lokalnych mb-* z elementów będących całymi sekcjami. */
-
-    /* Jeden wspólny odstęp między kolejnymi sekcjami. */
-
-    /* Sekcje generowane warunkowo wewnątrz głównych widoków. */
-    .matches-view .prediction-list-wrap,
-    .specials-view section + section,
-    .allspecials-view section + section,
-    .leaderboard-view .leaderboard-card + .leaderboard-card,
-    .compare-view .compare-match-card + .compare-match-card,
-    .admin-panel .admin-match-card + .admin-match-card {
-      margin-top: var(--tab-section-gap) !important;
-    }
-
-    @media (max-width: 520px) {
-      :root {
-        --tab-section-gap: 12px;
-      }
-    }
-
-    /* Profil użytkownika po rozwinięciu — bez bocznych „wcięć”.
-       Górna i dolna część tworzą jedną spójną kartę. */
-
-    .profile-choice-shell.is-open .profile-choice-trigger,
-    .profile-choice-shell.is-open .profile-choice-actions {
-      width: 100% !important;
-      margin-left: 0 !important;
-      margin-right: 0 !important;
-      box-sizing: border-box !important;
-    }
-
-    .profile-choice-shell.is-open .profile-choice-trigger {
-      border-bottom-left-radius: 0 !important;
-      border-bottom-right-radius: 0 !important;
-      border-bottom-color: transparent !important;
-      margin-bottom: 0 !important;
-    }
-
-    .profile-choice-shell.is-open .profile-choice-actions {
-      margin-top: 0 !important;
-      border-top-left-radius: 0 !important;
-      border-top-right-radius: 0 !important;
-      border-bottom-left-radius: 30px !important;
-      border-bottom-right-radius: 30px !important;
-      border-top-width: 1px !important;
-      border-top-style: solid !important;
-      padding: 10px !important;
-      box-shadow: none !important;
-    }
-
-    .profile-choice-shell.is-open .profile-choice-action-grid {
-      width: 100% !important;
-      margin: 0 !important;
-    }
-
-    /* Modal profilu nie może wpadać pod stały górny pasek. */
-    .profile-modal-overlay {
-      display: flex !important;
-      justify-content: center !important;
-      align-items: flex-start !important;
-      padding-top: calc(var(--fixed-header-content-offset, 96px) + 8px) !important;
-      padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 18px) !important;
-      overflow-y: auto !important;
-      box-sizing: border-box !important;
-    }
-
-    .profile-modal-overlay .login-modal-sheet,
-    .profile-modal-overlay .login-modal-compact-sheet {
-      align-self: flex-start !important;
-      margin-top: 0 !important;
-      margin-bottom: 0 !important;
-    }
-
-    @media (max-width: 520px) {
-      .profile-modal-overlay {
-        padding-top: calc(var(--fixed-header-content-offset, 90px) + 6px) !important;
-        padding-left: 12px !important;
-        padding-right: 12px !important;
-      }
-
-      .profile-modal-overlay .login-modal-sheet {
-        max-height: calc(100dvh - var(--fixed-header-content-offset, 90px) - env(safe-area-inset-bottom, 0px) - 22px) !important;
-      }
-
-      .profile-modal-overlay .login-modal-compact-sheet {
-        max-height: calc(100dvh - var(--fixed-header-content-offset, 90px) - env(safe-area-inset-bottom, 0px) - 38px) !important;
-      }
-    }
-
-    /* Modal profilu: blokada przewijania ekranu znajdującego się pod spodem. */
-    html.modal-scroll-locked,
-    body.modal-scroll-locked {
-      overflow: hidden !important;
-      overscroll-behavior: none !important;
-    }
-
-    /* Klasa profile-modal-overlay należy do samego tła. */
-    .profile-modal-overlay {
-      display: block !important;
-      padding: 0 !important;
-      overflow: hidden !important;
-    }
-
-    /* Kontener modala pozostaje pod stałym nagłówkiem i przechwytuje gesty. */
-    .profile-modal-overlay-root {
-      align-items: flex-start !important;
-      padding-top: calc(var(--fixed-header-content-offset, 96px) + 8px) !important;
-      padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 18px) !important;
-      padding-left: 12px !important;
-      padding-right: 12px !important;
-      overflow-y: auto !important;
-      overscroll-behavior: contain !important;
-      touch-action: none;
-      box-sizing: border-box !important;
-    }
-
-    .profile-modal-overlay-root .login-modal-sheet,
-    .profile-modal-overlay-root .login-modal-compact-sheet,
-    .profile-modal-overlay-root .login-modal-content {
-      touch-action: pan-y !important;
-      overscroll-behavior: contain !important;
-    }
-
-    .profile-modal-overlay-root .login-modal-sheet,
-    .profile-modal-overlay-root .login-modal-compact-sheet {
-      align-self: flex-start !important;
-      margin-top: 0 !important;
-      margin-bottom: 0 !important;
-    }
-
-    @media (max-width: 520px) {
-      .profile-modal-overlay-root {
-        padding-top: calc(var(--fixed-header-content-offset, 90px) + 6px) !important;
-      }
-
-      .profile-modal-overlay-root .login-modal-sheet {
-        max-height: calc(100dvh - var(--fixed-header-content-offset, 90px) - env(safe-area-inset-bottom, 0px) - 22px) !important;
-      }
-
-      .profile-modal-overlay-root .login-modal-compact-sheet {
-        max-height: calc(100dvh - var(--fixed-header-content-offset, 90px) - env(safe-area-inset-bottom, 0px) - 38px) !important;
-      }
-    }
-
-    /* Pełna blokada przewijania tła pod każdym etapem modala profilu. */
-    html.modal-scroll-locked,
-    body.modal-scroll-locked,
-    body.modal-scroll-locked #root,
-    body.modal-scroll-locked .pitch-bg {
-      overscroll-behavior: none !important;
-    }
-
-    body.modal-scroll-locked {
-      touch-action: none !important;
-    }
-
-    .profile-modal-overlay-root,
-    .profile-modal-overlay {
-      overscroll-behavior: contain !important;
-    }
-
-    .profile-modal-overlay-root .login-modal-content {
-      -webkit-overflow-scrolling: touch !important;
-      overscroll-behavior: contain !important;
-      touch-action: pan-y !important;
-    }
-
-    /* Ostateczny wygląd kapsułek karnych — czytelniejszy podział K | EKW */
-    .prediction-penalty,
-    .compare-player-penalty,
-    .match-penalty-badge {
-      display: inline-flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      gap: 0 !important;
-      min-width: 60px !important;
-      padding: 4px 10px !important;
-      border-radius: 999px !important;
-      background: linear-gradient(
-        145deg,
-        rgba(96, 118, 166, .22),
-        rgba(96, 118, 166, .11)
-      ) !important;
-      border: 1px solid rgba(166, 188, 228, .20) !important;
-      color: rgba(248, 250, 255, .96) !important;
-      font-size: 10px !important;
-      font-weight: 800 !important;
-      line-height: 1 !important;
-      letter-spacing: .06em !important;
-      white-space: nowrap !important;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.10),
-        0 1px 4px rgba(0,0,0,.10) !important;
-      vertical-align: middle !important;
-    }
-
-    .prediction-penalty::before,
-    .compare-player-penalty::before,
-    .match-penalty-badge::before {
-      content: "K" !important;
-      display: inline-flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      margin-right: 7px !important;
-      padding-right: 7px !important;
-      border-right: 1px solid rgba(210, 224, 255, .24) !important;
-      color: rgba(215, 228, 255, .84) !important;
-      font-size: 9px !important;
-      font-weight: 900 !important;
-      letter-spacing: .03em !important;
-      line-height: 1 !important;
-      flex: 0 0 auto !important;
-    }
-
-    /* Kapsułki karnych: tylko trzyliterowy skrót drużyny. */
-    .prediction-penalty,
-    .compare-player-penalty,
-    .match-penalty-badge {
-      gap: 0 !important;
-      min-width: 0 !important;
-      width: auto !important;
-      padding: 4px 8px !important;
-      font-size: 10px !important;
-      font-weight: 800 !important;
-      letter-spacing: .07em !important;
-      line-height: 1 !important;
-      white-space: nowrap !important;
-    }
-
-    .prediction-penalty::before,
-    .compare-player-penalty::before,
-    .match-penalty-badge::before {
-      content: none !important;
-      display: none !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      border: 0 !important;
-    }
-
-    .prediction-score-grid {
-      grid-template-columns: 44px 40px 28px !important;
-      min-width: 124px !important;
-    }
-
-    /* Zakładka Mecze: kapsułka karnych pokazuje wyłącznie 3-literowy skrót. */
-    .matches-view .match-penalty-badge,
-    .match-card .match-penalty-badge {
-      display: inline-flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      width: auto !important;
-      min-width: 0 !important;
-      padding: 4px 8px !important;
-      gap: 0 !important;
-      font-size: 10px !important;
-      font-weight: 800 !important;
-      line-height: 1 !important;
-      letter-spacing: .07em !important;
-      white-space: nowrap !important;
-      border-radius: 999px !important;
-    }
-
-    .matches-view .match-penalty-badge::before,
-    .match-card .match-penalty-badge::before {
-      content: none !important;
-      display: none !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      border: 0 !important;
-    }
-
-    /* Drabinka: usuń podwójny odstęp między nagłówkiem a właściwą drabinką.
-       Kontener miał jednocześnie gap: 18px i wspólny margin-top sekcji. */
-    .bracket-page {
-      gap: 0 !important;
-    }
-
-    .bracket-page > :not([hidden]) ~ :not([hidden]) {
-      margin-top: var(--tab-section-gap) !important;
-    }
-
-    /* ═══════════════════════════════════════════════════════════════
-       OSTATECZNY SYSTEM ODSTĘPÓW
-       Jedna wartość dla przerw między głównymi sekcjami i kartami.
-    ═══════════════════════════════════════════════════════════════ */
-    :root {
-      --ui-section-gap: 14px;
-      --ui-modal-gap: 12px;
-    }
-
-    /* Każda zakładka korzysta z prawdziwego flex-gap zamiast mieszanki
-       space-y, margin-top, margin-bottom i własnych wartości gap. */
-    .matches-view,
-    .specials-view,
-    .allspecials-view,
-    .leaderboard-view,
-    .compare-view,
-    .bracket-page,
-    .admin-panel {
-      display: flex !important;
-      flex-direction: column !important;
-      gap: var(--ui-section-gap) !important;
-    }
-
-    /* Kasowanie lokalnych marginesów pomiędzy całymi sekcjami.
-       Od tej chwili odstęp tworzy wyłącznie gap kontenera. */
-    .matches-view > *,
-    .specials-view > *,
-    .allspecials-view > *,
-    .leaderboard-view > *,
-    .compare-view > *,
-    .bracket-page > *,
-    .admin-panel > * {
-      margin-top: 0 !important;
-      margin-bottom: 0 !important;
-    }
-
-    .matches-view > :not([hidden]) ~ :not([hidden]),
-    .specials-view > :not([hidden]) ~ :not([hidden]),
-    .allspecials-view > :not([hidden]) ~ :not([hidden]),
-    .leaderboard-view > :not([hidden]) ~ :not([hidden]),
-    .compare-view > :not([hidden]) ~ :not([hidden]),
-    .bracket-page > :not([hidden]) ~ :not([hidden]),
-    .admin-panel > :not([hidden]) ~ :not([hidden]) {
-      margin-top: 0 !important;
-    }
-
-    /* Podsekcje będące bezpośrednimi stosami w zakładkach admina
-       i typów specjalnych także korzystają z tej samej przerwy. */
-    .admin-panel > .space-y-2,
-    .admin-panel > .space-y-3,
-    .admin-panel > .space-y-4,
-    .specials-view > .space-y-2,
-    .specials-view > .space-y-3,
-    .specials-view > .space-y-4,
-    .allspecials-view > .space-y-2,
-    .allspecials-view > .space-y-3,
-    .leaderboard-view > .space-y-2,
-    .leaderboard-view > .space-y-3,
-    .compare-view > .space-y-2,
-    .compare-view > .space-y-3,
-    .matches-view > .space-y-2,
-    .matches-view > .space-y-3 {
-      display: flex !important;
-      flex-direction: column !important;
-      gap: var(--ui-section-gap) !important;
-    }
-
-    .admin-panel > .space-y-2 > *,
-    .admin-panel > .space-y-3 > *,
-    .admin-panel > .space-y-4 > *,
-    .specials-view > .space-y-2 > *,
-    .specials-view > .space-y-3 > *,
-    .specials-view > .space-y-4 > *,
-    .allspecials-view > .space-y-2 > *,
-    .allspecials-view > .space-y-3 > *,
-    .leaderboard-view > .space-y-2 > *,
-    .leaderboard-view > .space-y-3 > *,
-    .compare-view > .space-y-2 > *,
-    .compare-view > .space-y-3 > *,
-    .matches-view > .space-y-2 > *,
-    .matches-view > .space-y-3 > * {
-      margin-top: 0 !important;
-      margin-bottom: 0 !important;
-    }
-
-    /* Powtarzające się karty — bez własnych dodatkowych marginesów,
-       żeby nie powstawały podwójne „szpary”. */
-    .match-card,
-    .admin-match-card,
-    .leaderboard-card,
-    .compare-match-card,
-    .table-card,
-    .bracket-intro,
-    .bracket-scroll-shell {
-      margin-top: 0 !important;
-      margin-bottom: 0 !important;
-    }
-
-    .match-card + .match-card,
-    .admin-match-card + .admin-match-card,
-    .leaderboard-card + .leaderboard-card,
-    .compare-match-card + .compare-match-card,
-    .table-card + .table-card {
-      margin-top: 0 !important;
-    }
-
-    /* Główne stosy formularzy w modalach mają identyczny rytm. */
-    .login-modal-content > .space-y-3,
-    .login-modal-content > .space-y-4 {
-      display: flex !important;
-      flex-direction: column !important;
-      gap: var(--ui-modal-gap) !important;
-    }
-
-    .login-modal-content > .space-y-3 > *,
-    .login-modal-content > .space-y-4 > * {
-      margin-top: 0 !important;
-      margin-bottom: 0 !important;
-    }
-
-    @media (max-width: 520px) {
-      :root {
-        --ui-section-gap: 12px;
-        --ui-modal-gap: 12px;
-      }
-    }
-
-    /* Kapsułki karnych — płaski styl 2D:
-       bez gradientu, bez cienia, bez poświaty, jednolity kolor. */
-    .prediction-penalty,
-    .compare-player-penalty,
-    .match-penalty-badge {
-      background: rgba(70, 86, 120, 0.72) !important;
-      border: none !important;
-      box-shadow: none !important;
-      filter: none !important;
-      text-shadow: none !important;
-      backdrop-filter: none !important;
-      -webkit-backdrop-filter: none !important;
-      color: rgba(255, 255, 255, 0.96) !important;
-    }
-
-    .prediction-penalty::before,
-    .compare-player-penalty::before,
-    .match-penalty-badge::before {
-      box-shadow: none !important;
-      filter: none !important;
-      text-shadow: none !important;
-      background: none !important;
-    }
-
-    /* Zakładka Mecze — wymuszony płaski styl 2D kapsułek karnych. */
-    .matches-view .match-penalty-badge,
-    .match-card .match-penalty-badge {
-      background: rgba(70, 86, 120, 0.72) !important;
-      background-image: none !important;
-      border: none !important;
-      box-shadow: none !important;
-      filter: none !important;
-      text-shadow: none !important;
-      backdrop-filter: none !important;
-      -webkit-backdrop-filter: none !important;
-      color: rgba(255, 255, 255, 0.96) !important;
-    }
-
-    .matches-view .match-penalty-badge::before,
-    .match-card .match-penalty-badge::before {
-      content: none !important;
-      display: none !important;
-      background: none !important;
-      border: none !important;
-      box-shadow: none !important;
-      filter: none !important;
-      text-shadow: none !important;
-    }
-
-    /* Przełączniki blokad faz — po najechaniu tylko delikatne przyciemnienie,
-       bez znikania koloru od globalnego button:hover. */
-    .phase-lock-toggle:hover {
-      background-color: inherit;
-    }
-
-    .phase-lock-toggle.is-compare-on:hover {
-      background: #005c38 !important;
-    }
-
-    .phase-lock-toggle.is-locked-on:hover {
-      background: #dc3f3f !important;
-    }
-
-    .phase-lock-toggle.is-off:hover {
-      background: #bfc5d0 !important;
-    }
-
-    .phase-lock-toggle:active {
-      transform: none !important;
-      filter: brightness(.98);
     }
 
     .phase-lock-toggle > span {
@@ -5022,7 +3454,6 @@
     textarea,
     select,
     [contenteditable="true"] {
-      -webkit-tap-highlight-color: transparent !important;
     }
 
     input:focus,
@@ -5037,7 +3468,6 @@
       outline-offset: 0 !important;
       box-shadow: none !important;
       filter: none !important;
-      -webkit-box-shadow: none !important;
     }
 
     /* Usuń również pierścień dodawany przez klasy focus/ring Tailwinda. */
@@ -5173,7 +3603,6 @@
       transform: none !important;
       filter: none !important;
       opacity: 1 !important;
-      -webkit-tap-highlight-color: transparent;
     }
 
     .app-note:hover,
@@ -5317,7 +3746,6 @@
       border-radius: 0 !important;
       background: transparent !important;
       box-shadow: none !important;
-      -webkit-mask-image: none !important;
               mask-image: none !important;
     }
 
@@ -5345,7 +3773,6 @@
       border-radius: 0 !important;
       background: transparent !important;
       box-shadow: none !important;
-      -webkit-mask-image: none !important;
               mask-image: none !important;
     }
 
@@ -5373,7 +3800,6 @@
       box-shadow: none !important;
       color: rgba(235,241,255,.72) !important;
       text-shadow: none !important;
-      -webkit-mask-image: none !important;
               mask-image: none !important;
     }
     .profile-choice-shell.is-open .profile-choice-actions {
@@ -5464,7 +3890,6 @@
       border-radius: 0 !important;
       box-shadow: none !important;
       filter: none !important;
-      -webkit-backdrop-filter: none !important;
       backdrop-filter: none !important;
     }
 
@@ -5507,7 +3932,6 @@
       background-color: transparent !important;
       color: var(--label-1) !important;
       box-shadow: var(--tab-match-shadow) !important;
-      -webkit-backdrop-filter: blur(26px) saturate(165%) !important;
       backdrop-filter: blur(26px) saturate(165%) !important;
     }
 
@@ -5525,7 +3949,6 @@
     html:not([data-theme="light"]) .specials-score-banner [class*="text-[#c8d4f4]"],
     html:not([data-theme="light"]) .bracket-intro p {
       color: var(--label-2) !important;
-      -webkit-text-fill-color: var(--label-2) !important;
     }
 
     /* Zwykłe karty we wszystkich widokach mają tę samą powierzchnię co mecze. */
@@ -5540,7 +3963,6 @@
       background: var(--tab-match-surface-soft) !important;
       background-color: transparent !important;
       box-shadow: var(--tab-match-shadow) !important;
-      -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
       backdrop-filter: blur(24px) saturate(160%) !important;
     }
 
@@ -5676,7 +4098,6 @@
       .fixed.inset-0.z-50 > .relative
     ):not(#__flat_background_banner_override__) {
       box-shadow: none !important;
-      -webkit-box-shadow: none !important;
       text-shadow: none !important;
       filter: none !important;
       transform: none !important;
@@ -5718,7 +4139,6 @@
       .fixed.inset-0.z-50 > .relative
     ):is(:hover, :focus, :focus-visible, :active, [open], .expanded):not(#__flat_background_banner_state_override__) {
       box-shadow: none !important;
-      -webkit-box-shadow: none !important;
       text-shadow: none !important;
       filter: none !important;
       transform: none !important;
@@ -5753,7 +4173,6 @@
       .bracket-third-place-label
     ):not(#__flat_bracket_effects__) {
       box-shadow: none !important;
-      -webkit-box-shadow: none !important;
       text-shadow: none !important;
       filter: none !important;
       transform: none !important;
@@ -5767,7 +4186,6 @@
       .bracket-champion
     ):is(:hover, :focus, :focus-visible, :active, [open], .expanded):not(#__flat_bracket_effects_state__) {
       box-shadow: none !important;
-      -webkit-box-shadow: none !important;
       text-shadow: none !important;
       filter: none !important;
       transform: none !important;
@@ -5788,19 +4206,16 @@
       .bracket-champion
     )::after {
       box-shadow: none !important;
-      -webkit-box-shadow: none !important;
       text-shadow: none !important;
       filter: none !important;
     }
 
     /* Zachowujemy wyłącznie półprzezroczysty gradient i rozmycie tła. */
     html body .bracket-page :is(.bracket-intro, .bracket-section) {
-      -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
       backdrop-filter: blur(24px) saturate(160%) !important;
     }
 
     html body .bracket-page :is(.bracket-match, .bracket-final-card, .bracket-champion) {
-      -webkit-backdrop-filter: blur(14px) saturate(145%) !important;
       backdrop-filter: blur(14px) saturate(145%) !important;
     }
 
@@ -5846,7 +4261,6 @@
       margin-top: 0 !important;
       padding-top: 12px !important;
       position: relative;
-      -webkit-mask-image: none !important;
               mask-image: none !important;
     }
 
@@ -5892,52 +4306,401 @@
 
 
 
-  <style id="iphone-safari-unified-top-scroll">
-    /*
-      iPhone Safari: każda zakładka zachowuje się jak Drabinka.
-      Treść przewija się pod pływającym nagłówkiem aż do samej góry
-      ekranu. Panele filtrów nie zatrzymują się pod nagłówkiem.
-    */
-    .top-scroll-guard {
-      display: none !important;
-    }
-
-    @supports (-webkit-touch-callout: none) {
-      html body .app-header {
-        z-index: 1000 !important;
-      }
-
-      /* Zachowuje miejsce pod stałym nagłówkiem na początku strony,
-         ale podczas przewijania cała zawartość może przejść pod nim. */
-      html body .app-content {
-        padding-top: var(--fixed-header-content-offset, 96px) !important;
-        overflow: visible !important;
-      }
-
-      /* Wszystkie filtry przewijają się razem z treścią — tak jak
-         elementy Drabinki — zamiast przyklejać się pod nagłówkiem. */
-      html body .filters-sticky {
-        position: relative !important;
-        top: auto !important;
-        inset-block-start: auto !important;
-        z-index: 20 !important;
-      }
-
-      /* Transform na całej zakładce powoduje artefakty warstw w Safari.
-         Na iPhonie pozostaje lekkie przenikanie bez przesuwania warstwy. */
-      .tab-view {
-        transform: none !important;
-        -webkit-transform: none !important;
-        animation: iosTabFadeIn .22s ease-out both !important;
-      }
-
-      @keyframes iosTabFadeIn {
-        from { opacity: 0; }
-        to   { opacity: 1; }
+    <style id="desktop-scroll-fix">
+    @media (hover: hover) and (pointer: fine) {
+      html,
+      body {
+        overflow-y: auto !important;
+        overscroll-behavior-y: auto !important;
       }
     }
   </style>
 
+  <style id="unified-banner-spacing">
+    :root {
+      --banner-gap: 14px;
+    }
+
+    .app-content > .install-banner {
+      margin-bottom: var(--banner-gap) !important;
+    }
+
+    .matches-view,
+    .specials-view,
+    .allspecials-view,
+    .leaderboard-view,
+    .compare-view,
+    .admin-panel,
+    .bracket-page {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: var(--banner-gap) !important;
+    }
+
+    .matches-view > *,
+    .specials-view > *,
+    .allspecials-view > *,
+    .leaderboard-view > *,
+    .compare-view > *,
+    .admin-panel > *,
+    .bracket-page > * {
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+    }
+
+    .leaderboard-header,
+    .my-predictions-banner,
+    .specials-score-banner,
+    .admin-panel-banner,
+    .bracket-intro,
+    .bracket-section,
+    section.bg-white,
+    section.app-note,
+    .allspecials-note {
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+    }
+
+    @media (max-width: 520px) {
+      :root {
+        --banner-gap: 12px;
+      }
+    }
+  </style>
+
+  <style id="expanded-table-header-continuation">
+    :root {
+      --expanded-match-surface: linear-gradient(145deg, rgba(36, 55, 78, .94), rgba(24, 31, 48, .96)) !important;
+    }
+
+    html:not([data-theme="light"]) body .match-card.expanded,
+    html:not([data-theme="light"]) body .admin-match-card.expanded,
+    html:not([data-theme="light"]) body .compare-match-card {
+      background: var(--expanded-match-surface) !important;
+      background-image: var(--expanded-match-surface) !important;
+      overflow: hidden !important;
+      border-color: rgba(255,255,255,.08) !important;
+    }
+
+    html:not([data-theme="light"]) body .match-card.expanded > button:first-child,
+    html:not([data-theme="light"]) body .match-card.expanded > button:first-child:hover,
+    html:not([data-theme="light"]) body .match-card.expanded > button:first-child:focus,
+    html:not([data-theme="light"]) body .match-card.expanded > button:first-child:active,
+    html:not([data-theme="light"]) body .match-card.expanded > div:last-child,
+    html:not([data-theme="light"]) body .admin-match-card.expanded > .admin-match-summary-button,
+    html:not([data-theme="light"]) body .admin-match-card.expanded > .admin-match-summary-button:hover,
+    html:not([data-theme="light"]) body .admin-match-card.expanded > .admin-match-summary-button:focus,
+    html:not([data-theme="light"]) body .admin-match-card.expanded > .admin-match-summary-button:active,
+    html:not([data-theme="light"]) body .admin-match-card.expanded > .admin-match-details,
+    html:not([data-theme="light"]) body .compare-match-toggle[aria-expanded="true"],
+    html:not([data-theme="light"]) body .compare-match-toggle[aria-expanded="true"]:hover,
+    html:not([data-theme="light"]) body .compare-match-toggle[aria-expanded="true"]:focus,
+    html:not([data-theme="light"]) body .compare-match-toggle[aria-expanded="true"]:active,
+    html:not([data-theme="light"]) body .compare-match-toggle[aria-expanded="true"] + .compare-player-list {
+      background: transparent !important;
+      background-color: transparent !important;
+      background-image: none !important;
+      border-top-color: transparent !important;
+      box-shadow: none !important;
+    }
+
+    html:not([data-theme="light"]) body .match-card.expanded > div:last-child,
+    html:not([data-theme="light"]) body .admin-match-card.expanded > .admin-match-details,
+    html:not([data-theme="light"]) body .compare-match-toggle[aria-expanded="true"] + .compare-player-list {
+      margin-top: 0 !important;
+      border-top: 0 !important;
+    }
+  </style>
+
+  <style id="full-width-header-title-fix">
+    html body .app-header {
+      left: 0 !important;
+      right: 0 !important;
+      width: 100% !important;
+      max-width: none !important;
+      margin: 0 !important;
+      border-left: 0 !important;
+      border-right: 0 !important;
+      border-top: 0 !important;
+      border-radius: 0 0 28px 28px !important;
+      padding: 14px 18px 14px !important;
+    }
+
+    html body .app-header .logo {
+      flex: 1 1 auto !important;
+      min-width: 0 !important;
+      gap: 14px !important;
+    }
+
+    html body .app-header .title-group {
+      min-width: 0 !important;
+      flex: 1 1 auto !important;
+    }
+
+    html body .app-header .title-group h1 {
+      font-size: clamp(22px, 3.2vw, 30px) !important;
+      letter-spacing: .045em !important;
+      line-height: .95 !important;
+      max-width: 100% !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+    }
+
+    html body .app-header .logo-icon {
+      width: 54px !important;
+      height: 54px !important;
+      border-radius: 18px !important;
+      flex: 0 0 auto !important;
+    }
+
+    html body .app-header .player-row {
+      flex: 0 0 auto !important;
+    }
+
+    @media (max-width: 520px) {
+      html body .app-header {
+        padding: 15px 17px 15px !important;
+        border-radius: 0 0 30px 30px !important;
+      }
+
+      html body .app-header .title-group h1 {
+        font-size: clamp(19px, 5.3vw, 24px) !important;
+        letter-spacing: .025em !important;
+      }
+
+      html body .app-header .logo-icon {
+        width: 64px !important;
+        height: 64px !important;
+        border-radius: 22px !important;
+      }
+    }
+
+    @media (max-width: 380px) {
+      html body .app-header {
+        padding-left: 14px !important;
+        padding-right: 14px !important;
+      }
+
+      html body .app-header .logo {
+        gap: 10px !important;
+      }
+
+      html body .app-header .title-group h1 {
+        font-size: 18px !important;
+        letter-spacing: .015em !important;
+      }
+
+      html body .app-header .logo-icon {
+        width: 52px !important;
+        height: 52px !important;
+        border-radius: 18px !important;
+      }
+    }
+  </style>
+
+  <style id="fixed-square-top-header">
+    html body .app-header {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      z-index: 80 !important;
+      width: 100% !important;
+      max-width: none !important;
+      margin: 0 !important;
+      border-radius: 0 !important;
+      border-left: 0 !important;
+      border-right: 0 !important;
+      border-top: 0 !important;
+    }
+
+    html body .app-content {
+      padding-top: 92px !important;
+    }
+
+    @media (max-width: 520px) {
+      html body .app-header {
+        border-radius: 0 !important;
+      }
+
+      html body .app-content {
+        padding-top: 104px !important;
+      }
+    }
+
+    @media (max-width: 380px) {
+      html body .app-content {
+        padding-top: 92px !important;
+      }
+    }
+  </style>
+
+  <style id="top-header-liquid-glass-depth">
+    html body .app-header {
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.055) 44%, rgba(255,255,255,.025)),
+        radial-gradient(circle at 12% 0%, rgba(124,190,255,.22), transparent 34%),
+        radial-gradient(circle at 86% -18%, rgba(99,102,241,.18), transparent 36%),
+        rgba(7, 18, 34, .46) !important;
+      backdrop-filter: blur(34px) saturate(190%) contrast(112%) !important;
+      -webkit-backdrop-filter: blur(34px) saturate(190%) contrast(112%) !important;
+      border-bottom: 1px solid rgba(255,255,255,.18) !important;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.30),
+        inset 0 -1px 0 rgba(255,255,255,.08),
+        0 10px 34px rgba(0,0,0,.22) !important;
+    }
+
+    html body .app-header::before {
+      content: "" !important;
+      position: absolute !important;
+      inset: 0 !important;
+      pointer-events: none !important;
+      background:
+        linear-gradient(110deg, rgba(255,255,255,.16), transparent 32%, rgba(255,255,255,.06) 64%, transparent),
+        linear-gradient(180deg, rgba(255,255,255,.10), transparent 42%) !important;
+      mix-blend-mode: screen !important;
+      opacity: .62 !important;
+    }
+
+    html body .app-header > * {
+      position: relative !important;
+      z-index: 1 !important;
+    }
+  </style>
+
+  <style id="admin-close-profile-offset-fix">
+    html body .admin-panel-actions {
+      flex: 0 0 auto !important;
+    }
+
+
+    html body .profile-modal-overlay-root {
+      align-items: flex-start !important;
+      padding-top: 96px !important;
+      padding-bottom: 22px !important;
+      overflow-y: auto !important;
+    }
+
+    html body .profile-modal-overlay-root .login-modal-sheet,
+    html body .profile-modal-overlay-root .login-modal-compact-sheet {
+      margin-top: 0 !important;
+      max-height: calc(100dvh - 118px) !important;
+    }
+
+    @media (max-width: 520px) {
+      html body .profile-modal-overlay-root {
+        padding-top: 112px !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+      }
+
+      html body .profile-modal-overlay-root .login-modal-sheet,
+      html body .profile-modal-overlay-root .login-modal-compact-sheet {
+        max-height: calc(100dvh - 134px) !important;
+      }
+    }
+
+    @media (max-width: 380px) {
+      html body .profile-modal-overlay-root {
+        padding-top: 100px !important;
+      }
+
+      html body .profile-modal-overlay-root .login-modal-sheet,
+      html body .profile-modal-overlay-root .login-modal-compact-sheet {
+        max-height: calc(100dvh - 122px) !important;
+      }
+    }
+  </style>
+
+  <style id="admin-gate-close-button-fix">
+    html body .admin-gate-card {
+      position: relative !important;
+    }
+
+    html body .admin-gate-close-btn {
+      position: absolute !important;
+      top: 12px !important;
+      right: 12px !important;
+      width: 34px !important;
+      height: 34px !important;
+      border: 1px solid rgba(255,255,255,.14) !important;
+      border-radius: 999px !important;
+      background: rgba(255,255,255,.08) !important;
+      color: rgba(255,255,255,.92) !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      cursor: pointer !important;
+      z-index: 2 !important;
+      transition: background .16s var(--ease-out), transform .12s var(--ease-spring) !important;
+    }
+
+    html body .admin-gate-close-btn:hover,
+    html body .admin-gate-close-btn:focus-visible {
+      background: rgba(255,255,255,.16) !important;
+      outline: none !important;
+    }
+
+    html body .admin-gate-close-btn:active {
+      transform: scale(.94) !important;
+    }
+  </style>
+
+  <style id="bottom-nav-soft-blur">
+    html body .bottom-nav {
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.035)),
+        rgba(9, 18, 34, .58) !important;
+      backdrop-filter: blur(22px) saturate(165%) !important;
+      -webkit-backdrop-filter: blur(22px) saturate(165%) !important;
+      border: 1px solid rgba(255,255,255,.10) !important;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.12),
+        0 -10px 34px rgba(0,0,0,.24) !important;
+    }
+
+    html body .bottom-nav::before {
+      content: "" !important;
+      position: absolute !important;
+      inset: -10px -8px !important;
+      z-index: -1 !important;
+      pointer-events: none !important;
+      background: rgba(9, 18, 34, .28) !important;
+      backdrop-filter: blur(18px) saturate(145%) !important;
+      -webkit-backdrop-filter: blur(18px) saturate(145%) !important;
+      border-radius: inherit !important;
+    }
+  </style>
+
+
+<style id="group-filter-letter-size-and-centering">
+  html body .group-order-filter-row {
+    align-items: center !important;
+  }
+
+  html body .group-order-filter-row.pill-scroll-safe {
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+    margin-top: 0 !important;
+  }
+
+  html body .group-order-filter-row .selection-tile {
+    font-size: 17px !important;
+    line-height: 1 !important;
+    letter-spacing: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  html body .allspecials-view .allspecials-group-filter-centered {
+    justify-content: center !important;
+  }
+</style>
+
+<!-- fixed-filter-banner-like-nav removed: filter now in normal flow with sticky -->
 </head>
 <body>
   <div id="loading">
@@ -5971,98 +4734,11 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// ── PWA setup ──────────────────────────────────────────────────
-(function () {
-  const isStandalone = window.matchMedia?.('(display-mode: standalone)').matches || window.navigator.standalone === true;
-  if (isStandalone) document.documentElement.classList.add('is-standalone');
-
-  // Keep the background at least as tall as the current iOS visual viewport.
-  let viewportFrame = 0;
-  const syncViewportHeight = () => {
-    cancelAnimationFrame(viewportFrame);
-    viewportFrame = requestAnimationFrame(() => {
-      const vv = window.visualViewport;
-      const visualHeight = vv ? vv.height : 0;
-      const height = visualHeight || window.innerHeight || document.documentElement.clientHeight || 0;
-      const top = vv ? Math.max(0, vv.offsetTop || 0) : 0;
-      const layoutHeight = Math.max(window.innerHeight || 0, document.documentElement.clientHeight || 0);
-      const bottom = vv ? Math.max(0, layoutHeight - top - vv.height) : 0;
-
-      if (height > 0) {
-        document.documentElement.style.setProperty('--app-viewport-height', `${Math.ceil(height)}px`);
-        document.documentElement.style.setProperty('--app-viewport-top', `${Math.round(top)}px`);
-        document.documentElement.style.setProperty('--app-viewport-bottom', `${Math.round(bottom)}px`);
-      }
-    });
-  };
-  syncViewportHeight();
-  window.addEventListener('resize', syncViewportHeight, {
-    passive: true
-  });
-  window.addEventListener('orientationchange', () => {
-    syncViewportHeight();
-    setTimeout(syncViewportHeight, 250);
-  }, {
-    passive: true
-  });
-  window.addEventListener('pageshow', syncViewportHeight, {
-    passive: true
-  });
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) syncViewportHeight();
-  }, {
-    passive: true
-  });
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', syncViewportHeight, {
-      passive: true
-    });
-    window.visualViewport.addEventListener('scroll', syncViewportHeight, {
-      passive: true
-    });
-  }
-  // manifest
-  const manifest = {
-    name: "FIFA WORLD CUP 2026 – Typer",
-    short_name: "FIFA WC 2026",
-    description: "Typowanie wyników FIFA World Cup 2026",
-    start_url: new URL('./', window.location.href).href,
-    scope: new URL('./', window.location.href).href,
-    display: "standalone",
-    background_color: document.documentElement.getAttribute('data-theme') === 'light' ? "#f2f2f7" : "#05070d",
-    theme_color: document.documentElement.getAttribute('data-theme') === 'light' ? "#f2f2f7" : "#07101d",
-    orientation: "portrait",
-    icons: [{
-      src: new URL('./mundial2026-app-icon-v2-192.png', document.baseURI).href,
-      sizes: "192x192",
-      type: "image/png",
-      purpose: "any"
-    }, {
-      src: new URL('./mundial2026-app-icon-v2-512.png', document.baseURI).href,
-      sizes: "512x512",
-      type: "image/png",
-      purpose: "any maskable"
-    }]
-  };
-  try {
-    const blob = new Blob([JSON.stringify(manifest)], {
-      type: 'application/manifest+json'
-    });
-    document.getElementById('pwa-manifest').href = URL.createObjectURL(blob);
-  } catch (e) {}
-  // show "slow connection" message after 4s
-  setTimeout(() => {
-    const el = document.getElementById('loading-slow');
-    if (el) el.style.display = 'block';
-  }, 4000);
-  // Service worker: cache-first dla zasobów statycznych (offline + szybki start na słabym łączu).
-  // Dane z Firebase nadal idą przez sieć (sw.js ich nie cache'uje), więc wyniki są zawsze aktualne.
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js').catch(() => {});
-    });
-  }
-})();
+// Show "slow connection" message after 4s.
+setTimeout(() => {
+  const el = document.getElementById('loading-slow');
+  if (el) el.style.display = 'block';
+}, 4000);
 
 // ─── React hooks ───────────────────────────────────────────────
 const {
@@ -7872,14 +6548,14 @@ function Btn({
     danger: 'bg-red-600 hover:bg-red-700 text-white',
     dark: 'bg-stone-900 hover:bg-stone-800 text-stone-50'
   };
-  const ios26Style = {
+  const liquidGlassButtonStyle = {
     borderRadius: '999px',
     transition: 'all .20s var(--ease-out)',
     boxShadow: 'var(--hl), 0 2px 8px rgba(0,0,0,0.30)',
     letterSpacing: '0.01em'
   };
   return React.createElement("button", _extends({
-    style: ios26Style,
+    style: liquidGlassButtonStyle,
     className: `${base} ${sizes[size]} ${variants[variant]} ${className}`
   }, props), children);
 }
@@ -9165,10 +7841,8 @@ function MatchesView({
   const visibleMatches = compactDevice ? filtered.slice(0, visibleCount) : filtered;
   const hasMoreMatches = compactDevice && visibleCount < filtered.length;
   const filterBtns = PHASE_FILTER_TABS;
-  return React.createElement("div", {
-    className: "matches-view space-y-3"
-  }, React.createElement("div", {
-    className: "phase-filter-panel bg-white border border-[#b0bce8] rounded-xl p-3 filters-sticky shadow-sm"
+  const filterPanel = React.createElement("div", {
+    className: "phase-filter-panel fixed-filter-portal-panel bg-white border border-[#b0bce8] rounded-xl p-3 filters-sticky shadow-sm"
   }, React.createElement("div", {
     className: "flex flex-col gap-1"
   }, React.createElement("div", {
@@ -9209,7 +7883,10 @@ function MatchesView({
     className: `selection-tile${statusFilter === t.k ? ' is-selected' : ''} flex-1 px-2 py-1 rounded-lg text-xs font-medium`
   }, t.l)))), React.createElement("div", {
     className: "text-[11px] text-stone-500 mt-1 text-center"
-  }, filtered.length, " ", plMecze(filtered.length))), visibleMatches.map(m => React.createElement(MatchCard, {
+  }, filtered.length, " ", plMecze(filtered.length)));
+  return React.createElement("div", {
+    className: "matches-view space-y-3"
+  }, filterPanel, visibleMatches.map(m => React.createElement(MatchCard, {
     key: m.id,
     match: m,
     teams: teams,
@@ -9326,7 +8003,7 @@ function SpecialsView({
   }, "Kolejno\u015B\u0107 w grupach"), React.createElement("p", {
     className: "text-xs text-stone-500 mb-3"
   }, "1 trafione: ", POINTS.groupOrderOne, " pkt \u2022 2 trafione: ", POINTS.groupOrderTwo, " pkt \u2022 wszystkie 4: ", POINTS.groupOrderAll, " pkt"), React.createElement("div", {
-    className: "pill-scroll-safe"
+    className: "group-order-filter-row pill-scroll-safe flex gap-1 p-2 overflow-x-auto"
   }, GROUPS.map(g => React.createElement("button", {
     key: g,
     onClick: () => {
@@ -9566,13 +8243,13 @@ function SpecialsAllView({
   }, React.createElement("div", {
     className: "px-4 py-3 text-sm font-bold tracking-wide text-stone-800 flex items-center justify-between"
   }, React.createElement("span", null, "Kolejno\u015B\u0107 w grupach")), React.createElement("div", {
-    className: "group-order-filter-row flex gap-1 p-2 overflow-x-auto"
+    className: "group-order-filter-row pill-scroll-safe allspecials-group-filter-centered flex gap-1 p-2 overflow-x-auto justify-center"
   }, GROUPS.map(g => React.createElement("button", {
     key: g,
     onClick: () => {
       setSelGroup(g);
     },
-    className: `selection-tile${selGroup === g ? ' is-selected' : ''} shrink-0 w-9 h-9 rounded-lg text-sm font-bold`
+    className: `selection-tile${selGroup === g ? ' is-selected' : ''} shrink-0 w-10 h-10 rounded-lg font-bold`
   }, g))), React.createElement("div", {
     className: "overflow-x-auto"
   }, React.createElement("table", {
@@ -10613,14 +9290,24 @@ function PhaseLockPanel({
 function AdminGate({
   adminPassword,
   onUnlock,
-  onSetPassword
+  onSetPassword,
+  onClose
 }) {
   const [input, setInput] = useState('');
   const [confirm, setConfirm] = useState('');
   const [error, setError] = useState('');
   if (!adminPassword) return React.createElement("div", {
-    className: "bg-white border border-stone-200 rounded-xl p-5 max-w-md mx-auto"
-  }, React.createElement("div", {
+    className: "admin-gate-card bg-white border border-stone-200 rounded-xl p-5 max-w-md mx-auto"
+  }, React.createElement("button", {
+    type: "button",
+    onClick: onClose,
+    className: "admin-gate-close-btn",
+    title: "Wyjdź z logowania administratora",
+    "aria-label": "Wyjdź z logowania administratora"
+  }, React.createElement(Icon, {
+    name: "x",
+    size: 18
+  })), React.createElement("div", {
     className: "text-center mb-4"
   }, React.createElement(Icon, {
     name: "lock",
@@ -10661,8 +9348,17 @@ function AdminGate({
     }
   }, "Ustaw has\u0142o"));
   return React.createElement("div", {
-    className: "bg-white border border-stone-200 rounded-xl p-5 max-w-md mx-auto"
-  }, React.createElement("div", {
+    className: "admin-gate-card bg-white border border-stone-200 rounded-xl p-5 max-w-md mx-auto"
+  }, React.createElement("button", {
+    type: "button",
+    onClick: onClose,
+    className: "admin-gate-close-btn",
+    title: "Wyjdź z logowania administratora",
+    "aria-label": "Wyjdź z logowania administratora"
+  }, React.createElement(Icon, {
+    name: "x",
+    size: 18
+  })), React.createElement("div", {
     className: "text-center mb-4"
   }, React.createElement(Icon, {
     name: "lock",
@@ -12447,7 +11143,7 @@ function TournamentBracket({
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  DOLNA NAWIGACJA — przeciągalna "kropla" w stylu iOS 26
+//  DOLNA NAWIGACJA — przeciągalna "kropla" w stylu Liquid Glass
 // ═══════════════════════════════════════════════════════════════
 function BottomNav({
   tabs,
@@ -12534,7 +11230,7 @@ function BottomNav({
       captured: false
     };
     suppressClick.current = false;
-    // Nie przechwytujemy wskaźnika od razu, bo na iOS blokuje to zwykły click
+    // Nie przechwytujemy wskaźnika od razu, bo przechwycenie wskaźnika może blokować zwykły click
     // przycisku. Pointer capture włączamy dopiero po rozpoczęciu przeciągania.
   };
   const onPointerMove = e => {
@@ -12708,8 +11404,6 @@ function Mundial2026() {
     } catch (e) {}
     const themeMeta = document.querySelector('meta[name="theme-color"]');
     if (themeMeta) themeMeta.setAttribute('content', theme === 'light' ? '#f2f2f7' : '#0d2b4a');
-    const statusMeta = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
-    if (statusMeta) statusMeta.setAttribute('content', theme === 'light' ? 'default' : 'black-translucent');
   }, [theme]);
   const [activeTab, setActiveTab] = useState('matches');
 
@@ -13073,7 +11767,8 @@ function Mundial2026() {
     onSetPassword: pwd => {
       setAdminPasswordHash(hashPwd(pwd));
       setAdminUnlocked(true);
-    }
+    },
+    onClose: () => setActiveTab('matches')
   }) : React.createElement(AdminPanel, {
     teams: safeTeams,
     matches: safeMatches,
@@ -13153,9 +11848,12 @@ ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(
     const row = origin && origin.closest ? origin.closest(selector) : null;
     if (!row || row.scrollWidth <= row.clientWidth + 1) return;
 
-    const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY)
-      ? event.deltaX
-      : event.deltaY;
+    const hasHorizontalIntent = Math.abs(event.deltaX) > Math.abs(event.deltaY);
+    const hasShiftWheelIntent = event.shiftKey && Math.abs(event.deltaY) > 0;
+
+    if (!hasHorizontalIntent && !hasShiftWheelIntent) return;
+
+    const delta = hasHorizontalIntent ? event.deltaX : event.deltaY;
 
     if (!delta) return;
 
@@ -13174,76 +11872,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(
 })();
 </script>
 
-
-<script>
-/* Safari/iOS potrafi po zmianie motywu ponownie przeliczyć pozycję
-   elementu z backdrop-filter. Wymuszamy fixed także bez przeładowania. */
-(function () {
-  function pinAppHeader() {
-    var header = document.querySelector('.app-header');
-    if (!header) return false;
-
-    header.style.setProperty('position', 'fixed', 'important');
-    header.style.setProperty('top', 'calc(env(safe-area-inset-top, 0px) + 7px)', 'important');
-    header.style.setProperty('left', '50%', 'important');
-    header.style.setProperty('right', 'auto', 'important');
-    header.style.setProperty('margin', '0', 'important');
-    header.style.setProperty('transform', 'translate3d(-50%, 0, 0)', 'important');
-    header.style.setProperty('-webkit-transform', 'translate3d(-50%, 0, 0)', 'important');
-    header.style.setProperty('z-index', '1000', 'important');
-
-    var rect = header.getBoundingClientRect();
-    var height = Math.ceil(rect.height || 64);
-    /* rect.bottom jest liczone względem aktualnego visual viewportu.
-       To działa poprawnie zarówno przy rozwiniętych, jak i zwiniętych
-       paskach Safari, bez podwójnego dodawania safe-area. */
-    var viewportBottom = Math.ceil(rect.bottom || (height + 7));
-
-    document.documentElement.style.setProperty(
-      '--fixed-header-viewport-bottom',
-      viewportBottom + 'px'
-    );
-    document.documentElement.style.setProperty(
-      '--fixed-header-content-offset',
-      (viewportBottom + 16) + 'px'
-    );
-    document.documentElement.style.setProperty(
-      '--fixed-header-filter-offset',
-      (viewportBottom + 8) + 'px'
-    );
-    return true;
-  }
-
-  var pinScheduled = false;
-  function schedulePin() {
-    if (pinScheduled) return;
-    pinScheduled = true;
-    requestAnimationFrame(function () {
-      pinScheduled = false;
-      if (!pinAppHeader()) {
-        setTimeout(pinAppHeader, 80);
-      }
-    });
-  }
-
-  schedulePin();
-  window.addEventListener('load', schedulePin, { once: true });
-  window.addEventListener('resize', schedulePin);
-  window.addEventListener('orientationchange', schedulePin);
-
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', schedulePin);
-    window.visualViewport.addEventListener('scroll', schedulePin);
-  }
-
-  new MutationObserver(schedulePin).observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ['data-theme', 'class']
-  });
-
-  new MutationObserver(schedulePin).observe(document.body, { childList: true, subtree: true });
-})();
-</script>
 
 
 <script>
@@ -13305,5 +11933,28 @@ ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(
 })();
 </script>
 
+
+
+
+
+<script>
+(function () {
+  function update() {
+    var header = document.querySelector('.app-header');
+    if (!header) return;
+    var h = header.getBoundingClientRect().height;
+    document.documentElement.style.setProperty('--header-height', h + 'px');
+  }
+  function schedule() { requestAnimationFrame(update); }
+  window.addEventListener('load', schedule);
+  window.addEventListener('resize', schedule);
+  window.addEventListener('orientationchange', schedule);
+  var tries = 0;
+  var interval = setInterval(function () {
+    update();
+    if (++tries >= 20) clearInterval(interval);
+  }, 150);
+})();
+</script>
 </body>
 </html>
