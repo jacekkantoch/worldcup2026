@@ -7167,6 +7167,579 @@
     }
   </style>
 
+
+  <style id="match-card-single-surface-final-fix">
+    /* Karta meczu jest jedną nieprzerwaną powierzchnią także po rozwinięciu. */
+    html body .match-card,
+    html body .match-card.expanded {
+      overflow: hidden !important;
+      background: var(--glass-1) !important;
+      border-color: var(--border-1) !important;
+      box-shadow: var(--shadow-sm), var(--hl), var(--shadow-glow) !important;
+    }
+
+    html body .match-card.expanded > button:first-child,
+    html body .match-card.expanded > button:first-child:hover,
+    html body .match-card.expanded > button:first-child:focus,
+    html body .match-card.expanded > button:first-child:active,
+    html body .match-card.expanded > div:last-child {
+      background: transparent !important;
+      background-color: transparent !important;
+      background-image: none !important;
+      border: 0 !important;
+      border-color: transparent !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      backdrop-filter: none !important;
+    }
+
+    html body .match-card.expanded > div:last-child {
+      margin-top: 0 !important;
+      outline: 0 !important;
+    }
+
+    html[data-theme="light"] body .match-card,
+    html[data-theme="light"] body .match-card.expanded {
+      background: var(--glass-1) !important;
+      border-color: rgba(39,68,103,.11) !important;
+    }
+  </style>
+
+
+  <style id="dark-mode-tab-surface-unification">
+    /*
+      Dark mode: wszystkie zakładki korzystają z tej samej neutralnej
+      granatowo-grafitowej palety co zakładka „Mecze”. Kolor pozostaje
+      akcentem zaznaczeń i komunikatów, a nie tłem całych banerów.
+    */
+    html:not([data-theme="light"]) {
+      --tab-match-surface:
+        radial-gradient(circle at 18% -18%, rgba(255,255,255,.145), transparent 43%),
+        linear-gradient(145deg, rgba(27,35,52,.76), rgba(12,17,28,.62));
+      --tab-match-surface-soft:
+        radial-gradient(circle at 18% -22%, rgba(255,255,255,.105), transparent 44%),
+        linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.025));
+      --tab-match-surface-inner: rgba(255,255,255,.045);
+      --tab-match-shadow:
+        inset 0 1px 0 rgba(255,255,255,.115),
+        0 10px 30px rgba(0,0,0,.20),
+        0 0 0 1px rgba(255,255,255,.018);
+    }
+
+    /* Główne bannery i podsumowania zakładek. */
+    html:not([data-theme="light"]) .leaderboard-header,
+    html:not([data-theme="light"]) .my-predictions-banner,
+    html:not([data-theme="light"]) .specials-score-banner,
+    html:not([data-theme="light"]) .admin-panel-banner,
+    html:not([data-theme="light"]) .bracket-intro,
+    html:not([data-theme="light"]) .bracket-section {
+      background: var(--tab-match-surface) !important;
+      background-color: transparent !important;
+      color: var(--label-1) !important;
+      box-shadow: var(--tab-match-shadow) !important;
+      -webkit-backdrop-filter: blur(26px) saturate(165%) !important;
+      backdrop-filter: blur(26px) saturate(165%) !important;
+    }
+
+    html:not([data-theme="light"]) .leaderboard-header *,
+    html:not([data-theme="light"]) .my-predictions-banner *,
+    html:not([data-theme="light"]) .specials-score-banner *,
+    html:not([data-theme="light"]) .admin-panel-banner *,
+    html:not([data-theme="light"]) .bracket-intro * {
+      color: var(--label-1) !important;
+    }
+
+    html:not([data-theme="light"]) .leaderboard-header p,
+    html:not([data-theme="light"]) .my-predictions-banner [class*="text-stone-300"],
+    html:not([data-theme="light"]) .specials-score-banner [class*="text-[#a0b4e8]"],
+    html:not([data-theme="light"]) .specials-score-banner [class*="text-[#c8d4f4]"],
+    html:not([data-theme="light"]) .bracket-intro p {
+      color: var(--label-2) !important;
+      -webkit-text-fill-color: var(--label-2) !important;
+    }
+
+    /* Zwykłe karty we wszystkich widokach mają tę samą powierzchnię co mecze. */
+    html:not([data-theme="light"]) .leaderboard-card,
+    html:not([data-theme="light"]) .compare-match-card,
+    html:not([data-theme="light"]) .table-card,
+    html:not([data-theme="light"]) .admin-tabs-shell,
+    html:not([data-theme="light"]) .admin-phase-filters,
+    html:not([data-theme="light"]) .admin-match-card,
+    html:not([data-theme="light"]) .specials-view > section,
+    html:not([data-theme="light"]) .allspecials-view > .table-card {
+      background: var(--tab-match-surface-soft) !important;
+      background-color: transparent !important;
+      box-shadow: var(--tab-match-shadow) !important;
+      -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
+      backdrop-filter: blur(24px) saturate(160%) !important;
+    }
+
+    /* Filtry w porównaniu i panelu administratora odpowiadają filtrom z Meczy. */
+    html:not([data-theme="light"]) .compare-view .filters-sticky,
+    html:not([data-theme="light"]) .admin-phase-filters,
+    html:not([data-theme="light"]) .phase-filter-panel {
+      background:
+        radial-gradient(circle at 18% -20%, rgba(255,255,255,.16), transparent 42%),
+        linear-gradient(145deg, rgba(28,36,54,.74), rgba(14,19,31,.60)) !important;
+      box-shadow: var(--shadow-md), var(--hl2), 0 0 0 1px rgba(0,0,0,.10) !important;
+    }
+
+    /* Ranking: usuń wielobarwne tła kategorii, pozostawiając czytelne dane. */
+    html:not([data-theme="light"]) .leaderboard-category-card {
+      background: var(--tab-match-surface-inner) !important;
+      background-image: none !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.07) !important;
+    }
+
+    html:not([data-theme="light"]) .leaderboard-phase-details {
+      background: rgba(255,255,255,.035) !important;
+      background-image: none !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.065) !important;
+    }
+
+    /* Porównanie: neutralne tło karty i rozwijanej listy. */
+    html:not([data-theme="light"]) .compare-match-card {
+      background: var(--tab-match-surface-soft) !important;
+    }
+    html:not([data-theme="light"]) .compare-match-toggle,
+    html:not([data-theme="light"]) .compare-match-toggle[aria-expanded="true"] {
+      background: rgba(255,255,255,.032) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.045) !important;
+    }
+    html:not([data-theme="light"]) .compare-player-list {
+      background: transparent !important;
+    }
+
+    /* Tabele i ich nagłówki nie tworzą jaśniejszych, obcych pasów. */
+    html:not([data-theme="light"]) .table-card > div:first-child,
+    html:not([data-theme="light"]) .table-card thead tr,
+    html:not([data-theme="light"]) .specials-view thead tr,
+    html:not([data-theme="light"]) .allspecials-view thead tr {
+      background: rgba(255,255,255,.035) !important;
+      background-image: none !important;
+    }
+
+    /* Drabinka: karty meczów są neutralne, zgodne z kartami w Mecze. */
+    html:not([data-theme="light"]) .bracket-match,
+    html:not([data-theme="light"]) .bracket-final-card {
+      background: var(--tab-match-surface-soft) !important;
+      background-color: transparent !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.075), 0 7px 20px rgba(0,0,0,.14) !important;
+    }
+    html:not([data-theme="light"]) .bracket-match-head {
+      background: rgba(255,255,255,.025) !important;
+    }
+    html:not([data-theme="light"]) .bracket-team-row.is-winner {
+      background: rgba(112,184,255,.095) !important;
+    }
+    html:not([data-theme="light"]) .bracket-champion {
+      background: rgba(255,255,255,.05) !important;
+      color: var(--label-1) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.07) !important;
+    }
+
+    /* Panel admina: wnętrza sekcji pozostają neutralne; semantyczne komunikaty
+       zachowują własny żółty/czerwony/zielony akcent. */
+    html:not([data-theme="light"]) .admin-panel .bg-white:not(.app-note),
+    html:not([data-theme="light"]) .admin-panel .bg-stone-50:not(.app-note),
+    html:not([data-theme="light"]) .admin-panel .bg-stone-50\/50:not(.app-note) {
+      background: var(--tab-match-surface-soft) !important;
+      background-color: transparent !important;
+    }
+
+    /* Brak efektu zmiany tła podczas najechania na nieinteraktywne powierzchnie. */
+    html:not([data-theme="light"]) .leaderboard-header:hover,
+    html:not([data-theme="light"]) .my-predictions-banner:hover,
+    html:not([data-theme="light"]) .specials-score-banner:hover,
+    html:not([data-theme="light"]) .admin-panel-banner:hover,
+    html:not([data-theme="light"]) .bracket-intro:hover,
+    html:not([data-theme="light"]) .bracket-section:hover {
+      background: var(--tab-match-surface) !important;
+      transform: none !important;
+    }
+  </style>
+
+
+
+  <style id="flat-background-banners-final">
+    /*
+      Płaskie powierzchnie tła: zachowujemy dotychczasowe gradienty
+      i rozmycie backdrop-filter, usuwamy natomiast cień, poświatę,
+      wewnętrzne refleksy oraz unoszenie dające efekt 3D.
+    */
+    html:not([data-theme="light"]) {
+      --tab-match-shadow: none !important;
+    }
+
+    html body :is(
+      .glass,
+      .glass-strong,
+      .match-card,
+      .admin-match-card,
+      .deferred-card,
+      .filters-sticky,
+      .phase-filter-panel,
+      .admin-phase-filters,
+      .admin-tabs-shell,
+      section.bg-white,
+      div.bg-white,
+      .install-banner,
+      .app-header,
+      .bottom-nav,
+      .leaderboard-header,
+      .leaderboard-card,
+      .leaderboard-category-card,
+      .leaderboard-phase-details,
+      .my-predictions-banner,
+      .specials-score-banner,
+      .admin-panel-banner,
+      .compare-match-card,
+      .table-card,
+      .bracket-intro,
+      .bracket-section,
+      .bracket-match,
+      .bracket-final-card,
+      .login-modal-sheet,
+      .login-modal-compact-sheet,
+      .toast-bar,
+      .app-note,
+      .fixed.inset-0.z-50 > .relative
+    ):not(#__flat_background_banner_override__) {
+      box-shadow: none !important;
+      -webkit-box-shadow: none !important;
+      text-shadow: none !important;
+      filter: none !important;
+      transform: none !important;
+    }
+
+    /* Stany interakcji nie mogą ponownie włączać cienia ani poświaty. */
+    html body :is(
+      .glass,
+      .glass-strong,
+      .match-card,
+      .admin-match-card,
+      .deferred-card,
+      .filters-sticky,
+      .phase-filter-panel,
+      .admin-phase-filters,
+      .admin-tabs-shell,
+      section.bg-white,
+      div.bg-white,
+      .install-banner,
+      .app-header,
+      .bottom-nav,
+      .leaderboard-header,
+      .leaderboard-card,
+      .leaderboard-category-card,
+      .leaderboard-phase-details,
+      .my-predictions-banner,
+      .specials-score-banner,
+      .admin-panel-banner,
+      .compare-match-card,
+      .table-card,
+      .bracket-intro,
+      .bracket-section,
+      .bracket-match,
+      .bracket-final-card,
+      .login-modal-sheet,
+      .login-modal-compact-sheet,
+      .toast-bar,
+      .app-note,
+      .fixed.inset-0.z-50 > .relative
+    ):is(:hover, :focus, :focus-visible, :active, [open], .expanded):not(#__flat_background_banner_state_override__) {
+      box-shadow: none !important;
+      -webkit-box-shadow: none !important;
+      text-shadow: none !important;
+      filter: none !important;
+      transform: none !important;
+    }
+
+    /* Jasny motyw dodawał osobną warstwę błysku na szkle — wyłączamy ją,
+       pozostawiając właściwy gradient powierzchni i rozmycie tła. */
+    html[data-theme="light"] body :is(
+      .glass,
+      .glass-strong,
+      .match-card,
+      .filters-sticky,
+      .app-header,
+      .bottom-nav,
+      .admin-match-card
+    ):not(#__flat_background_banner_light_override__)::before,
+    html body .app-note:not(#__flat_background_banner_note_override__)::after {
+      content: none !important;
+      display: none !important;
+      box-shadow: none !important;
+      filter: none !important;
+    }
+  </style>
+
+
+
+  <style id="flat-bracket-effects-final">
+    /*
+      Drabinka bez efektu 3D: pozostają gradienty i rozmycie tła,
+      a cienie, poświaty, refleksy i unoszenie są wyłączone.
+    */
+    html body .bracket-page :is(
+      .bracket-intro,
+      .bracket-section,
+      .bracket-match,
+      .bracket-final-card,
+      .bracket-champion,
+      .bracket-match-head,
+      .bracket-team-row,
+      .bracket-round-label,
+      .bracket-third-place-label
+    ):not(#__flat_bracket_effects__) {
+      box-shadow: none !important;
+      -webkit-box-shadow: none !important;
+      text-shadow: none !important;
+      filter: none !important;
+      transform: none !important;
+    }
+
+    html body .bracket-page :is(
+      .bracket-intro,
+      .bracket-section,
+      .bracket-match,
+      .bracket-final-card,
+      .bracket-champion
+    ):is(:hover, :focus, :focus-visible, :active, [open], .expanded):not(#__flat_bracket_effects_state__) {
+      box-shadow: none !important;
+      -webkit-box-shadow: none !important;
+      text-shadow: none !important;
+      filter: none !important;
+      transform: none !important;
+    }
+
+    html body .bracket-page :is(
+      .bracket-intro,
+      .bracket-section,
+      .bracket-match,
+      .bracket-final-card,
+      .bracket-champion
+    )::before,
+    html body .bracket-page :is(
+      .bracket-intro,
+      .bracket-section,
+      .bracket-match,
+      .bracket-final-card,
+      .bracket-champion
+    )::after {
+      box-shadow: none !important;
+      -webkit-box-shadow: none !important;
+      text-shadow: none !important;
+      filter: none !important;
+    }
+
+    /* Zachowujemy wyłącznie półprzezroczysty gradient i rozmycie tła. */
+    html body .bracket-page :is(.bracket-intro, .bracket-section) {
+      -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
+      backdrop-filter: blur(24px) saturate(160%) !important;
+    }
+
+    html body .bracket-page :is(.bracket-match, .bracket-final-card, .bracket-champion) {
+      -webkit-backdrop-filter: blur(14px) saturate(145%) !important;
+      backdrop-filter: blur(14px) saturate(145%) !important;
+    }
+
+    html body .bracket-page .bracket-connectors,
+    html body .bracket-page .bracket-connectors path,
+    html body .bracket-page svg {
+      filter: none !important;
+      box-shadow: none !important;
+      text-shadow: none !important;
+    }
+  </style>
+
+  <style id="admin-expanded-surface-unify-fix">
+    /* Admin — nagłówek i rozwinięta lista mają być jedną, identyczną powierzchnią. */
+    html body .admin-match-card.expanded {
+      overflow: hidden !important;
+      isolation: isolate !important;
+      background: var(--glass-1) !important;
+      border-color: var(--border-1) !important;
+      box-shadow: none !important;
+    }
+
+    html body .admin-match-card.expanded > .admin-match-summary-button,
+    html body .admin-match-card.expanded > .admin-match-summary-button:hover,
+    html body .admin-match-card.expanded > .admin-match-summary-button:focus,
+    html body .admin-match-card.expanded > .admin-match-summary-button:active,
+    html body .admin-match-card.expanded > .admin-match-details,
+    html body .admin-match-card.expanded > .admin-match-details:hover,
+    html body .admin-match-card.expanded > .admin-match-details:focus,
+    html body .admin-match-card.expanded > .admin-match-details:active {
+      background: transparent !important;
+      border: 0 !important;
+      box-shadow: none !important;
+    }
+
+    html body .admin-match-card.expanded > .admin-match-summary-button {
+      border-bottom: 0 !important;
+      margin-bottom: 0 !important;
+    }
+
+    html body .admin-match-card.expanded > .admin-match-details {
+      border-top: 0 !important;
+      margin-top: 0 !important;
+      padding-top: 12px !important;
+      position: relative;
+      -webkit-mask-image: none !important;
+              mask-image: none !important;
+    }
+
+    html body .admin-match-card.expanded > .admin-match-details::before,
+    html body .admin-match-card.expanded > .admin-match-summary-button::after {
+      content: none !important;
+      display: none !important;
+    }
+  </style>
+
+  <style id="light-specials-lock-note-fix">
+    /* Light mode — komunikat blokady typów specjalnych nie może być ciemnym paskiem. */
+    html[data-theme="light"] .specials-view .app-note.app-note--danger {
+      background: linear-gradient(145deg, rgba(255,250,250,.96), rgba(246,241,243,.90)) !important;
+      border-color: rgba(255,105,97,.24) !important;
+      color: #9a4a47 !important;
+      --note-color: #9a4a47 !important;
+      --note-border: rgba(255,105,97,.24) !important;
+      box-shadow: none !important;
+    }
+
+    html[data-theme="light"] .specials-view .app-note.app-note--danger:hover,
+    html[data-theme="light"] .specials-view .app-note.app-note--danger:active,
+    html[data-theme="light"] .specials-view .app-note.app-note--danger:focus,
+    html[data-theme="light"] .specials-view .app-note.app-note--danger:focus-visible,
+    html[data-theme="light"] .specials-view .app-note.app-note--danger:focus-within {
+      background: linear-gradient(145deg, rgba(255,250,250,.96), rgba(246,241,243,.90)) !important;
+      border-color: rgba(255,105,97,.24) !important;
+      color: #9a4a47 !important;
+      --note-color: #9a4a47 !important;
+      --note-border: rgba(255,105,97,.24) !important;
+      box-shadow: none !important;
+    }
+
+    html[data-theme="light"] .specials-view .app-note.app-note--danger span,
+    html[data-theme="light"] .specials-view .app-note.app-note--danger p,
+    html[data-theme="light"] .specials-view .app-note.app-note--danger strong,
+    html[data-theme="light"] .specials-view .app-note.app-note--danger em,
+    html[data-theme="light"] .specials-view .app-note.app-note--danger svg {
+      color: #9a4a47 !important;
+      stroke: currentColor !important;
+      -webkit-text-fill-color: #9a4a47 !important;
+    }
+
+    html[data-theme="light"] .specials-view .app-note.app-note--danger .text-amber-400 {
+      color: #d88937 !important;
+    }
+  </style>
+
+  <style id="light-mode-static-info-banners">
+    /* Light mode — zwykłe banery informacyjne są całkowicie statyczne.
+       Banery zawierające akcje zachowują klikalne przyciski. */
+    html[data-theme="light"] body .app-note:not(.app-note--with-actions) {
+      pointer-events: none !important;
+      cursor: default !important;
+      transition: none !important;
+      animation: none !important;
+      transform: none !important;
+      filter: none !important;
+      opacity: 1 !important;
+      -webkit-tap-highlight-color: transparent !important;
+    }
+
+    html[data-theme="light"] body .app-note:not(.app-note--with-actions):hover,
+    html[data-theme="light"] body .app-note:not(.app-note--with-actions):active,
+    html[data-theme="light"] body .app-note:not(.app-note--with-actions):focus,
+    html[data-theme="light"] body .app-note:not(.app-note--with-actions):focus-visible,
+    html[data-theme="light"] body .app-note:not(.app-note--with-actions):focus-within {
+      cursor: default !important;
+      transition: none !important;
+      animation: none !important;
+      transform: none !important;
+      filter: none !important;
+      opacity: 1 !important;
+      outline: none !important;
+      box-shadow: none !important;
+      -webkit-box-shadow: none !important;
+      text-shadow: none !important;
+    }
+
+    html[data-theme="light"] body .app-note:not(.app-note--with-actions)::before,
+    html[data-theme="light"] body .app-note:not(.app-note--with-actions)::after {
+      pointer-events: none !important;
+      transition: none !important;
+      animation: none !important;
+      transform: none !important;
+      filter: none !important;
+    }
+  </style>
+
+  <style id="light-mode-background-darken-fix">
+    /* Light mode — delikatnie przyciemnione tło całego ekranu. */
+    html[data-theme="light"] {
+      --bg-0: #e4edf7;
+      --app-screen-background:
+        radial-gradient(ellipse 100% 58% at 50% -13%, rgba(74,166,255,.18), transparent 60%),
+        radial-gradient(ellipse 68% 48% at -8% 70%, rgba(67,211,166,.09), transparent 67%),
+        radial-gradient(ellipse 70% 48% at 108% 78%, rgba(172,116,238,.10), transparent 66%),
+        linear-gradient(180deg, #e4edf7 0%, #eaf0f6 48%, #dde7f2 100%);
+      background-color: #e4edf7 !important;
+    }
+
+    html[data-theme="light"],
+    html[data-theme="light"] body {
+      background-color: #e4edf7 !important;
+    }
+
+    html[data-theme="light"] body::before {
+      background-color: #e4edf7 !important;
+      background-image: var(--app-screen-background) !important;
+    }
+  </style>
+
+
+  <style id="compare-expanded-rounded-ends-restore">
+    /* Zakładka Porównanie — po rozwinięciu nagłówek meczu ma zachować pełne zaokrąglenie. */
+    .compare-view .compare-match-toggle[aria-expanded="true"],
+    .compare-view .compare-match-toggle[aria-expanded="true"]:hover,
+    .compare-view .compare-match-toggle[aria-expanded="true"]:focus,
+    .compare-view .compare-match-toggle[aria-expanded="true"]:active {
+      margin-bottom: 8px !important;
+      border-width: 1px !important;
+      border-style: solid !important;
+      border-color: rgba(255,255,255,.09) !important;
+      border-radius: 999px !important;
+      background: rgba(255,255,255,.035) !important;
+      box-shadow: none !important;
+      color: inherit !important;
+      transform: none !important;
+    }
+
+    .compare-view .compare-match-toggle[aria-expanded="true"] + .compare-player-list {
+      margin-top: 0 !important;
+      padding-top: 10px !important;
+      border-top: 1px solid var(--border-1) !important;
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+
+    html[data-theme="light"] .compare-view .compare-match-toggle[aria-expanded="true"],
+    html[data-theme="light"] .compare-view .compare-match-toggle[aria-expanded="true"]:hover,
+    html[data-theme="light"] .compare-view .compare-match-toggle[aria-expanded="true"]:focus,
+    html[data-theme="light"] .compare-view .compare-match-toggle[aria-expanded="true"]:active {
+      border-color: rgba(96,117,145,.22) !important;
+      background: rgba(248,251,255,.78) !important;
+    }
+
+    html[data-theme="light"] .compare-view .compare-match-toggle[aria-expanded="true"] + .compare-player-list {
+      border-top: 1px solid rgba(96,117,145,.18) !important;
+    }
+  </style>
+
 </head>
 <body>
   <div id="loading">
@@ -9995,10 +10568,11 @@ const MatchCard = React.memo(function MatchCard({
     name: "mappin",
     size: 11
   }), match.city))), expanded && /*#__PURE__*/React.createElement("div", {
-    className: "px-3 sm:px-4 pb-4 pt-2 border-t",
+    className: "px-3 sm:px-4 pb-4 pt-2",
     style: {
-      borderColor: "var(--sep)",
-      background: "var(--bg-1)"
+      border: "0",
+      background: "transparent",
+      boxShadow: "none"
     }
   }, !activePlayerId && /*#__PURE__*/React.createElement("div", {
     className: "text-center text-sm text-stone-600 bg-amber-50 border border-amber-200 rounded-lg p-3 app-note app-note--warning app-note--compact app-note--center"
@@ -10673,7 +11247,7 @@ function SpecialsView({
     name: "save",
     size: 18
   }), "Zapisz typy specjalne")), hasResults && /*#__PURE__*/React.createElement("div", {
-    className: "bg-[#0d1b5e] text-white rounded-xl p-4"
+    className: "specials-score-banner bg-[#0d1b5e] text-white rounded-xl p-4"
   }, /*#__PURE__*/React.createElement("h4", {
     className: "font-display text-base tracking-wide mb-2 text-[#c8d4f4]"
   }, "Twoje punkty specjalne"), /*#__PURE__*/React.createElement("div", {
@@ -11170,7 +11744,7 @@ function MyPredictionsView({
   return /*#__PURE__*/React.createElement("div", {
     className: "space-y-3"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "bg-gradient-to-br from-[#1a1a3a] to-[#0d1b5e] text-white rounded-xl p-4"
+    className: "my-predictions-banner bg-gradient-to-br from-[#1a1a3a] to-[#0d1b5e] text-white rounded-xl p-4"
   }, /*#__PURE__*/React.createElement("h3", {
     className: "font-display text-xl tracking-wide flex items-center gap-2"
   }, /*#__PURE__*/React.createElement(Icon, {
@@ -11326,7 +11900,8 @@ function CompareView({
   scoringSettings
 }) {
   const [phaseFilter, setPhaseFilter] = useState('all');
-  const [sortNearest, setSortNearest] = useState(false);
+  const [groupFilter, setGroupFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
   const [expandedMatches, setExpandedMatches] = useState(() => new Set());
   const toggleMatchDetails = useCallback(matchId => {
     setExpandedMatches(prev => {
@@ -11335,37 +11910,68 @@ function CompareView({
       return next;
     });
   }, []);
-  const now = useMemo(() => new Date(), []);
   const filtered = useMemo(() => {
-    const base = matches.filter(m => phaseFilter === 'all' || m.phase === phaseFilter);
-    if (sortNearest) {
-      const sorted = [...base].sort((a, b) => Math.abs(new Date(a.date) - now) - Math.abs(new Date(b.date) - now));
-      const top3 = sorted.slice(0, 3);
-      const top3ids = new Set(top3.map(m => m.id));
-      const rest = base.filter(m => !top3ids.has(m.id)).sort((a, b) => (PHASE_RANK[a.phase] ?? 99) - (PHASE_RANK[b.phase] ?? 99) || a.num - b.num);
-      return [...top3, ...rest];
-    }
-    return [...base].sort((a, b) => (PHASE_RANK[a.phase] ?? 99) - (PHASE_RANK[b.phase] ?? 99) || a.num - b.num);
-  }, [matches, phaseFilter, sortNearest, now]);
+    return matches.filter(m => {
+      if (phaseFilter !== 'all' && m.phase !== phaseFilter) return false;
+      if (phaseFilter === 'group' && groupFilter !== 'all' && m.group !== groupFilter) return false;
+      if (statusFilter === 'pending' && results[m.id]) return false;
+      if (statusFilter === 'done' && !results[m.id]) return false;
+      return true;
+    }).sort((a, b) => (PHASE_RANK[a.phase] ?? 99) - (PHASE_RANK[b.phase] ?? 99) || a.num - b.num);
+  }, [matches, phaseFilter, groupFilter, statusFilter, results]);
+  useEffect(() => {
+    setExpandedMatches(new Set());
+  }, [phaseFilter, groupFilter, statusFilter]);
   if (players.length === 0) return /*#__PURE__*/React.createElement("div", {
     className: "text-center text-stone-500 py-12 app-note app-note--info app-note--center"
   }, "Dodaj graczy, \u017Ceby por\xF3wnywa\u0107 typy.");
   return /*#__PURE__*/React.createElement("div", {
     className: "compare-view space-y-3"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "bg-white border border-[#b0bce8] rounded-xl p-3 filters-sticky shadow-sm"
+    className: "phase-filter-panel bg-white border border-[#b0bce8] rounded-xl p-3 filters-sticky shadow-sm"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "pill-scroll-safe"
+    className: "flex flex-col gap-1"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "chip-scroll-row tight"
   }, PHASE_FILTER_TABS.map(t => /*#__PURE__*/React.createElement("button", {
     key: t.k,
     onClick: () => {
       setPhaseFilter(t.k);
     },
     className: `selection-tile${phaseFilter === t.k ? ' is-selected' : ''} shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold`
-  }, t.l))), /*#__PURE__*/React.createElement("button", {
-    onClick: () => setSortNearest(s => !s),
-    className: `selection-tile edge-safe-button${sortNearest ? ' is-selected' : ''} w-full py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors`
-  }, "Sortuj od: nadchodz\u0105ce mecze")), filtered.map(m => {
+  }, t.l))), phaseFilter === 'group' && /*#__PURE__*/React.createElement("div", {
+    className: "chip-scroll-row tight"
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: () => {
+      setGroupFilter('all');
+    },
+    className: `selection-tile${groupFilter === 'all' ? ' is-selected' : ''} shrink-0 px-2.5 py-1 rounded-lg text-xs font-bold`
+  }, "Wszystkie"), GROUPS.map(g => /*#__PURE__*/React.createElement("button", {
+    key: g,
+    onClick: () => {
+      setGroupFilter(g);
+    },
+    className: `selection-tile${groupFilter === g ? ' is-selected' : ''} shrink-0 w-8 h-7 rounded-lg text-xs font-bold`
+  }, g))), /*#__PURE__*/React.createElement("div", {
+    className: "edge-safe-row flex gap-1 items-center py-0.5"
+  }, [{
+    k: 'all',
+    l: 'Wszystkie'
+  }, {
+    k: 'pending',
+    l: 'Nadchodzące'
+  }, {
+    k: 'done',
+    l: 'Zakończone'
+  }].map(t => /*#__PURE__*/React.createElement("button", {
+    key: t.k,
+    onClick: () => {
+      setStatusFilter(t.k);
+    },
+    className: `selection-tile${statusFilter === t.k ? ' is-selected' : ''} flex-1 px-2 py-1 rounded-lg text-xs font-medium`
+  }, t.l)))), /*#__PURE__*/React.createElement("div", {
+    className: "text-[11px] text-stone-500 mt-1 text-center"
+  }, filtered.length, " ", plMecze(filtered.length))), filtered.map(m => {
     const home = teams[m.homeTeamId],
       away = teams[m.awayTeamId],
       result = results[m.id];
@@ -12941,9 +13547,9 @@ function LoginModal({
     overlayClassName: "profile-modal-overlay"
   }, /*#__PURE__*/React.createElement("div", {
     className: "space-y-4"
-  }, step === 'pick' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("p", {
+  }, step === 'pick' && /*#__PURE__*/React.createElement(React.Fragment, null, !activePlayer && /*#__PURE__*/React.createElement("p", {
     className: "text-sm text-stone-600"
-  }, activePlayer ? 'Wybierz profil i skorzystaj z akcji poniżej.' : 'Wybierz swój profil, żeby typować.'), /*#__PURE__*/React.createElement(Btn, {
+  }, 'Wybierz swój profil, żeby typować.'), /*#__PURE__*/React.createElement(Btn, {
     variant: "outline",
     onClick: onManagePlayers,
     className: "w-full"
@@ -13006,7 +13612,7 @@ function LoginModal({
         color: "rgba(255,255,255,0.6)",
         marginTop: 2
       }
-    }, p.pinHash ? 'chroniony PINem' : 'bez PINu', isCurrent ? ' • aktywny' : '')), /*#__PURE__*/React.createElement(Icon, {
+    }, isCurrent ? 'aktywny' : '')), /*#__PURE__*/React.createElement(Icon, {
       name: "chevdown",
       size: 18,
       style: {
@@ -13073,19 +13679,7 @@ function LoginModal({
     variant: "outline",
     onClick: onClose,
     className: "flex-1"
-  }, "Zamknij"))), step === 'pin' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("button", {
-    onClick: () => {
-      setStep('pick');
-      setErr('');
-    },
-    className: "text-xs text-stone-500 hover:text-stone-800 flex items-center gap-1"
-  }, /*#__PURE__*/React.createElement(Icon, {
-    name: "arrow",
-    size: 12,
-    style: {
-      transform: "rotate(180deg)"
-    }
-  }), "Wr\xF3\u0107"), /*#__PURE__*/React.createElement("div", {
+  }, "Zamknij"))), step === 'pin' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "text-center py-2"
   }, /*#__PURE__*/React.createElement("div", {
     className: "w-14 h-14 rounded-full bg-[#e8ecf8] flex items-center justify-center text-2xl font-bold text-[#162570] mx-auto mb-2"
@@ -13112,7 +13706,11 @@ function LoginModal({
     className: "flex gap-2"
   }, /*#__PURE__*/React.createElement(Btn, {
     variant: "outline",
-    onClick: onClose,
+    onClick: () => {
+      setPin('');
+      setErr('');
+      setStep('pick');
+    },
     className: "flex-1"
   }, "Anuluj"), /*#__PURE__*/React.createElement(Btn, {
     variant: "primary",
@@ -13580,7 +14178,7 @@ function TournamentBracket({
     className: "bracket-page"
   }, /*#__PURE__*/React.createElement("div", {
     className: "bracket-intro"
-  }, /*#__PURE__*/React.createElement("h2", null, "Drabinka turnieju"), /*#__PURE__*/React.createElement("p", null, "Na telefonie przeci\u0105gnij drabink\u0119 poziomo.")), /*#__PURE__*/React.createElement(BracketTree, {
+  }, /*#__PURE__*/React.createElement("h2", null, "Drabinka turnieju"), /*#__PURE__*/React.createElement("p", null, "Przeci\u0105gnij drabink\u0119 poziomo, aby zobaczy\u0107 kolejne etapy.")), /*#__PURE__*/React.createElement(BracketTree, {
     config: BRACKET_LAYOUT,
     matchesById: matchesById,
     teams: teams,
