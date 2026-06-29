@@ -23,7 +23,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="apple-mobile-web-app-title" content="FIFA WORLD CUP 2026"/>
-  <meta name="theme-color" content="#0d2b4a"/>
+  <meta name="theme-color" content="#07101d"/>
   <meta name="color-scheme" content="dark"/>
   <link rel="manifest" id="pwa-manifest"/>
   <link rel="apple-touch-icon" sizes="180x180" href="./mundial2026-app-icon-v2-180.png"/>
@@ -8436,37 +8436,70 @@
 
   <style id="iphone-safari-unified-top-scroll">
     /*
-      iPhone Safari: każda zakładka zachowuje się jak Drabinka.
-      Treść przewija się pod pływającym nagłówkiem aż do samej góry
-      ekranu. Panele filtrów nie zatrzymują się pod nagłówkiem.
+      Jednolity sposób przewijania we wszystkich zakładkach:
+      filtry są zwykłą częścią treści i nie nakładają się na pierwszą kartę.
+      Treść może podczas przewijania przechodzić pod stałym nagłówkiem.
     */
     .top-scroll-guard {
       display: none !important;
     }
 
+    /* Kolor w obszarze safe-area nad pływającym nagłówkiem. */
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0 0 auto 0;
+      height: calc(env(safe-area-inset-top, 0px) + 18px);
+      background: #07101d;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    html[data-theme="light"] body::after {
+      background: #f2f2f7;
+    }
+
+    html body .app-header {
+      z-index: 1000 !important;
+    }
+
+    /* Odstęp początkowy wynika wyłącznie z wysokości nagłówka.
+       Nie jest już liczony z pozycji visualViewport Safari. */
+    html body .app-content {
+      padding-top: var(--fixed-header-content-offset, 96px) !important;
+      overflow: visible !important;
+    }
+
+    /* Ostateczne wyłączenie sticky we wszystkich zakładkach i motywach.
+       position: static przywraca panelom normalne miejsce w układzie flex. */
+    html body .filters-sticky,
+    html[data-theme="light"] body .filters-sticky,
+    html[data-theme="dark"] body .filters-sticky {
+      position: static !important;
+      inset: auto !important;
+      top: auto !important;
+      right: auto !important;
+      bottom: auto !important;
+      left: auto !important;
+      z-index: auto !important;
+      transform: none !important;
+      -webkit-transform: none !important;
+    }
+
+    /* Stabilizuje wysokość półprzezroczystych paneli filtrów w Safari,
+       aby następna karta zawsze zaczynała się dopiero pod panelem. */
+    .phase-filter-panel,
+    .admin-phase-filters {
+      position: relative !important;
+      display: block !important;
+      height: auto !important;
+      min-height: 0 !important;
+      overflow: visible !important;
+      isolation: isolate;
+    }
+
     @supports (-webkit-touch-callout: none) {
-      html body .app-header {
-        z-index: 1000 !important;
-      }
-
-      /* Zachowuje miejsce pod stałym nagłówkiem na początku strony,
-         ale podczas przewijania cała zawartość może przejść pod nim. */
-      html body .app-content {
-        padding-top: var(--fixed-header-content-offset, 96px) !important;
-        overflow: visible !important;
-      }
-
-      /* Wszystkie filtry przewijają się razem z treścią — tak jak
-         elementy Drabinki — zamiast przyklejać się pod nagłówkiem. */
-      html body .filters-sticky {
-        position: relative !important;
-        top: auto !important;
-        inset-block-start: auto !important;
-        z-index: 20 !important;
-      }
-
-      /* Transform na całej zakładce powoduje artefakty warstw w Safari.
-         Na iPhonie pozostaje lekkie przenikanie bez przesuwania warstwy. */
+      /* Transform całej zakładki potrafi tworzyć błędne warstwy w iOS Safari. */
       .tab-view {
         transform: none !important;
         -webkit-transform: none !important;
@@ -15259,7 +15292,7 @@ function Mundial2026() {
       localStorage.setItem('wc2026:theme', theme);
     } catch (e) {}
     const themeMeta = document.querySelector('meta[name="theme-color"]');
-    if (themeMeta) themeMeta.setAttribute('content', theme === 'light' ? '#f2f2f7' : '#0d2b4a');
+    if (themeMeta) themeMeta.setAttribute('content', theme === 'light' ? '#f2f2f7' : '#07101d');
     const statusMeta = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
     if (statusMeta) statusMeta.setAttribute('content', theme === 'light' ? 'default' : 'black-translucent');
   }, [theme]);
@@ -15744,24 +15777,27 @@ ReactDOM.createRoot(document.getElementById('root')).render(/*#__PURE__*/React.c
     header.style.setProperty('-webkit-transform', 'translate3d(-50%, 0, 0)', 'important');
     header.style.setProperty('z-index', '1000', 'important');
 
-    var rect = header.getBoundingClientRect();
-    var height = Math.ceil(rect.height || 64);
-    /* rect.bottom jest liczone względem aktualnego visual viewportu.
-       To działa poprawnie zarówno przy rozwiniętych, jak i zwiniętych
-       paskach Safari, bez podwójnego dodawania safe-area. */
-    var viewportBottom = Math.ceil(rect.bottom || (height + 7));
+    var computed = window.getComputedStyle(header);
+    var height = Math.ceil(header.offsetHeight || parseFloat(computed.height) || 64);
+    var cssTop = parseFloat(computed.top);
+    if (!Number.isFinite(cssTop)) cssTop = 7;
+
+    /* Nie używamy rect.bottom: w iOS Safari zawiera on przesunięcie
+       visualViewport i podczas zwijania pasków potrafił dodawać setki px. */
+    var headerFlowBottom = Math.ceil(Math.max(0, cssTop) + height);
+    var contentOffset = headerFlowBottom + 16;
 
     document.documentElement.style.setProperty(
       '--fixed-header-viewport-bottom',
-      viewportBottom + 'px'
+      headerFlowBottom + 'px'
     );
     document.documentElement.style.setProperty(
       '--fixed-header-content-offset',
-      (viewportBottom + 16) + 'px'
+      contentOffset + 'px'
     );
     document.documentElement.style.setProperty(
       '--fixed-header-filter-offset',
-      (viewportBottom + 8) + 'px'
+      contentOffset + 'px'
     );
     return true;
   }
@@ -15785,7 +15821,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(/*#__PURE__*/React.c
 
   if (window.visualViewport) {
     window.visualViewport.addEventListener('resize', schedulePin);
-    window.visualViewport.addEventListener('scroll', schedulePin);
   }
 
   new MutationObserver(schedulePin).observe(document.documentElement, {
