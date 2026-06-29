@@ -154,7 +154,7 @@
 
     /* Bottom Nav */
     .bottom-nav {
-      position: fixed; bottom: -22px; left: 0; right: 0; z-index: 40;
+      position: fixed; bottom: -32px; left: 0; right: 0; z-index: 40;
       background: #141416; border-top: 1px solid var(--sep);
       box-shadow: 0 -1px 0 rgba(255,255,255,0.05), 0 -4px 20px rgba(0,0,0,0.55);
       padding-bottom: var(--safe-bottom);
@@ -950,7 +950,7 @@
       .login-btn { max-width: 105px; padding-left: 10px; padding-right: 10px; }
       .players-btn { width: 36px; height: 36px; }
       .app-content { padding-left: 9px; padding-right: 9px; }
-      .bottom-nav { left: 7px; right: 7px; width: calc(100% - 14px); bottom: calc(-7px + var(--safe-bottom)); border-radius: 25px; }
+      .bottom-nav { left: 7px; right: 7px; width: calc(100% - 14px); bottom: calc(-17px + var(--safe-bottom)); border-radius: 25px; }
       .bottom-nav button { min-height: 55px; }
 
     }
@@ -3440,6 +3440,24 @@
     .filters-sticky .overflow-x-auto {
     }
 
+    .admin-group-order-filter-row {
+      scrollbar-width: none !important;
+      -ms-overflow-style: none !important;
+      mask-image: linear-gradient(
+        to right,
+        #000 0,
+        #000 calc(100% - 32px),
+        transparent 100%
+      ) !important;
+      mask-repeat: no-repeat !important;
+      mask-size: 100% 100% !important;
+      padding-right: 36px !important;
+    }
+
+    .admin-group-order-filter-row::-webkit-scrollbar {
+      display: none !important;
+    }
+
     .phase-lock-toggle > span {
       pointer-events: none;
     }
@@ -4692,47 +4710,6 @@
 </style>
 
 <!-- fixed-filter-banner-like-nav removed: filter now in normal flow with sticky -->
-
-  <style id="bottom-nav-lower-position">
-    /* Dolne menu obniżone o ok. 10 px względem poprzedniej pozycji. */
-    html body .bottom-nav {
-      bottom: calc(var(--safe-bottom) - 17px) !important;
-    }
-  </style>
-
-
-  <style id="admin-group-filter-right-fade">
-    /* Panel admina → Wyniki specjalne → Kolejność w grupach:
-       delikatne zanikanie po prawej oraz niewidoczny pasek przewijania. */
-    html body .admin-group-order-filter-row {
-      -webkit-mask-image: linear-gradient(
-        to right,
-        #000 0,
-        #000 calc(100% - 32px),
-        transparent 100%
-      ) !important;
-      mask-image: linear-gradient(
-        to right,
-        #000 0,
-        #000 calc(100% - 32px),
-        transparent 100%
-      ) !important;
-      -webkit-mask-repeat: no-repeat !important;
-      mask-repeat: no-repeat !important;
-      -webkit-mask-size: 100% 100% !important;
-      mask-size: 100% 100% !important;
-      padding-right: 36px !important;
-      scrollbar-width: none !important;
-      -ms-overflow-style: none !important;
-    }
-
-    html body .admin-group-order-filter-row::-webkit-scrollbar {
-      display: none !important;
-      width: 0 !important;
-      height: 0 !important;
-    }
-  </style>
-
 </head>
 <body>
   <div id="loading">
@@ -10207,7 +10184,7 @@ function AdminPanel({
   }, React.createElement("h4", {
     className: "font-display text-base mb-2"
   }, "Kolejno\u015B\u0107 w grupach"), React.createElement("div", {
-    className: "admin-group-order-filter-row flex gap-1 overflow-x-auto pb-2 mb-3"
+    className: "admin-group-order-filter-row flex gap-1 overflow-x-auto mb-3"
   }, GROUPS.map(g => React.createElement("button", {
     key: g,
     onClick: () => {
