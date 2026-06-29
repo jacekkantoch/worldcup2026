@@ -3527,8 +3527,6 @@ function SpecialsAllView({
   return React.createElement("div", {
     className: "allspecials-view space-y-3"
   }, React.createElement("div", {
-    className: "bg-blue-50 border border-blue-200 rounded-xl p-3 text-xs text-blue-900 allspecials-note app-note app-note--info app-note--compact"
-  }, "Typy specjalne wszystkich uczestnik\xF3w \u2014 widoczne dla ka\u017Cdego."), React.createElement("div", {
     className: "bg-white border border-stone-200 rounded-xl overflow-hidden table-card"
   }, React.createElement("div", {
     className: "px-4 py-3 text-sm font-bold tracking-wide text-stone-800 flex items-center justify-between"

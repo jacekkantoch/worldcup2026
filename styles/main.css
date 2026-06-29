@@ -135,7 +135,7 @@
     /* Bottom Nav */
     .bottom-nav {
       position: fixed; bottom: 0; left: 0; right: 0; z-index: 40;
-      background: linear-gradient(160deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%), rgba(14,20,35,0.55);
+      background: linear-gradient(160deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%), rgba(14,20,35,0.20);
       border-top: 1px solid rgba(255,255,255,0.12);
       box-shadow: 0 -1px 0 rgba(255,255,255,0.10), 0 -4px 24px rgba(0,0,0,0.40);
       backdrop-filter: blur(12px) saturate(150%);
@@ -3035,12 +3035,14 @@
 
     /* Aktywna ikona zakładki: sprężysty skok w górę */
     .bottom-nav button svg.nav-icon {
+      width: 24px !important;
+      height: 24px !important;
       transition: transform .32s cubic-bezier(.34,1.56,.64,1),
                   opacity   .20s ease !important;
       transform: scale(1) translateY(0) !important;
     }
     .bottom-nav button.active svg.nav-icon {
-      transform: scale(1.20) translateY(-2px) !important;
+      transform: scale(1.18) translateY(-2px) !important;
     }
 
     /* Etykieta aktywnej zakładki: fade-in */
@@ -3061,8 +3063,8 @@
        Zamiast wielokropka lub ostrego ucięcia tekst łagodnie zanika.
     ═══════════════════════════════════════════════════════════════ */
     :root {
-      --overflow-fade: clamp(16px, 5vw, 30px);
-      --overflow-fade-small: clamp(10px, 3.5vw, 20px);
+      --overflow-fade: 24px;
+      --overflow-fade-small: var(--overflow-fade);
     }
 
     /* Elementy wyrównane do lewej — zanikanie przy prawej krawędzi. */
@@ -3418,7 +3420,7 @@
        Brak zanikania po lewej we wszystkich poziomych menu filtrów.
     ═══════════════════════════════════════════════════════════════ */
     :root {
-      --filter-right-fade: 10px;
+      --filter-right-fade: var(--overflow-fade);
     }
 
     .chip-scroll-row,
@@ -3436,12 +3438,12 @@
       mask-image: linear-gradient(
         to right,
         #000 0,
-        #000 calc(100% - 32px),
+        #000 calc(100% - var(--overflow-fade)),
         transparent 100%
       ) !important;
       mask-repeat: no-repeat !important;
       mask-size: 100% 100% !important;
-      padding-right: 36px !important;
+      padding-right: calc(var(--overflow-fade) + 4px) !important;
     }
 
     .admin-group-order-filter-row::-webkit-scrollbar {
@@ -4351,7 +4353,7 @@ html body .app-header {
     }
 
     html body .app-content {
-      padding-top: 92px !important;
+      padding-top: calc(var(--header-height, 80px) + var(--banner-gap, 14px)) !important;
     }
 
     @media (max-width: 520px) {
@@ -4360,19 +4362,19 @@ html body .app-header {
       }
 
       html body .app-content {
-        padding-top: 104px !important;
+        padding-top: calc(var(--header-height, 92px) + var(--banner-gap, 12px)) !important;
       }
     }
 
     @media (max-width: 380px) {
       html body .app-content {
-        padding-top: 92px !important;
+        padding-top: calc(var(--header-height, 80px) + var(--banner-gap, 12px)) !important;
       }
     }
 
 /* ===== 15. top-header-liquid-glass-depth ===== */
 html body .app-header {
-      background: linear-gradient(160deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%), rgba(14,20,35,0.55) !important;
+      background: linear-gradient(160deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%), rgba(14,20,35,0.20) !important;
       backdrop-filter: blur(12px) saturate(150%) !important;
       -webkit-backdrop-filter: blur(12px) saturate(150%) !important;
       border-bottom: 1px solid rgba(255,255,255,0.12) !important;
@@ -4464,7 +4466,7 @@ html body .admin-gate-card {
 html body .bottom-nav {
       background:
         linear-gradient(160deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%),
-        rgba(14,20,35,0.55) !important;
+        rgba(14,20,35,0.20) !important;
       backdrop-filter: blur(12px) saturate(150%) !important;
       -webkit-backdrop-filter: blur(12px) saturate(150%) !important;
       border: 1px solid rgba(255,255,255,.10) !important;
@@ -4515,12 +4517,12 @@ html body .group-order-filter-row {
     mask-image: linear-gradient(
       to right,
       #000 0,
-      #000 calc(100% - 32px),
+      #000 calc(100% - var(--overflow-fade)),
       transparent 100%
     ) !important;
     mask-repeat: no-repeat !important;
     mask-size: 100% 100% !important;
-    padding-right: 36px !important;
+    padding-right: calc(var(--overflow-fade) + 4px) !important;
   }
 
 /* ===== 20. ios-safari-optimizations ===== */
@@ -4572,3 +4574,111 @@ html body .group-order-filter-row {
     -webkit-appearance: none;
     appearance: none;
   }
+
+
+/* Admin: nazwy drużyn w zakładce Mecze i wyniki mają być zawsze czytelne. */
+html body .admin-panel .admin-match-summary-teams,
+html body .admin-panel .admin-match-summary-teams *,
+html body .admin-panel .admin-score-team-name {
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  white-space: normal !important;
+}
+
+html body .admin-panel .admin-match-summary-teams {
+  line-height: 1.25 !important;
+  row-gap: 3px !important;
+}
+
+html body .admin-panel .admin-score-team-name {
+  line-height: 1.25 !important;
+  overflow-wrap: anywhere !important;
+}
+
+
+/* Bracket color refresh */
+html body .bracket-page {
+  --bracket-panel: linear-gradient(145deg, rgba(28, 52, 70, .42), rgba(23, 27, 43, .52));
+  --bracket-card: linear-gradient(145deg, rgba(43, 70, 89, .50), rgba(29, 32, 53, .62));
+  --bracket-card-finished: linear-gradient(145deg, rgba(47, 82, 94, .58), rgba(33, 39, 61, .68));
+  --bracket-line: rgba(111, 196, 255, .46);
+  --bracket-border: rgba(154, 213, 255, .22);
+  --bracket-winner-bg: linear-gradient(90deg, rgba(48, 209, 88, .20), rgba(111, 196, 255, .11));
+  --bracket-winner-text: rgba(231, 255, 241, .98);
+  --bracket-loser-text: rgba(210, 221, 235, .50);
+  --bracket-gold: rgba(245, 200, 66, .94);
+}
+
+html body .bracket-page .bracket-intro,
+html body .bracket-page .bracket-section {
+  background: var(--bracket-panel) !important;
+  border-color: rgba(154, 213, 255, .18) !important;
+}
+
+html body .bracket-page .bracket-section-title h3,
+html body .bracket-page .bracket-intro h2 {
+  color: rgba(245, 250, 255, .98) !important;
+}
+
+html body .bracket-page .bracket-section-title span,
+html body .bracket-page .bracket-round-label,
+html body .bracket-page .bracket-third-place-label,
+html body .bracket-page .bracket-match-head {
+  color: rgba(183, 211, 235, .78) !important;
+}
+
+html body .bracket-page .bracket-match,
+html body .bracket-page .bracket-final-card {
+  background: var(--bracket-card) !important;
+  border-color: var(--bracket-border) !important;
+}
+
+html body .bracket-page .bracket-match.is-finished,
+html body .bracket-page .bracket-final-card.is-finished {
+  background: var(--bracket-card-finished) !important;
+  border-color: rgba(111, 196, 255, .34) !important;
+}
+
+html body .bracket-page .bracket-match-head {
+  background: rgba(111, 196, 255, .07) !important;
+  border-bottom-color: rgba(154, 213, 255, .14) !important;
+}
+
+html body .bracket-page .bracket-team-row {
+  color: rgba(224, 235, 245, .76) !important;
+}
+
+html body .bracket-page .bracket-team-row + .bracket-team-row {
+  border-top-color: rgba(154, 213, 255, .10) !important;
+}
+
+html body .bracket-page .bracket-team-row.is-winner {
+  background: var(--bracket-winner-bg) !important;
+  color: var(--bracket-winner-text) !important;
+}
+
+html body .bracket-page .bracket-team-row.is-loser {
+  color: var(--bracket-loser-text) !important;
+  opacity: 1 !important;
+}
+
+html body .bracket-page .bracket-score {
+  color: inherit !important;
+}
+
+html body .bracket-page .bracket-connectors path {
+  stroke: var(--bracket-line) !important;
+  stroke-width: 1.4 !important;
+}
+
+html body .bracket-page .bracket-champion {
+  background: linear-gradient(145deg, rgba(245, 200, 66, .18), rgba(111, 196, 255, .08)) !important;
+  border-color: rgba(245, 200, 66, .34) !important;
+  color: var(--bracket-gold) !important;
+}
+
+html body .bracket-page .bracket-placeholder {
+  color: rgba(183, 211, 235, .42) !important;
+}
