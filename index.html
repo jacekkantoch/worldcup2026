@@ -8444,15 +8444,25 @@
       display: none !important;
     }
 
-    /* Kolor w obszarze safe-area nad pływającym nagłówkiem. */
+    /*
+      Nieprzezroczysta osłona nad pływającym nagłówkiem.
+      W Safari position:fixed jest liczony od górnej krawędzi visualViewport,
+      która może znajdować się poniżej paska statusu. Ujemny offset rozciąga
+      osłonę aż do fizycznej góry ekranu, więc przewijane filtry nie pojawiają
+      się nad nagłówkiem ani pod zegarem / Dynamic Island.
+    */
     body::after {
       content: "";
       position: fixed;
-      inset: 0 0 auto 0;
-      height: calc(env(safe-area-inset-top, 0px) + 18px);
+      left: 0;
+      right: 0;
+      top: calc(-1 * var(--app-viewport-top, 0px));
+      height: calc(var(--app-viewport-top, 0px) + 19px);
       background: #07101d;
       pointer-events: none;
       z-index: 999;
+      transform: translateZ(0);
+      -webkit-transform: translateZ(0);
     }
 
     html[data-theme="light"] body::after {
