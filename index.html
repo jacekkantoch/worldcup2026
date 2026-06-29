@@ -31,8 +31,7 @@
   <link rel="icon" type="image/png" sizes="192x192" href="./mundial2026-app-icon-v2-192.png"/>
   <script>
     (function(){
-      var theme='dark';
-      try { theme=localStorage.getItem('wc2026:theme')==='light'?'light':'dark'; } catch(e) {}
+      var theme='dark'; // light mode wyłączony
       document.documentElement.setAttribute('data-theme',theme);
     })();
   </script>
@@ -133,8 +132,7 @@
       box-shadow: 0 2px 10px rgba(0,0,0,0.55);
     }
     .app-header .title-group { min-width: 0; }
-    .app-header .title-group h1 { margin: 0; font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: .06em; line-height: 1; color: var(--label-1); white-space: nowrap; }
-    .app-header .title-group small { display: none; }
+    .app-header .title-group h1 { margin: 0; font-family: 'Bebas Neue', sans-serif; font-size: 20px; font-weight: 400; letter-spacing: .06em; line-height: 1; color: var(--label-1); white-space: nowrap; }
     .player-row { display: flex; align-items: center; gap: 8px; }
 
     .login-btn {
@@ -556,14 +554,11 @@
       text-shadow: 0 2px 8px rgba(0,0,0,.35);
     }
     .app-header .title-group h1 {
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "DM Sans", sans-serif;
-      font-size: 16px;
-      font-weight: 780;
-      letter-spacing: -.015em;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      font-weight: 400;
+      letter-spacing: .06em;
       white-space: nowrap;
-    }
-    .app-header .title-group small {
-      display: none;
     }
 
     .login-btn,
@@ -998,7 +993,6 @@
     }
     @media (max-width: 520px) {
       .app-header { width: calc(100% - 14px); margin-top: 7px; border-radius: 23px; }
-      .app-header .title-group small { max-width: 155px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       .login-btn { max-width: 105px; padding-left: 10px; padding-right: 10px; }
       .players-btn { width: 36px; height: 36px; }
       .app-content { padding-left: 9px; padding-right: 9px; }
@@ -1007,9 +1001,8 @@
       .filters-sticky { top: calc(var(--safe-top) + 78px); }
     }
     @media (max-width: 380px) {
-      .app-header .title-group small { display: none; }
       .app-header .logo-icon { width: 38px; height: 38px; border-radius: 13px; }
-      .app-header .title-group h1 { font-size: 13px; letter-spacing: .02em; }
+      .app-header .title-group h1 { font-size: 15px !important; letter-spacing: .05em !important; }
       .player-row { gap: 5px; }
       .login-btn { max-width: 92px; }
     }
@@ -2771,18 +2764,18 @@
         radial-gradient(ellipse 100% 58% at 50% -13%, rgba(74,166,255,.22), transparent 62%),
         radial-gradient(ellipse 68% 48% at -8% 70%, rgba(67,211,166,.12), transparent 69%),
         radial-gradient(ellipse 70% 48% at 108% 78%, rgba(172,116,238,.12), transparent 68%),
-        linear-gradient(180deg, #eef6ff 0%, #f5f8fc 48%, #e9f0f8 100%);
-      background-color: #eef6ff !important;
+        linear-gradient(180deg, #f2f2f7 0%, #f5f5fa 48%, #efeff4 100%);
+      background-color: #f2f2f7 !important;
     }
 
     html[data-theme="light"],
     html[data-theme="light"] body {
-      background-color: #eef6ff !important;
+      background-color: #f2f2f7 !important;
       color: var(--label-1) !important;
     }
     html[data-theme="light"] body::before {
-      background-color: #eef6ff !important;
-      background-image: var(--app-screen-background) !important;
+      background-color: #f2f2f7 !important;
+      background-image: none !important;
     }
     html[data-theme="light"] .pitch-bg::before {
       background: radial-gradient(circle at 65% 35%, rgba(63,166,255,.24), rgba(10,132,255,.06) 46%, transparent 73%);
@@ -2834,7 +2827,6 @@
       box-shadow: inset 0 1px 0 rgba(255,255,255,.75) !important;
     }
     html[data-theme="light"] .bottom-nav button { color: rgba(38,61,88,.50) !important; }
-    html[data-theme="light"] .bottom-nav button.active { color: #075fae !important; text-shadow: none !important; }
     html[data-theme="light"] .bottom-nav button.active svg { color: #075fae !important; filter: none !important; }
 
     html[data-theme="light"] .glass,
@@ -2967,7 +2959,7 @@
         radial-gradient(circle at 50% 14%, rgba(63,157,246,.20), transparent 40%),
         radial-gradient(circle at 15% 85%, rgba(48,209,88,.09), transparent 36%),
         radial-gradient(circle at 85% 82%, rgba(171,94,226,.10), transparent 36%),
-        #eef6ff !important;
+        #f2f2f7 !important;
       color: var(--label-1) !important;
     }
     html[data-theme="light"] .loading-title { color: var(--label-1) !important; }
@@ -3139,29 +3131,12 @@
       text-shadow: none !important;
     }
 
-    html[data-theme="light"] .bottom-nav button.active svg,
-    html[data-theme="light"] .bottom-nav button.active svg.nav-icon {
-      stroke: #075fae !important;
-      color: #075fae !important;
-      fill: currentColor !important;
-      filter: none !important;
-    }
-
     html[data-theme="light"] .bg-\[\#0d1b5e\],
     html[data-theme="light"] .bg-\[\#162570\],
     html[data-theme="light"] [class*="bg-[#0d1b5e]"],
     html[data-theme="light"] [class*="bg-[#162570]"],
     html[data-theme="light"] [class*="from-[#1a1a3a]"][class*="to-[#0d1b5e]"],
     html[data-theme="light"] [class*="from-[#0d1b5e]"][class*="to-[#162570]"] {
-      color: #ffffff !important;
-      -webkit-text-fill-color: #ffffff !important;
-    }
-    html[data-theme="light"] .bg-\[\#0d1b5e\] *,
-    html[data-theme="light"] .bg-\[\#162570\] *,
-    html[data-theme="light"] [class*="bg-[#0d1b5e]"] *,
-    html[data-theme="light"] [class*="bg-[#162570]"] *,
-    html[data-theme="light"] [class*="from-[#1a1a3a]"][class*="to-[#0d1b5e]"] *,
-    html[data-theme="light"] [class*="from-[#0d1b5e]"][class*="to-[#162570]"] * {
       color: #ffffff !important;
       -webkit-text-fill-color: #ffffff !important;
     }
@@ -4116,22 +4091,15 @@
     }
     .app-header .title-group h1 {
       margin: 0;
-      line-height: .94;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      font-weight: 400;
+      letter-spacing: .06em;
+      line-height: 1;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       max-width: 100%;
-    }
-    .app-header .title-group small {
-      display: block !important;
-      margin-top: 3px;
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      color: var(--label-2);
-      line-height: 1;
-      white-space: nowrap;
     }
     .app-header .logo-icon {
       box-shadow: none !important;
@@ -4139,13 +4107,8 @@
     }
     @media (max-width: 520px) {
       .app-header .title-group h1 {
-        font-size: 12px !important;
-        letter-spacing: -.01em !important;
-      }
-      .app-header .title-group small {
-        display: block !important;
-        font-size: 11px !important;
-        letter-spacing: .12em !important;
+        font-size: 17px !important;
+        letter-spacing: .05em !important;
       }
     }
     @media (max-width: 380px) {
@@ -4372,12 +4335,6 @@
     .profile-choice-shell {
       width: 100%;
     }
-    .profile-choice-shell.is-open .profile-choice-trigger {
-      border-bottom-left-radius: 0 !important;
-      border-bottom-right-radius: 0 !important;
-      border-bottom-color: transparent !important;
-      margin-bottom: 0 !important;
-    }
     .profile-choice-actions {
       margin-top: -1px !important;
       border-top-left-radius: 0 !important;
@@ -4483,8 +4440,9 @@
     /* ── Przełącznik motywu: sprężysty suwak ── */
     .theme-switch-thumb {
       transition:
-        transform  .46s cubic-bezier(.34,1.56,.64,1),
-        background .30s ease,
+        transform  .44s cubic-bezier(.34,1.56,.64,1),
+        background .32s ease,
+        color      .24s ease,
         box-shadow .30s ease !important;
       will-change: transform;
     }
@@ -6880,6 +6838,96 @@
       }
     }
 
+    /* ═══════════════════════════════════════════════════════════════
+       LIGHT MODE — CLEAN FLAT (bez cieni, poświat i blurów)
+       Zostawione: gradienty, kolory, obramowania
+    ═══════════════════════════════════════════════════════════════ */
+    html[data-theme="light"] {
+      /* Wyzerowanie zmiennych cieni – zapobiega ich użyciu przez var() */
+      --shadow-sm:   none;
+      --shadow-md:   none;
+      --shadow-lg:   none;
+      --shadow-glow: none;
+      --hl:  none;
+      --hl2: none;
+    }
+
+    /* Usunięcie box-shadow i backdrop-filter ze wszystkich elementów light mode */
+    html[data-theme="light"] .nav-droplet,
+    html[data-theme="light"] .glass,
+    html[data-theme="light"] .glass-strong,
+    html[data-theme="light"] .match-card,
+    html[data-theme="light"] .match-card.expanded,
+    html[data-theme="light"] .filters-sticky,
+    html[data-theme="light"] .login-btn,
+    html[data-theme="light"] .players-btn,
+    html[data-theme="light"] .theme-toggle-btn,
+    html[data-theme="light"] .selection-tile,
+    html[data-theme="light"] .selection-tile:hover,
+    html[data-theme="light"] .leaderboard-position-badge,
+    html[data-theme="light"] .leaderboard-header,
+    html[data-theme="light"] .profile-avatar,
+    html[data-theme="light"] .profile-menu-btn.is-authenticated .profile-avatar,
+    html[data-theme="light"] section.bg-white,
+    html[data-theme="light"] div.bg-white,
+    html[data-theme="light"] .install-banner,
+    html[data-theme="light"] .bracket-intro,
+    html[data-theme="light"] .bracket-section,
+    html[data-theme="light"] .bracket-match,
+    html[data-theme="light"] .bracket-final-card,
+    html[data-theme="light"] .admin-match-card,
+    html[data-theme="light"] .admin-match-details,
+    html[data-theme="light"] .admin-panel-banner,
+    html[data-theme="light"] .admin-panel-banner button,
+    html[data-theme="light"] .modal,
+    html[data-theme="light"] .modal-sheet,
+    html[data-theme="light"] .players-sheet,
+    html[data-theme="light"] .auth-sheet,
+    html[data-theme="light"] .toast-bar,
+    html[data-theme="light"] .match-final-result-card,
+    html[data-theme="light"] .match-points-badge,
+    html[data-theme="light"] .compare-view .compare-match-card,
+    html[data-theme="light"] input,
+    html[data-theme="light"] select,
+    html[data-theme="light"] textarea,
+    html[data-theme="light"] .fixed.inset-0.z-50 > .relative,
+    html[data-theme="light"] .theme-toggle-btn.theme-switch {
+      box-shadow: none !important;
+      -webkit-backdrop-filter: none !important;
+      backdrop-filter: none !important;
+    }
+
+    /* Overlay modalu – tylko lekkie przyciemnienie, bez blura */
+    html[data-theme="light"] .fixed.inset-0.z-50 > .absolute.inset-0 {
+      -webkit-backdrop-filter: none !important;
+      backdrop-filter: none !important;
+      background: rgba(42,57,77,.18) !important;
+    }
+
+    /* Focus ring – jedyne dozwolone box-shadow w light mode */
+    html[data-theme="light"] input:focus,
+    html[data-theme="light"] select:focus,
+    html[data-theme="light"] textarea:focus {
+      box-shadow: 0 0 0 2px rgba(10,120,232,.32) !important;
+    }
+
+    /* Żadnych text-shadow w light mode */
+    html[data-theme="light"] * {
+      text-shadow: none !important;
+    }
+
+    /* Rozmycie tła pod nagłówkiem i bottom nav — jak w dark mode */
+    html[data-theme="light"] .app-header {
+      -webkit-backdrop-filter: blur(28px) saturate(160%) !important;
+      backdrop-filter: blur(28px) saturate(160%) !important;
+      box-shadow: none !important;
+    }
+    html[data-theme="light"] .bottom-nav {
+      -webkit-backdrop-filter: blur(28px) saturate(160%) !important;
+      backdrop-filter: blur(28px) saturate(160%) !important;
+      box-shadow: none !important;
+    }
+
 </style>
 
   <style id="expanded-header-color-fix">
@@ -7681,23 +7729,23 @@
   <style id="light-mode-background-darken-fix">
     /* Light mode — delikatnie przyciemnione tło całego ekranu. */
     html[data-theme="light"] {
-      --bg-0: #e4edf7;
+      --bg-0: #f2f2f7;
       --app-screen-background:
         radial-gradient(ellipse 100% 58% at 50% -13%, rgba(74,166,255,.18), transparent 60%),
         radial-gradient(ellipse 68% 48% at -8% 70%, rgba(67,211,166,.09), transparent 67%),
         radial-gradient(ellipse 70% 48% at 108% 78%, rgba(172,116,238,.10), transparent 66%),
-        linear-gradient(180deg, #e4edf7 0%, #eaf0f6 48%, #dde7f2 100%);
-      background-color: #e4edf7 !important;
+        linear-gradient(180deg, #f2f2f7 0%, #f5f5fa 48%, #efeff4 100%);
+      background-color: #f2f2f7 !important;
     }
 
     html[data-theme="light"],
     html[data-theme="light"] body {
-      background-color: #e4edf7 !important;
+      background-color: #f2f2f7 !important;
     }
 
     html[data-theme="light"] body::before {
-      background-color: #e4edf7 !important;
-      background-image: var(--app-screen-background) !important;
+      background-color: #f2f2f7 !important;
+      background-image: none !important;
     }
   </style>
 
@@ -7739,6 +7787,631 @@
       border-top: 1px solid rgba(96,117,145,.18) !important;
     }
   </style>
+
+  <style id="light-mode-unified-palette">
+    /*
+     * ════════════════════════════════════════════════════════════════
+     *  iOS 26 · LIQUID GLASS · Light Mode
+     *  Lustrzane odbicie dark mode:
+     *   — te same floating elementy i blur
+     *   — semi-transparentne białe powierzchnie z saturate
+     *   — system iOS: #f2f2f7 jako tło, rgba(255,255,255,.XX) glass
+     * ════════════════════════════════════════════════════════════════
+     */
+
+    /* ── Tokeny iOS 26 (light) ──────────────────────────────────── */
+    html[data-theme="light"] {
+      color-scheme: light;
+
+      /* System Backgrounds */
+      --bg-0: #f2f2f7;
+      --bg-1: rgba(255,255,255,.80);
+      --bg-2: rgba(242,242,247,.85);
+      --bg-3: rgba(232,232,240,.90);
+      --bg-4: rgba(220,220,230,.94);
+
+      /* Liquid Glass surfaces — semi-transparentne, blur robi resztę */
+      --glass-1: linear-gradient(160deg, rgba(255,255,255,.90) 0%, rgba(245,245,250,.80) 100%);
+      --glass-2: linear-gradient(160deg, rgba(255,255,255,.94) 0%, rgba(245,245,250,.86) 100%);
+      --glass-3: linear-gradient(160deg, rgba(255,255,255,.97) 0%, rgba(242,242,247,.90) 100%);
+      --glass-4: linear-gradient(160deg, rgba(255,255,255,1)   0%, rgba(240,240,248,.94) 100%);
+
+      /* Borders — iOS separator */
+      --border-1: rgba(60,60,67,.12);
+      --border-2: rgba(60,60,67,.18);
+      --border-3: rgba(60,60,67,.28);
+      --hl:  inset 0 1px 0 rgba(255,255,255,.80), inset 0 -1px 0 rgba(0,0,0,.04);
+      --hl2: inset 0 1px 0 rgba(255,255,255,.90), inset 0 -1px 0 rgba(0,0,0,.06);
+      --sep: rgba(60,60,67,.18);
+
+      /* Labels — iOS 26 light */
+      --label-1: rgba(0,0,0,.88);
+      --label-2: rgba(60,60,67,.60);
+      --label-3: rgba(60,60,67,.30);
+      --label-4: rgba(60,60,67,.16);
+
+      /* Accents — iOS 26 light */
+      --accent:        #007AFF;
+      --accent-strong: #0062CC;
+      --accent-green:  #34C759;
+      --accent-red:    #FF3B30;
+      --accent-orange: #FF9500;
+      --accent-yellow: #FFCC00;
+      --accent-purple: #AF52DE;
+      --gold:          #FF9500;
+
+      /* Shadows — subtelne, jasne */
+      --shadow-sm:   0 4px 16px rgba(0,0,0,.08), 0 1px 4px rgba(0,0,0,.05);
+      --shadow-md:   0 8px 28px rgba(0,0,0,.10), 0 2px 8px rgba(0,0,0,.06);
+      --shadow-lg:   0 16px 48px rgba(0,0,0,.14), 0 4px 12px rgba(0,0,0,.08);
+      --shadow-glow: inset 0 1px 0 rgba(255,255,255,.80);
+    }
+
+    /* ── Tło aplikacji — jak dark mode, tylko jasne blamy ──────── */
+    html[data-theme="light"],
+    html[data-theme="light"] body {
+      background-color: #f2f2f7 !important;
+      color: rgba(0,0,0,.88) !important;
+    }
+    html[data-theme="light"] body {
+      background:
+        radial-gradient(ellipse 80% 30%  at 50%   0%,  rgba(0,122,255,.06)   0%, transparent 65%),
+        radial-gradient(ellipse 50% 25%  at 10% 100%,  rgba(52,199,89,.04)   0%, transparent 60%),
+        radial-gradient(ellipse 50% 25%  at 90% 100%,  rgba(88,86,214,.03)   0%, transparent 60%),
+        #f2f2f7 !important;
+      background-attachment: fixed !important;
+    }
+    html[data-theme="light"] body::before {
+      display: none !important;
+    }
+    html[data-theme="light"] .pitch-bg::before,
+    html[data-theme="light"] .pitch-bg::after { display: none !important; }
+
+    /* ── Nagłówek — floating glass, jak dark mode ───────────────── */
+    html[data-theme="light"] .app-header {
+      background:
+        radial-gradient(circle at 20% -20%, rgba(255,255,255,.95), transparent 42%),
+        linear-gradient(145deg, rgba(255,255,255,.84), rgba(242,242,247,.74)) !important;
+      border: 1px solid rgba(60,60,67,.14) !important;
+      -webkit-backdrop-filter: blur(34px) saturate(190%) !important;
+      backdrop-filter: blur(34px) saturate(190%) !important;
+      box-shadow: 0 8px 24px rgba(0,0,0,.08), var(--hl) !important;
+      color: rgba(0,0,0,.88) !important;
+    }
+    html[data-theme="light"] .app-header .title-group h1 {
+      color: rgba(0,0,0,.88) !important;
+    }
+
+    /* ── Przyciski nagłówka ─────────────────────────────────────── */
+    html[data-theme="light"] .login-btn,
+    html[data-theme="light"] .players-btn {
+      background:
+        radial-gradient(circle at 25% 0%, rgba(255,255,255,.80), transparent 44%),
+        rgba(120,120,128,.12) !important;
+      border: 1px solid rgba(60,60,67,.16) !important;
+      -webkit-backdrop-filter: blur(18px) saturate(160%) !important;
+      backdrop-filter: blur(18px) saturate(160%) !important;
+      box-shadow: var(--hl) !important;
+      color: rgba(0,0,0,.88) !important;
+    }
+    html[data-theme="light"] .login-btn:hover,
+    html[data-theme="light"] .players-btn:hover {
+      background:
+        radial-gradient(circle at 25% 0%, rgba(255,255,255,.90), transparent 44%),
+        rgba(120,120,128,.18) !important;
+    }
+
+    /* ── Dolna nawigacja — floating glass, jak dark mode ───────── */
+    html[data-theme="light"] .bottom-nav {
+      background:
+        radial-gradient(circle at 20% -30%, rgba(255,255,255,.92), transparent 44%),
+        linear-gradient(145deg, rgba(255,255,255,.82), rgba(242,242,247,.72)) !important;
+      border: 1px solid rgba(60,60,67,.14) !important;
+      -webkit-backdrop-filter: blur(34px) saturate(190%) !important;
+      backdrop-filter: blur(34px) saturate(190%) !important;
+      box-shadow: 0 8px 24px rgba(0,0,0,.08), var(--hl) !important;
+    }
+    html[data-theme="light"] .bottom-nav button {
+      color: rgba(60,60,67,.50) !important;
+    }
+    html[data-theme="light"] .bottom-nav button.active {
+      color: #007AFF !important;
+    }
+    html[data-theme="light"] .bottom-nav button.active svg {
+      stroke: #007AFF !important;
+    }
+    html[data-theme="light"] .nav-droplet,
+    html[data-theme="light"] .nav-droplet.dragging {
+      background: rgba(0,122,255,.12) !important;
+      border: 1px solid rgba(0,122,255,.26) !important;
+      box-shadow: none !important;
+    }
+
+    /* ── Glass — karty, sekcje, panele ─────────────────────────── */
+    html[data-theme="light"] .glass,
+    html[data-theme="light"] .match-card,
+    html[data-theme="light"] body .match-card,
+    html[data-theme="light"] section.bg-white,
+    html[data-theme="light"] div.bg-white,
+    html[data-theme="light"] .install-banner,
+    html[data-theme="light"] .leaderboard-header,
+    html[data-theme="light"] .bracket-intro,
+    html[data-theme="light"] .bracket-section,
+    html[data-theme="light"] .admin-match-card,
+    html[data-theme="light"] .bracket-match,
+    html[data-theme="light"] .bracket-final-card {
+      background: var(--glass-1) !important;
+      border: 1px solid rgba(60,60,67,.12) !important;
+      -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
+      backdrop-filter: blur(20px) saturate(160%) !important;
+      box-shadow: var(--shadow-sm), var(--hl) !important;
+      color: rgba(0,0,0,.88) !important;
+    }
+    html[data-theme="light"] .glass-strong,
+    html[data-theme="light"] .match-card.expanded {
+      background: var(--glass-2) !important;
+      border: 1px solid rgba(60,60,67,.16) !important;
+      -webkit-backdrop-filter: blur(26px) saturate(175%) !important;
+      backdrop-filter: blur(26px) saturate(175%) !important;
+      box-shadow: var(--shadow-md), var(--hl2) !important;
+    }
+
+    /* ── Panel filtrów ─────────────────────────────────────────── */
+    html[data-theme="light"] .filters-sticky {
+      background:
+        radial-gradient(circle at 18% -20%, rgba(255,255,255,.90), transparent 42%),
+        linear-gradient(145deg, rgba(255,255,255,.82), rgba(242,242,247,.74)) !important;
+      border: 1px solid rgba(60,60,67,.14) !important;
+      -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
+      backdrop-filter: blur(28px) saturate(180%) !important;
+      box-shadow: var(--shadow-md), var(--hl2) !important;
+    }
+
+    /* ── Kafelki (selection-tile) ──────────────────────────────── */
+    html[data-theme="light"] .selection-tile {
+      background: rgba(120,120,128,.12) !important;
+      border: 1px solid rgba(60,60,67,.10) !important;
+      box-shadow: none !important;
+      color: rgba(60,60,67,.70) !important;
+    }
+    html[data-theme="light"] .selection-tile:hover {
+      background: rgba(120,120,128,.18) !important;
+      color: rgba(0,0,0,.88) !important;
+    }
+    html[data-theme="light"] .selection-tile.is-selected,
+    html[data-theme="light"] .selection-tile.is-selected:hover {
+      background: #007AFF !important;
+      border-color: rgba(0,122,255,.50) !important;
+      color: #ffffff !important;
+      text-shadow: none !important;
+      box-shadow: 0 2px 8px rgba(0,122,255,.24) !important;
+    }
+
+    /* ── Inputy ────────────────────────────────────────────────── */
+    html[data-theme="light"] input,
+    html[data-theme="light"] select,
+    html[data-theme="light"] textarea {
+      background: rgba(118,118,128,.12) !important;
+      border: 1px solid rgba(60,60,67,.14) !important;
+      box-shadow: none !important;
+      color: rgba(0,0,0,.88) !important;
+    }
+    html[data-theme="light"] input::placeholder,
+    html[data-theme="light"] textarea::placeholder {
+      color: rgba(60,60,67,.40) !important;
+    }
+    html[data-theme="light"] input:focus,
+    html[data-theme="light"] select:focus,
+    html[data-theme="light"] textarea:focus {
+      background: rgba(255,255,255,.90) !important;
+      border-color: #007AFF !important;
+      box-shadow: 0 0 0 3px rgba(0,122,255,.16) !important;
+    }
+    html[data-theme="light"] select option {
+      background: #ffffff !important;
+      color: rgba(0,0,0,.88) !important;
+    }
+
+    /* ── Modał ──────────────────────────────────────────────────── */
+    html[data-theme="light"] .fixed.inset-0.z-50 > .absolute.inset-0 {
+      background: rgba(0,0,0,.20) !important;
+      -webkit-backdrop-filter: blur(12px) saturate(140%) !important;
+      backdrop-filter: blur(12px) saturate(140%) !important;
+    }
+    html[data-theme="light"] .fixed.inset-0.z-50 > .relative {
+      background:
+        radial-gradient(circle at 16% -10%, rgba(255,255,255,.96), transparent 42%),
+        linear-gradient(145deg, rgba(255,255,255,.92), rgba(242,242,247,.86)) !important;
+      border: 1px solid rgba(60,60,67,.14) !important;
+      -webkit-backdrop-filter: blur(34px) saturate(190%) !important;
+      backdrop-filter: blur(34px) saturate(190%) !important;
+      box-shadow: var(--shadow-lg), var(--hl) !important;
+      color: rgba(0,0,0,.88) !important;
+    }
+    html[data-theme="light"] .fixed.inset-0.z-50 > .relative > div:first-child {
+      background: rgba(120,120,128,.08) !important;
+      border-bottom: 1px solid rgba(60,60,67,.12) !important;
+    }
+
+    /* ── Toast ──────────────────────────────────────────────────── */
+    html[data-theme="light"] .toast-bar {
+      background:
+        radial-gradient(circle at 20% -20%, rgba(255,255,255,.92), transparent 42%),
+        linear-gradient(145deg, rgba(255,255,255,.86), rgba(242,242,247,.78)) !important;
+      border: 1px solid rgba(60,60,67,.14) !important;
+      -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
+      backdrop-filter: blur(28px) saturate(180%) !important;
+      box-shadow: var(--shadow-md), var(--hl) !important;
+      color: rgba(0,0,0,.88) !important;
+    }
+
+    /* ── Tła pomocnicze ────────────────────────────────────────── */
+    html[data-theme="light"] .bg-stone-50,
+    html[data-theme="light"] .bg-stone-50\/50 {
+      background: rgba(120,120,128,.08) !important;
+    }
+    html[data-theme="light"] .bg-stone-100 {
+      background: rgba(120,120,128,.14) !important;
+    }
+    html[data-theme="light"] .admin-match-details {
+      background: rgba(120,120,128,.08) !important;
+      border-top: 1px solid rgba(60,60,67,.10) !important;
+      box-shadow: none !important;
+    }
+
+    /* ── Tła kontekstowe (info/sukces/błąd/ostrzeżenie) ─────────── */
+    html[data-theme="light"] .bg-blue-50,
+    html[data-theme="light"] [class*="bg-sky-"],
+    html[data-theme="light"] [class*="bg-blue-"] {
+      background: rgba(0,122,255,.08) !important;
+    }
+    html[data-theme="light"] .bg-emerald-50,
+    html[data-theme="light"] .bg-\[#e6f4ec\],
+    html[data-theme="light"] .bg-\[#e8f4ee\] {
+      background: rgba(52,199,89,.10) !important;
+    }
+    html[data-theme="light"] .bg-amber-50,
+    html[data-theme="light"] .bg-amber-100,
+    html[data-theme="light"] [class*="bg-amber-50"],
+    html[data-theme="light"] [class*="bg-amber-100"] {
+      background: rgba(255,149,0,.10) !important;
+    }
+    html[data-theme="light"] .bg-red-50 {
+      background: rgba(255,59,48,.08) !important;
+    }
+
+    /* ── Tabele ─────────────────────────────────────────────────── */
+    html[data-theme="light"] th { color: rgba(60,60,67,.60) !important; }
+    html[data-theme="light"] td { color: rgba(0,0,0,.88) !important; }
+    html[data-theme="light"] tr:hover {
+      background: rgba(0,122,255,.04) !important;
+    }
+    html[data-theme="light"] .specials-view .table-card,
+    html[data-theme="light"] .allspecials-view .table-card {
+      background: var(--glass-1) !important;
+      border-color: rgba(60,60,67,.12) !important;
+    }
+    html[data-theme="light"] .allspecials-view thead tr,
+    html[data-theme="light"] .specials-view thead tr {
+      background: rgba(120,120,128,.10) !important;
+    }
+    html[data-theme="light"] .allspecials-view tbody tr:nth-child(even) {
+      background: rgba(120,120,128,.05) !important;
+    }
+    html[data-theme="light"] .allspecials-view tbody tr:hover {
+      background: rgba(0,122,255,.06) !important;
+    }
+
+    /* ── Odznaki punktów ────────────────────────────────────────── */
+    html[data-theme="light"] .match-points-badge.exact {
+      background: rgba(52,199,89,.14) !important;
+      border-color: rgba(52,199,89,.34) !important;
+      color: #1a8c3a !important;
+    }
+    html[data-theme="light"] .match-points-badge.partial {
+      background: rgba(255,149,0,.14) !important;
+      border-color: rgba(255,149,0,.32) !important;
+      color: #c47200 !important;
+    }
+    html[data-theme="light"] .match-points-badge.miss {
+      background: rgba(255,59,48,.12) !important;
+      border-color: rgba(255,59,48,.28) !important;
+      color: #cc2018 !important;
+    }
+    html[data-theme="light"] .rank-stat-exact  { color: #1a8c3a !important; }
+    html[data-theme="light"] .rank-stat-partial { color: #c47200 !important; }
+    html[data-theme="light"] .rank-stat-miss    { color: #cc2018 !important; }
+
+    /* ── Wiersze typów graczy ───────────────────────────────────── */
+    html[data-theme="light"] .prediction-row-empty,
+    html[data-theme="light"] .prediction-row-pending {
+      background: rgba(120,120,128,.08) !important;
+      border-color: rgba(60,60,67,.08) !important;
+    }
+
+    /* ── Typy specjalne — statusy ───────────────────────────────── */
+    html[data-theme="light"] .all-special-status-correct {
+      color: #1a8c3a !important;
+      background: rgba(52,199,89,.14) !important;
+    }
+    html[data-theme="light"] .all-special-status-wrong {
+      color: #cc2018 !important;
+      background: rgba(255,59,48,.12) !important;
+    }
+    html[data-theme="light"] .all-special-status-neutral {
+      color: rgba(60,60,67,.70) !important;
+      background: rgba(120,120,128,.12) !important;
+    }
+    html[data-theme="light"] .specials-view .selection-tile.is-correct,
+    html[data-theme="light"] .specials-view .selection-tile.is-correct:hover {
+      background: rgba(52,199,89,.14) !important;
+      border-color: rgba(52,199,89,.32) !important;
+      color: #1a8c3a !important;
+    }
+    html[data-theme="light"] .specials-view .selection-tile.is-wrong,
+    html[data-theme="light"] .specials-view .selection-tile.is-wrong:hover {
+      background: rgba(255,59,48,.12) !important;
+      border-color: rgba(255,59,48,.26) !important;
+      color: #cc2018 !important;
+    }
+
+    /* ── Admin ──────────────────────────────────────────────────── */
+    html[data-theme="light"] .admin-panel-banner {
+      background: rgba(120,120,128,.10) !important;
+      border: 1px solid rgba(60,60,67,.14) !important;
+      color: rgba(0,0,0,.88) !important;
+      box-shadow: none !important;
+    }
+    html[data-theme="light"] .admin-panel-banner * {
+      color: rgba(0,0,0,.88) !important;
+    }
+    html[data-theme="light"] .admin-panel-banner button {
+      background: rgba(255,255,255,.60) !important;
+      border: 1px solid rgba(60,60,67,.16) !important;
+      box-shadow: none !important;
+    }
+    html[data-theme="light"] .admin-match-details .admin-score-team-name,
+    html[data-theme="light"] .admin-match-details .admin-score-team,
+    html[data-theme="light"] .admin-match-details .admin-score-side,
+    html[data-theme="light"] .admin-match-details .admin-score-separator,
+    html[data-theme="light"] .admin-match-details .score-value-input {
+      color: rgba(0,0,0,.88) !important;
+    }
+
+    /* ── Karta wyniku końcowego ─────────────────────────────────── */
+    html[data-theme="light"] .match-final-result-card {
+      background: rgba(120,120,128,.10) !important;
+      border: 1px solid rgba(60,60,67,.14) !important;
+      box-shadow: none !important;
+      color: rgba(0,0,0,.88) !important;
+    }
+    html[data-theme="light"] .match-final-result-card > div,
+    html[data-theme="light"] .match-final-result-card span,
+    html[data-theme="light"] .match-final-result-card strong {
+      color: rgba(0,0,0,.88) !important;
+    }
+    html[data-theme="light"] .match-final-result-card .text-stone-400 {
+      color: rgba(60,60,67,.45) !important;
+    }
+    html[data-theme="light"] .match-final-result-card .text-amber-300,
+    html[data-theme="light"] .match-final-result-card .text-amber-400 {
+      color: #c47200 !important;
+    }
+    html[data-theme="light"] .match-final-result-card [style*="#4ade80"] { color: #1a8c3a !important; }
+    html[data-theme="light"] .match-final-result-card [style*="#fbbf24"] { color: #c47200 !important; }
+    html[data-theme="light"] .match-final-result-card [style*="#f87171"] { color: #cc2018 !important; }
+    html[data-theme="light"] .match-final-result-card .border-stone-700 {
+      border-color: rgba(60,60,67,.14) !important;
+    }
+
+    /* ── Klasyfikacja ───────────────────────────────────────────── */
+    html[data-theme="light"] .leaderboard-position-badge {
+      background: linear-gradient(145deg, rgba(0,122,255,.88), rgba(0,80,210,.80)) !important;
+      border: 1px solid rgba(0,122,255,.36) !important;
+      box-shadow: 0 2px 8px rgba(0,122,255,.20) !important;
+      color: #ffffff !important;
+      text-shadow: none !important;
+    }
+    html[data-theme="light"] .leaderboard-phase-summary,
+    html[data-theme="light"] .leaderboard-phase-details {
+      background: var(--glass-1) !important;
+      border-color: rgba(60,60,67,.12) !important;
+      box-shadow: var(--shadow-sm), var(--hl) !important;
+    }
+    html[data-theme="light"] .leaderboard-phase-summary:hover {
+      background: var(--glass-2) !important;
+    }
+    html[data-theme="light"] .leaderboard-phase-details[open] .leaderboard-phase-details-body {
+      background: rgba(120,120,128,.06) !important;
+    }
+    html[data-theme="light"] .leaderboard-header p {
+      color: rgba(60,60,67,.60) !important;
+    }
+
+    /* ── Porównanie ─────────────────────────────────────────────── */
+    html[data-theme="light"] .compare-view .compare-match-card {
+      background: var(--glass-1) !important;
+      border: 1px solid rgba(60,60,67,.12) !important;
+      box-shadow: var(--shadow-sm), var(--hl) !important;
+    }
+    html[data-theme="light"] .compare-view .compare-match-toggle,
+    html[data-theme="light"] .compare-match-toggle[aria-expanded="true"],
+    html[data-theme="light"] .compare-view .compare-match-toggle[aria-expanded="true"] {
+      background: rgba(120,120,128,.08) !important;
+      border-color: rgba(60,60,67,.10) !important;
+    }
+    html[data-theme="light"] .compare-view .compare-player-row.compare-player-row-empty {
+      background: rgba(120,120,128,.08) !important;
+      border-color: rgba(60,60,67,.08) !important;
+    }
+
+    /* ── Bracket ────────────────────────────────────────────────── */
+    html[data-theme="light"] .bracket-connectors path {
+      stroke: rgba(60,60,67,.28) !important;
+    }
+    html[data-theme="light"] .bracket-team-row.is-winner {
+      background: rgba(0,122,255,.10) !important;
+    }
+    html[data-theme="light"] body .bracket-page .bracket-match.is-finished,
+    html[data-theme="light"] body .bracket-page .bracket-final-card.is-finished {
+      border-color: rgba(0,122,255,.26) !important;
+    }
+    html[data-theme="light"] body .bracket-page .bracket-match-head {
+      border-bottom-color: rgba(60,60,67,.10) !important;
+    }
+    html[data-theme="light"] body .bracket-page .bracket-team-row + .bracket-team-row {
+      border-top-color: rgba(60,60,67,.08) !important;
+    }
+    html[data-theme="light"] body .bracket-page .bracket-section,
+    html[data-theme="light"] body .bracket-page .bracket-intro {
+      border-color: rgba(60,60,67,.14) !important;
+    }
+
+    /* ── Profile / avatar ───────────────────────────────────────── */
+    html[data-theme="light"] .profile-avatar {
+      background: rgba(120,120,128,.14) !important;
+      border: 1px solid rgba(60,60,67,.16) !important;
+      color: rgba(60,60,67,.70) !important;
+      box-shadow: none !important;
+    }
+    html[data-theme="light"] .profile-menu-btn.is-authenticated .profile-avatar {
+      background: rgba(0,122,255,.16) !important;
+      color: rgba(0,0,0,.88) !important;
+    }
+
+    /* ── Kolory tekstowe ────────────────────────────────────────── */
+    html[data-theme="light"] .text-white,
+    html[data-theme="light"] .text-stone-50,
+    html[data-theme="light"] .text-stone-100,
+    html[data-theme="light"] [style*="color: white"],
+    html[data-theme="light"] [style*="color:white"],
+    html[data-theme="light"] [style*="color: #fff"],
+    html[data-theme="light"] [style*="color:#fff"],
+    html[data-theme="light"] [style*="color: rgba(255, 255, 255"],
+    html[data-theme="light"] [style*="color:rgba(255, 255, 255"],
+    html[data-theme="light"] [style*="color: rgba(255,255,255"],
+    html[data-theme="light"] [style*="color:rgba(255,255,255"] {
+      color: rgba(0,0,0,.88) !important;
+      text-shadow: none !important;
+    }
+    html[data-theme="light"] .text-stone-900,
+    html[data-theme="light"] .text-stone-800,
+    html[data-theme="light"] .text-stone-700 { color: rgba(0,0,0,.88) !important; }
+    html[data-theme="light"] .text-stone-600,
+    html[data-theme="light"] .text-stone-500 { color: rgba(60,60,67,.60) !important; }
+    html[data-theme="light"] .text-stone-400,
+    html[data-theme="light"] .text-stone-300 { color: rgba(60,60,67,.40) !important; }
+    html[data-theme="light"] .match-card [style*="color: white"],
+    html[data-theme="light"] .match-card [style*="color:white"],
+    html[data-theme="light"] .match-card [style*="rgba(255, 255, 255"],
+    html[data-theme="light"] .match-card [style*="rgba(255,255,255"],
+    html[data-theme="light"] .admin-match-card [style*="rgba(255, 255, 255"],
+    html[data-theme="light"] .admin-match-card [style*="rgba(255,255,255"] {
+      color: rgba(60,60,67,.70) !important;
+    }
+    html[data-theme="light"] .match-card > button [style*="Bebas Neue"] {
+      color: rgba(0,0,0,.88) !important;
+    }
+    html[data-theme="light"] .match-card span[style*="text-transform: uppercase"] {
+      color: #007AFF !important;
+    }
+    html[data-theme="light"] .compare-view .compare-match-card [style*="rgba(255,255,255"],
+    html[data-theme="light"] .compare-view .compare-match-card [style*="color:white"],
+    html[data-theme="light"] .compare-view .compare-match-card [style*="color: white"] {
+      color: rgba(0,0,0,.88) !important;
+    }
+    html[data-theme="light"] .selection-tile.is-selected,
+    html[data-theme="light"] .selection-tile.is-selected:hover {
+      color: #ffffff !important;
+    }
+    html[data-theme="light"] .bg-\[#0d1b5e\],
+    html[data-theme="light"] .bg-\[#162570\],
+    html[data-theme="light"] [class*="bg-[#0d1b5e]"],
+    html[data-theme="light"] [class*="bg-[#162570]"] { color: #ffffff !important; }
+
+    /* ── Zerowanie text-shadow wszędzie ─────────────────────────── */
+    html[data-theme="light"] * { text-shadow: none !important; }
+
+    /* ── Scrollbar + zaznaczenie ────────────────────────────────── */
+    html[data-theme="light"] ::-webkit-scrollbar-thumb {
+      background: rgba(60,60,67,.22);
+    }
+    html[data-theme="light"] ::selection {
+      background: rgba(0,122,255,.20);
+      color: rgba(0,0,0,.88);
+    }
+
+    /* ── Ekran ładowania ────────────────────────────────────────── */
+    html[data-theme="light"] #loading {
+      background: #f2f2f7 !important;
+      color: rgba(0,0,0,.88) !important;
+    }
+    html[data-theme="light"] .loading-title { color: rgba(0,0,0,.88) !important; }
+    html[data-theme="light"] .loading-sub   { color: rgba(60,60,67,.55) !important; }
+    /* ── Komunikaty app-note — jasne tło w light mode ───────────── */
+    html[data-theme="light"] .app-note {
+      background:
+        rgba(255,255,255,.82) !important;
+      border: 1px solid rgba(60,60,67,.14) !important;
+      box-shadow: none !important;
+      -webkit-backdrop-filter: blur(16px) saturate(150%) !important;
+      backdrop-filter: blur(16px) saturate(150%) !important;
+      color: rgba(0,0,0,.80) !important;
+      --note-color: rgba(0,0,0,.80) !important;
+    }
+    html[data-theme="light"] .app-note--info {
+      background: rgba(0,122,255,.08) !important;
+      border-color: rgba(0,122,255,.22) !important;
+      --note-color: #004fcc !important;
+      color: #004fcc !important;
+    }
+    html[data-theme="light"] .app-note--danger {
+      background: rgba(255,59,48,.08) !important;
+      border-color: rgba(255,59,48,.22) !important;
+      --note-color: #c0180e !important;
+      color: #c0180e !important;
+    }
+    html[data-theme="light"] .app-note--warning {
+      background: rgba(255,149,0,.10) !important;
+      border-color: rgba(255,149,0,.24) !important;
+      --note-color: #a05400 !important;
+      color: #a05400 !important;
+    }
+    html[data-theme="light"] .app-note--success {
+      background: rgba(52,199,89,.10) !important;
+      border-color: rgba(52,199,89,.24) !important;
+      --note-color: #167a34 !important;
+      color: #167a34 !important;
+    }
+    html[data-theme="light"] .app-note p,
+    html[data-theme="light"] .app-note > span,
+    html[data-theme="light"] .app-note > strong,
+    html[data-theme="light"] .app-note > em,
+    html[data-theme="light"] .app-note > div > p,
+    html[data-theme="light"] .app-note > div > span,
+    html[data-theme="light"] .app-note > div > strong {
+      color: inherit !important;
+    }
+    html[data-theme="light"] .app-note svg {
+      color: inherit !important;
+      stroke: currentColor !important;
+    }
+    html[data-theme="light"] .app-note strong { color: inherit !important; }
+    html[data-theme="light"] .app-note::after { display: none !important; }
+
+    /* Tekst na niebieskim tle (is-selected, badge pozycji) — zawsze biały */
+    html[data-theme="light"] .selection-tile.is-selected *,
+    html[data-theme="light"] .selection-tile.is-selected span,
+    html[data-theme="light"] .selection-tile.is-selected strong {
+      color: #ffffff !important;
+    }
+    html[data-theme="light"] .leaderboard-position-badge,
+    html[data-theme="light"] .leaderboard-position-badge * {
+      color: #ffffff !important;
+    }
+
+  </style>
+
 
 </head>
 <body>
@@ -7831,8 +8504,8 @@ const db = firebase.database();
     start_url: new URL('./', window.location.href).href,
     scope: new URL('./', window.location.href).href,
     display: "standalone",
-    background_color: document.documentElement.getAttribute('data-theme') === 'light' ? "#eef6ff" : "#05070d",
-    theme_color: document.documentElement.getAttribute('data-theme') === 'light' ? "#eef6ff" : "#07101d",
+    background_color: document.documentElement.getAttribute('data-theme') === 'light' ? "#f2f2f7" : "#05070d",
+    theme_color: document.documentElement.getAttribute('data-theme') === 'light' ? "#f2f2f7" : "#07101d",
     orientation: "portrait",
     icons: [{
       src: new URL('./mundial2026-app-icon-v2-192.png', document.baseURI).href,
@@ -9155,8 +9828,8 @@ function generateInitialMatches() {
     id: 'M73',
     num: 73,
     phase: 'r32',
-    homeTeamId: 'A2',
-    awayTeamId: 'B1',
+    homeTeamId: null,
+    awayTeamId: null,
     date: '2026-06-28T19:00:00Z',
     city: 'Los Angeles (USA)'
   });
@@ -9164,8 +9837,8 @@ function generateInitialMatches() {
     id: 'M74',
     num: 74,
     phase: 'r32',
-    homeTeamId: 'E1',
-    awayTeamId: 'D2',
+    homeTeamId: null,
+    awayTeamId: null,
     date: '2026-06-29T20:30:00Z',
     city: 'Boston (USA)'
   });
@@ -9173,8 +9846,8 @@ function generateInitialMatches() {
     id: 'M75',
     num: 75,
     phase: 'r32',
-    homeTeamId: 'F1',
-    awayTeamId: 'C2',
+    homeTeamId: null,
+    awayTeamId: null,
     date: '2026-06-30T01:00:00Z',
     city: 'Monterrey (Meksyk)'
   });
@@ -9182,8 +9855,8 @@ function generateInitialMatches() {
     id: 'M76',
     num: 76,
     phase: 'r32',
-    homeTeamId: 'C1',
-    awayTeamId: 'F2',
+    homeTeamId: null,
+    awayTeamId: null,
     date: '2026-06-29T17:00:00Z',
     city: 'Houston (USA)'
   });
@@ -9191,8 +9864,8 @@ function generateInitialMatches() {
     id: 'M77',
     num: 77,
     phase: 'r32',
-    homeTeamId: 'I1',
-    awayTeamId: 'F3',
+    homeTeamId: null,
+    awayTeamId: null,
     date: '2026-06-30T21:00:00Z',
     city: 'New York/NJ (USA)'
   });
@@ -9200,8 +9873,8 @@ function generateInitialMatches() {
     id: 'M78',
     num: 78,
     phase: 'r32',
-    homeTeamId: 'E3',
-    awayTeamId: 'I4',
+    homeTeamId: null,
+    awayTeamId: null,
     date: '2026-06-30T17:00:00Z',
     city: 'Dallas (USA)'
   });
@@ -9209,8 +9882,8 @@ function generateInitialMatches() {
     id: 'M79',
     num: 79,
     phase: 'r32',
-    homeTeamId: 'A1',
-    awayTeamId: 'E4',
+    homeTeamId: null,
+    awayTeamId: null,
     date: '2026-07-01T01:00:00Z',
     city: 'Mexico City (Meksyk)'
   });
@@ -9218,8 +9891,8 @@ function generateInitialMatches() {
     id: 'M80',
     num: 80,
     phase: 'r32',
-    homeTeamId: 'L1',
-    awayTeamId: 'K2',
+    homeTeamId: null,
+    awayTeamId: null,
     date: '2026-07-01T16:00:00Z',
     city: 'Atlanta (USA)'
   });
@@ -9227,8 +9900,8 @@ function generateInitialMatches() {
     id: 'M81',
     num: 81,
     phase: 'r32',
-    homeTeamId: 'D1',
-    awayTeamId: 'B2',
+    homeTeamId: null,
+    awayTeamId: null,
     date: '2026-07-02T00:00:00Z',
     city: 'San Francisco (USA)'
   });
@@ -9236,8 +9909,8 @@ function generateInitialMatches() {
     id: 'M82',
     num: 82,
     phase: 'r32',
-    homeTeamId: 'G1',
-    awayTeamId: 'I2',
+    homeTeamId: null,
+    awayTeamId: null,
     date: '2026-07-01T20:00:00Z',
     city: 'Seattle (USA)'
   });
@@ -9245,8 +9918,8 @@ function generateInitialMatches() {
     id: 'M83',
     num: 83,
     phase: 'r32',
-    homeTeamId: 'K1',
-    awayTeamId: 'L2',
+    homeTeamId: null,
+    awayTeamId: null,
     date: '2026-07-02T23:00:00Z',
     city: 'Toronto (Kanada)'
   });
@@ -9254,8 +9927,8 @@ function generateInitialMatches() {
     id: 'M84',
     num: 84,
     phase: 'r32',
-    homeTeamId: 'H1',
-    awayTeamId: 'J3',
+    homeTeamId: null,
+    awayTeamId: null,
     date: '2026-07-02T19:00:00Z',
     city: 'Los Angeles (USA)'
   });
@@ -9263,8 +9936,8 @@ function generateInitialMatches() {
     id: 'M85',
     num: 85,
     phase: 'r32',
-    homeTeamId: 'B4',
-    awayTeamId: 'J2',
+    homeTeamId: null,
+    awayTeamId: null,
     date: '2026-07-03T03:00:00Z',
     city: 'Vancouver (Kanada)'
   });
@@ -9272,8 +9945,8 @@ function generateInitialMatches() {
     id: 'M86',
     num: 86,
     phase: 'r32',
-    homeTeamId: 'J1',
-    awayTeamId: 'H2',
+    homeTeamId: null,
+    awayTeamId: null,
     date: '2026-07-03T22:00:00Z',
     city: 'Miami (USA)'
   });
@@ -9281,8 +9954,8 @@ function generateInitialMatches() {
     id: 'M87',
     num: 87,
     phase: 'r32',
-    homeTeamId: 'K4',
-    awayTeamId: 'L3',
+    homeTeamId: null,
+    awayTeamId: null,
     date: '2026-07-04T01:30:00Z',
     city: 'Kansas City (USA)'
   });
@@ -9290,8 +9963,8 @@ function generateInitialMatches() {
     id: 'M88',
     num: 88,
     phase: 'r32',
-    homeTeamId: 'D3',
-    awayTeamId: 'G2',
+    homeTeamId: null,
+    awayTeamId: null,
     date: '2026-07-03T18:00:00Z',
     city: 'Dallas (USA)'
   });
@@ -9486,37 +10159,69 @@ function useFirebaseState(path, defaultValue) {
       console.error('Firebase write error:', path, e);
     }
   }, [path]);
-  return [value, updateValue, loaded];
+  // Zapis pojedynczego klucza – nie nadpisuje całej kolekcji, więc
+  // równoczesne zapisy z różnych urządzeń nie kasują się nawzajem.
+  const writeChild = useCallback(async (childKey, childValue) => {
+    const cur = valueRef.current;
+    const base = cur && typeof cur === 'object' && !Array.isArray(cur) ? cur : {};
+    const nextLocal = {
+      ...base,
+      [childKey]: childValue
+    };
+    valueRef.current = nextLocal;
+    setValue(nextLocal);
+    try {
+      await db.ref(`${path}/${childKey}`).set(childValue);
+    } catch (e) {
+      console.error('Firebase child write error:', path, childKey, e);
+    }
+  }, [path]);
+  const removeChild = useCallback(async childKey => {
+    const cur = valueRef.current;
+    const base = cur && typeof cur === 'object' && !Array.isArray(cur) ? cur : {};
+    const nextLocal = {
+      ...base
+    };
+    delete nextLocal[childKey];
+    valueRef.current = nextLocal;
+    setValue(nextLocal);
+    try {
+      await db.ref(`${path}/${childKey}`).remove();
+    } catch (e) {
+      console.error('Firebase child remove error:', path, childKey, e);
+    }
+  }, [path]);
+  return [value, updateValue, loaded, writeChild, removeChild];
 }
 
 // ═══════════════════════════════════════════════════════════════
 //  PUNKTACJA
 // ═══════════════════════════════════════════════════════════════
-function scoreGroupMatch(pred, result) {
+function scoreGroupMatch(pred, result, points = POINTS) {
   if (!pred || !result) return 0;
-  if (pred.home === result.home && pred.away === result.away) return POINTS.group.exact;
+  if (pred.home === result.home && pred.away === result.away) return points.group.exact;
   const po = pred.home > pred.away ? 'h' : pred.home < pred.away ? 'a' : 'd';
   const ro = result.home > result.away ? 'h' : result.home < result.away ? 'a' : 'd';
-  return po === ro ? POINTS.group.winner : 0;
+  return po === ro ? points.group.winner : 0;
 }
-function scoreKnockoutMatch(pred, result) {
+function scoreKnockoutMatch(pred, result, points = POINTS) {
   if (!pred || !result) return 0;
   const exact = pred.home === result.home && pred.away === result.away;
   let predictedAdv = pred.home > pred.away ? 'home' : pred.home < pred.away ? 'away' : pred.penWinner || null;
-  let base = exact ? POINTS.knockout.exact : predictedAdv && predictedAdv === result.advancingTeam ? POINTS.knockout.winner : 0;
-  let bonus = result.pensHappened && pred.penWinner && pred.penWinner === result.advancingTeam ? POINTS.knockout.penBonus : 0;
+  let base = exact ? points.knockout.exact : predictedAdv && predictedAdv === result.advancingTeam ? points.knockout.winner : 0;
+  let bonus = result.pensHappened && pred.penWinner && pred.penWinner === result.advancingTeam ? points.knockout.penBonus : 0;
   return base + bonus;
 }
-function scoreMatch(pred, result, phase) {
-  return phase === 'group' ? scoreGroupMatch(pred, result) : scoreKnockoutMatch(pred, result);
+function scoreMatch(pred, result, phase, points = POINTS) {
+  return phase === 'group' ? scoreGroupMatch(pred, result, points) : scoreKnockoutMatch(pred, result, points);
 }
-function predictionQuality(pred, result, phase) {
+function predictionQuality(pred, result, phase, points = POINTS) {
   if (!pred || !result) return null;
   const exact = pred.home === result.home && pred.away === result.away;
   if (exact) return 'exact';
-  return scoreMatch(pred, result, phase) > 0 ? 'partial' : 'miss';
+  return scoreMatch(pred, result, phase, points) > 0 ? 'partial' : 'miss';
 }
-function scoreSpecials(special, results) {
+function scoreSpecials(special, results, points = POINTS) {
   if (!special || !results) return {
     groupOrders: 0,
     podium: 0,
@@ -9531,14 +10236,14 @@ function scoreSpecials(special, results) {
       r = results.groupOrders?.[g] || [];
     if (!r.some(Boolean)) return;
     const exact = p.filter((t, i) => t && r[i] && t === r[i]).length;
-    if (exact === 4) groupOrders += POINTS.groupOrderAll;else if (exact === 2) groupOrders += POINTS.groupOrderTwo;else if (exact === 1) groupOrders += POINTS.groupOrderOne;
+    if (exact === 4) groupOrders += points.groupOrderAll;else if (exact === 2) groupOrders += points.groupOrderTwo;else if (exact === 1) groupOrders += points.groupOrderOne;
   });
-  if (special.champion && results.champion && special.champion === results.champion) podium += POINTS.champion;
-  if (special.runnerUp && results.runnerUp && special.runnerUp === results.runnerUp) podium += POINTS.runnerUp;
-  if (special.third && results.third && special.third === results.third) podium += POINTS.third;
+  if (special.champion && results.champion && special.champion === results.champion) podium += points.champion;
+  if (special.runnerUp && results.runnerUp && special.runnerUp === results.runnerUp) podium += points.runnerUp;
+  if (special.third && results.third && special.third === results.third) podium += points.third;
   const n = s => (s || '').trim().toLowerCase();
-  if (special.topScorer && results.topScorer && n(special.topScorer) === n(results.topScorer)) awards += POINTS.topScorer;
-  if (special.mvp && results.mvp && n(special.mvp) === n(results.mvp)) awards += POINTS.mvp;
+  if (special.topScorer && results.topScorer && n(special.topScorer) === n(results.topScorer)) awards += points.topScorer;
+  if (special.mvp && results.mvp && n(special.mvp) === n(results.mvp)) awards += points.mvp;
   return {
     groupOrders,
     podium,
@@ -9556,7 +10261,7 @@ function compareRankingEntries(a, b) {
   const playerName = entry => String(entry?.player?.name || entry?.name || '');
   return value(b, 'total') - value(a, 'total') || value(b, 'exact') - value(a, 'exact') || value(b, 'podium') - value(a, 'podium') || value(b, 'awards') - value(a, 'awards') || groupPoints(b) - groupPoints(a) || playerName(a).localeCompare(playerName(b), 'pl', {
     sensitivity: 'base'
-  }) || (Number(a?.index) || 0) - (Number(b?.index) || 0);
+  });
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -9569,11 +10274,10 @@ function plMecze(n) {
   if (b >= 2 && b <= 4 && (a < 12 || a > 14)) return 'mecze';
   return 'meczów';
 }
-function formatDate(iso) {
-  // Zawsze wyświetlamy w czasie polskim (CEST = Europe/Warsaw = UTC+2 latem)
-  const d = new Date(iso);
+// Formatter tworzony RAZ (kosztowne) i reużywany przy każdym renderze karty.
+const PL_DATE_FMT = (function () {
   try {
-    const fmt = new Intl.DateTimeFormat('pl-PL', {
+    return new Intl.DateTimeFormat('pl-PL', {
       timeZone: 'Europe/Warsaw',
       weekday: 'short',
       day: 'numeric',
@@ -9582,21 +10286,31 @@ function formatDate(iso) {
       minute: '2-digit',
       hour12: false
     });
-    const parts = fmt.formatToParts(d).reduce((a, {
-      type,
-      value
-    }) => ({
-      ...a,
-      [type]: value
-    }), {});
-    return `${parts.weekday} ${parts.day} ${parts.month} • ${parts.hour}:${parts.minute}`;
   } catch (e) {
-    // fallback – czas UTC+2 ręcznie
-    const pl = new Date(d.getTime() + 2 * 3600 * 1000);
-    const days = ['Nd', 'Pn', 'Wt', 'Śr', 'Cz', 'Pt', 'Sb'];
-    const months = ['sty', 'lut', 'mar', 'kwi', 'maj', 'cze', 'lip', 'sie', 'wrz', 'paź', 'lis', 'gru'];
-    return `${days[pl.getUTCDay()]} ${pl.getUTCDate()} ${months[pl.getUTCMonth()]} • ${String(pl.getUTCHours()).padStart(2, '0')}:${String(pl.getUTCMinutes()).padStart(2, '0')}`;
+    return null;
   }
+})();
+function formatDate(iso) {
+  // Zawsze wyświetlamy w czasie polskim (Europe/Warsaw, z poprawnym DST przez Intl).
+  const d = new Date(iso);
+  if (PL_DATE_FMT) {
+    try {
+      const parts = PL_DATE_FMT.formatToParts(d).reduce((a, {
+        type,
+        value
+      }) => ({
+        ...a,
+        [type]: value
+      }), {});
+      return `${parts.weekday} ${parts.day} ${parts.month} • ${parts.hour}:${parts.minute}`;
+    } catch (e) {}
+  }
+  // Fallback bez Intl – przybliżenie strefy Warszawy: CEST (UTC+2) latem, CET (UTC+1) zimą.
+  const isSummer = d.getUTCMonth() >= 3 && d.getUTCMonth() <= 9; // kwi–paź ≈ czas letni
+  const pl = new Date(d.getTime() + (isSummer ? 2 : 1) * 3600 * 1000);
+  const days = ['Nd', 'Pn', 'Wt', 'Śr', 'Cz', 'Pt', 'Sb'];
+  const months = ['sty', 'lut', 'mar', 'kwi', 'maj', 'cze', 'lip', 'sie', 'wrz', 'paź', 'lis', 'gru'];
+  return `${days[pl.getUTCDay()]} ${pl.getUTCDate()} ${months[pl.getUTCMonth()]} • ${String(pl.getUTCHours()).padStart(2, '0')}:${String(pl.getUTCMinutes()).padStart(2, '0')}`;
 }
 function uid() {
   return 'p_' + Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4);
@@ -10315,7 +11029,7 @@ const MatchCard = React.memo(function MatchCard({
   teams,
   prediction,
   result,
-  allPredictions,
+  matchPredictions,
   players,
   activePlayerId,
   phaseLocks,
@@ -10354,8 +11068,8 @@ const MatchCard = React.memo(function MatchCard({
   const isDraw = isDraft && draft.home === draft.away;
   const needsPen = isKnockout && isDraw;
   const canSave = !locked && teamsAssigned && activePlayerId && isDraft && (!needsPen || draft.penWinner);
-  const myPoints = useMemo(() => !prediction || !result ? null : scoreMatch(prediction, result, match.phase), [prediction, result, match.phase, scoringSettings]);
-  const quality = predictionQuality(prediction, result, match.phase);
+  const myPoints = useMemo(() => !prediction || !result ? null : scoreMatch(prediction, result, match.phase, scoringSettings), [prediction, result, match.phase, scoringSettings]);
+  const quality = predictionQuality(prediction, result, match.phase, scoringSettings);
   const phaseColor = {
     group: 'border',
     r32: 'border',
@@ -10764,14 +11478,14 @@ const MatchCard = React.memo(function MatchCard({
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "save",
     size: 16
-  }), prediction ? 'Zaktualizuj typ' : 'Zapisz typ')), locked && comparisonVisible && allPredictions && players && /*#__PURE__*/React.createElement("div", {
+  }), prediction ? 'Zaktualizuj typ' : 'Zapisz typ')), locked && comparisonVisible && matchPredictions && players && /*#__PURE__*/React.createElement("div", {
     className: "prediction-list-wrap mt-4 pt-3 border-t border-stone-200"
   }, /*#__PURE__*/React.createElement("p", {
     className: "prediction-list-title text-[10px] uppercase tracking-wider font-bold text-stone-500 mb-2"
   }, "Typy wszystkich graczy"), /*#__PURE__*/React.createElement("div", {
     className: "prediction-list space-y-1"
   }, players.map(pl => {
-    const pp = allPredictions[`${pl.id}:${match.id}`];
+    const pp = matchPredictions[pl.id];
     if (!pp) return /*#__PURE__*/React.createElement("div", {
       key: pl.id,
       className: "prediction-row prediction-row-empty flex justify-between text-xs py-1 px-2 rounded bg-stone-100"
@@ -10780,8 +11494,8 @@ const MatchCard = React.memo(function MatchCard({
     }, pl.name), /*#__PURE__*/React.createElement("span", {
       className: "prediction-empty-label text-stone-400 italic"
     }, "brak"));
-    const q = predictionQuality(pp, result, match.phase);
-    const pts = scoreMatch(pp, result, match.phase);
+    const q = predictionQuality(pp, result, match.phase, scoringSettings);
+    const pts = scoreMatch(pp, result, match.phase, scoringSettings);
     const bgStyle = q === 'exact' ? {
       background: 'rgba(0,160,60,.30)',
       border: '1px solid rgba(0,220,80,.45)',
@@ -10883,7 +11597,13 @@ function MatchesView({
   const [groupFilter, setGroupFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [expandedId, setExpandedId] = useState(null);
-  const compactDevice = useMemo(() => typeof window !== "undefined" && (window.innerWidth <= 700 || window.matchMedia("(pointer: coarse)").matches), []);
+  const [compactDevice, setCompactDevice] = useState(() => typeof window !== "undefined" && (window.innerWidth <= 700 || window.matchMedia("(pointer: coarse)").matches));
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const check = () => setCompactDevice(window.innerWidth <= 700 || window.matchMedia("(pointer: coarse)").matches);
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
   const [visibleCount, setVisibleCount] = useState(() => compactDevice ? 18 : Number.MAX_SAFE_INTEGER);
   const handleToggleMatch = useCallback(id => setExpandedId(prev => prev === id ? null : id), []);
   const handlePhaseFilter = useCallback(phase => {
@@ -10898,6 +11618,21 @@ function MatchesView({
       return true;
     }).sort((a, b) => (PHASE_RANK[a.phase] ?? 99) - (PHASE_RANK[b.phase] ?? 99) || a.num - b.num);
   }, [matches, phaseFilter, groupFilter, statusFilter, results]);
+  const comparisonVisible = !!(phaseLocks && phaseLocks.compareVisible);
+  // Mapa matchId -> { playerId: typ } liczona raz na zmianę `predictions`.
+  // Dzięki temu, gdy porównanie jest ukryte, karty nie re-renderują się
+  // przy zmianie cudzych typów (przekazujemy null zamiast całego obiektu).
+  const predictionsByMatch = useMemo(() => {
+    const map = {};
+    for (const key in predictions) {
+      const i = key.indexOf(':');
+      if (i < 0) continue;
+      const pid = key.slice(0, i);
+      const mid = key.slice(i + 1);
+      (map[mid] || (map[mid] = {}))[pid] = predictions[key];
+    }
+    return map;
+  }, [predictions]);
   useEffect(() => {
     setVisibleCount(compactDevice ? 18 : Number.MAX_SAFE_INTEGER);
     setExpandedId(null);
@@ -10955,7 +11690,7 @@ function MatchesView({
     teams: teams,
     prediction: predictions[`${activePlayerId}:${m.id}`],
     result: results[m.id],
-    allPredictions: predictions,
+    matchPredictions: comparisonVisible ? predictionsByMatch[m.id] || {} : null,
     players: players,
     activePlayerId: activePlayerId,
     phaseLocks: phaseLocks,
@@ -11046,7 +11781,7 @@ function SpecialsView({
       };
     });
   };
-  const myScores = useMemo(() => scoreSpecials(mine, specialResults), [mine, specialResults, scoringSettings]);
+  const myScores = useMemo(() => scoreSpecials(mine, specialResults, scoringSettings), [mine, specialResults, scoringSettings]);
   const hasResults = !!(specialResults?.champion || specialResults?.topScorer || Object.keys(specialResults?.groupOrders || {}).length > 0);
   if (!activePlayerId) return /*#__PURE__*/React.createElement("div", {
     className: "text-center text-sm text-stone-600 bg-amber-50 border border-amber-200 rounded-lg p-4 mt-4 app-note app-note--warning app-note--center"
@@ -11462,12 +12197,12 @@ function LeaderboardView({
         const pred = predictions[`${pl.id}:${m.id}`],
           res = results[m.id];
         if (!pred || !res) return;
-        const pts = scoreMatch(pred, res, m.phase);
-        const q = predictionQuality(pred, res, m.phase);
+        const pts = scoreMatch(pred, res, m.phase, scoringSettings);
+        const q = predictionQuality(pred, res, m.phase, scoringSettings);
         if (q === 'exact') exact++;else if (q === 'partial') partial++;else if (q === 'miss') incorrect++;
         if (m.phase === 'group') gm += pts;else km += pts;
       });
-      const sp = scoreSpecials(specialPredictions[pl.id], specialResults);
+      const sp = scoreSpecials(specialPredictions[pl.id], specialResults, scoringSettings);
       return {
         player: pl,
         gm,
@@ -12119,8 +12854,8 @@ function CompareView({
           fontStyle: 'italic'
         }
       }, "brak"));
-      const q = predictionQuality(pp, result, m.phase);
-      const pts = result ? scoreMatch(pp, result, m.phase) : null;
+      const q = predictionQuality(pp, result, m.phase, scoringSettings);
+      const pts = result ? scoreMatch(pp, result, m.phase, scoringSettings) : null;
       const rowBg = !result ? {
         background: 'rgba(255,255,255,.04)',
         color: 'rgba(255,255,255,.7)'
@@ -14011,7 +14746,7 @@ function resolveBracketTeamId(matchId, side, matchesById, results, cache) {
   if (r32) {
     const match = matchesById[matchId];
     const realId = match?.[side === 'home' ? 'homeTeamId' : 'awayTeamId'];
-    const id = realId || (side === 'home' ? r32[0] : r32[1]);
+    const id = realId || null; // bez fallbacku do slotów z rozstawienia – pokaż etykietę źródła
     cache[key] = id || null;
     return cache[key];
   }
@@ -14415,9 +15150,9 @@ function Mundial2026() {
   const [players, setPlayers, plLoaded] = useFirebaseState(FB.players, []);
   const [teams, setTeams, tLoaded] = useFirebaseState(FB.teams, generateInitialTeams());
   const [matches, setMatches, mLoaded] = useFirebaseState(FB.matches, generateInitialMatches());
-  const [predictions, setPredictions, prLoaded] = useFirebaseState(FB.predictions, {});
-  const [results, setResults, rLoaded] = useFirebaseState(FB.results, {});
-  const [specialPredictions, setSpecialPredictions, spLoaded] = useFirebaseState(FB.specialPredictions, {});
+  const [predictions, setPredictions, prLoaded, setPredictionChild] = useFirebaseState(FB.predictions, {});
+  const [results, setResults, rLoaded, setResultChild, removeResultChild] = useFirebaseState(FB.results, {});
+  const [specialPredictions, setSpecialPredictions, spLoaded, setSpecialChild] = useFirebaseState(FB.specialPredictions, {});
   const [specialResults, setSpecialResults, srLoaded] = useFirebaseState(FB.specialResults, {
     groupOrders: {}
   });
@@ -14439,14 +15174,17 @@ function Mundial2026() {
     } catch (e) {}
     setActivePlayerState(id);
   }, []);
-  const [theme, setTheme] = useState(() => {
-    try {
-      return localStorage.getItem('wc2026:theme') === 'light' ? 'light' : 'dark';
-    } catch (e) {
-      return 'dark';
-    }
-  });
-  const toggleTheme = useCallback(() => setTheme(current => current === 'dark' ? 'light' : 'dark'), []);
+  const [theme, setTheme] = useState('dark');
+  const toggleTheme = useCallback(() => {
+    // Opóźnienie o 1 klatkę: React setState jest synchroniczne, ale
+    // przeglądarka musi zdążyć przetworzyć re-render z nową klasą
+    // zanim zmieni się data-theme (które resetuje transition).
+    // requestAnimationFrame gwarantuje kolejność: klasę CSS zmieniamy
+    // w tym samym render-cycle, a motyw (data-theme) w następnej klatce.
+    requestAnimationFrame(() => {
+      setTheme(current => current === 'dark' ? 'light' : 'dark');
+    });
+  }, []);
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
     document.documentElement.style.colorScheme = theme;
@@ -14454,7 +15192,7 @@ function Mundial2026() {
       localStorage.setItem('wc2026:theme', theme);
     } catch (e) {}
     const themeMeta = document.querySelector('meta[name="theme-color"]');
-    if (themeMeta) themeMeta.setAttribute('content', theme === 'light' ? '#eef6ff' : '#0d2b4a');
+    if (themeMeta) themeMeta.setAttribute('content', theme === 'light' ? '#f2f2f7' : '#0d2b4a');
     const statusMeta = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
     if (statusMeta) statusMeta.setAttribute('content', theme === 'light' ? 'default' : 'black-translucent');
   }, [theme]);
@@ -14528,39 +15266,24 @@ function Mundial2026() {
       onErr && onErr('Błędny PIN');
       return;
     }
-    setPredictions(prev => ({
-      ...(prev || {}),
-      [`${activePlayer}:${matchId}`]: payload
-    }));
+    setPredictionChild(`${activePlayer}:${matchId}`, payload);
     onSuccess && onSuccess();
-  }, [activePlayer, players, setPredictions]);
+  }, [activePlayer, players, setPredictionChild]);
   const handleSaveSpecial = useCallback((playerId, payload, pin, onErr, onSuccess) => {
     const pl = (Array.isArray(players) ? players : []).find(p => p.id === playerId);
     if (pl && pl.pinHash && hashPin(pin) !== pl.pinHash) {
       onErr && onErr('Błędny PIN');
       return;
     }
-    setSpecialPredictions(prev => ({
-      ...(prev || {}),
-      [playerId]: payload
-    }));
+    setSpecialChild(playerId, payload);
     onSuccess && onSuccess();
-  }, [players, setSpecialPredictions]);
+  }, [players, setSpecialChild]);
   const handleSaveResult = useCallback((matchId, payload) => {
-    setResults(prev => ({
-      ...(prev || {}),
-      [matchId]: payload
-    }));
-  }, [setResults]);
+    setResultChild(matchId, payload);
+  }, [setResultChild]);
   const handleDeleteResult = useCallback(matchId => {
-    setResults(prev => {
-      const n = {
-        ...(prev || {})
-      };
-      delete n[matchId];
-      return n;
-    });
-  }, [setResults]);
+    removeResultChild(matchId);
+  }, [removeResultChild]);
   const handleUpdateTeam = useCallback((idOrMatchId, nameOrHomeId, flagOrAwayId) => {
     if (idOrMatchId.startsWith('M')) {
       setMatches(prev => (prev || []).map(m => m.id === idOrMatchId ? {
@@ -14713,34 +15436,9 @@ function Mundial2026() {
     className: "logo-icon"
   }, "\u26BD"), /*#__PURE__*/React.createElement("div", {
     className: "title-group"
-  }, /*#__PURE__*/React.createElement("h1", null, "FIFA WORLD"), /*#__PURE__*/React.createElement("small", null, "CUP 2026"))), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("h1", null, "FIFA WORLD CUP 2026"))), /*#__PURE__*/React.createElement("div", {
     className: "player-row"
   }, /*#__PURE__*/React.createElement("button", {
-    type: "button",
-    className: `theme-toggle-btn theme-switch ${theme === 'light' ? 'is-light' : 'is-dark'}`,
-    onClick: toggleTheme,
-    "aria-pressed": theme === 'light',
-    "aria-label": theme === 'dark' ? 'Włącz jasny motyw' : 'Włącz ciemny motyw',
-    title: theme === 'dark' ? 'Włącz jasny motyw' : 'Włącz ciemny motyw'
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "theme-switch-track",
-    "aria-hidden": "true"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "theme-switch-icon theme-switch-icon-moon"
-  }, /*#__PURE__*/React.createElement(FilledThemeIcon, {
-    name: "moon",
-    size: 14
-  })), /*#__PURE__*/React.createElement("span", {
-    className: "theme-switch-icon theme-switch-icon-sun"
-  }, /*#__PURE__*/React.createElement(FilledThemeIcon, {
-    name: "sun",
-    size: 14
-  })), /*#__PURE__*/React.createElement("span", {
-    className: "theme-switch-thumb"
-  }, /*#__PURE__*/React.createElement(FilledThemeIcon, {
-    name: theme === 'light' ? 'sun' : 'moon',
-    size: 16
-  })))), /*#__PURE__*/React.createElement("button", {
     onClick: () => setLoginModal(true),
     className: `login-btn profile-menu-btn${activePlayerData ? ' is-authenticated' : ''}`,
     title: activePlayerData ? `Profil: ${activePlayerData.name}` : 'Zaloguj się lub wybierz użytkownika',
@@ -14991,8 +15689,12 @@ ReactDOM.createRoot(document.getElementById('root')).render(/*#__PURE__*/React.c
     return true;
   }
 
+  var pinScheduled = false;
   function schedulePin() {
+    if (pinScheduled) return;
+    pinScheduled = true;
     requestAnimationFrame(function () {
+      pinScheduled = false;
       if (!pinAppHeader()) {
         setTimeout(pinAppHeader, 80);
       }
@@ -15013,10 +15715,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(/*#__PURE__*/React.c
     attributeFilter: ['data-theme', 'class']
   });
 
-  new MutationObserver(function () {
-    if (!document.querySelector('.app-header')) schedulePin();
-    else pinAppHeader();
-  }).observe(document.body, { childList: true, subtree: true });
+  new MutationObserver(schedulePin).observe(document.body, { childList: true, subtree: true });
 })();
 </script>
 
