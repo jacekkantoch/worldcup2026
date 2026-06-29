@@ -37,7 +37,7 @@
     ═══════════════════════════════════════════════════════════════ */
     :root {
       --safe-top:    0px;
-      --safe-bottom: 20px;
+      --safe-bottom: 4px;
       /* Liquid Glass system backgrounds (dark) */
       --bg-0: #000000;
       --bg-1: #1C1C1E;
@@ -4335,6 +4335,14 @@
       display: flex !important;
       flex-direction: column !important;
       gap: var(--banner-gap) !important;
+    }
+
+    /* sticky wymaga display:block na rodzicu — flex blokuje sticky na desktopie */
+    .matches-view {
+      display: block !important;
+    }
+    .matches-view > * + * {
+      margin-top: var(--banner-gap) !important;
     }
 
     .matches-view > *,
