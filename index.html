@@ -2,7 +2,7 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
   <title>FIFA WORLD CUP 2026 – Typer v6</title>
   <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin />
   <link rel="preconnect" href="https://www.gstatic.com" crossorigin />
@@ -20,6 +20,13 @@
   <meta name="application-name" content="FIFA WORLD CUP 2026"/>
   <meta name="theme-color" content="#0d2b4a"/>
   <meta name="color-scheme" content="dark"/>
+  <!-- iOS PWA & Safari optimizations -->
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="Mundial 2026"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="format-detection" content="telephone=no"/>
+  <link rel="apple-touch-icon" href="./mundial2026-app-icon-v2-192.png"/>
   <link rel="icon" type="image/png" sizes="32x32" href="./mundial2026-app-icon-v2-32.png"/>
   <link rel="icon" type="image/png" sizes="192x192" href="./mundial2026-app-icon-v2-192.png"/>
   <script>
@@ -36,8 +43,8 @@
        Liquid = smooth gradients + organic shapes + fluid transitions
     ═══════════════════════════════════════════════════════════════ */
     :root {
-      --safe-top:    0px;
-      --safe-bottom: 20px;
+      --safe-top:    env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 20px);
       /* Liquid Glass system backgrounds (dark) */
       --bg-0: #000000;
       --bg-1: #1C1C1E;
@@ -87,11 +94,22 @@
 
     *, *::before, *::after { box-sizing: border-box; }
     html, body { overscroll-behavior: none; margin: 0; padding: 0; }
+    * { -webkit-tap-highlight-color: transparent; }
+
+    html {
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+
+    body {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
 
     body {
       font-family: 'DM Sans', system-ui, sans-serif;
       padding-bottom: calc(84px + var(--safe-bottom));
-      min-height: 100vh;
+      min-height: 100dvh;
       background:
         radial-gradient(ellipse 80% 30% at 50% 0%,  rgba(10,132,255,0.05) 0%, transparent 65%),
         radial-gradient(ellipse 50% 25% at 10% 100%, rgba(48,209,88,0.04)  0%, transparent 60%),
@@ -221,7 +239,7 @@
     .install-banner button { background: var(--accent); color: white; border: none; border-radius: 10px; padding: 9px 16px; font-weight: 700; font-size: 13px; cursor: pointer; white-space: nowrap; transition: opacity .15s, transform .12s; }
     .install-banner button:active { transform: scale(.96); opacity: .85; }
 
-    #loading { display: flex; align-items: center; justify-content: center; min-height: 100vh; flex-direction: column; gap: 18px; background: var(--bg-0); }
+    #loading { display: flex; align-items: center; justify-content: center; min-height: 100dvh; flex-direction: column; gap: 18px; background: var(--bg-0); }
     .loading-icon { width: 72px; height: 72px; background: linear-gradient(145deg, #fff 0%, #e4edff 100%); border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 40px; line-height: 1; box-shadow: 0 4px 20px rgba(0,0,0,0.60); animation: iconPulse 2.4s ease-in-out infinite; }
     @keyframes iconPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
     .loading-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: .14em; color: var(--label-1); }
@@ -451,7 +469,7 @@
     .pitch-bg {
       position: relative;
       isolation: isolate;
-      min-height: 100vh;
+      min-height: 100dvh;
     }
     .pitch-bg::before,
     .pitch-bg::after {
@@ -2075,6 +2093,7 @@
       gap: 8px !important;
       overflow-x: auto !important;
       overflow-y: hidden !important;
+      -webkit-overflow-scrolling: touch !important;
       padding: 9px 3px 10px !important;
       margin: -6px 0 2px !important;
       scroll-padding-inline: 3px;
@@ -4710,6 +4729,57 @@
 </style>
 
 <!-- fixed-filter-banner-like-nav removed: filter now in normal flow with sticky -->
+
+<style id="ios-safari-optimizations">
+  /* iOS 26 / Safari — momentum scrolling dla wszystkich przewijanych kontenerów */
+  .overflow-x-auto,
+  .overflow-y-auto,
+  .overflow-auto,
+  [class*="overflow-"] {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Zapobiega zoom przy fokusie na input na iOS */
+  input, select, textarea {
+    font-size: max(16px, 1em) !important;
+  }
+
+  /* Wyłącz callout (długie przytrzymanie) na elementach interaktywnych */
+  button, a, [role="button"] {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* Tekst może być zaznaczany */
+  p, span, h1, h2, h3, h4, td, th {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+
+  /* Przyspiesz renderowanie animowanych elementów */
+  .bottom-nav,
+  .app-header,
+  .match-card,
+  .nav-droplet {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+
+  /* Napraw sticky positioning na Safari */
+  .filters-sticky {
+    position: -webkit-sticky;
+    position: sticky;
+  }
+
+  /* Wyłącz domyślne style przycisków na iOS */
+  button {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+</style>
 </head>
 <body>
   <div id="loading">
