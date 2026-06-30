@@ -5080,47 +5080,46 @@ html body [role="button"]:hover {
   filter: none !important;
 }
 
-/* iOS Safari: aplikacja i dolne menu dochodzą do samego dołu ekranu. */
-html,
-body {
-  min-height: 100vh;
-  min-height: 100dvh;
-  min-height: 100lvh;
-  background-color: #05070d !important;
-}
-
-html body::before {
-  content: "";
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: max(120px, calc(var(--safe-bottom) + 80px));
-  background: #05070d;
-  pointer-events: none;
-  z-index: -1;
-}
-
+/* Safari w przeglądarce: dokument schodzi pod dolny pasek adresu Safari.
+   Nie dotyczy trybu dodanego do ekranu głównego. */
 @supports (-webkit-touch-callout: none) {
-  @media (max-width: 700px), (pointer: coarse) {
-    html body {
-      padding-bottom: 0 !important;
+  @media (display-mode: browser) and (max-width: 700px),
+         (display-mode: browser) and (pointer: coarse) {
+    html {
+      min-height: 100vh !important;
+      min-height: 100lvh !important;
+      background: #05070d !important;
+    }
+
+    body {
+      min-height: 100vh !important;
       min-height: 100lvh !important;
       background-color: #05070d !important;
+      background-attachment: fixed !important;
+      background-clip: border-box !important;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: -140px;
+      height: 260px;
+      background:
+        radial-gradient(ellipse 55% 36% at 8% 35%, rgba(48,209,88,0.04), transparent 62%),
+        radial-gradient(ellipse 55% 36% at 92% 35%, rgba(48,209,88,0.03), transparent 62%),
+        #05070d;
+      pointer-events: none;
+      z-index: -1;
     }
 
     html body .app-content {
-      padding-bottom: calc(92px + max(0px, var(--safe-bottom))) !important;
+      padding-bottom: max(76px, calc(64px + var(--safe-bottom))) !important;
     }
 
     html body .bottom-nav {
-      left: 0 !important;
-      right: 0 !important;
-      bottom: 0 !important;
-      width: 100% !important;
-      border-radius: 26px 26px 0 0 !important;
-      padding-bottom: max(8px, var(--safe-bottom)) !important;
-      margin-bottom: 0 !important;
+      bottom: max(2px, calc(var(--safe-bottom) - 28px)) !important;
     }
   }
 }
