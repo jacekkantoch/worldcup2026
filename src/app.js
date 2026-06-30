@@ -6127,10 +6127,7 @@ function resolveBracketTeamId(matchId, side, matchesById, results, cache) {
   if (Object.prototype.hasOwnProperty.call(cache, key)) return cache[key];
   const r32 = TVP_R32_TEAMS[matchId];
   if (r32) {
-    const match = matchesById[matchId];
-    const realId = match?.[side === 'home' ? 'homeTeamId' : 'awayTeamId'];
-    const id = realId || null; // bez fallbacku do slotów z rozstawienia – pokaż etykietę źródła
-    cache[key] = id || null;
+    cache[key] = r32[side === 'home' ? 0 : 1] || null;
     return cache[key];
   }
   const feed = BRACKET_FEEDS[matchId];

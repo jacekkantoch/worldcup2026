@@ -5079,3 +5079,48 @@ html body [role="button"]:hover {
   box-shadow: none !important;
   filter: none !important;
 }
+
+/* iOS Safari: aplikacja i dolne menu dochodzą do samego dołu ekranu. */
+html,
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  min-height: 100lvh;
+  background-color: #05070d !important;
+}
+
+html body::before {
+  content: "";
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: max(120px, calc(var(--safe-bottom) + 80px));
+  background: #05070d;
+  pointer-events: none;
+  z-index: -1;
+}
+
+@supports (-webkit-touch-callout: none) {
+  @media (max-width: 700px), (pointer: coarse) {
+    html body {
+      padding-bottom: 0 !important;
+      min-height: 100lvh !important;
+      background-color: #05070d !important;
+    }
+
+    html body .app-content {
+      padding-bottom: calc(92px + max(0px, var(--safe-bottom))) !important;
+    }
+
+    html body .bottom-nav {
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      width: 100% !important;
+      border-radius: 26px 26px 0 0 !important;
+      padding-bottom: max(8px, var(--safe-bottom)) !important;
+      margin-bottom: 0 !important;
+    }
+  }
+}
