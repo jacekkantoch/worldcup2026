@@ -5610,6 +5610,7 @@ function LoginModal({
     }
   }, [open, activePlayer]);
   const pl = players.find(p => p.id === selected);
+  const activeProfile = players.find(p => p.id === activePlayer);
   const hasPinHash = pl && pl.pinHash;
   const isCompactStep = step === 'pin' || step === 'rename';
   const handlePick = () => {
@@ -5668,20 +5669,28 @@ function LoginModal({
     panelClassName: `login-modal-sheet${isCompactStep ? " login-modal-compact-sheet" : ""}`,
     overlayClassName: "profile-modal-overlay"
   }, React.createElement("div", {
-    className: "space-y-4"
-  }, step === 'pick' && React.createElement(React.Fragment, null, !activePlayer && React.createElement("p", {
-    className: "text-sm text-stone-600"
+    className: "space-y-4 profile-modal-body"
+  }, step === 'pick' && React.createElement(React.Fragment, null, activeProfile ? React.createElement("section", {
+    className: "profile-current-card"
+  }, React.createElement("div", {
+    className: "profile-current-avatar"
+  }, activeProfile.name.slice(0, 1).toUpperCase()), React.createElement("div", {
+    className: "profile-current-copy"
+  }, React.createElement("span", {
+    className: "profile-current-label"
+  }, "Aktywny profil"), React.createElement("strong", null, activeProfile.name))) : React.createElement("p", {
+    className: "profile-modal-hint"
   }, 'Wybierz swój profil, żeby typować.'), React.createElement(Btn, {
     variant: "outline",
     onClick: onManagePlayers,
-    className: "w-full"
+    className: "w-full profile-add-user-btn"
   }, React.createElement(Icon, {
     name: "plus",
     size: 15
   }), players.length === 0 ? 'Dodaj pierwszego użytkownika' : 'Dodaj użytkownika'), React.createElement("div", {
-    className: "space-y-1.5"
+    className: "space-y-1.5 profile-users-list"
   }, players.length === 0 && React.createElement("p", {
-    className: "text-center text-stone-500 text-sm py-4"
+    className: "profile-empty-state"
   }, "Brak u\u017Cytkownik\xF3w. U\u017Cyj przycisku powy\u017Cej, aby doda\u0107 pierwsz\u0105 osob\u0119."), players.map(p => {
     const isOpen = selected === p.id;
     const isCurrent = activePlayer && activePlayer === p.id;

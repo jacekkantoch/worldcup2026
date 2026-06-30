@@ -4631,9 +4631,9 @@ html body .admin-panel .admin-match-details button span[class*="truncate"] {
 }
 
 html body,
-html body *,
-html body *::before,
-html body *::after {
+html body *:not(.phase-filter-panel):not(.filters-sticky):not(.admin-phase-filters),
+html body *:not(.phase-filter-panel):not(.filters-sticky):not(.admin-phase-filters)::before,
+html body *:not(.phase-filter-panel):not(.filters-sticky):not(.admin-phase-filters)::after {
   box-shadow: none !important;
   text-shadow: none !important;
   filter: none !important;
@@ -4988,35 +4988,18 @@ html body {
   }
 }
 
-/* Delikatny cien pod panelem filtrow. */
-html:not([data-theme="light"]) body .phase-filter-panel.filters-sticky,
-html:not([data-theme="light"]) body .filters-sticky {
-  position: sticky !important;
-  overflow: visible !important;
-  isolation: isolate !important;
-}
 
+/* Filtry: normalne cienie odblokowane. */
+html:not([data-theme="light"]) body .phase-filter-panel,
+html:not([data-theme="light"]) body .filters-sticky,
 html:not([data-theme="light"]) body .admin-phase-filters {
-  position: relative !important;
   overflow: visible !important;
-  isolation: isolate !important;
+  box-shadow:
+    0 18px 24px -16px rgba(0, 0, 0, .62),
+    0 8px 12px -10px rgba(0, 0, 0, .42) !important;
+  filter: none !important;
 }
 
-html:not([data-theme="light"]) body .phase-filter-panel.filters-sticky::after,
-html:not([data-theme="light"]) body .admin-phase-filters::after {
-  content: "" !important;
-  display: block !important;
-  position: absolute !important;
-  left: 18px !important;
-  right: 18px !important;
-  bottom: -13px !important;
-  height: 18px !important;
-  z-index: -1 !important;
-  pointer-events: none !important;
-  border-radius: 999px !important;
-  background: radial-gradient(ellipse at center, rgba(0, 0, 0, .34) 0%, rgba(0, 0, 0, .20) 42%, rgba(0, 0, 0, 0) 76%) !important;
-  opacity: 1 !important;
-}
 
 /* Porownaj: panel filtrow z takim samym kryciem jak Mecze. */
 html:not([data-theme="light"]) body .compare-view .phase-filter-panel.filters-sticky {
@@ -5026,4 +5009,202 @@ html:not([data-theme="light"]) body .compare-view .phase-filter-panel.filters-st
     linear-gradient(145deg, rgba(29, 39, 58, .94), rgba(13, 19, 32, .90)) !important;
   background-color: rgba(15, 23, 38, .94) !important;
   border-color: transparent !important;
+}
+
+/* Redesign: profil i uzytkownicy. */
+html body .profile-modal-overlay {
+  background: rgba(2, 7, 16, .56) !important;
+  backdrop-filter: blur(6px) saturate(120%) !important;
+  -webkit-backdrop-filter: blur(6px) saturate(120%) !important;
+}
+
+html body .login-modal-sheet:not(.login-modal-compact-sheet) {
+  width: min(calc(100% - 42px), 520px) !important;
+  max-height: min(82dvh, 760px) !important;
+  border-radius: 28px !important;
+  background:
+    linear-gradient(180deg, rgba(31, 44, 67, .98), rgba(11, 18, 31, .98)) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+}
+
+html body .login-modal-sheet:not(.login-modal-compact-sheet) > div:first-child {
+  min-height: 64px !important;
+  padding: 16px 22px !important;
+  background: linear-gradient(180deg, rgba(38, 54, 81, .94), rgba(29, 42, 64, .92)) !important;
+  border-bottom: 1px solid rgba(255,255,255,.08) !important;
+}
+
+html body .login-modal-sheet:not(.login-modal-compact-sheet) .login-modal-title {
+  font-size: 19px !important;
+  letter-spacing: -.02em !important;
+}
+
+html body .login-modal-sheet:not(.login-modal-compact-sheet) .login-modal-content {
+  padding: 18px 22px 22px !important;
+}
+
+html body .profile-modal-body {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+}
+
+html body .profile-modal-body > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 0 !important;
+}
+
+html body .profile-current-card {
+  display: grid !important;
+  grid-template-columns: 52px minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 13px !important;
+  padding: 14px !important;
+  border-radius: 22px !important;
+  background: linear-gradient(145deg, rgba(73, 121, 190, .24), rgba(25, 36, 56, .92)) !important;
+  border: 1px solid rgba(128, 180, 255, .20) !important;
+}
+
+html body .profile-current-avatar {
+  width: 52px !important;
+  height: 52px !important;
+  border-radius: 18px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: linear-gradient(145deg, rgba(105, 153, 235, .95), rgba(55, 82, 178, .88)) !important;
+  color: #fff !important;
+  font-size: 22px !important;
+  font-weight: 900 !important;
+}
+
+html body .profile-current-copy {
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+}
+
+html body .profile-current-label {
+  color: rgba(190, 210, 238, .68) !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  letter-spacing: .08em !important;
+  text-transform: uppercase !important;
+}
+
+html body .profile-current-copy strong {
+  color: rgba(255,255,255,.98) !important;
+  font-size: 20px !important;
+  line-height: 1.1 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+html body .profile-modal-hint {
+  margin: 0 !important;
+  color: rgba(205, 218, 238, .72) !important;
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+}
+
+html body .profile-add-user-btn {
+  min-height: 52px !important;
+  border-radius: 18px !important;
+  background: rgba(255,255,255,.065) !important;
+  border-color: rgba(255,255,255,.10) !important;
+  color: rgba(255,255,255,.94) !important;
+  font-size: 15px !important;
+  font-weight: 850 !important;
+}
+
+html body .profile-users-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+html body .profile-empty-state {
+  margin: 0 !important;
+  padding: 22px 16px !important;
+  border-radius: 20px !important;
+  background: rgba(255,255,255,.045) !important;
+  color: rgba(220,230,245,.68) !important;
+  text-align: center !important;
+  font-size: 13px !important;
+}
+
+html body .profile-choice-shell {
+  border-radius: 20px !important;
+}
+
+html body .profile-choice-trigger {
+  min-height: 64px !important;
+  padding: 10px 13px !important;
+  border-radius: 20px !important;
+  background: rgba(255,255,255,.055) !important;
+  border: 1px solid rgba(255,255,255,.075) !important;
+  color: rgba(255,255,255,.94) !important;
+}
+
+html body .profile-choice-shell.is-open {
+  border-radius: 22px !important;
+  background: rgba(255,255,255,.065) !important;
+  border: 1px solid rgba(255,255,255,.11) !important;
+}
+
+html body .profile-choice-shell.is-open .profile-choice-trigger {
+  border-radius: 22px 22px 0 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+
+html body .player-choice-avatar {
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 15px !important;
+  background: rgba(116, 137, 168, .35) !important;
+}
+
+html body .profile-choice-actions {
+  border-radius: 0 0 22px 22px !important;
+  padding: 0 12px 12px !important;
+  background: transparent !important;
+}
+
+html body .profile-choice-action-grid {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 8px !important;
+}
+
+html body .profile-choice-action-grid button {
+  min-height: 42px !important;
+  border-radius: 15px !important;
+}
+
+html body .profile-choice-cancel {
+  grid-column: 1 / -1 !important;
+}
+
+html body .profile-choice-logout {
+  background: rgba(255, 69, 58, .14) !important;
+  border: 1px solid rgba(255, 105, 97, .24) !important;
+  color: #ff9b96 !important;
+}
+
+@media (max-width: 520px) {
+  html body .login-modal-sheet:not(.login-modal-compact-sheet) {
+    width: min(calc(100% - 22px), 520px) !important;
+    max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - 34px) !important;
+    border-radius: 24px !important;
+  }
+
+  html body .login-modal-sheet:not(.login-modal-compact-sheet) .login-modal-content {
+    padding: 14px !important;
+  }
+
+  html body .profile-current-copy strong {
+    font-size: 18px !important;
+  }
 }
