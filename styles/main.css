@@ -4927,7 +4927,7 @@ html body .matches-view .match-card > button:first-child::after {
 
 /* Delikatnie nizszy header. */
 html body .app-header {
-  padding: 8px 18px 8px !important;
+  padding: calc(var(--safe-top) + 8px) 18px 8px !important;
 }
 
 html body .app-header .logo-icon {
@@ -4937,12 +4937,12 @@ html body .app-header .logo-icon {
 }
 
 html body .app-content {
-  padding-top: calc(var(--header-height, 58px) + var(--banner-gap, 14px)) !important;
+  padding-top: calc(var(--safe-top) + var(--header-height, 58px) + var(--banner-gap, 14px)) !important;
 }
 
 @media (max-width: 520px) {
   html body .app-header {
-    padding: 9px 17px 9px !important;
+    padding: calc(var(--safe-top) + 9px) 17px 9px !important;
   }
 
   html body .app-header .logo-icon {
@@ -4952,13 +4952,13 @@ html body .app-content {
   }
 
   html body .app-content {
-    padding-top: calc(var(--header-height, 66px) + var(--banner-gap, 12px)) !important;
+    padding-top: calc(var(--safe-top) + var(--header-height, 66px) + var(--banner-gap, 12px)) !important;
   }
 }
 
 @media (max-width: 380px) {
   html body .app-header {
-    padding-top: 7px !important;
+    padding-top: calc(var(--safe-top) + 7px) !important;
     padding-bottom: 7px !important;
   }
 
@@ -4969,7 +4969,7 @@ html body .app-content {
   }
 
   html body .app-content {
-    padding-top: calc(var(--header-height, 54px) + var(--banner-gap, 12px)) !important;
+    padding-top: calc(var(--safe-top) + var(--header-height, 54px) + var(--banner-gap, 12px)) !important;
   }
 }
 
