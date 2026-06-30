@@ -1,4 +1,4 @@
-// ===== Inline script 2 from original index.html =====
+﻿// ===== Inline script 2 from original index.html =====
 function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
 // ─── Firebase init ─────────────────────────────────────────────
 const firebaseConfig = {
@@ -229,6 +229,87 @@ function normalizePointsSettings(value) {
 }
 let POINTS = normalizePointsSettings(DEFAULT_POINTS);
 const GROUPS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
+
+function InfiniteGroupFilter({ selected, onSelect, btnClass }) {
+  const ref = React.useRef(null);
+  const debounceRef = React.useRef(null);
+  const snappingRef = React.useRef(false);
+  const [visualCenter, setVisualCenter] = React.useState(selected);
+  const items = [...GROUPS, ...GROUPS, ...GROUPS];
+
+  const snapToIndex = React.useCallback((rawIndex, smooth) => {
+    const el = ref.current;
+    if (!el) return;
+    const oneW = el.scrollWidth / 3;
+    const itemW = oneW / GROUPS.length;
+    const target = rawIndex * itemW - el.clientWidth / 2 + itemW / 2;
+    if (smooth) {
+      snappingRef.current = true;
+      el.style.scrollBehavior = 'smooth';
+      el.scrollLeft = target;
+      setTimeout(() => { el.style.scrollBehavior = 'auto'; snappingRef.current = false; }, 400);
+    } else {
+      el.scrollLeft = target;
+    }
+  }, []);
+
+  React.useEffect(() => {
+    requestAnimationFrame(() => {
+      const el = ref.current;
+      if (!el) return;
+      const oneW = el.scrollWidth / 3;
+      const itemW = oneW / GROUPS.length;
+      const idx = Math.max(0, GROUPS.indexOf(selected));
+      el.scrollLeft = oneW + idx * itemW - el.clientWidth / 2 + itemW / 2;
+      setVisualCenter(selected);
+    });
+  }, []);
+
+  const onScroll = React.useCallback(() => {
+    const el = ref.current;
+    if (!el) return;
+    const oneW = el.scrollWidth / 3;
+    const itemW = oneW / GROUPS.length;
+    if (el.scrollLeft < oneW * 0.4) { el.scrollLeft += oneW; return; }
+    if (el.scrollLeft > oneW * 1.6) { el.scrollLeft -= oneW; return; }
+    // aktualizuj zaznaczenie na bieżąco, podczas przesuwania
+    const centerXLive = el.scrollLeft + el.clientWidth / 2;
+    const rawIndexLive = Math.round(centerXLive / itemW - 0.5);
+    const groupIndexLive = ((rawIndexLive % GROUPS.length) + GROUPS.length) % GROUPS.length;
+    setVisualCenter(GROUPS[groupIndexLive]);
+    if (snappingRef.current) return;
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      if (snappingRef.current) return;
+      const centerX = el.scrollLeft + el.clientWidth / 2;
+      const rawIndex = Math.round(centerX / itemW - 0.5);
+      const groupIndex = ((rawIndex % GROUPS.length) + GROUPS.length) % GROUPS.length;
+      snapToIndex(rawIndex, true);
+      onSelect(GROUPS[groupIndex]);
+    }, 120);
+  }, [onSelect, snapToIndex]);
+
+  return React.createElement('div', {
+    style: { display: 'flex', justifyContent: 'center', width: '100%' }
+  }, React.createElement('div', {
+    ref,
+    onScroll,
+    className: 'infinite-group-scroll',
+    style: {
+      display: 'flex', gap: '4px', overflowX: 'auto', scrollBehavior: 'auto',
+      overscrollBehavior: 'none', maxWidth: '480px', width: '100%',
+      maskImage: 'linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%)',
+      WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%)'
+    }
+  }, items.map((g, i) =>
+    React.createElement('button', {
+      key: i,
+      onClick: undefined,
+      className: `${btnClass}${visualCenter === g ? ' is-selected' : ''}`
+    }, g)
+  )));
+}
+
 const PHASE_LABELS = {
   group: 'Faza grupowa',
   r32: '1/16 finału',
@@ -276,7 +357,6 @@ function phaseBadgeLabel(match) {
   return match.phase === 'group' ? `Gr ${match.group}` : PHASE_BADGE_LABELS[match.phase] || PHASE_LABELS[match.phase] || match.phase;
 }
 const PHASE_ORDER = ['group', 'r32', 'r16', 'qf', 'sf', 'third', 'final'];
-const MATCH_LIST_PAGE_SIZE = 20;
 const PHASE_RANK = Object.fromEntries(PHASE_ORDER.map((phase, index) => [phase, index]));
 function getLatestResultPhase(matches, results) {
   let latest = 'all';
@@ -1319,150 +1399,22 @@ function generateInitialMatches() {
     date: '2026-06-28T02:00:00Z',
     city: 'Dallas (USA)'
   });
-  matches.push({
-    id: 'M73',
-    num: 73,
-    phase: 'r32',
-    homeTeamId: null,
-    awayTeamId: null,
-    date: '2026-06-28T19:00:00Z',
-    city: 'Los Angeles (USA)'
-  });
-  matches.push({
-    id: 'M74',
-    num: 74,
-    phase: 'r32',
-    homeTeamId: null,
-    awayTeamId: null,
-    date: '2026-06-29T20:30:00Z',
-    city: 'Boston (USA)'
-  });
-  matches.push({
-    id: 'M75',
-    num: 75,
-    phase: 'r32',
-    homeTeamId: null,
-    awayTeamId: null,
-    date: '2026-06-30T01:00:00Z',
-    city: 'Monterrey (Meksyk)'
-  });
-  matches.push({
-    id: 'M76',
-    num: 76,
-    phase: 'r32',
-    homeTeamId: null,
-    awayTeamId: null,
-    date: '2026-06-29T17:00:00Z',
-    city: 'Houston (USA)'
-  });
-  matches.push({
-    id: 'M77',
-    num: 77,
-    phase: 'r32',
-    homeTeamId: null,
-    awayTeamId: null,
-    date: '2026-06-30T21:00:00Z',
-    city: 'New York/NJ (USA)'
-  });
-  matches.push({
-    id: 'M78',
-    num: 78,
-    phase: 'r32',
-    homeTeamId: null,
-    awayTeamId: null,
-    date: '2026-06-30T17:00:00Z',
-    city: 'Dallas (USA)'
-  });
-  matches.push({
-    id: 'M79',
-    num: 79,
-    phase: 'r32',
-    homeTeamId: null,
-    awayTeamId: null,
-    date: '2026-07-01T01:00:00Z',
-    city: 'Mexico City (Meksyk)'
-  });
-  matches.push({
-    id: 'M80',
-    num: 80,
-    phase: 'r32',
-    homeTeamId: null,
-    awayTeamId: null,
-    date: '2026-07-01T16:00:00Z',
-    city: 'Atlanta (USA)'
-  });
-  matches.push({
-    id: 'M81',
-    num: 81,
-    phase: 'r32',
-    homeTeamId: null,
-    awayTeamId: null,
-    date: '2026-07-02T00:00:00Z',
-    city: 'San Francisco (USA)'
-  });
-  matches.push({
-    id: 'M82',
-    num: 82,
-    phase: 'r32',
-    homeTeamId: null,
-    awayTeamId: null,
-    date: '2026-07-01T20:00:00Z',
-    city: 'Seattle (USA)'
-  });
-  matches.push({
-    id: 'M83',
-    num: 83,
-    phase: 'r32',
-    homeTeamId: null,
-    awayTeamId: null,
-    date: '2026-07-02T23:00:00Z',
-    city: 'Toronto (Kanada)'
-  });
-  matches.push({
-    id: 'M84',
-    num: 84,
-    phase: 'r32',
-    homeTeamId: null,
-    awayTeamId: null,
-    date: '2026-07-02T19:00:00Z',
-    city: 'Los Angeles (USA)'
-  });
-  matches.push({
-    id: 'M85',
-    num: 85,
-    phase: 'r32',
-    homeTeamId: null,
-    awayTeamId: null,
-    date: '2026-07-03T03:00:00Z',
-    city: 'Vancouver (Kanada)'
-  });
-  matches.push({
-    id: 'M86',
-    num: 86,
-    phase: 'r32',
-    homeTeamId: null,
-    awayTeamId: null,
-    date: '2026-07-03T22:00:00Z',
-    city: 'Miami (USA)'
-  });
-  matches.push({
-    id: 'M87',
-    num: 87,
-    phase: 'r32',
-    homeTeamId: null,
-    awayTeamId: null,
-    date: '2026-07-04T01:30:00Z',
-    city: 'Kansas City (USA)'
-  });
-  matches.push({
-    id: 'M88',
-    num: 88,
-    phase: 'r32',
-    homeTeamId: null,
-    awayTeamId: null,
-    date: '2026-07-03T18:00:00Z',
-    city: 'Dallas (USA)'
-  });
+  matches.push({ id: 'M73', num: 73, phase: 'r32', homeTeamId: null, awayTeamId: null, date: '2026-06-28T19:00:00Z', city: 'Los Angeles (USA)' });
+  matches.push({ id: 'M74', num: 75, phase: 'r32', homeTeamId: null, awayTeamId: null, date: '2026-06-29T20:30:00Z', city: 'Boston (USA)' });
+  matches.push({ id: 'M75', num: 76, phase: 'r32', homeTeamId: null, awayTeamId: null, date: '2026-06-30T01:00:00Z', city: 'Monterrey (Meksyk)' });
+  matches.push({ id: 'M76', num: 74, phase: 'r32', homeTeamId: null, awayTeamId: null, date: '2026-06-29T17:00:00Z', city: 'Houston (USA)' });
+  matches.push({ id: 'M77', num: 77, phase: 'r32', homeTeamId: null, awayTeamId: null, date: '2026-06-30T17:00:00Z', city: 'Dallas (USA)' });
+  matches.push({ id: 'M78', num: 78, phase: 'r32', homeTeamId: null, awayTeamId: null, date: '2026-06-30T21:00:00Z', city: 'Nowy Jork/NJ (USA)' });
+  matches.push({ id: 'M79', num: 79, phase: 'r32', homeTeamId: null, awayTeamId: null, date: '2026-07-01T01:00:00Z', city: 'Meksyk (Meksyk)' });
+  matches.push({ id: 'M80', num: 80, phase: 'r32', homeTeamId: null, awayTeamId: null, date: '2026-07-01T16:00:00Z', city: 'Atlanta (USA)' });
+  matches.push({ id: 'M81', num: 81, phase: 'r32', homeTeamId: null, awayTeamId: null, date: '2026-07-01T20:00:00Z', city: 'Seattle (USA)' });
+  matches.push({ id: 'M82', num: 82, phase: 'r32', homeTeamId: null, awayTeamId: null, date: '2026-07-02T00:00:00Z', city: 'San Francisco (USA)' });
+  matches.push({ id: 'M83', num: 83, phase: 'r32', homeTeamId: null, awayTeamId: null, date: '2026-07-02T19:00:00Z', city: 'Los Angeles (USA)' });
+  matches.push({ id: 'M84', num: 84, phase: 'r32', homeTeamId: null, awayTeamId: null, date: '2026-07-02T23:00:00Z', city: 'Toronto (Kanada)' });
+  matches.push({ id: 'M85', num: 85, phase: 'r32', homeTeamId: null, awayTeamId: null, date: '2026-07-03T03:00:00Z', city: 'Vancouver (Kanada)' });
+  matches.push({ id: 'M86', num: 86, phase: 'r32', homeTeamId: null, awayTeamId: null, date: '2026-07-03T18:00:00Z', city: 'Dallas (USA)' });
+  matches.push({ id: 'M87', num: 87, phase: 'r32', homeTeamId: null, awayTeamId: null, date: '2026-07-03T22:00:00Z', city: 'Miami (USA)' });
+  matches.push({ id: 'M88', num: 88, phase: 'r32', homeTeamId: null, awayTeamId: null, date: '2026-07-04T01:30:00Z', city: 'Kansas City (USA)' });
   matches.push({
     id: 'M89',
     num: 89,
@@ -2148,19 +2100,15 @@ function Modal({
       boxShadow: 'var(--shadow-lg), var(--hl)'
     }
   }, React.createElement("div", {
-    className: "flex items-center justify-between p-4 border-b",
-    style: {
-      borderColor: "var(--sep)",
-      background: "var(--bg-2)"
-    }
+    className: "flex items-center justify-between p-4"
   }, React.createElement("h3", {
     className: "login-modal-title font-display text-xl tracking-wide text-stone-900"
   }, title), React.createElement("button", {
     onClick: onClose,
-    className: "p-1.5 rounded-lg hover:bg-white/10 text-stone-600"
+    className: "modal-close-btn"
   }, React.createElement(Icon, {
     name: "x",
-    size: 20
+    size: 18
   }))), React.createElement("div", {
     className: "login-modal-content overflow-y-auto p-4"
   }, children)));
@@ -3112,7 +3060,14 @@ function MatchesView({
   const autoPhaseFilterRef = useRef('all');
   const phaseFilterTouchedRef = useRef(false);
   const [expandedId, setExpandedId] = useState(null);
-  const [visibleCount, setVisibleCount] = useState(MATCH_LIST_PAGE_SIZE);
+  const [compactDevice, setCompactDevice] = useState(() => typeof window !== "undefined" && (window.innerWidth <= 700 || window.matchMedia("(pointer: coarse)").matches));
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const check = () => setCompactDevice(window.innerWidth <= 700 || window.matchMedia("(pointer: coarse)").matches);
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+  const [visibleCount, setVisibleCount] = useState(() => compactDevice ? 18 : Number.MAX_SAFE_INTEGER);
   const handleToggleMatch = useCallback(id => setExpandedId(prev => prev === id ? null : id), []);
   const defaultResultPhase = useMemo(() => getLatestResultPhase(matches, results), [matches, results]);
   useEffect(() => {
@@ -3152,11 +3107,11 @@ function MatchesView({
     return map;
   }, [predictions]);
   useEffect(() => {
-    setVisibleCount(MATCH_LIST_PAGE_SIZE);
+    setVisibleCount(compactDevice ? 18 : Number.MAX_SAFE_INTEGER);
     setExpandedId(null);
-  }, [phaseFilter, groupFilter, statusFilter]);
-  const visibleMatches = filtered.slice(0, visibleCount);
-  const hasMoreMatches = visibleCount < filtered.length;
+  }, [phaseFilter, groupFilter, statusFilter, compactDevice]);
+  const visibleMatches = compactDevice ? filtered.slice(0, visibleCount) : filtered;
+  const hasMoreMatches = compactDevice && visibleCount < filtered.length;
   const filterBtns = PHASE_FILTER_TABS;
   const filterPanel = React.createElement("div", {
     className: "phase-filter-panel fixed-filter-portal-panel bg-white border border-[#b0bce8] rounded-xl p-3 filters-sticky shadow-sm"
@@ -3219,7 +3174,7 @@ function MatchesView({
     onToggleMatch: handleToggleMatch
   })), hasMoreMatches && React.createElement("button", {
     type: "button",
-    onClick: () => setVisibleCount(count => count + MATCH_LIST_PAGE_SIZE),
+    onClick: () => setVisibleCount(count => count + 18),
     className: "selection-tile w-full rounded-xl px-4 py-3 text-sm font-semibold"
   }, "Poka\u017C kolejne mecze (", filtered.length - visibleCount, ")"), filtered.length === 0 && React.createElement("div", {
     className: "text-center text-stone-500 py-12 app-note app-note--info app-note--center"
@@ -3320,14 +3275,13 @@ function SpecialsView({
   }, "Kolejno\u015B\u0107 w grupach"), React.createElement("p", {
     className: "text-xs text-stone-500 mb-3"
   }, "1 trafione: ", POINTS.groupOrderOne, " pkt \u2022 2 trafione: ", POINTS.groupOrderTwo, " pkt \u2022 wszystkie 4: ", POINTS.groupOrderAll, " pkt"), React.createElement("div", {
-    className: "group-order-filter-row pill-scroll-safe flex gap-1 p-2 overflow-x-auto"
-  }, GROUPS.map(g => React.createElement("button", {
-    key: g,
-    onClick: () => {
-      setActiveGroup(g);
-    },
-    className: `selection-tile${activeGroup === g ? ' is-selected' : ''} shrink-0 w-10 h-10 rounded-lg font-bold`
-  }, g))), [0, 1, 2, 3].map(pos => {
+    className: "group-order-filter-row pill-scroll-safe flex gap-1 p-2",
+    style: { overflow: 'hidden' }
+  }, React.createElement(InfiniteGroupFilter, {
+    selected: activeGroup,
+    onSelect: setActiveGroup,
+    btnClass: 'selection-tile shrink-0 w-10 h-10 rounded-lg font-bold'
+  })), [0, 1, 2, 3].map(pos => {
     const placeName = ['1. miejsce', '2. miejsce', '3. miejsce', '4. miejsce'][pos];
     const order = draft.groupOrders[activeGroup] || [];
     const selected = order[pos];
@@ -3558,14 +3512,13 @@ function SpecialsAllView({
   }, React.createElement("div", {
     className: "px-4 py-3 text-sm font-bold tracking-wide text-stone-800 flex items-center justify-between"
   }, React.createElement("span", null, "Kolejno\u015B\u0107 w grupach")), React.createElement("div", {
-    className: "group-order-filter-row pill-scroll-safe allspecials-group-filter-centered flex gap-1 py-2 pl-3 pr-2 overflow-x-auto"
-  }, GROUPS.map(g => React.createElement("button", {
-    key: g,
-    onClick: () => {
-      setSelGroup(g);
-    },
-    className: `selection-tile${selGroup === g ? ' is-selected' : ''} shrink-0 w-10 h-10 rounded-lg font-bold`
-  }, g))), React.createElement("div", {
+    className: "group-order-filter-row pill-scroll-safe allspecials-group-filter-centered flex gap-1 py-2 pl-3 pr-2",
+    style: { overflow: 'hidden' }
+  }, React.createElement(InfiniteGroupFilter, {
+    selected: selGroup,
+    onSelect: setSelGroup,
+    btnClass: 'selection-tile shrink-0 w-10 h-10 rounded-lg font-bold'
+  })), React.createElement("div", {
     className: "overflow-x-auto"
   }, React.createElement("table", {
     className: "w-full text-xs"
@@ -3978,7 +3931,6 @@ function CompareView({
   const autoPhaseFilterRef = useRef('all');
   const phaseFilterTouchedRef = useRef(false);
   const [expandedMatches, setExpandedMatches] = useState(() => new Set());
-  const [visibleCount, setVisibleCount] = useState(MATCH_LIST_PAGE_SIZE);
   const toggleMatchDetails = useCallback(matchId => {
     setExpandedMatches(prev => {
       const next = new Set(prev);
@@ -4005,11 +3957,8 @@ function CompareView({
     }).sort((a, b) => (PHASE_RANK[a.phase] ?? 99) - (PHASE_RANK[b.phase] ?? 99) || a.num - b.num);
   }, [matches, phaseFilter, groupFilter, statusFilter, results]);
   useEffect(() => {
-    setVisibleCount(MATCH_LIST_PAGE_SIZE);
     setExpandedMatches(new Set());
   }, [phaseFilter, groupFilter, statusFilter]);
-  const visibleMatches = filtered.slice(0, visibleCount);
-  const hasMoreMatches = visibleCount < filtered.length;
   if (players.length === 0) return React.createElement("div", {
     className: "text-center text-stone-500 py-12 app-note app-note--info app-note--center"
   }, "Dodaj graczy, \u017Ceby por\xF3wnywa\u0107 typy.");
@@ -4060,7 +4009,7 @@ function CompareView({
     className: `selection-tile${statusFilter === t.k ? ' is-selected' : ''} flex-1 px-2 py-1 rounded-lg text-xs font-medium`
   }, t.l)))), React.createElement("div", {
     className: "text-[11px] text-stone-500 mt-1 text-center"
-  }, filtered.length, " ", plMecze(filtered.length))), visibleMatches.map(m => {
+  }, filtered.length, " ", plMecze(filtered.length))), filtered.map(m => {
     const home = teams[m.homeTeamId],
       away = teams[m.awayTeamId],
       result = results[m.id];
@@ -4264,13 +4213,7 @@ function CompareView({
         }
       }, pts === null ? '0' : pts > 0 ? `+${pts}` : '0')));
     })));
-  }), hasMoreMatches && React.createElement("button", {
-    type: "button",
-    onClick: () => setVisibleCount(count => count + MATCH_LIST_PAGE_SIZE),
-    className: "selection-tile w-full rounded-xl px-4 py-3 text-sm font-semibold"
-  }, "Poka\u017C kolejne mecze (", filtered.length - visibleCount, ")"), filtered.length === 0 && React.createElement("div", {
-    className: "text-center text-stone-500 py-12 app-note app-note--info app-note--center"
-  }, "Brak mecz\xF3w dla wybranych filtr\xF3w"));
+  }));
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -4449,97 +4392,85 @@ function AdminGate({
   const [confirm, setConfirm] = useState('');
   const [error, setError] = useState('');
   if (!adminPassword) return React.createElement("div", {
-    className: "admin-gate-card bg-white border border-stone-200 rounded-xl p-5 max-w-md mx-auto"
-  }, React.createElement("button", {
-    type: "button",
-    onClick: onClose,
-    className: "admin-gate-close-btn",
-    title: "Wyjdź z logowania administratora",
-    "aria-label": "Wyjdź z logowania administratora"
-  }, React.createElement(Icon, {
-    name: "x",
-    size: 18
-  })), React.createElement("div", {
-    className: "text-center mb-4"
-  }, React.createElement(Icon, {
-    name: "lock",
-    size: 32,
-    className: "text-[#0d1b5e] mx-auto mb-2 block"
-  }), React.createElement("h3", {
-    className: "font-display text-xl tracking-wide"
-  }, "Ustaw has\u0142o admina"), React.createElement("p", {
-    className: "text-xs text-stone-500 mt-1"
-  }, "Jednorazowe \u2014 zapami\u0119taj dobrze!")), React.createElement("input", {
-    type: "password",
-    value: input,
-    onChange: e => setInput(e.target.value),
-    placeholder: "Nowe has\u0142o",
-    className: "w-full px-3 py-2.5 border-2 border-stone-200 rounded-lg focus:border-[#0d1b5e] focus:outline-none text-sm mb-2"
-  }), React.createElement("input", {
-    type: "password",
-    value: confirm,
-    onChange: e => setConfirm(e.target.value),
-    placeholder: "Powt\xF3rz has\u0142o",
-    className: "w-full px-3 py-2.5 border-2 border-stone-200 rounded-lg focus:border-[#0d1b5e] focus:outline-none text-sm mb-3"
-  }), error && React.createElement("p", {
-    className: "text-xs text-red-600 mb-2"
-  }, error), React.createElement(Btn, {
-    variant: "primary",
-    size: "lg",
-    className: "w-full",
-    onClick: () => {
-      if (input.length < 3) {
-        setError('Hasło musi mieć min. 3 znaki');
-        return;
+    className: "admin-gate-card"
+  },
+    React.createElement("button", {
+      type: "button",
+      onClick: onClose,
+      className: "admin-gate-close-btn",
+      title: "Wyjdź z logowania administratora",
+      "aria-label": "Wyjdź z logowania administratora"
+    }, React.createElement(Icon, { name: "x", size: 18 })),
+    React.createElement("div", { className: "admin-gate-hero" },
+      React.createElement("div", { className: "admin-gate-icon" }, React.createElement(Icon, { name: "lock", size: 24 })),
+      React.createElement("h3", { className: "admin-gate-title" }, "Ustaw hasło admina"),
+      React.createElement("p", { className: "admin-gate-subtitle" }, "Jednorazowe — zapamiętaj dobrze!")
+    ),
+    React.createElement("div", { className: "admin-gate-field" },
+      React.createElement("input", {
+        type: "password",
+        value: input,
+        onChange: e => setInput(e.target.value),
+        placeholder: "Nowe hasło",
+        className: "profile-text-input"
+      })
+    ),
+    React.createElement("div", { className: "admin-gate-field" },
+      React.createElement("input", {
+        type: "password",
+        value: confirm,
+        onChange: e => setConfirm(e.target.value),
+        placeholder: "Powtórz hasło",
+        className: "profile-text-input"
+      })
+    ),
+    error && React.createElement("p", { className: "profile-error" }, error),
+    React.createElement("button", {
+      className: "profile-action-btn profile-action-login admin-gate-submit",
+      onClick: () => {
+        if (input.length < 3) {
+          setError('Hasło musi mieć min. 3 znaki');
+          return;
+        }
+        if (input !== confirm) {
+          setError('Hasła nie pasują');
+          return;
+        }
+        onSetPassword(input);
       }
-      if (input !== confirm) {
-        setError('Hasła nie pasują');
-        return;
-      }
-      onSetPassword(input);
-    }
-  }, "Ustaw has\u0142o"));
+    }, "Ustaw hasło")
+  );
   return React.createElement("div", {
-    className: "admin-gate-card bg-white border border-stone-200 rounded-xl p-5 max-w-md mx-auto"
-  }, React.createElement("button", {
-    type: "button",
-    onClick: onClose,
-    className: "admin-gate-close-btn",
-    title: "Wyjdź z logowania administratora",
-    "aria-label": "Wyjdź z logowania administratora"
-  }, React.createElement(Icon, {
-    name: "x",
-    size: 18
-  })), React.createElement("div", {
-    className: "text-center mb-4"
-  }, React.createElement(Icon, {
-    name: "lock",
-    size: 32,
-    className: "text-[#0d1b5e] mx-auto mb-2 block"
-  }), React.createElement("h3", {
-    className: "font-display text-xl tracking-wide"
-  }, "Panel administratora")), React.createElement("input", {
-    type: "password",
-    value: input,
-    onChange: e => {
-      setInput(e.target.value);
-      setError('');
-    },
-    onKeyDown: e => e.key === 'Enter' && onUnlock(input, err => setError(err)),
-    placeholder: "Has\u0142o",
-    className: "w-full px-3 py-2.5 border-2 border-stone-200 rounded-lg focus:border-[#0d1b5e] focus:outline-none text-sm mb-3",
-    autoFocus: true
-  }), error && React.createElement("p", {
-    className: "text-xs text-red-600 mb-2"
-  }, error), React.createElement(Btn, {
-    variant: "primary",
-    size: "lg",
-    className: "w-full",
-    onClick: () => onUnlock(input, err => setError(err))
-  }, React.createElement(Icon, {
-    name: "unlock",
-    size: 16
-  }), "Odblokuj"));
+    className: "admin-gate-card"
+  },
+    React.createElement("button", {
+      type: "button",
+      onClick: onClose,
+      className: "admin-gate-close-btn",
+      title: "Wyjdź z logowania administratora",
+      "aria-label": "Wyjdź z logowania administratora"
+    }, React.createElement(Icon, { name: "x", size: 18 })),
+    React.createElement("div", { className: "admin-gate-hero" },
+      React.createElement("div", { className: "admin-gate-icon" }, React.createElement(Icon, { name: "lock", size: 24 })),
+      React.createElement("h3", { className: "admin-gate-title" }, "Panel administratora")
+    ),
+    React.createElement("div", { className: "admin-gate-field" },
+      React.createElement("input", {
+        type: "password",
+        value: input,
+        onChange: e => { setInput(e.target.value); setError(''); },
+        onKeyDown: e => e.key === 'Enter' && onUnlock(input, err => setError(err)),
+        placeholder: "Hasło",
+        className: "profile-text-input",
+        autoFocus: true
+      })
+    ),
+    error && React.createElement("p", { className: "profile-error" }, error),
+    React.createElement("button", {
+      className: "profile-action-btn profile-action-login admin-gate-submit",
+      onClick: () => onUnlock(input, err => setError(err))
+    }, React.createElement(Icon, { name: "unlock", size: 14 }), "Odblokuj")
+  );
 }
 function AdminMatchRow({
   match,
@@ -5319,7 +5250,7 @@ function AdminPanel({
   }))), tab === 'teams' && React.createElement("div", {
     className: "space-y-3"
   }, React.createElement("div", {
-    className: "bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-900 app-note app-note--info app-note--compact"
+    className: "app-note app-note--warning app-note--compact"
   }, "Wpisz nazw\u0119 dru\u017Cyny oraz dwuliterowy kod kraju, np. pl, de lub fr."), GROUPS.map(g => React.createElement("div", {
     key: g,
     className: "bg-white border border-stone-200 rounded-xl p-3"
@@ -5341,14 +5272,13 @@ function AdminPanel({
   }, React.createElement("h4", {
     className: "font-display text-base mb-2"
   }, "Kolejno\u015B\u0107 w grupach"), React.createElement("div", {
-    className: "admin-group-order-filter-row flex gap-1 overflow-x-auto mb-3"
-  }, GROUPS.map(g => React.createElement("button", {
-    key: g,
-    onClick: () => {
-      setSpGroup(g);
-    },
-    className: `selection-tile${spGroup === g ? ' is-selected' : ''} shrink-0 w-9 h-9 rounded-lg font-bold`
-  }, g))), [0, 1, 2, 3].map(pos => {
+    className: "admin-group-order-filter-row flex gap-1 mb-3",
+    style: { overflow: 'hidden' }
+  }, React.createElement(InfiniteGroupFilter, {
+    selected: spGroup,
+    onSelect: setSpGroup,
+    btnClass: 'selection-tile shrink-0 w-9 h-9 rounded-lg font-bold'
+  })), [0, 1, 2, 3].map(pos => {
     const gTeams = Object.values(teams).filter(t => t && t.group === spGroup);
     return React.createElement("div", {
       key: pos,
@@ -5610,7 +5540,6 @@ function LoginModal({
     }
   }, [open, activePlayer]);
   const pl = players.find(p => p.id === selected);
-  const activeProfile = players.find(p => p.id === activePlayer);
   const hasPinHash = pl && pl.pinHash;
   const isCompactStep = step === 'pin' || step === 'rename';
   const handlePick = () => {
@@ -5669,241 +5598,152 @@ function LoginModal({
     panelClassName: `login-modal-sheet${isCompactStep ? " login-modal-compact-sheet" : ""}`,
     overlayClassName: "profile-modal-overlay"
   }, React.createElement("div", {
-    className: "space-y-4 profile-modal-body"
-  }, step === 'pick' && React.createElement(React.Fragment, null, activeProfile ? React.createElement("section", {
-    className: "profile-current-card"
-  }, React.createElement("div", {
-    className: "profile-current-avatar"
-  }, activeProfile.name.slice(0, 1).toUpperCase()), React.createElement("div", {
-    className: "profile-current-copy"
-  }, React.createElement("span", {
-    className: "profile-current-label"
-  }, "Aktywny profil"), React.createElement("strong", null, activeProfile.name))) : React.createElement("p", {
-    className: "profile-modal-hint"
-  }, 'Wybierz swój profil, żeby typować.'), React.createElement(Btn, {
-    variant: "outline",
-    onClick: onManagePlayers,
-    className: "w-full profile-add-user-btn"
-  }, React.createElement(Icon, {
-    name: "plus",
-    size: 15
-  }), players.length === 0 ? 'Dodaj pierwszego użytkownika' : 'Dodaj użytkownika'), React.createElement("div", {
-    className: "space-y-1.5 profile-users-list"
-  }, players.length === 0 && React.createElement("p", {
-    className: "profile-empty-state"
-  }, "Brak u\u017Cytkownik\xF3w. U\u017Cyj przycisku powy\u017Cej, aby doda\u0107 pierwsz\u0105 osob\u0119."), players.map(p => {
-    const isOpen = selected === p.id;
-    const isCurrent = activePlayer && activePlayer === p.id;
-    return React.createElement("div", {
-      key: p.id,
-      className: `profile-choice-shell${isOpen ? ' is-open' : ''}`
-    }, React.createElement("button", {
-      onClick: () => {
-        setSelected(prev => prev === p.id ? '' : p.id);
-        setErr('');
+    className: "profile-modal-body"
+  }, step === 'pick' && React.createElement(React.Fragment, null,
+    !activePlayer && React.createElement("p", {
+      className: "profile-modal-hint"
+    }, "Wybierz swój profil, żeby typować."),
+    React.createElement("button", {
+      className: "profile-add-btn",
+      onClick: onManagePlayers
+    },
+      React.createElement(Icon, { name: "plus", size: 15 }),
+      players.length === 0 ? "Dodaj pierwszego użytkownika" : "Dodaj użytkownika"
+    ),
+    React.createElement("div", {
+      className: "profile-player-list"
+    }, players.length === 0 && React.createElement("p", {
+      className: "profile-empty-hint"
+    }, "Brak użytkowników. Użyj przycisku powyżej."), players.map(p => {
+      const isOpen = selected === p.id;
+      const isCurrent = activePlayer && activePlayer === p.id;
+      return React.createElement("div", {
+        key: p.id,
+        className: `profile-choice-shell${isOpen ? ' is-open' : ''}${isCurrent ? ' is-current' : ''}`
       },
-      className: "selection-tile player-choice profile-choice-trigger",
-      style: {
-        width: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 12,
-        padding: 12,
-        textAlign: 'left',
-        cursor: 'pointer'
-      }
-    }, React.createElement("div", {
-      className: "player-choice-avatar",
-      style: {
-        width: 36,
-        height: 36,
-        borderRadius: '50%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: 14,
-        fontWeight: 800,
-        flexShrink: 0,
-        color: 'white'
-      }
-    }, p.name.slice(0, 1).toUpperCase()), React.createElement("div", {
-      className: "flex-1 min-w-0"
-    }, React.createElement("div", {
-      style: {
-        fontWeight: 700,
-        fontSize: 14,
-        color: "rgba(255,255,255,.95)",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-        whiteSpace: "nowrap"
-      }
-    }, p.name), React.createElement("div", {
-      style: {
-        fontSize: 11,
-        color: "rgba(255,255,255,0.6)",
-        marginTop: 2
-      }
-    }, isCurrent ? 'aktywny' : '')), React.createElement(Icon, {
-      name: "chevdown",
-      size: 18,
-      style: {
-        transform: isOpen ? 'rotate(180deg)' : 'none',
-        stroke: "rgba(255,255,255,.9)",
-        flexShrink: 0,
-        transition: 'transform .2s ease'
-      }
-    })), isOpen && React.createElement("div", {
-      className: "selection-tile profile-choice-actions",
-      style: {
-        padding: 10
-      }
-    }, React.createElement("div", {
-      className: "grid grid-cols-2 gap-2 profile-choice-action-grid"
-    }, isCurrent ? React.createElement("button", {
-      className: "profile-choice-main-action profile-choice-logout",
-      onClick: () => {
-        onLogin('');
-        onClose();
-      }
-    }, React.createElement(Icon, {
-      name: "logout",
-      size: 14
-    }), "Wyloguj si\u0119") : React.createElement(Btn, {
-      variant: "primary",
-      onClick: () => {
-        setSelected(p.id);
-        if (p.pinHash) {
-          setStep('pin');
-          setPin('');
-          setErr('');
-        } else {
-          onLogin(p.id);
-        }
-      },
-      className: "w-full profile-choice-main-action"
-    }, React.createElement(Icon, {
-      name: p.pinHash ? 'lock' : 'check',
-      size: 14
-    }), "Zaloguj"), React.createElement(Btn, {
-      variant: "outline",
-      onClick: () => {
-        setSelected(p.id);
-        setNewName(p.name || '');
-        setRenamePin('');
-        setStep('rename');
-        setRenameErr('');
-      },
-      className: "w-full"
-    }, React.createElement(Icon, {
-      name: "edit",
-      size: 14
-    }), "Zmie\u0144 nazw\u0119"), React.createElement(Btn, {
-      variant: "outline",
-      onClick: () => setSelected(''),
-      className: "w-full col-span-2 profile-choice-cancel"
-    }, "Anuluj"))));
-  })), err && React.createElement("p", {
-    className: "text-xs text-red-600 font-semibold"
-  }, err), React.createElement("div", {
-    className: "flex gap-2"
-  }, React.createElement(Btn, {
-    variant: "outline",
-    onClick: onClose,
-    className: "flex-1"
-  }, "Zamknij"))), step === 'pin' && React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "text-center py-2"
-  }, React.createElement("div", {
-    className: "w-14 h-14 rounded-full bg-[#e8ecf8] flex items-center justify-center text-2xl font-bold text-[#162570] mx-auto mb-2"
-  }, pl.name.slice(0, 1).toUpperCase()), React.createElement("p", {
-    className: "font-semibold text-stone-900"
-  }, pl.name), React.createElement("p", {
-    className: "text-xs text-stone-500 mt-0.5"
-  }, "Wpisz PIN, \u017Ceby si\u0119 zalogowa\u0107")), React.createElement("input", {
-    type: "password",
-    inputMode: "numeric",
-    value: pin,
-    autoFocus: true,
-    onChange: e => {
-      setPin(e.target.value);
-      setErr('');
-    },
-    onKeyDown: e => e.key === 'Enter' && handlePin(),
-    placeholder: "\u2022\u2022\u2022\u2022",
-    maxLength: 8,
-    className: `w-full px-4 py-3 border-2 rounded-xl focus:outline-none text-center text-2xl tracking-[0.5em] ${err ? 'border-red-400 bg-red-50' : 'border-stone-200 focus:border-[#0d1b5e]'}`
-  }), err && React.createElement("p", {
-    className: "text-xs text-red-600 font-semibold text-center"
-  }, err), React.createElement("div", {
-    className: "flex gap-2"
-  }, React.createElement(Btn, {
-    variant: "outline",
-    onClick: () => {
-      setPin('');
-      setErr('');
-      setStep('pick');
-    },
-    className: "flex-1"
-  }, "Anuluj"), React.createElement(Btn, {
-    variant: "primary",
-    onClick: handlePin,
-    disabled: pin.length < 4,
-    className: "flex-1"
-  }, React.createElement(Icon, {
-    name: "unlock",
-    size: 14
-  }), "Zaloguj"))), step === 'rename' && React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "text-center py-2"
-  }, React.createElement("div", {
-    className: "w-14 h-14 rounded-full bg-[#e8ecf8] flex items-center justify-center text-2xl font-bold text-[#162570] mx-auto"
-  }, pl && pl.name.slice(0, 1).toUpperCase())), React.createElement("div", {
-    className: "space-y-3"
-  }, React.createElement("div", null, React.createElement("label", {
-    className: "text-xs font-semibold text-stone-600 block mb-1"
-  }, "Nowe imi\u0119 i nazwisko"), React.createElement("input", {
-    autoFocus: true,
-    value: newName,
-    onChange: e => {
-      setNewName(e.target.value);
-      setRenameErr('');
-    },
-    onKeyDown: e => {
-      if (e.key === 'Enter' && !hasPinHash) handleRenameSubmit();
-    },
-    placeholder: "np. Jan Kowalski",
-    className: `w-full px-3 py-2.5 border-2 rounded-lg focus:outline-none text-sm ${renameErr ? 'border-red-400 bg-red-50' : 'border-stone-200 focus:border-[#0d1b5e]'}`
-  })), hasPinHash && React.createElement("div", null, React.createElement("label", {
-    className: "text-xs font-semibold text-stone-600 block mb-1"
-  }, "PIN u\u017Cytkownika"), React.createElement("input", {
-    type: "password",
-    inputMode: "numeric",
-    value: renamePin,
-    onChange: e => {
-      setRenamePin(e.target.value);
-      setRenameErr('');
-    },
-    onKeyDown: e => {
-      if (e.key === 'Enter') handleRenameSubmit();
-    },
-    placeholder: "\u2022\u2022\u2022\u2022",
-    maxLength: 8,
-    className: `w-full px-3 py-2.5 border-2 rounded-lg focus:outline-none text-sm tracking-[0.35em] text-center ${renameErr ? 'border-red-400 bg-red-50' : 'border-stone-200 focus:border-[#0d1b5e]'}`
-  })), renameErr && React.createElement("p", {
-    className: "text-xs text-red-600 font-semibold mt-1"
-  }, renameErr)), React.createElement("div", {
-    className: "flex gap-2"
-  }, React.createElement(Btn, {
-    variant: "outline",
-    onClick: () => setStep('pick'),
-    className: "flex-1"
-  }, "Anuluj"), React.createElement(Btn, {
-    variant: "primary",
-    onClick: handleRenameSubmit,
-    disabled: !newName.trim(),
-    className: "flex-1"
-  }, React.createElement(Icon, {
-    name: "check",
-    size: 14
-  }), "Zapisz nazw\u0119")))));
+        React.createElement("button", {
+          onClick: () => { setSelected(prev => prev === p.id ? '' : p.id); setErr(''); },
+          className: "profile-choice-trigger"
+        },
+          React.createElement("div", { className: `profile-row-avatar${isCurrent ? ' is-active' : ''}` },
+            p.name.slice(0, 1).toUpperCase()
+          ),
+          React.createElement("div", { className: "profile-row-info" },
+            React.createElement("span", { className: "profile-row-name" }, p.name),
+            isCurrent && React.createElement("span", { className: "profile-row-badge" }, "aktywny")
+          ),
+          React.createElement("div", {
+            className: `profile-row-chevron${isOpen ? ' is-open' : ''}`
+          }, React.createElement(Icon, { name: "chevdown", size: 16 }))
+        ),
+        isOpen && React.createElement("div", { className: "profile-choice-actions" },
+          isCurrent
+            ? React.createElement("button", {
+                className: "profile-action-btn profile-action-logout",
+                onClick: () => { onLogin(''); onClose(); }
+              }, React.createElement(Icon, { name: "logout", size: 14 }), "Wyloguj się")
+            : React.createElement("button", {
+                className: "profile-action-btn profile-action-login",
+                onClick: () => {
+                  setSelected(p.id);
+                  if (p.pinHash) { setStep('pin'); setPin(''); setErr(''); }
+                  else onLogin(p.id);
+                }
+              }, React.createElement(Icon, { name: p.pinHash ? 'lock' : 'check', size: 14 }), "Zaloguj"),
+          React.createElement("button", {
+            className: "profile-action-btn profile-action-rename",
+            onClick: () => {
+              setSelected(p.id);
+              setNewName(p.name || '');
+              setRenamePin('');
+              setStep('rename');
+              setRenameErr('');
+            }
+          }, React.createElement(Icon, { name: "edit", size: 14 }), "Zmień nazwę"),
+          React.createElement("button", {
+            className: "profile-action-btn profile-action-cancel profile-action-full",
+            onClick: () => setSelected('')
+          }, "Anuluj")
+        )
+      );
+    })),
+    err && React.createElement("p", { className: "profile-error" }, err),
+    React.createElement("button", {
+      className: "profile-close-btn",
+      onClick: onClose
+    }, "Zamknij")
+  ), step === 'pin' && React.createElement(React.Fragment, null,
+    React.createElement("div", { className: "profile-step-hero" },
+      React.createElement("div", { className: "profile-step-avatar" }, pl.name.slice(0, 1).toUpperCase()),
+      React.createElement("p", { className: "profile-step-name" }, pl.name),
+      React.createElement("p", { className: "profile-step-hint" }, "Wpisz PIN, żeby się zalogować")
+    ),
+    React.createElement("input", {
+      type: "password",
+      inputMode: "numeric",
+      value: pin,
+      autoFocus: true,
+      onChange: e => { setPin(e.target.value); setErr(''); },
+      onKeyDown: e => e.key === 'Enter' && handlePin(),
+      placeholder: "••••",
+      maxLength: 8,
+      className: `profile-pin-input${err ? ' has-error' : ''}`
+    }),
+    err && React.createElement("p", { className: "profile-error", style: { textAlign: 'center' } }, err),
+    React.createElement("div", { className: "profile-step-actions" },
+      React.createElement("button", {
+        className: "profile-action-btn profile-action-cancel",
+        onClick: () => { setPin(''); setErr(''); setStep('pick'); }
+      }, "Anuluj"),
+      React.createElement("button", {
+        className: "profile-action-btn profile-action-login",
+        onClick: handlePin,
+        disabled: pin.length < 4
+      }, React.createElement(Icon, { name: "unlock", size: 14 }), "Zaloguj")
+    )
+  ), step === 'rename' && React.createElement(React.Fragment, null,
+    React.createElement("div", { className: "profile-step-hero" },
+      React.createElement("div", { className: "profile-step-avatar" }, pl && pl.name.slice(0, 1).toUpperCase()),
+      React.createElement("p", { className: "profile-step-name" }, pl && pl.name),
+      React.createElement("p", { className: "profile-step-hint" }, "Zmiana nazwy użytkownika")
+    ),
+    React.createElement("div", { className: "profile-field" },
+      React.createElement("label", { className: "profile-label" }, "Nowe imię i nazwisko"),
+      React.createElement("input", {
+        autoFocus: true,
+        value: newName,
+        onChange: e => { setNewName(e.target.value); setRenameErr(''); },
+        onKeyDown: e => { if (e.key === 'Enter' && !hasPinHash) handleRenameSubmit(); },
+        placeholder: "np. Jan Kowalski",
+        className: `profile-text-input${renameErr ? ' has-error' : ''}`
+      })
+    ),
+    hasPinHash && React.createElement("div", { className: "profile-field" },
+      React.createElement("label", { className: "profile-label" }, "PIN użytkownika"),
+      React.createElement("input", {
+        type: "password",
+        inputMode: "numeric",
+        value: renamePin,
+        onChange: e => { setRenamePin(e.target.value); setRenameErr(''); },
+        onKeyDown: e => { if (e.key === 'Enter') handleRenameSubmit(); },
+        placeholder: "••••",
+        maxLength: 8,
+        className: `profile-pin-input${renameErr ? ' has-error' : ''}`
+      })
+    ),
+    renameErr && React.createElement("p", { className: "profile-error" }, renameErr),
+    React.createElement("div", { className: "profile-step-actions" },
+      React.createElement("button", {
+        className: "profile-action-btn profile-action-cancel",
+        onClick: () => setStep('pick')
+      }, "Anuluj"),
+      React.createElement("button", {
+        className: "profile-action-btn profile-action-login",
+        onClick: handleRenameSubmit,
+        disabled: !newName.trim()
+      }, React.createElement(Icon, { name: "check", size: 14 }), "Zapisz nazwę")
+    )
+  )));
 }
 function PlayersManager({
   open,
@@ -6022,52 +5862,17 @@ function PlayersManager({
 // Oficjalna ścieżka fazy pucharowej FIFA World Cup 2026.
 // Kolejność wizualna jest celowo inna niż kolejność numerów meczów,
 // aby każda para sąsiadujących kart prowadziła do właściwego kolejnego meczu.
-// Pary 1/16 finału i ich pozycje zgodne z drabinką TVP Sport.
-// Układ pozostaje jednokierunkowy: wszystkie pary startują po lewej stronie.
-const TVP_R32_TEAMS = {
-  M73: ['A2', 'B1'],
-  // RPA – Kanada
-  M74: ['E1', 'D2'],
-  // Niemcy – Paragwaj
-  M75: ['F1', 'C2'],
-  // Holandia – Maroko
-  M76: ['C1', 'F2'],
-  // Brazylia – Japonia
-  M77: ['I1', 'F3'],
-  // Francja – Szwecja
-  M78: ['E3', 'I4'],
-  // Wybrzeże Kości Słoniowej – Norwegia
-  M79: ['A1', 'E4'],
-  // Meksyk – Ekwador
-  M80: ['L1', 'K2'],
-  // Anglia – DR Konga
-  M81: ['D1', 'B2'],
-  // USA – Bośnia i Hercegowina
-  M82: ['G1', 'I2'],
-  // Belgia – Senegal
-  M83: ['K1', 'L2'],
-  // Portugalia – Chorwacja
-  M84: ['H1', 'J3'],
-  // Hiszpania – Austria
-  M85: ['B4', 'J2'],
-  // Szwajcaria – Algieria
-  M86: ['J1', 'H2'],
-  // Argentyna – Rep. Zielonego Przylądka
-  M87: ['K4', 'L3'],
-  // Kolumbia – Ghana
-  M88: ['D3', 'G2'] // Australia – Egipt
-};
 
 // Dokładne przejścia zwycięzców zgodne z kolejnością gałęzi TVP.
 const BRACKET_FEEDS = {
-  M89: [['M74', 'winner'], ['M77', 'winner']],
-  M90: [['M73', 'winner'], ['M75', 'winner']],
-  M91: [['M76', 'winner'], ['M78', 'winner']],
+  M89: [['M75', 'winner'], ['M78', 'winner']],
+  M90: [['M73', 'winner'], ['M76', 'winner']],
+  M91: [['M74', 'winner'], ['M77', 'winner']],
   M92: [['M79', 'winner'], ['M80', 'winner']],
-  M93: [['M83', 'winner'], ['M84', 'winner']],
-  M94: [['M81', 'winner'], ['M82', 'winner']],
-  M95: [['M86', 'winner'], ['M88', 'winner']],
-  M96: [['M85', 'winner'], ['M87', 'winner']],
+  M93: [['M84', 'winner'], ['M83', 'winner']],
+  M94: [['M82', 'winner'], ['M81', 'winner']],
+  M95: [['M87', 'winner'], ['M86', 'winner']],
+  M96: [['M85', 'winner'], ['M88', 'winner']],
   M97: [['M89', 'winner'], ['M90', 'winner']],
   M98: [['M93', 'winner'], ['M94', 'winner']],
   M99: [['M91', 'winner'], ['M92', 'winner']],
@@ -6080,7 +5885,7 @@ const BRACKET_FEEDS = {
 const BRACKET_LAYOUT = {
   rounds: [{
     label: '1/16 finału',
-    ids: ['M74', 'M77', 'M73', 'M75', 'M83', 'M84', 'M81', 'M82', 'M76', 'M78', 'M79', 'M80', 'M86', 'M88', 'M85', 'M87']
+    ids: ['M75', 'M78', 'M73', 'M76', 'M84', 'M83', 'M82', 'M81', 'M74', 'M77', 'M79', 'M80', 'M87', 'M86', 'M85', 'M88']
   }, {
     label: '1/8 finału',
     ids: ['M89', 'M90', 'M93', 'M94', 'M91', 'M92', 'M95', 'M96']
@@ -6100,26 +5905,26 @@ const BRACKET_SOURCES = {
   M74: ['1. miejsce grupy E', '3. miejsce: A/B/C/D/F'],
   M75: ['1. miejsce grupy F', '2. miejsce grupy C'],
   M76: ['1. miejsce grupy C', '2. miejsce grupy F'],
-  M77: ['1. miejsce grupy I', '3. miejsce: C/D/F/G/H'],
-  M78: ['2. miejsce grupy E', '2. miejsce grupy I'],
+  M77: ['2. miejsce grupy E', '2. miejsce grupy I'],
+  M78: ['1. miejsce grupy I', '3. miejsce: C/D/F/G/H'],
   M79: ['1. miejsce grupy A', '3. miejsce: C/E/F/H/I'],
   M80: ['1. miejsce grupy L', '3. miejsce: E/H/I/J/K'],
-  M81: ['1. miejsce grupy D', '3. miejsce: B/E/F/I/J'],
-  M82: ['1. miejsce grupy G', '3. miejsce: A/E/H/I/J'],
-  M83: ['2. miejsce grupy K', '2. miejsce grupy L'],
-  M84: ['1. miejsce grupy H', '2. miejsce grupy J'],
+  M81: ['1. miejsce grupy G', '3. miejsce: A/E/H/I/J'],
+  M82: ['1. miejsce grupy D', '3. miejsce: B/E/F/I/J'],
+  M83: ['1. miejsce grupy H', '2. miejsce grupy J'],
+  M84: ['2. miejsce grupy K', '2. miejsce grupy L'],
   M85: ['1. miejsce grupy B', '3. miejsce: E/F/G/I/J'],
-  M86: ['1. miejsce grupy J', '2. miejsce grupy H'],
-  M87: ['1. miejsce grupy K', '3. miejsce: D/E/I/J/L'],
-  M88: ['2. miejsce grupy D', '2. miejsce grupy G'],
-  M89: ['Zwycięzca M74', 'Zwycięzca M77'],
-  M90: ['Zwycięzca M73', 'Zwycięzca M75'],
-  M91: ['Zwycięzca M76', 'Zwycięzca M78'],
+  M86: ['2. miejsce grupy D', '2. miejsce grupy G'],
+  M87: ['1. miejsce grupy J', '2. miejsce grupy H'],
+  M88: ['1. miejsce grupy K', '3. miejsce: D/E/I/J/L'],
+  M89: ['Zwycięzca M75', 'Zwycięzca M78'],
+  M90: ['Zwycięzca M73', 'Zwycięzca M76'],
+  M91: ['Zwycięzca M74', 'Zwycięzca M77'],
   M92: ['Zwycięzca M79', 'Zwycięzca M80'],
-  M93: ['Zwycięzca M83', 'Zwycięzca M84'],
-  M94: ['Zwycięzca M81', 'Zwycięzca M82'],
-  M95: ['Zwycięzca M86', 'Zwycięzca M88'],
-  M96: ['Zwycięzca M85', 'Zwycięzca M87'],
+  M93: ['Zwycięzca M84', 'Zwycięzca M83'],
+  M94: ['Zwycięzca M82', 'Zwycięzca M81'],
+  M95: ['Zwycięzca M87', 'Zwycięzca M86'],
+  M96: ['Zwycięzca M85', 'Zwycięzca M88'],
   M97: ['Zwycięzca M89', 'Zwycięzca M90'],
   M98: ['Zwycięzca M93', 'Zwycięzca M94'],
   M99: ['Zwycięzca M91', 'Zwycięzca M92'],
@@ -6138,9 +5943,10 @@ function bracketWinnerSide(result) {
 function resolveBracketTeamId(matchId, side, matchesById, results, cache) {
   const key = `${matchId}:${side}`;
   if (Object.prototype.hasOwnProperty.call(cache, key)) return cache[key];
-  const r32 = TVP_R32_TEAMS[matchId];
-  if (r32) {
-    cache[key] = r32[side === 'home' ? 0 : 1] || null;
+  const matchObj = matchesById[matchId];
+  if (matchObj && matchObj.phase === 'r32') {
+    const teamId = matchObj[side === 'home' ? 'homeTeamId' : 'awayTeamId'] || null;
+    cache[key] = teamId;
     return cache[key];
   }
   const feed = BRACKET_FEEDS[matchId];
@@ -6154,8 +5960,7 @@ function resolveBracketTeamId(matchId, side, matchesById, results, cache) {
       return cache[key];
     }
   }
-  const match = matchesById[matchId];
-  const fallback = match?.[side === 'home' ? 'homeTeamId' : 'awayTeamId'] || null;
+  const fallback = matchObj?.[side === 'home' ? 'homeTeamId' : 'awayTeamId'] || null;
   cache[key] = fallback;
   return fallback;
 }
@@ -6507,6 +6312,11 @@ function BottomNav({
       return;
     }
     if (tabKey === activeTab) return;
+    const _dropEl = trackRef.current && trackRef.current.querySelector('.nav-droplet');
+    if (_dropEl) {
+      _dropEl.classList.add('squishing');
+      setTimeout(() => _dropEl.classList.remove('squishing'), 180);
+    }
     requestSelect(tabKey);
   };
   useEffect(() => () => {

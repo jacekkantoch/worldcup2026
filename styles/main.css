@@ -805,7 +805,7 @@
       box-shadow: 0 35px 110px rgba(0,0,0,.60), inset 0 1px 0 rgba(255,255,255,.25) !important;
     }
     .fixed.inset-0.z-50 > .relative > div:first-child {
-      background: rgba(255,255,255,.045) !important;
+      background: transparent !important;
       border-color: rgba(255,255,255,.12) !important;
     }
 
@@ -3440,7 +3440,7 @@
       background:
         radial-gradient(circle at -6% 50%, var(--note-left-glow), transparent 34%),
         radial-gradient(circle at 106% 50%, var(--note-right-glow), transparent 30%),
-        linear-gradient(90deg, rgba(48,54,70,.97) 0%, rgba(27,29,38,.97) 56%, rgba(25,22,24,.97) 100%) !important;
+        rgba(32,36,50,.97) !important;
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,.10),
         inset 0 -1px 0 rgba(0,0,0,.18),
@@ -3452,10 +3452,14 @@
       letter-spacing: -.01em;
     }
     .app-note--warning {
-      --note-color: #ffd65a;
-      --note-border: rgba(255,210,90,.20);
-      --note-left-glow: rgba(0,190,225,.22);
-      --note-right-glow: rgba(255,145,25,.13);
+      --note-color: #5a3e00;
+      --note-border: rgba(200,160,40,.50);
+      --note-left-glow: rgba(255,255,180,.18);
+      --note-right-glow: rgba(255,200,0,.14);
+      background:
+        radial-gradient(circle at -6% 50%, var(--note-left-glow), transparent 34%),
+        radial-gradient(circle at 106% 50%, var(--note-right-glow), transparent 30%),
+        rgba(190,145,20,.88) !important;
     }
     .app-note--info {
       --note-color: #a9d8ff;
@@ -3464,10 +3468,14 @@
       --note-right-glow: rgba(70,125,255,.14);
     }
     .app-note--danger {
-      --note-color: #ffaaa2;
-      --note-border: rgba(255,105,97,.22);
-      --note-left-glow: rgba(0,190,225,.16);
-      --note-right-glow: rgba(255,70,75,.16);
+      --note-color: #3a0604;
+      --note-border: rgba(180,50,40,.50);
+      --note-left-glow: rgba(255,180,160,.16);
+      --note-right-glow: rgba(255,80,60,.14);
+      background:
+        radial-gradient(circle at -6% 50%, var(--note-left-glow), transparent 34%),
+        radial-gradient(circle at 106% 50%, var(--note-right-glow), transparent 30%),
+        rgba(160,30,22,.90) !important;
     }
     .app-note--success {
       --note-color: #8cebae;
@@ -3545,7 +3553,7 @@
       background:
         radial-gradient(circle at -6% 50%, var(--note-left-glow), transparent 34%),
         radial-gradient(circle at 106% 50%, var(--note-right-glow), transparent 30%),
-        linear-gradient(90deg, rgba(48,54,70,.97) 0%, rgba(27,29,38,.97) 56%, rgba(25,22,24,.97) 100%) !important;
+        rgba(32,36,50,.97) !important;
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,.10),
         inset 0 -1px 0 rgba(0,0,0,.18),
@@ -3558,6 +3566,24 @@
       filter: none !important;
       opacity: 1 !important;
       outline: none !important;
+    }
+
+    /* Warning i danger zachowują swój kolor przy hover/active */
+    .app-note--warning:is(:hover, :active, :focus, :focus-visible, :focus-within),
+    div.app-note--warning:is(:hover, :active),
+    section.app-note--warning:is(:hover, :active) {
+      background:
+        radial-gradient(circle at -6% 50%, var(--note-left-glow), transparent 34%),
+        radial-gradient(circle at 106% 50%, var(--note-right-glow), transparent 30%),
+        rgba(190,145,20,.88) !important;
+    }
+    .app-note--danger:is(:hover, :active, :focus, :focus-visible, :focus-within),
+    div.app-note--danger:is(:hover, :active),
+    section.app-note--danger:is(:hover, :active) {
+      background:
+        radial-gradient(circle at -6% 50%, var(--note-left-glow), transparent 34%),
+        radial-gradient(circle at 106% 50%, var(--note-right-glow), transparent 30%),
+        rgba(160,30,22,.90) !important;
     }
 
     /* Przyciski umieszczone wewnątrz komunikatów nadal działają normalnie. */
@@ -4344,6 +4370,58 @@ html body .admin-panel-actions {
 /* ===== 17. admin-gate-close-button-fix ===== */
 html body .admin-gate-card {
       position: relative !important;
+      max-width: 360px !important;
+      margin: 18px auto !important;
+      padding: 22px 18px 18px !important;
+      border-radius: 26px !important;
+      background:
+        linear-gradient(180deg, rgba(31, 44, 67, .98), rgba(11, 18, 31, .98)) !important;
+      border: 1px solid rgba(255,255,255,.10) !important;
+      box-shadow: var(--shadow-lg) !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 10px !important;
+    }
+
+    html body .admin-gate-hero {
+      text-align: center !important;
+      padding: 4px 0 4px !important;
+    }
+
+    html body .admin-gate-icon {
+      width: 54px !important;
+      height: 54px !important;
+      border-radius: 50% !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      margin: 0 auto 11px !important;
+      color: #eef8ff !important;
+      background: linear-gradient(145deg, rgba(93,188,255,.46), rgba(91,77,242,.38)) !important;
+      border: 1px solid rgba(174,220,255,.46) !important;
+    }
+
+    html body .admin-gate-title {
+      font-size: 17px !important;
+      font-weight: 780 !important;
+      letter-spacing: -.02em !important;
+      color: var(--label-1) !important;
+      margin: 0 !important;
+    }
+
+    html body .admin-gate-subtitle {
+      font-size: 12px !important;
+      color: var(--label-3) !important;
+      margin: 5px 0 0 !important;
+    }
+
+    html body .admin-gate-field { margin: 0 !important; }
+
+    html body .admin-gate-submit {
+      width: 100% !important;
+      margin-top: 4px !important;
+      padding: 11px 16px !important;
+      font-size: 13.5px !important;
     }
 
     html body .admin-gate-close-btn {
@@ -4578,6 +4656,7 @@ html body .admin-score-controls > div > div:last-child > button {
   justify-content: center !important;
   font-size: 26px !important;
   line-height: 1 !important;
+  outline: none !important;
 }
 
 
@@ -5019,192 +5098,495 @@ html body .profile-modal-overlay {
 }
 
 html body .login-modal-sheet:not(.login-modal-compact-sheet) {
-  width: min(calc(100% - 42px), 520px) !important;
-  max-height: min(82dvh, 760px) !important;
-  border-radius: 28px !important;
+  width: min(calc(100% - 42px), 400px) !important;
+  max-height: min(74dvh, 600px) !important;
+  border-radius: 26px !important;
   background:
     linear-gradient(180deg, rgba(31, 44, 67, .98), rgba(11, 18, 31, .98)) !important;
   border: 1px solid rgba(255,255,255,.10) !important;
 }
 
 html body .login-modal-sheet:not(.login-modal-compact-sheet) > div:first-child {
-  min-height: 64px !important;
-  padding: 16px 22px !important;
-  background: linear-gradient(180deg, rgba(38, 54, 81, .94), rgba(29, 42, 64, .92)) !important;
-  border-bottom: 1px solid rgba(255,255,255,.08) !important;
+  min-height: 52px !important;
+  padding: 13px 17px !important;
+  background: transparent !important;
+  border-bottom: 0 !important;
 }
 
 html body .login-modal-sheet:not(.login-modal-compact-sheet) .login-modal-title {
-  font-size: 19px !important;
+  font-size: 16px !important;
   letter-spacing: -.02em !important;
 }
 
 html body .login-modal-sheet:not(.login-modal-compact-sheet) .login-modal-content {
-  padding: 18px 22px 22px !important;
-}
-
-html body .profile-modal-body {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 14px !important;
-}
-
-html body .profile-modal-body > :not([hidden]) ~ :not([hidden]) {
-  margin-top: 0 !important;
-}
-
-html body .profile-current-card {
-  display: grid !important;
-  grid-template-columns: 52px minmax(0, 1fr) !important;
-  align-items: center !important;
-  gap: 13px !important;
-  padding: 14px !important;
-  border-radius: 22px !important;
-  background: linear-gradient(145deg, rgba(73, 121, 190, .24), rgba(25, 36, 56, .92)) !important;
-  border: 1px solid rgba(128, 180, 255, .20) !important;
-}
-
-html body .profile-current-avatar {
-  width: 52px !important;
-  height: 52px !important;
-  border-radius: 18px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  background: linear-gradient(145deg, rgba(105, 153, 235, .95), rgba(55, 82, 178, .88)) !important;
-  color: #fff !important;
-  font-size: 22px !important;
-  font-weight: 900 !important;
-}
-
-html body .profile-current-copy {
-  min-width: 0 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 3px !important;
-}
-
-html body .profile-current-label {
-  color: rgba(190, 210, 238, .68) !important;
-  font-size: 11px !important;
-  font-weight: 800 !important;
-  letter-spacing: .08em !important;
-  text-transform: uppercase !important;
-}
-
-html body .profile-current-copy strong {
-  color: rgba(255,255,255,.98) !important;
-  font-size: 20px !important;
-  line-height: 1.1 !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  white-space: nowrap !important;
-}
-
-html body .profile-modal-hint {
-  margin: 0 !important;
-  color: rgba(205, 218, 238, .72) !important;
-  font-size: 13px !important;
-  line-height: 1.4 !important;
-}
-
-html body .profile-add-user-btn {
-  min-height: 52px !important;
-  border-radius: 18px !important;
-  background: rgba(255,255,255,.065) !important;
-  border-color: rgba(255,255,255,.10) !important;
-  color: rgba(255,255,255,.94) !important;
-  font-size: 15px !important;
-  font-weight: 850 !important;
-}
-
-html body .profile-users-list {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 8px !important;
-}
-
-html body .profile-empty-state {
-  margin: 0 !important;
-  padding: 22px 16px !important;
-  border-radius: 20px !important;
-  background: rgba(255,255,255,.045) !important;
-  color: rgba(220,230,245,.68) !important;
-  text-align: center !important;
-  font-size: 13px !important;
-}
-
-html body .profile-choice-shell {
-  border-radius: 20px !important;
-}
-
-html body .profile-choice-trigger {
-  min-height: 64px !important;
-  padding: 10px 13px !important;
-  border-radius: 20px !important;
-  background: rgba(255,255,255,.055) !important;
-  border: 1px solid rgba(255,255,255,.075) !important;
-  color: rgba(255,255,255,.94) !important;
-}
-
-html body .profile-choice-shell.is-open {
-  border-radius: 22px !important;
-  background: rgba(255,255,255,.065) !important;
-  border: 1px solid rgba(255,255,255,.11) !important;
-}
-
-html body .profile-choice-shell.is-open .profile-choice-trigger {
-  border-radius: 22px 22px 0 0 !important;
-  background: transparent !important;
-  border: 0 !important;
-}
-
-html body .player-choice-avatar {
-  width: 42px !important;
-  height: 42px !important;
-  border-radius: 15px !important;
-  background: rgba(116, 137, 168, .35) !important;
-}
-
-html body .profile-choice-actions {
-  border-radius: 0 0 22px 22px !important;
-  padding: 0 12px 12px !important;
-  background: transparent !important;
-}
-
-html body .profile-choice-action-grid {
-  display: grid !important;
-  grid-template-columns: 1fr 1fr !important;
-  gap: 8px !important;
-}
-
-html body .profile-choice-action-grid button {
-  min-height: 42px !important;
-  border-radius: 15px !important;
-}
-
-html body .profile-choice-cancel {
-  grid-column: 1 / -1 !important;
-}
-
-html body .profile-choice-logout {
-  background: rgba(255, 69, 58, .14) !important;
-  border: 1px solid rgba(255, 105, 97, .24) !important;
-  color: #ff9b96 !important;
+  padding: 13px 15px 15px !important;
 }
 
 @media (max-width: 520px) {
   html body .login-modal-sheet:not(.login-modal-compact-sheet) {
-    width: min(calc(100% - 22px), 520px) !important;
-    max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - 34px) !important;
-    border-radius: 24px !important;
+    width: min(calc(100% - 26px), 360px) !important;
+    max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - 150px) !important;
+    border-radius: 22px !important;
+  }
+
+  html body .login-modal-sheet:not(.login-modal-compact-sheet) > div:first-child {
+    min-height: 46px !important;
+    padding: 11px 14px !important;
+  }
+
+  html body .login-modal-sheet:not(.login-modal-compact-sheet) .login-modal-title {
+    font-size: 15px !important;
   }
 
   html body .login-modal-sheet:not(.login-modal-compact-sheet) .login-modal-content {
-    padding: 14px !important;
+    padding: 11px 12px 12px !important;
   }
 
-  html body .profile-current-copy strong {
-    font-size: 18px !important;
+  html body .profile-modal-overlay-root {
+    padding-top: 76px !important;
   }
+
+  html body .profile-add-btn {
+    padding: 9px 14px !important;
+    font-size: 12.5px !important;
+  }
+
+  html body .profile-player-list { gap: 5px !important; }
+
+  html body .profile-choice-trigger {
+    padding: 9px 11px !important;
+    gap: 9px !important;
+  }
+  html body .profile-row-avatar {
+    width: 30px !important;
+    height: 30px !important;
+    font-size: 11.5px !important;
+  }
+  html body .profile-row-name { font-size: 13px !important; }
+  html body .profile-row-badge { font-size: 8.5px !important; padding: 1px 6px !important; }
+
+  html body .profile-choice-actions {
+    padding: 8px 8px 9px !important;
+    gap: 6px !important;
+  }
+  html body .profile-action-btn {
+    padding: 8px 10px !important;
+    font-size: 11.5px !important;
+  }
+
+  html body .profile-step-hero { padding: 4px 0 4px !important; }
+  html body .profile-step-avatar {
+    width: 48px !important;
+    height: 48px !important;
+    font-size: 18px !important;
+    margin-bottom: 7px !important;
+  }
+  html body .profile-step-name { font-size: 14px !important; }
+  html body .profile-step-hint { font-size: 11px !important; }
+
+  html body .profile-pin-input {
+    padding: 11px !important;
+    font-size: 19px !important;
+    letter-spacing: .35em !important;
+  }
+  html body .profile-text-input {
+    padding: 9px 14px !important;
+    font-size: 13px !important;
+  }
+  html body .profile-close-btn {
+    padding: 9px !important;
+    font-size: 12.5px !important;
+  }
+}
+
+.infinite-group-scroll::-webkit-scrollbar { display: none; }
+.infinite-group-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Przycisk zamknięcia (X) modali — okrągłe szklane tło */
+.modal-close-btn {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255,255,255,.10);
+  border: 1px solid rgba(255,255,255,.14);
+  color: rgba(255,255,255,.90);
+  cursor: pointer;
+  transition: background .16s var(--ease-out), border-color .16s, transform .12s;
+}
+.modal-close-btn:hover {
+  background: rgba(255,255,255,.16);
+  border-color: rgba(255,255,255,.22);
+}
+.modal-close-btn:active {
+  transform: scale(.92);
+}
+.modal-close-btn svg {
+  display: block;
+  stroke: currentColor;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PROFIL I UŻYTKOWNICY — redesign spójny z liquid-glass
+═══════════════════════════════════════════════════════════════ */
+
+/* Modal body spacing */
+.profile-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Hint — niezalogowany */
+.profile-modal-hint {
+  font-size: 13px;
+  color: var(--label-2);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* "Dodaj użytkownika" button */
+.profile-add-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 11px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--label-1);
+  background: linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.03));
+  border: 1px solid rgba(255,255,255,.16);
+  cursor: pointer;
+  transition: background .18s var(--ease-out), border-color .18s;
+  letter-spacing: -.005em;
+}
+.profile-add-btn:hover {
+  background: linear-gradient(145deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
+  border-color: rgba(255,255,255,.24);
+}
+.profile-add-btn:active { transform: scale(.97); }
+.profile-add-btn svg { flex-shrink: 0; }
+
+/* Lista graczy */
+.profile-player-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.profile-empty-hint {
+  font-size: 12.5px;
+  color: var(--label-3);
+  text-align: center;
+  padding: 14px 0 6px;
+  margin: 0;
+}
+
+/* Rząd gracza */
+.profile-choice-shell {
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.13);
+  background: linear-gradient(145deg, rgba(255,255,255,.07), rgba(255,255,255,.025));
+  transition: border-color .18s;
+}
+.profile-choice-shell.is-open {
+  border-color: rgba(255,255,255,.20);
+  background: linear-gradient(145deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+}
+.profile-choice-shell.is-current {
+  border-color: rgba(112,184,255,.32);
+  background: linear-gradient(145deg, rgba(93,188,255,.10), rgba(91,77,242,.065));
+}
+
+/* Trigger (wiersz gracza) */
+.profile-choice-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 11px 13px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+.profile-choice-trigger:active { opacity: .75; }
+
+/* Mini-avatar w wierszu */
+.profile-row-avatar {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 850;
+  color: rgba(255,255,255,.88);
+  background: rgba(255,255,255,.11);
+  border: 1px solid rgba(255,255,255,.16);
+  letter-spacing: -.01em;
+  transition: background .18s, border-color .18s;
+}
+.profile-row-avatar.is-active {
+  background: linear-gradient(145deg, rgba(93,188,255,.46), rgba(91,77,242,.38));
+  border-color: rgba(174,220,255,.46);
+  color: #eef8ff;
+}
+
+/* Info w wierszu */
+.profile-row-info {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.profile-row-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--label-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  letter-spacing: -.01em;
+}
+.profile-row-badge {
+  flex-shrink: 0;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--accent-green);
+  background: rgba(73,223,125,.12);
+  border: 1px solid rgba(73,223,125,.24);
+  border-radius: 999px;
+  padding: 2px 7px;
+}
+
+/* Chevron */
+.profile-row-chevron {
+  flex-shrink: 0;
+  color: rgba(255,255,255,.45);
+  transition: transform .22s var(--ease-spring), color .18s;
+  display: flex;
+  align-items: center;
+}
+.profile-row-chevron.is-open {
+  transform: rotate(180deg);
+  color: rgba(255,255,255,.75);
+}
+
+/* Panel akcji (rozwinięty) */
+.profile-choice-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+  padding: 10px 10px 11px;
+  border-top: 1px solid rgba(255,255,255,.08);
+  background: rgba(0,0,0,.08);
+}
+
+/* Wspólny styl przycisków akcji */
+.profile-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 12px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,.14);
+  background: linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.03));
+  color: var(--label-1);
+  transition: background .16s var(--ease-out), border-color .16s, opacity .16s, transform .12s;
+  white-space: nowrap;
+}
+.profile-action-btn:hover {
+  background: linear-gradient(145deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
+  border-color: rgba(255,255,255,.24);
+}
+.profile-action-btn:active { transform: scale(.95); }
+.profile-action-btn:disabled {
+  opacity: .38;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Zaloguj — niebieskie */
+.profile-action-login {
+  background: linear-gradient(145deg, rgba(62,174,255,.46), rgba(36,101,242,.34));
+  border-color: rgba(151,211,255,.44);
+  color: #eef8ff;
+}
+.profile-action-login:hover {
+  background: linear-gradient(145deg, rgba(82,188,255,.58), rgba(46,118,252,.44));
+  border-color: rgba(165,220,255,.58);
+}
+
+/* Wyloguj — czerwone */
+.profile-action-logout {
+  background: rgba(180,0,0,.18);
+  border-color: rgba(255,105,97,.30);
+  color: #ff9b96;
+}
+.profile-action-logout:hover {
+  background: rgba(200,0,0,.24);
+  border-color: rgba(255,105,97,.44);
+}
+
+/* Zmień nazwę — subtelny */
+.profile-action-rename {
+  color: var(--label-2);
+}
+
+/* Anuluj — rozciągnięty przez obie kolumny */
+.profile-action-cancel {
+  color: var(--label-3);
+  font-weight: 600;
+}
+.profile-action-full {
+  grid-column: 1 / -1;
+}
+
+/* Zamknij */
+.profile-close-btn {
+  width: 100%;
+  padding: 11px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--label-2);
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  cursor: pointer;
+  transition: background .16s, border-color .16s;
+}
+.profile-close-btn:hover {
+  background: rgba(255,255,255,.10);
+  border-color: rgba(255,255,255,.20);
+}
+.profile-close-btn:active { opacity: .75; }
+
+/* Błąd */
+.profile-error {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--accent-red);
+  margin: 0;
+  letter-spacing: .01em;
+}
+
+/* ── Kroki PIN i Zmiana nazwy ── */
+.profile-step-hero {
+  text-align: center;
+  padding: 10px 0 6px;
+}
+.profile-step-avatar {
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 850;
+  color: #eef8ff;
+  background: linear-gradient(145deg, rgba(93,188,255,.46), rgba(91,77,242,.38));
+  border: 1px solid rgba(174,220,255,.46);
+  margin: 0 auto 10px;
+  letter-spacing: -.01em;
+}
+.profile-step-name {
+  font-size: 16px;
+  font-weight: 780;
+  color: var(--label-1);
+  margin: 0 0 4px;
+  letter-spacing: -.02em;
+}
+.profile-step-hint {
+  font-size: 12px;
+  color: var(--label-3);
+  margin: 0;
+}
+
+/* PIN input — duży, wyśrodkowany */
+.profile-pin-input {
+  width: 100%;
+  padding: 14px;
+  border-radius: 999px;
+  text-align: center;
+  font-size: 22px;
+  letter-spacing: .45em;
+  font-family: inherit;
+  color: var(--label-1);
+  background: linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.03));
+  border: 1px solid rgba(255,255,255,.18);
+  transition: border-color .18s, box-shadow .18s;
+}
+.profile-pin-input:focus {
+  border-color: rgba(112,184,255,.78);
+  box-shadow: 0 0 0 3px rgba(55,142,255,.18);
+  outline: none;
+}
+.profile-pin-input.has-error {
+  border-color: rgba(255,105,97,.55);
+  background: rgba(180,0,0,.08);
+}
+
+/* Pole tekstowe — rename */
+.profile-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.profile-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--label-2);
+  letter-spacing: .02em;
+  padding-left: 4px;
+}
+.profile-text-input {
+  width: 100%;
+  padding: 11px 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--label-1);
+  background: linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.03));
+  border: 1px solid rgba(255,255,255,.18);
+  transition: border-color .18s, box-shadow .18s;
+}
+.profile-text-input:focus {
+  border-color: rgba(112,184,255,.78);
+  box-shadow: 0 0 0 3px rgba(55,142,255,.18);
+  outline: none;
+}
+.profile-text-input.has-error {
+  border-color: rgba(255,105,97,.55);
+  background: rgba(180,0,0,.08);
+}
+
+/* Przyciski akcji w kroku PIN/rename */
+.profile-step-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+/* Responsive */
+@media (max-width: 400px) {
+  .profile-action-btn { font-size: 12px; padding: 9px 10px; }
+  .profile-step-avatar { width: 54px; height: 54px; font-size: 20px; }
 }
