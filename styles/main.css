@@ -4758,3 +4758,324 @@ html body .bracket-scroll::-webkit-scrollbar {
   width: 0 !important;
   height: 0 !important;
 }
+
+/* Admin: bez zanikania nazw drużyn w wyborze awansu po karnych. */
+html body .admin-panel .admin-match-details button .truncate,
+html body .admin-panel .admin-match-details button span[class*="truncate"] {
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+/* Flat mode: bez cieni, poświat, błysków i efektu 3D. */
+:root {
+  --shadow-sm: none !important;
+  --shadow-md: none !important;
+  --shadow-lg: none !important;
+  --shadow-glow: none !important;
+  --hl: none !important;
+  --hl2: none !important;
+}
+
+html body,
+html body *,
+html body *::before,
+html body *::after {
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+  transform-style: flat !important;
+  perspective: none !important;
+}
+
+html body .pitch-bg::before,
+html body .pitch-bg::after,
+html body .app-note::after,
+html body .app-header::before,
+html body .bottom-nav::before,
+html body .admin-match-card.expanded > .admin-match-details::before,
+html body .admin-match-card.expanded > .admin-match-summary-button::after,
+html body .match-card::before,
+html body .match-card::after,
+html body .selection-tile::before,
+html body .selection-tile::after,
+html body .nav-droplet::before,
+html body .nav-droplet::after,
+html body .login-btn::before,
+html body .players-btn::before {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+  background-image: none !important;
+}
+
+html body .app-header .logo-icon,
+html body .loading-icon,
+html body .nav-droplet,
+html body .selection-tile,
+html body .match-points-badge,
+html body .score-input-shell,
+html body .score-input-shell > button,
+html body .score-input-shell .score-value-input,
+html body .app-note,
+html body .match-card,
+html body .admin-match-card,
+html body .leaderboard-card,
+html body .bracket-match,
+html body .bracket-final-card {
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+html body .nav-droplet.dragging,
+html body .match-card,
+html body .admin-match-card,
+html body .selection-tile,
+html body .bottom-nav button,
+html body .app-header button {
+  transform: none !important;
+}
+
+/* Safari mobile: treść bliżej paska przeglądarki, menu niżej. */
+@media (max-width: 700px), (pointer: coarse) {
+  html body {
+    padding-bottom: calc(58px + max(0px, var(--safe-bottom) - 22px)) !important;
+  }
+
+  html body .app-content {
+    padding-bottom: 64px !important;
+  }
+
+  html body .bottom-nav {
+    bottom: max(4px, calc(var(--safe-bottom) - 24px)) !important;
+  }
+}
+
+@supports (-webkit-touch-callout: none) {
+  @media (max-width: 700px), (pointer: coarse) {
+    html body {
+      padding-bottom: calc(52px + max(0px, var(--safe-bottom) - 26px)) !important;
+    }
+
+    html body .app-content {
+      padding-bottom: 56px !important;
+    }
+
+    html body .bottom-nav {
+      bottom: max(2px, calc(var(--safe-bottom) - 28px)) !important;
+    }
+  }
+}
+
+/* Banery informacyjne: brak efektów po najechaniu. */
+html body .app-note,
+html body .install-banner,
+html body .specials-score-banner,
+html body .admin-panel-banner {
+  cursor: default !important;
+  transition: none !important;
+  animation: none !important;
+  transform: none !important;
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+html body .app-note:is(:hover, :focus, :focus-visible, :focus-within, :active),
+html body .install-banner:is(:hover, :focus, :focus-visible, :focus-within, :active),
+html body .specials-score-banner:is(:hover, :focus, :focus-visible, :focus-within, :active),
+html body .admin-panel-banner:is(:hover, :focus, :focus-visible, :focus-within, :active) {
+  cursor: default !important;
+  transition: none !important;
+  animation: none !important;
+  transform: none !important;
+  filter: none !important;
+  opacity: 1 !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+html body .app-note:is(:hover, :focus, :focus-visible, :focus-within, :active) {
+  border-color: var(--note-border) !important;
+  color: var(--note-color) !important;
+}
+
+html body .install-banner:is(:hover, :focus, :focus-visible, :focus-within, :active) {
+  background: var(--glass-2) !important;
+  border-color: var(--border-2) !important;
+}
+
+html body .app-note button,
+html body .app-note a,
+html body .install-banner button,
+html body .install-banner a {
+  cursor: pointer !important;
+  transition: opacity .15s, background .15s, color .15s !important;
+}
+
+/* Typy innych graczy: płaskie wiersze bez efektu 3D. */
+html body .prediction-row,
+html body .compare-view .compare-player-row {
+  background: rgba(255,255,255,.035) !important;
+  background-image: none !important;
+  border: 1px solid rgba(255,255,255,.055) !important;
+  box-shadow: none !important;
+  filter: none !important;
+  transform: none !important;
+}
+
+html body .prediction-row::before,
+html body .prediction-row::after,
+html body .compare-view .compare-player-row::before,
+html body .compare-view .compare-player-row::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html body .prediction-row-exact,
+html body .compare-view .prediction-row-exact {
+  background: rgba(18, 132, 78, .22) !important;
+  border-color: rgba(60, 190, 115, .22) !important;
+}
+
+html body .prediction-row-partial,
+html body .compare-view .prediction-row-partial {
+  background: rgba(138, 91, 28, .22) !important;
+  border-color: rgba(210, 145, 48, .22) !important;
+}
+
+html body .prediction-row-miss,
+html body .compare-view .prediction-row-miss {
+  background: rgba(122, 42, 52, .20) !important;
+  border-color: rgba(190, 74, 84, .20) !important;
+}
+
+html body .prediction-row-empty,
+html body .prediction-row-pending,
+html body .compare-view .prediction-row-empty,
+html body .compare-view .prediction-row-pending {
+  background: rgba(255,255,255,.035) !important;
+  border-color: rgba(255,255,255,.055) !important;
+}
+
+/* Kolor skrótu drużyny wskazanej w karnych. */
+html body .prediction-penalty.penalty-hit,
+html body .compare-view .compare-player-penalty.penalty-hit {
+  color: #4ade80 !important;
+}
+
+html body .prediction-penalty.penalty-miss,
+html body .compare-view .compare-player-penalty.penalty-miss {
+  color: #f87171 !important;
+}
+
+/* Stabilizacja hover: bez przypadkowych podswietlen poza elementem. */
+html body :is(
+  .match-card,
+  .admin-match-card,
+  .compare-match-toggle,
+  .selection-tile,
+  .leaderboard-phase-summary,
+  .leaderboard-card,
+  .bracket-match,
+  .bracket-final-card,
+  .bracket-section,
+  .prediction-row,
+  .compare-player-row,
+  .app-note,
+  .install-banner,
+  .specials-score-banner,
+  .admin-panel-banner,
+  section.bg-white,
+  .glass,
+  .glass-strong
+) {
+  overflow: hidden !important;
+  isolation: isolate !important;
+  contain: paint !important;
+}
+
+html body :is(
+  .match-card,
+  .admin-match-card,
+  .compare-match-toggle,
+  .selection-tile,
+  .leaderboard-phase-summary,
+  .leaderboard-card,
+  .bracket-match,
+  .bracket-final-card,
+  .bracket-section,
+  .prediction-row,
+  .compare-player-row,
+  .app-note,
+  .install-banner,
+  .specials-score-banner,
+  .admin-panel-banner,
+  section.bg-white,
+  .glass,
+  .glass-strong
+):is(:hover, :focus, :focus-visible, :focus-within, :active) {
+  box-shadow: none !important;
+  filter: none !important;
+  transform: none !important;
+}
+
+html body :is(
+  .match-card,
+  .admin-match-card,
+  .compare-match-toggle,
+  .selection-tile,
+  .leaderboard-phase-summary,
+  .leaderboard-card,
+  .bracket-match,
+  .bracket-final-card,
+  .bracket-section,
+  .prediction-row,
+  .compare-player-row,
+  .app-note,
+  .install-banner,
+  .specials-score-banner,
+  .admin-panel-banner,
+  section.bg-white,
+  .glass,
+  .glass-strong
+)::before,
+html body :is(
+  .match-card,
+  .admin-match-card,
+  .compare-match-toggle,
+  .selection-tile,
+  .leaderboard-phase-summary,
+  .leaderboard-card,
+  .bracket-match,
+  .bracket-final-card,
+  .bracket-section,
+  .prediction-row,
+  .compare-player-row,
+  .app-note,
+  .install-banner,
+  .specials-score-banner,
+  .admin-panel-banner,
+  section.bg-white,
+  .glass,
+  .glass-strong
+)::after {
+  content: none !important;
+  display: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+  background-image: none !important;
+}
+
+html body tr:hover,
+html body button:hover,
+html body [role="button"]:hover {
+  box-shadow: none !important;
+  filter: none !important;
+}

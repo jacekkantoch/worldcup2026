@@ -1711,9 +1711,13 @@ function scoreGroupMatch(pred, result, points = POINTS) {
 function scoreKnockoutMatch(pred, result, points = POINTS) {
   if (!pred || !result) return 0;
   const exact = pred.home === result.home && pred.away === result.away;
-  let predictedAdv = pred.home > pred.away ? 'home' : pred.home < pred.away ? 'away' : pred.penWinner || null;
-  let base = exact ? points.knockout.exact : predictedAdv && predictedAdv === result.advancingTeam ? points.knockout.winner : 0;
-  let bonus = result.pensHappened && pred.penWinner && pred.penWinner === result.advancingTeam ? points.knockout.penBonus : 0;
+  const predictedPens = pred.home === pred.away;
+  const resultPens = !!result.pensHappened;
+  const sameResolutionMode = predictedPens === resultPens;
+  const predictedAdv = pred.home > pred.away ? 'home' : pred.home < pred.away ? 'away' : pred.penWinner || null;
+  const winnerOnly = !exact && sameResolutionMode && predictedAdv && predictedAdv === result.advancingTeam;
+  const base = exact ? points.knockout.exact : winnerOnly ? points.knockout.winner : 0;
+  const bonus = resultPens && predictedPens && pred.penWinner && pred.penWinner === result.advancingTeam ? points.knockout.penBonus : 0;
   return base + bonus;
 }
 function scoreMatch(pred, result, phase, points = POINTS) {
@@ -1901,17 +1905,12 @@ function ScoreInput({
       userSelect: 'none',
       transition: 'background .12s'
     }
-  }, "\u2212"), React.createElement("input", {
-    type: "number",
-    inputMode: "numeric",
-    value: num === null ? '' : num,
-    onChange: e => {
-      const v = e.target.value;
-      if (v === '') { onChange(null); } else { const n = parseInt(v, 10); set(Number.isNaN(n) ? 0 : Math.min(99, Math.max(0, n))); }
-    },
-    disabled: disabled,
-    min: "0",
-    max: "99",
+  }, "\u2212"), React.createElement("div", {
+    role: "spinbutton",
+    "aria-valuemin": 0,
+    "aria-valuemax": 99,
+    "aria-valuenow": num === null ? 0 : num,
+    "aria-disabled": disabled,
     style: {
       width: 62,
       height: 56,
@@ -1923,10 +1922,16 @@ function ScoreInput({
       color: 'white',
       fontFamily: "'Bebas Neue',sans-serif",
       fontSize: 28,
-      letterSpacing: '0.04em'
+      letterSpacing: '0.04em',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      userSelect: 'none',
+      pointerEvents: 'none',
+      opacity: disabled ? .5 : 1
     },
-    className: "score-value-input text-2xl font-bold focus:outline-none disabled:opacity-50 font-display"
-  }), React.createElement("button", {
+    className: "score-value-input text-2xl font-bold font-display"
+  }, num === null ? '' : num), React.createElement("button", {
     type: "button",
     onClick: () => set((num ?? 0) + 1),
     disabled: disabled,
@@ -3019,6 +3024,8 @@ const MatchCard = React.memo(function MatchCard({
       color: 'rgba(255,255,255,.7)'
     };
     const rowState = q === 'exact' ? 'exact' : q === 'partial' ? 'partial' : result ? 'miss' : 'pending';
+    const penaltyHit = !!(result?.pensHappened && pp.penWinner && pp.penWinner === result.advancingTeam);
+    const penaltyMiss = !!(result && pp.penWinner && !penaltyHit);
     return React.createElement("div", {
       key: pl.id,
       className: `prediction-row prediction-row-${rowState}`,
@@ -3064,7 +3071,7 @@ const MatchCard = React.memo(function MatchCard({
         textAlign: 'right'
       }
     }, pp.home, ":", pp.away), React.createElement("span", {
-      className: "prediction-penalty",
+      className: `prediction-penalty${penaltyHit ? ' penalty-hit' : penaltyMiss ? ' penalty-miss' : ''}`,
       style: {
         width: '42px',
         textAlign: 'right',
@@ -4219,6 +4226,8 @@ function CompareView({
         color: 'white'
       };
       const rowState = !result ? 'pending' : q === 'exact' ? 'exact' : q === 'partial' ? 'partial' : 'miss';
+      const penaltyHit = !!(result?.pensHappened && pp.penWinner && pp.penWinner === result.advancingTeam);
+      const penaltyMiss = !!(result && pp.penWinner && !penaltyHit);
       const penaltyTeam = pp.penWinner ? pp.penWinner === 'home' ? home : away : null;
       return React.createElement("div", {
         key: pl.id,
@@ -4244,7 +4253,7 @@ function CompareView({
       }, React.createElement("strong", {
         className: "compare-player-score-value"
       }, pp.home, ":", pp.away), React.createElement("span", {
-        className: "compare-player-penalty",
+        className: `compare-player-penalty${penaltyHit ? ' penalty-hit' : penaltyMiss ? ' penalty-miss' : ''}`,
         style: {
           opacity: pp.penWinner?.length ? 0.8 : 0
         }
@@ -4352,11 +4361,7 @@ function PhaseLockPanel({
   };
   return React.createElement("div", {
     className: "space-y-3"
-  }, React.createElement("div", {
-    className: "bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900 app-note app-note--warning"
-  }, React.createElement("p", {
-    className: "font-bold mb-1"
-  }, "Jak dzia\u0142aj\u0105 blokady i prze\u0142\u0105czniki?"), React.createElement("p", null, "Zablokowanie fazy uniemo\u017Cliwia graczom typowanie. Prze\u0142\u0105cznik ", React.createElement("strong", null, "Por\xF3wnanie"), " dzia\u0142a odwrotnie \u2014 w\u0142\u0105czenie go ", React.createElement("em", null, "udost\u0119pnia"), " zak\u0142adki Por\xF3wnanie i Typy wszystkich graczom. Zr\xF3b to ", React.createElement("strong", null, "przed pierwszym meczem rundy"), " \u2014 np. 24h wcze\u015Bniej. Blokada ", React.createElement("em", null, "nie"), " wp\u0142ywa na punktacj\u0119 (wyniki wpisuje admin niezale\u017Cnie).")), PHASE_DEFS.map(({
+  }, PHASE_DEFS.map(({
     key,
     label,
     desc,
@@ -4424,11 +4429,7 @@ function PhaseLockPanel({
     size: "lg",
     onClick: handleSave,
     className: "flex-1"
-  }, saved ? 'Zapisano!' : 'Zapisz blokady')), React.createElement("div", {
-    className: "bg-stone-50 border border-stone-200 rounded-xl p-3 text-xs text-stone-600 space-y-1 app-note app-note--info"
-  }, React.createElement("p", {
-    className: "font-bold text-stone-800"
-  }, "Sugerowany harmonogram blokad:"), React.createElement("p", null, "\u2022 ", React.createElement("strong", null, "Por\xF3wnanie"), " \u2014 w\u0142\u0105cz kiedy chcesz (np. po zako\u0144czeniu fazy grupowej)"), React.createElement("p", null, "\u2022 ", React.createElement("strong", null, "Typy specjalne"), " \u2014 zablokuj do 10.06.2026 wiecz\xF3r (dzie\u0144 przed M1)"), React.createElement("p", null, "\u2022 ", React.createElement("strong", null, "Faza grupowa"), " \u2014 zablokuj do 10.06.2026 wiecz\xF3r (dzie\u0144 przed M1)"), React.createElement("p", null, "\u2022 ", React.createElement("strong", null, "1/16 fina\u0142u"), " \u2014 zablokuj do 27.06.2026 wiecz\xF3r (dzie\u0144 przed M73)"), React.createElement("p", null, "\u2022 ", React.createElement("strong", null, "1/8 fina\u0142u"), " \u2014 zablokuj do 03.07.2026 wiecz\xF3r (dzie\u0144 przed M89)"), React.createElement("p", null, "\u2022 ", React.createElement("strong", null, "\u0106wier\u0107fina\u0142y"), " \u2014 zablokuj do 08.07.2026 wiecz\xF3r"), React.createElement("p", null, "\u2022 ", React.createElement("strong", null, "P\xF3\u0142fina\u0142y"), " \u2014 zablokuj do 13.07.2026 wiecz\xF3r"), React.createElement("p", null, "\u2022 ", React.createElement("strong", null, "Mecz o 3. m."), " \u2014 zablokuj do 17.07.2026 wiecz\xF3r"), React.createElement("p", null, "\u2022 ", React.createElement("strong", null, "Fina\u0142"), " \u2014 zablokuj do 18.07.2026 wiecz\xF3r")));
+  }, saved ? 'Zapisano!' : 'Zapisz blokady')));
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -4683,7 +4684,7 @@ function AdminMatchRow({
     name: "save",
     size: 14
   }), pairChanged ? 'Zapisz parę bez wyniku' : 'Para drużyn zapisana'), React.createElement("p", {
-    className: "text-[10px] text-stone-500 mt-2 text-center"
+    className: "text-[10px] text-amber-300 mt-2 text-center font-semibold"
   }, "Zapisanie pary nie ustawia wyniku ko\u0144cowego. Po zapisaniu gracze mog\u0105 od razu obstawia\u0107 ten mecz.")), teamsReady ? React.createElement(React.Fragment, null, React.createElement("div", {
     className: "admin-score-editor"
   }, React.createElement("div", {
@@ -5009,10 +5010,10 @@ function AdminScoringPanel({
     onChange: v => setNested('knockout', 'exact', v),
     note: "Wynik po regulaminowym czasie i dogrywce."
   }), React.createElement(AdminScoringField, {
-    label: "Dobry awans",
+    label: "Dobry rezultat",
     value: draft.knockout.winner,
     onChange: v => setNested('knockout', 'winner', v),
-    note: "Poprawnie wskazana dru\u017Cyna awansuj\u0105ca."
+    note: "Zwyci\u0119zca albo poprawnie przewidziany remis."
   }), React.createElement("div", {
     className: "col-span-2"
   }, React.createElement(AdminScoringField, {
