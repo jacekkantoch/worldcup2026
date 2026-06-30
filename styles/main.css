@@ -893,24 +893,6 @@
       contain: layout style paint;
     }
 
-    @media (max-width: 700px), (pointer: coarse) {
-      body { background-attachment: scroll; }
-      .pitch-bg::before,
-      .pitch-bg::after {
-        animation: none !important;
-        filter: blur(48px);
-      }
-      .match-card {
-        backdrop-filter: blur(14px) saturate(150%);
-      }
-      .glass,
-      .glass-strong,
-      section.bg-white,
-      .install-banner {
-        backdrop-filter: blur(18px) saturate(155%);
-      }
-    }
-
     @media (prefers-reduced-transparency: reduce) {
       .glass,
       .glass-strong,
@@ -1372,24 +1354,22 @@
     }
 
     /* Disable hover lift/bounce while preserving click/drag feedback. */
-    @media (hover: hover) and (pointer: fine) {
-      button:hover,
-      [role="button"]:hover,
-      .match-card:hover,
-      section.bg-white:hover,
-      div.bg-white:hover,
-      .glass:hover,
-      .glass-strong:hover,
-      .login-btn:hover,
-      .players-btn:hover,
-      .selection-tile:hover,
-      input:hover,
-      select:hover,
-      textarea:hover,
-      .bg-\[\#0d1b5e\]:hover,
-      .bg-\[\#162570\]:hover {
-        transform: none !important;
-      }
+    button:hover,
+    [role="button"]:hover,
+    .match-card:hover,
+    section.bg-white:hover,
+    div.bg-white:hover,
+    .glass:hover,
+    .glass-strong:hover,
+    .login-btn:hover,
+    .players-btn:hover,
+    .selection-tile:hover,
+    input:hover,
+    select:hover,
+    textarea:hover,
+    .bg-\[\#0d1b5e\]:hover,
+    .bg-\[\#162570\]:hover {
+      transform: none !important;
     }
 
     /* Selected states without glow */
@@ -4160,15 +4140,6 @@
       box-shadow: none !important;
     }
 
-/* ===== 10. desktop-scroll-fix ===== */
-@media (hover: hover) and (pointer: fine) {
-      html,
-      body {
-        overflow-y: auto !important;
-        overscroll-behavior-y: auto !important;
-      }
-    }
-
 /* ===== 11. unified-banner-spacing ===== */
 :root {
       --banner-gap: 14px;
@@ -4525,57 +4496,6 @@ html body .group-order-filter-row {
     padding-right: calc(var(--overflow-fade) + 4px) !important;
   }
 
-/* ===== 20. ios-safari-optimizations ===== */
-/* iOS 26 / Safari — momentum scrolling dla wszystkich przewijanych kontenerów */
-  .overflow-x-auto,
-  .overflow-y-auto,
-  .overflow-auto,
-  [class*="overflow-"] {
-    -webkit-overflow-scrolling: touch;
-  }
-
-  /* Zapobiega zoom przy fokusie na input na iOS */
-  input, select, textarea {
-    font-size: max(16px, 1em) !important;
-  }
-
-  /* Wyłącz callout (długie przytrzymanie) na elementach interaktywnych */
-  button, a, [role="button"] {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    user-select: none;
-  }
-
-  /* Tekst może być zaznaczany */
-  p, span, h1, h2, h3, h4, td, th {
-    -webkit-user-select: text;
-    user-select: text;
-  }
-
-  /* Przyspiesz renderowanie animowanych elementów */
-  .bottom-nav,
-  .app-header,
-  .match-card,
-  .nav-droplet {
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-  }
-
-  /* Napraw sticky positioning na Safari */
-  .filters-sticky {
-    position: -webkit-sticky;
-    position: sticky;
-  }
-
-  /* Wyłącz domyślne style przycisków na iOS */
-  button {
-    -webkit-appearance: none;
-    appearance: none;
-  }
-
-
 /* Admin: nazwy drużyn w zakładce Mecze i wyniki mają być zawsze czytelne. */
 html body .admin-panel .admin-match-summary-teams,
 html body .admin-panel .admin-match-summary-teams *,
@@ -4840,37 +4760,6 @@ html body .app-header button {
   transform: none !important;
 }
 
-/* Safari mobile: treść bliżej paska przeglądarki, menu niżej. */
-@media (max-width: 700px), (pointer: coarse) {
-  html body {
-    padding-bottom: calc(58px + max(0px, var(--safe-bottom) - 22px)) !important;
-  }
-
-  html body .app-content {
-    padding-bottom: 64px !important;
-  }
-
-  html body .bottom-nav {
-    bottom: max(4px, calc(var(--safe-bottom) - 24px)) !important;
-  }
-}
-
-@supports (-webkit-touch-callout: none) {
-  @media (max-width: 700px), (pointer: coarse) {
-    html body {
-      padding-bottom: calc(52px + max(0px, var(--safe-bottom) - 26px)) !important;
-    }
-
-    html body .app-content {
-      padding-bottom: 56px !important;
-    }
-
-    html body .bottom-nav {
-      bottom: max(2px, calc(var(--safe-bottom) - 28px)) !important;
-    }
-  }
-}
-
 /* Banery informacyjne: brak efektów po najechaniu. */
 html body .app-note,
 html body .install-banner,
@@ -5080,46 +4969,49 @@ html body [role="button"]:hover {
   filter: none !important;
 }
 
-/* Safari w przeglądarce: dokument schodzi pod dolny pasek adresu Safari.
-   Nie dotyczy trybu dodanego do ekranu głównego. */
-@supports (-webkit-touch-callout: none) {
-  @media (display-mode: browser) and (max-width: 700px),
-         (display-mode: browser) and (pointer: coarse) {
-    html {
-      min-height: 100vh !important;
-      min-height: 100lvh !important;
-      background: #05070d !important;
-    }
 
-    body {
-      min-height: 100vh !important;
-      min-height: 100lvh !important;
-      background-color: #05070d !important;
-      background-attachment: fixed !important;
-      background-clip: border-box !important;
-    }
+/* Filtry: mniej przejrzyste kafelki. */
+html:not([data-theme="light"]) body .phase-filter-panel,
+html:not([data-theme="light"]) body .filters-sticky,
+html:not([data-theme="light"]) body .admin-phase-filters {
+  background:
+    radial-gradient(circle at 18% -20%, rgba(255,255,255,.12), transparent 42%),
+    linear-gradient(145deg, rgba(29, 39, 58, .94), rgba(13, 19, 32, .90)) !important;
+  background-color: rgba(15, 23, 38, .94) !important;
+}
 
-    body::after {
-      content: "";
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: -140px;
-      height: 260px;
-      background:
-        radial-gradient(ellipse 55% 36% at 8% 35%, rgba(48,209,88,0.04), transparent 62%),
-        radial-gradient(ellipse 55% 36% at 92% 35%, rgba(48,209,88,0.03), transparent 62%),
-        #05070d;
-      pointer-events: none;
-      z-index: -1;
-    }
+/* Kafelki meczów: bez prostokątnego paska przy hover/tap. */
+html body .matches-view .match-card,
+html body .matches-view .match-card:hover,
+html body .matches-view .match-card:focus-within,
+html body .matches-view .match-card:active {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  transform: none !important;
+  background-image: var(--tab-match-surface-soft, var(--glass-1)) !important;
+}
 
-    html body .app-content {
-      padding-bottom: max(76px, calc(64px + var(--safe-bottom))) !important;
-    }
+html body .matches-view .match-card > button:first-child,
+html body .matches-view .match-card > button:first-child:hover,
+html body .matches-view .match-card > button:first-child:focus,
+html body .matches-view .match-card > button:first-child:focus-visible,
+html body .matches-view .match-card > button:first-child:active {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+  transform: none !important;
+}
 
-    html body .bottom-nav {
-      bottom: max(2px, calc(var(--safe-bottom) - 28px)) !important;
-    }
-  }
+html body .matches-view .match-card > button:first-child::before,
+html body .matches-view .match-card > button:first-child::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  filter: none !important;
 }

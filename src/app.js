@@ -276,6 +276,7 @@ function phaseBadgeLabel(match) {
   return match.phase === 'group' ? `Gr ${match.group}` : PHASE_BADGE_LABELS[match.phase] || PHASE_LABELS[match.phase] || match.phase;
 }
 const PHASE_ORDER = ['group', 'r32', 'r16', 'qf', 'sf', 'third', 'final'];
+const MATCH_LIST_PAGE_SIZE = 20;
 const PHASE_RANK = Object.fromEntries(PHASE_ORDER.map((phase, index) => [phase, index]));
 function getLatestResultPhase(matches, results) {
   let latest = 'all';
@@ -3111,14 +3112,7 @@ function MatchesView({
   const autoPhaseFilterRef = useRef('all');
   const phaseFilterTouchedRef = useRef(false);
   const [expandedId, setExpandedId] = useState(null);
-  const [compactDevice, setCompactDevice] = useState(() => typeof window !== "undefined" && (window.innerWidth <= 700 || window.matchMedia("(pointer: coarse)").matches));
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const check = () => setCompactDevice(window.innerWidth <= 700 || window.matchMedia("(pointer: coarse)").matches);
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
-  const [visibleCount, setVisibleCount] = useState(() => compactDevice ? 18 : Number.MAX_SAFE_INTEGER);
+  const [visibleCount, setVisibleCount] = useState(MATCH_LIST_PAGE_SIZE);
   const handleToggleMatch = useCallback(id => setExpandedId(prev => prev === id ? null : id), []);
   const defaultResultPhase = useMemo(() => getLatestResultPhase(matches, results), [matches, results]);
   useEffect(() => {
@@ -3158,11 +3152,11 @@ function MatchesView({
     return map;
   }, [predictions]);
   useEffect(() => {
-    setVisibleCount(compactDevice ? 18 : Number.MAX_SAFE_INTEGER);
+    setVisibleCount(MATCH_LIST_PAGE_SIZE);
     setExpandedId(null);
-  }, [phaseFilter, groupFilter, statusFilter, compactDevice]);
-  const visibleMatches = compactDevice ? filtered.slice(0, visibleCount) : filtered;
-  const hasMoreMatches = compactDevice && visibleCount < filtered.length;
+  }, [phaseFilter, groupFilter, statusFilter]);
+  const visibleMatches = filtered.slice(0, visibleCount);
+  const hasMoreMatches = visibleCount < filtered.length;
   const filterBtns = PHASE_FILTER_TABS;
   const filterPanel = React.createElement("div", {
     className: "phase-filter-panel fixed-filter-portal-panel bg-white border border-[#b0bce8] rounded-xl p-3 filters-sticky shadow-sm"
@@ -3225,7 +3219,7 @@ function MatchesView({
     onToggleMatch: handleToggleMatch
   })), hasMoreMatches && React.createElement("button", {
     type: "button",
-    onClick: () => setVisibleCount(count => count + 18),
+    onClick: () => setVisibleCount(count => count + MATCH_LIST_PAGE_SIZE),
     className: "selection-tile w-full rounded-xl px-4 py-3 text-sm font-semibold"
   }, "Poka\u017C kolejne mecze (", filtered.length - visibleCount, ")"), filtered.length === 0 && React.createElement("div", {
     className: "text-center text-stone-500 py-12 app-note app-note--info app-note--center"
@@ -3984,6 +3978,7 @@ function CompareView({
   const autoPhaseFilterRef = useRef('all');
   const phaseFilterTouchedRef = useRef(false);
   const [expandedMatches, setExpandedMatches] = useState(() => new Set());
+  const [visibleCount, setVisibleCount] = useState(MATCH_LIST_PAGE_SIZE);
   const toggleMatchDetails = useCallback(matchId => {
     setExpandedMatches(prev => {
       const next = new Set(prev);
@@ -4010,8 +4005,11 @@ function CompareView({
     }).sort((a, b) => (PHASE_RANK[a.phase] ?? 99) - (PHASE_RANK[b.phase] ?? 99) || a.num - b.num);
   }, [matches, phaseFilter, groupFilter, statusFilter, results]);
   useEffect(() => {
+    setVisibleCount(MATCH_LIST_PAGE_SIZE);
     setExpandedMatches(new Set());
   }, [phaseFilter, groupFilter, statusFilter]);
+  const visibleMatches = filtered.slice(0, visibleCount);
+  const hasMoreMatches = visibleCount < filtered.length;
   if (players.length === 0) return React.createElement("div", {
     className: "text-center text-stone-500 py-12 app-note app-note--info app-note--center"
   }, "Dodaj graczy, \u017Ceby por\xF3wnywa\u0107 typy.");
@@ -4062,7 +4060,7 @@ function CompareView({
     className: `selection-tile${statusFilter === t.k ? ' is-selected' : ''} flex-1 px-2 py-1 rounded-lg text-xs font-medium`
   }, t.l)))), React.createElement("div", {
     className: "text-[11px] text-stone-500 mt-1 text-center"
-  }, filtered.length, " ", plMecze(filtered.length))), filtered.map(m => {
+  }, filtered.length, " ", plMecze(filtered.length))), visibleMatches.map(m => {
     const home = teams[m.homeTeamId],
       away = teams[m.awayTeamId],
       result = results[m.id];
@@ -4266,7 +4264,13 @@ function CompareView({
         }
       }, pts === null ? '0' : pts > 0 ? `+${pts}` : '0')));
     })));
-  }));
+  }), hasMoreMatches && React.createElement("button", {
+    type: "button",
+    onClick: () => setVisibleCount(count => count + MATCH_LIST_PAGE_SIZE),
+    className: "selection-tile w-full rounded-xl px-4 py-3 text-sm font-semibold"
+  }, "Poka\u017C kolejne mecze (", filtered.length - visibleCount, ")"), filtered.length === 0 && React.createElement("div", {
+    className: "text-center text-stone-500 py-12 app-note app-note--info app-note--center"
+  }, "Brak mecz\xF3w dla wybranych filtr\xF3w"));
 }
 
 // ═══════════════════════════════════════════════════════════════
