@@ -6498,11 +6498,6 @@ function BottomNav({
       return;
     }
     if (tabKey === activeTab) return;
-    const _dropEl = trackRef.current && trackRef.current.querySelector('.nav-droplet');
-    if (_dropEl) {
-      _dropEl.classList.add('squishing');
-      setTimeout(() => _dropEl.classList.remove('squishing'), 180);
-    }
     requestSelect(tabKey);
   };
   useEffect(() => () => {
