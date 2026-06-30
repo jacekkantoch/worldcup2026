@@ -242,37 +242,63 @@ function InfiniteGroupFilter({ selected, onSelect, btnClass }) {
     if (!el) return;
     const oneW = el.scrollWidth / 3;
     const itemW = oneW / GROUPS.length;
+    if (!oneW || !itemW) return;
     const target = rawIndex * itemW - el.clientWidth / 2 + itemW / 2;
     if (smooth) {
       snappingRef.current = true;
       el.style.scrollBehavior = 'smooth';
       el.scrollLeft = target;
-      setTimeout(() => { el.style.scrollBehavior = 'auto'; snappingRef.current = false; }, 400);
+      setTimeout(() => {
+        el.style.scrollBehavior = 'auto';
+        snappingRef.current = false;
+      }, 400);
     } else {
       el.scrollLeft = target;
     }
   }, []);
 
+  const centerGroup = React.useCallback((group, smooth = false) => {
+    const idx = GROUPS.indexOf(group);
+    if (idx < 0) return;
+    setVisualCenter(group);
+    snapToIndex(GROUPS.length + idx, smooth);
+  }, [snapToIndex]);
+
+  const selectGroup = React.useCallback((group, smooth = true) => {
+    centerGroup(group, smooth);
+    onSelect(group);
+  }, [centerGroup, onSelect]);
+
   React.useEffect(() => {
-    requestAnimationFrame(() => {
-      const el = ref.current;
-      if (!el) return;
-      const oneW = el.scrollWidth / 3;
-      const itemW = oneW / GROUPS.length;
-      const idx = Math.max(0, GROUPS.indexOf(selected));
-      el.scrollLeft = oneW + idx * itemW - el.clientWidth / 2 + itemW / 2;
-      setVisualCenter(selected);
-    });
-  }, []);
+    const raf = requestAnimationFrame(() => centerGroup(selected, false));
+    return () => cancelAnimationFrame(raf);
+  }, [centerGroup, selected]);
+
+  React.useEffect(() => {
+    const el = ref.current;
+    if (!el) return undefined;
+    const recenter = () => requestAnimationFrame(() => centerGroup(selected, false));
+    let ro = null;
+    if (typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(recenter);
+      ro.observe(el);
+    }
+    window.addEventListener('resize', recenter);
+    return () => {
+      if (ro) ro.disconnect();
+      window.removeEventListener('resize', recenter);
+      clearTimeout(debounceRef.current);
+    };
+  }, [centerGroup, selected]);
 
   const onScroll = React.useCallback(() => {
     const el = ref.current;
     if (!el) return;
     const oneW = el.scrollWidth / 3;
     const itemW = oneW / GROUPS.length;
+    if (!oneW || !itemW) return;
     if (el.scrollLeft < oneW * 0.4) { el.scrollLeft += oneW; return; }
     if (el.scrollLeft > oneW * 1.6) { el.scrollLeft -= oneW; return; }
-    // aktualizuj zaznaczenie na bieżąco, podczas przesuwania
     const centerXLive = el.scrollLeft + el.clientWidth / 2;
     const rawIndexLive = Math.round(centerXLive / itemW - 0.5);
     const groupIndexLive = ((rawIndexLive % GROUPS.length) + GROUPS.length) % GROUPS.length;
@@ -289,23 +315,51 @@ function InfiniteGroupFilter({ selected, onSelect, btnClass }) {
     }, 120);
   }, [onSelect, snapToIndex]);
 
+  const onKeyDown = React.useCallback(e => {
+    const current = GROUPS.indexOf(visualCenter);
+    if (current < 0) return;
+    if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      selectGroup(GROUPS[(current + 1) % GROUPS.length]);
+    } else if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      selectGroup(GROUPS[(current - 1 + GROUPS.length) % GROUPS.length]);
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      selectGroup(GROUPS[0]);
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      selectGroup(GROUPS[GROUPS.length - 1]);
+    }
+  }, [selectGroup, visualCenter]);
+
   return React.createElement('div', {
     style: { display: 'flex', justifyContent: 'center', width: '100%' }
   }, React.createElement('div', {
     ref,
     onScroll,
+    onKeyDown,
+    role: 'tablist',
+    'aria-label': 'Filtr grup',
     className: 'infinite-group-scroll',
     style: {
       display: 'flex', gap: '4px', overflowX: 'auto', scrollBehavior: 'auto',
-      overscrollBehavior: 'none', maxWidth: '480px', width: '100%',
-      maskImage: 'linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%)',
-      WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%)'
+      overscrollBehavior: 'none', scrollSnapType: 'x mandatory', scrollPaddingInline: '50%',
+      maxWidth: '480px', width: '100%',
+      maskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)',
+      WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)'
     }
   }, items.map((g, i) =>
     React.createElement('button', {
       key: i,
-      onClick: undefined,
-      className: `${btnClass}${visualCenter === g ? ' is-selected' : ''}`
+      type: 'button',
+      role: 'tab',
+      'aria-selected': visualCenter === g,
+      'aria-pressed': visualCenter === g,
+      'aria-label': `Grupa ${g}`,
+      onClick: () => selectGroup(g),
+      className: `${btnClass}${visualCenter === g ? ' is-selected' : ''}`,
+      style: { scrollSnapAlign: 'center', scrollSnapStop: 'always' }
     }, g)
   )));
 }
@@ -2896,8 +2950,8 @@ const MatchCard = React.memo(function MatchCard({
   }, "Tw\xF3j typ: ", React.createElement("strong", {
     className: "font-display text-base"
   }, prediction.home, ":", prediction.away), prediction.penWinner && React.createElement("span", {
-    className: "match-penalty-badge ml-2"
-  }, (prediction.penWinner === 'home' ? home : away).name.slice(0, 3).toUpperCase()), React.createElement("span", {
+    className: `match-penalty-badge${result.pensHappened && prediction.penWinner === result.advancingTeam ? ' penalty-hit' : result ? ' penalty-miss' : ''} ml-2`
+  }, FLAG_ABBR[((prediction.penWinner === 'home' ? home : away).flag || '').toLowerCase()] || (prediction.penWinner === 'home' ? home : away).name.slice(0, 3).toUpperCase()), React.createElement("span", {
     className: `ml-2 font-bold ${quality === 'exact' ? 'text-[#6080d0]' : quality === 'partial' ? 'text-amber-400' : 'text-stone-400'}`
   }, React.createElement("span", {
     style: {
@@ -3028,7 +3082,7 @@ const MatchCard = React.memo(function MatchCard({
         fontSize: 11,
         whiteSpace: 'nowrap'
       }
-    }, pp.penWinner ? (pp.penWinner === 'home' ? home : away)?.name?.slice(0, 3)?.toUpperCase() : ''), React.createElement("span", {
+    }, pp.penWinner ? FLAG_ABBR[((pp.penWinner === 'home' ? home : away)?.flag || '').toLowerCase()] || ((pp.penWinner === 'home' ? home : away)?.name || '').slice(0, 3).toUpperCase() : ''), React.createElement("span", {
       className: "prediction-points",
       style: {
         width: '28px',
@@ -4204,7 +4258,7 @@ function CompareView({
         style: {
           opacity: pp.penWinner?.length ? 0.8 : 0
         }
-      }, pp.penWinner ? (penaltyTeam?.name?.slice(0, 3) || '').toUpperCase() : ''), React.createElement("span", {
+      }, pp.penWinner ? FLAG_ABBR[(penaltyTeam?.flag || '').toLowerCase()] || (penaltyTeam?.name || '').slice(0, 3).toUpperCase() : ''), React.createElement("span", {
         className: "compare-player-points",
         style: {
           fontWeight: 800,
@@ -6417,6 +6471,53 @@ function Mundial2026() {
     scrollAppToTop();
   }, [activeTab]);
   const [adminUnlocked, setAdminUnlocked] = useState(false);
+  const [adminLoginOpen, setAdminLoginOpen] = useState(false);
+  useEffect(() => {
+    const shouldLock = adminLoginOpen && !adminUnlocked;
+    const root = document.documentElement;
+    const body = document.body;
+    if (!shouldLock || !root || !body) return;
+
+    const scrollY = window.scrollY || window.pageYOffset || 0;
+    const previous = {
+      rootOverflow: root.style.overflow,
+      rootOverscroll: root.style.overscrollBehavior,
+      bodyPosition: body.style.position,
+      bodyTop: body.style.top,
+      bodyLeft: body.style.left,
+      bodyRight: body.style.right,
+      bodyWidth: body.style.width,
+      bodyOverflow: body.style.overflow,
+      bodyOverscroll: body.style.overscrollBehavior
+    };
+
+    root.classList.add('admin-gate-scroll-locked');
+    body.classList.add('admin-gate-scroll-locked');
+    root.style.setProperty('overflow', 'hidden', 'important');
+    root.style.setProperty('overscroll-behavior', 'none', 'important');
+    body.style.setProperty('position', 'fixed', 'important');
+    body.style.setProperty('top', `-${scrollY}px`, 'important');
+    body.style.setProperty('left', '0', 'important');
+    body.style.setProperty('right', '0', 'important');
+    body.style.setProperty('width', '100%', 'important');
+    body.style.setProperty('overflow', 'hidden', 'important');
+    body.style.setProperty('overscroll-behavior', 'none', 'important');
+
+    return () => {
+      root.classList.remove('admin-gate-scroll-locked');
+      body.classList.remove('admin-gate-scroll-locked');
+      root.style.overflow = previous.rootOverflow;
+      root.style.overscrollBehavior = previous.rootOverscroll;
+      body.style.position = previous.bodyPosition;
+      body.style.top = previous.bodyTop;
+      body.style.left = previous.bodyLeft;
+      body.style.right = previous.bodyRight;
+      body.style.width = previous.bodyWidth;
+      body.style.overflow = previous.bodyOverflow;
+      body.style.overscrollBehavior = previous.bodyOverscroll;
+      window.scrollTo(0, scrollY);
+    };
+  }, [adminLoginOpen, adminUnlocked]);
   const [playersModal, setPlayersModal] = useState(false);
   const [loginModal, setLoginModal] = useState(false);
   const allLoaded = plLoaded && tLoaded && mLoaded && prLoaded && rLoaded && spLoaded && srLoaded && apLoaded && plkLoaded && scLoaded;
@@ -6671,7 +6772,12 @@ function Mundial2026() {
   }, React.createElement("h1", null, "FIFA WORLD CUP 2026"))), React.createElement("div", {
     className: "player-row"
   }, React.createElement("button", {
-    onClick: () => setLoginModal(true),
+    onClick: () => {
+      setAdminLoginOpen(false);
+      if (activeTab === 'admin') setActiveTab('matches');
+      setPlayersModal(false);
+      setLoginModal(true);
+    },
     className: `login-btn profile-menu-btn${activePlayerData ? ' is-authenticated' : ''}`,
     title: activePlayerData ? `Profil: ${activePlayerData.name}` : 'Zaloguj się lub wybierz użytkownika',
     "aria-label": activePlayerData ? `Otwórz profil użytkownika ${activePlayerData.name}` : 'Zaloguj się lub wybierz użytkownika'
@@ -6693,12 +6799,15 @@ function Mundial2026() {
   }, "Zaloguj si\u0119")), React.createElement("button", {
     className: "players-btn",
     onClick: () => {
-      setActiveTab('admin');
+      setLoginModal(false);
+      setPlayersModal(false);
+      if (adminUnlocked) setActiveTab('admin');
+      else setAdminLoginOpen(true);
     },
     title: "Panel admina (wyniki)",
     style: {
-      background: activeTab === 'admin' ? 'rgba(124,58,237,.3)' : 'rgba(0,0,0,.2)',
-      borderColor: activeTab === 'admin' ? '#a78bfa' : 'rgba(255,255,255,.25)'
+      background: activeTab === 'admin' || adminLoginOpen ? 'rgba(124,58,237,.3)' : 'rgba(0,0,0,.2)',
+      borderColor: activeTab === 'admin' || adminLoginOpen ? '#a78bfa' : 'rgba(255,255,255,.25)'
     }
   }, React.createElement(NavIcon, {
     name: "settings",
@@ -6782,17 +6891,7 @@ function Mundial2026() {
     specialPredictions: safeSpecialPredictions,
     specialResults: safeSpecialResults,
     teams: safeTeams
-  }), activeTab === 'admin' && (!adminUnlocked ? React.createElement(AdminGate, {
-    adminPassword: adminPasswordHash,
-    onUnlock: (pwd, onErr) => {
-      if (hashPwd(pwd) === adminPasswordHash) setAdminUnlocked(true);else onErr('Złe hasło');
-    },
-    onSetPassword: pwd => {
-      setAdminPasswordHash(hashPwd(pwd));
-      setAdminUnlocked(true);
-    },
-    onClose: () => setActiveTab('matches')
-  }) : React.createElement(AdminPanel, {
+  }), activeTab === 'admin' && adminUnlocked && React.createElement(AdminPanel, {
     teams: safeTeams,
     matches: safeMatches,
     results: safeResults,
@@ -6826,11 +6925,32 @@ function Mundial2026() {
     }),
     onImport: handleImport,
     onLogout: () => setAdminUnlocked(false)
-  })))), React.createElement(BottomNav, {
+  }))), React.createElement(BottomNav, {
     tabs: tabs,
     activeTab: activeTab,
     onSelect: setActiveTab
-  }), React.createElement(PlayersManager, {
+  }), adminLoginOpen && !adminUnlocked && React.createElement("div", {
+    className: "admin-gate-overlay"
+  }, React.createElement("div", {
+    className: "admin-gate-backdrop",
+    onClick: () => setAdminLoginOpen(false)
+  }), React.createElement(AdminGate, {
+    adminPassword: adminPasswordHash,
+    onUnlock: (pwd, onErr) => {
+      if (hashPwd(pwd) === adminPasswordHash) {
+        setAdminUnlocked(true);
+        setAdminLoginOpen(false);
+        setActiveTab('admin');
+      } else onErr('Złe hasło');
+    },
+    onSetPassword: pwd => {
+      setAdminPasswordHash(hashPwd(pwd));
+      setAdminUnlocked(true);
+      setAdminLoginOpen(false);
+      setActiveTab('admin');
+    },
+    onClose: () => setAdminLoginOpen(false)
+  })), React.createElement(PlayersManager, {
     open: playersModal,
     onClose: () => setPlayersModal(false),
     players: safePlayers,

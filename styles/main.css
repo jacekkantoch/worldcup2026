@@ -4370,10 +4370,11 @@ html body .admin-panel-actions {
 /* ===== 17. admin-gate-close-button-fix ===== */
 html body .admin-gate-card {
       position: relative !important;
-      max-width: 360px !important;
+      width: min(calc(100% - 42px), 384px) !important;
+      max-width: none !important;
       margin: 18px auto !important;
       padding: 22px 18px 18px !important;
-      border-radius: 26px !important;
+      border-radius: 30px !important;
       background:
         linear-gradient(180deg, rgba(31, 44, 67, .98), rgba(11, 18, 31, .98)) !important;
       border: 1px solid rgba(255,255,255,.10) !important;
@@ -4426,8 +4427,8 @@ html body .admin-gate-card {
 
     html body .admin-gate-close-btn {
       position: absolute !important;
-      top: 12px !important;
-      right: 12px !important;
+      top: 9px !important;
+      right: 17px !important;
       width: 34px !important;
       height: 34px !important;
       border: 1px solid rgba(255,255,255,.14) !important;
@@ -5100,7 +5101,7 @@ html body .profile-modal-overlay {
 html body .login-modal-sheet:not(.login-modal-compact-sheet) {
   width: min(calc(100% - 42px), 400px) !important;
   max-height: min(74dvh, 600px) !important;
-  border-radius: 26px !important;
+  border-radius: 30px !important;
   background:
     linear-gradient(180deg, rgba(31, 44, 67, .98), rgba(11, 18, 31, .98)) !important;
   border: 1px solid rgba(255,255,255,.10) !important;
@@ -5126,7 +5127,7 @@ html body .login-modal-sheet:not(.login-modal-compact-sheet) .login-modal-conten
   html body .login-modal-sheet:not(.login-modal-compact-sheet) {
     width: min(calc(100% - 26px), 360px) !important;
     max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - 150px) !important;
-    border-radius: 22px !important;
+    border-radius: 30px !important;
   }
 
   html body .login-modal-sheet:not(.login-modal-compact-sheet) > div:first-child {
@@ -5589,4 +5590,235 @@ html body .login-modal-sheet:not(.login-modal-compact-sheet) .login-modal-conten
 @media (max-width: 400px) {
   .profile-action-btn { font-size: 12px; padding: 9px 10px; }
   .profile-step-avatar { width: 54px; height: 54px; font-size: 20px; }
+}
+
+/* Admin login backdrop matches profile modal overlay. */
+html body .admin-gate-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 70 !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  padding: calc(var(--safe-top) + 118px) 18px calc(var(--safe-bottom) + 96px) !important;
+  pointer-events: none !important;
+}
+
+html body .admin-gate-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 0 !important;
+  background: rgba(2, 7, 16, .56) !important;
+  backdrop-filter: blur(6px) saturate(120%) !important;
+  -webkit-backdrop-filter: blur(6px) saturate(120%) !important;
+  pointer-events: auto !important;
+}
+
+html body .admin-gate-overlay .admin-gate-card {
+  z-index: 1 !important;
+  pointer-events: auto !important;
+  margin: 0 auto !important;
+}
+
+/* Admin login width matches profile modal. */
+@media (max-width: 520px) {
+  html body .admin-gate-card {
+    width: min(calc(100% - 26px), 360px) !important;
+  }
+}
+
+/* Admin/profile modal corner radius alignment. */
+html body .admin-gate-card,
+html body .login-modal-sheet:not(.login-modal-compact-sheet) {
+  border-radius: 30px !important;
+}
+
+/* Profile/admin header gap alignment. */
+html body .profile-modal-overlay-root {
+  padding-top: 94px !important;
+}
+
+/* Admin/profile modal color alignment. */
+html body .admin-gate-card,
+html body .login-modal-sheet:not(.login-modal-compact-sheet) {
+  background:
+    linear-gradient(180deg, rgba(31, 44, 67, .98), rgba(11, 18, 31, .98)) !important;
+  border-color: rgba(255,255,255,.10) !important;
+}
+
+html body .admin-gate-close-btn {
+  background: rgba(255,255,255,.10) !important;
+  border-color: rgba(255,255,255,.14) !important;
+  color: rgba(255,255,255,.90) !important;
+}
+
+html body .admin-gate-close-btn:hover,
+html body .admin-gate-close-btn:focus-visible {
+  background: rgba(255,255,255,.16) !important;
+  border-color: rgba(255,255,255,.22) !important;
+}
+
+html body .admin-gate-icon {
+  background: linear-gradient(145deg, rgba(93,188,255,.46), rgba(91,77,242,.38)) !important;
+  border-color: rgba(174,220,255,.46) !important;
+  color: #eef8ff !important;
+}
+
+html body .admin-gate-card .profile-text-input {
+  background: linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.03)) !important;
+  border-color: rgba(255,255,255,.18) !important;
+  color: var(--label-1) !important;
+}
+
+/* Final admin/profile modal surface match. */
+html body .admin-gate-card,
+html body .login-modal-sheet:not(.login-modal-compact-sheet) {
+  background: linear-gradient(145deg, rgba(34,45,70,.72), rgba(12,18,31,.58)) !important;
+  border-color: transparent !important;
+}
+
+/* Admin score stepper seam fix. */
+html body .admin-score-controls > div > div:last-child {
+  grid-template-columns: 44px 68px 44px !important;
+  width: 156px !important;
+}
+
+html body .score-input-shell .score-value-input,
+html body .admin-score-controls .score-value-input {
+  border-left: 0 !important;
+  border-right: 0 !important;
+}
+
+html body .score-input-shell > button:first-child,
+html body .admin-score-controls > div > div:last-child > button:first-child {
+  border-right: 0 !important;
+}
+
+html body .score-input-shell > button:last-child,
+html body .admin-score-controls > div > div:last-child > button:last-child {
+  border-left: 0 !important;
+}
+
+/* Bracket palette alignment with main app surfaces. */
+html body .bracket-page {
+  --bracket-panel: linear-gradient(145deg, rgba(34,45,70,.72), rgba(12,18,31,.58));
+  --bracket-card: linear-gradient(145deg, rgba(37,47,72,.64), rgba(15,20,36,.70));
+  --bracket-card-finished: linear-gradient(145deg, rgba(45,55,84,.74), rgba(20,25,43,.78));
+  --bracket-line: rgba(143, 166, 214, .42);
+  --bracket-border: rgba(255,255,255,.10);
+  --bracket-head: rgba(255,255,255,.045);
+  --bracket-row-sep: rgba(255,255,255,.075);
+  --bracket-winner-bg: linear-gradient(90deg, rgba(245,200,66,.18), rgba(93,188,255,.08));
+  --bracket-winner-text: rgba(255,247,221,.98);
+  --bracket-loser-text: rgba(215,224,240,.48);
+  --bracket-muted: rgba(216,226,245,.62);
+  --bracket-placeholder: rgba(216,226,245,.36);
+  --bracket-gold: rgba(245, 200, 66, .96);
+}
+
+html body .bracket-page .bracket-intro,
+html body .bracket-page .bracket-section {
+  background: var(--bracket-panel) !important;
+  border-color: rgba(255,255,255,.08) !important;
+}
+
+html body .bracket-page .bracket-match,
+html body .bracket-page .bracket-final-card {
+  background: var(--bracket-card) !important;
+  border-color: var(--bracket-border) !important;
+}
+
+html body .bracket-page .bracket-match.is-finished,
+html body .bracket-page .bracket-final-card.is-finished {
+  background: var(--bracket-card-finished) !important;
+  border-color: rgba(245,200,66,.18) !important;
+}
+
+html body .bracket-page .bracket-match-head {
+  background: var(--bracket-head) !important;
+  border-bottom-color: var(--bracket-row-sep) !important;
+  color: var(--bracket-muted) !important;
+}
+
+html body .bracket-page .bracket-section-title span,
+html body .bracket-page .bracket-round-label,
+html body .bracket-page .bracket-third-place-label {
+  color: var(--bracket-muted) !important;
+}
+
+html body .bracket-page .bracket-team-row {
+  color: rgba(235,240,250,.78) !important;
+}
+
+html body .bracket-page .bracket-team-row + .bracket-team-row {
+  border-top-color: var(--bracket-row-sep) !important;
+}
+
+html body .bracket-page .bracket-team-row.is-winner {
+  background: var(--bracket-winner-bg) !important;
+  color: var(--bracket-winner-text) !important;
+}
+
+html body .bracket-page .bracket-team-row.is-loser {
+  color: var(--bracket-loser-text) !important;
+  opacity: 1 !important;
+}
+
+html body .bracket-page .bracket-connectors path {
+  stroke: var(--bracket-line) !important;
+}
+
+html body .bracket-page .bracket-champion {
+  background: linear-gradient(145deg, rgba(245,200,66,.18), rgba(255,255,255,.045)) !important;
+  border-color: rgba(245,200,66,.28) !important;
+  color: var(--bracket-gold) !important;
+}
+
+html body .bracket-page .bracket-placeholder {
+  color: var(--bracket-placeholder) !important;
+}
+
+/* Bracket winner green restore. */
+html body .bracket-page {
+  --bracket-winner-bg: linear-gradient(90deg, rgba(48, 209, 88, .20), rgba(111, 196, 255, .11));
+  --bracket-winner-text: rgba(231, 255, 241, .98);
+}
+
+/* Bracket subtle lightening pass. */
+html body .bracket-page {
+  --bracket-panel: linear-gradient(145deg, rgba(41,54,82,.76), rgba(17,24,42,.64));
+  --bracket-card: linear-gradient(145deg, rgba(46,58,88,.70), rgba(20,27,47,.74));
+  --bracket-card-finished: linear-gradient(145deg, rgba(55,68,101,.78), rgba(25,33,55,.82));
+  --bracket-line: rgba(158, 181, 224, .48);
+  --bracket-border: rgba(255,255,255,.13);
+  --bracket-head: rgba(255,255,255,.06);
+  --bracket-row-sep: rgba(255,255,255,.09);
+  --bracket-muted: rgba(225,233,248,.68);
+  --bracket-placeholder: rgba(225,233,248,.40);
+}
+
+/* Bracket background restore after lightening. */
+html body .bracket-page {
+  --bracket-panel: linear-gradient(145deg, rgba(34,45,70,.72), rgba(12,18,31,.58));
+  --bracket-card: linear-gradient(145deg, rgba(37,47,72,.64), rgba(15,20,36,.70));
+  --bracket-card-finished: linear-gradient(145deg, rgba(45,55,84,.74), rgba(20,25,43,.78));
+}
+
+/* Infinite group filter interaction polish. */
+html body .infinite-group-scroll {
+  scroll-snap-type: x mandatory !important;
+  scroll-padding-inline: 50% !important;
+  touch-action: pan-x !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+html body .infinite-group-scroll > button {
+  scroll-snap-align: center !important;
+  scroll-snap-stop: always !important;
+  cursor: pointer !important;
+}
+
+html body .infinite-group-scroll > button:focus-visible {
+  outline: 2px solid rgba(157, 210, 255, .95) !important;
+  outline-offset: 3px !important;
 }
