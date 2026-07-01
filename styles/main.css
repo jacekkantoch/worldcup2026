@@ -7346,54 +7346,6 @@ html body .profile-choice-shell.is-open .profile-choice-actions {
   overflow: hidden !important;
 }
 
-/* Matches viewport depth stack. */
-html body .matches-view {
-  perspective: 1000px !important;
-  transform-style: preserve-3d !important;
-}
-
-html body .matches-view > .match-card {
-  --match-stack-scale: 1;
-  --match-stack-y: 0px;
-  --match-stack-z: 0px;
-  --match-stack-opacity: 1;
-  --match-stack-shade: 0;
-  --match-stack-overlap: 0px;
-  --match-stack-level: 0;
-  transform-origin: 50% 100% !important;
-  transition: transform .18s ease, opacity .18s ease, margin-top .18s ease !important;
-}
-
-html body .matches-view > .match-card.is-depth-stacked,
-html body .matches-view > .match-card.is-depth-stacked:hover,
-html body .matches-view > .match-card.is-depth-stacked:focus-within,
-html body .matches-view > .match-card.is-depth-stacked:active {
-  margin-top: var(--match-stack-overlap) !important;
-  transform: translateY(var(--match-stack-y)) translateZ(var(--match-stack-z)) scale(var(--match-stack-scale)) !important;
-  opacity: var(--match-stack-opacity) !important;
-  z-index: var(--match-stack-order, 1) !important;
-}
-
-html body .matches-view > .match-card.is-depth-stacked::after {
-  content: "" !important;
-  position: absolute !important;
-  inset: 0 !important;
-  border-radius: inherit !important;
-  pointer-events: none !important;
-  background: linear-gradient(180deg, rgba(4, 9, 18, 0), rgba(4, 9, 18, .20)) !important;
-  opacity: calc(var(--match-stack-shade) * .75) !important;
-}
-
-html body .matches-view > .match-card.expanded,
-html body .matches-view > .match-card.expanded:hover,
-html body .matches-view > .match-card.expanded:focus-within,
-html body .matches-view > .match-card.expanded:active {
-  margin-top: 0 !important;
-  transform: none !important;
-  opacity: 1 !important;
-  z-index: 300 !important;
-}
-
 /* Mobile browser parity overrides. */
 html.is-mobile-browser body {
   min-height: var(--real-vh, 100dvh) !important;
@@ -7508,4 +7460,155 @@ html body .matches-view > .match-card.expanded:active {
 
 html body .matches-view > .match-card.is-depth-stacked:not(.expanded) {
   z-index: var(--match-stack-order, 1) !important;
+}
+
+/* Matches stack occlusion fix. */
+html body .matches-view > .match-card {
+  isolation: isolate !important;
+  overflow: hidden !important;
+  background:
+    radial-gradient(circle at 18% -22%, rgba(255,255,255,.105), transparent 42%),
+    linear-gradient(145deg, rgb(32, 43, 66), rgb(12, 18, 31)) !important;
+  background-color: rgb(14, 21, 36) !important;
+  background-image:
+    radial-gradient(circle at 18% -22%, rgba(255,255,255,.105), transparent 42%),
+    linear-gradient(145deg, rgb(32, 43, 66), rgb(12, 18, 31)) !important;
+}
+
+html body .matches-view > .match-card:not(.is-depth-stacked) {
+  z-index: 500 !important;
+}
+
+html body .matches-view > .match-card.is-depth-stacked:not(.expanded) {
+  z-index: var(--match-stack-order, 1) !important;
+}
+
+html body .matches-view > .match-card.expanded,
+html body .matches-view > .match-card.expanded:hover,
+html body .matches-view > .match-card.expanded:focus-within,
+html body .matches-view > .match-card.expanded:active {
+  z-index: 500 !important;
+}
+
+html body .matches-view > .match-card > * {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+html body .matches-view > .match-card.is-depth-stacked::after {
+  z-index: 2 !important;
+}
+
+html body .matches-view .phase-filter-panel.filters-sticky,
+html body .matches-view .filters-sticky {
+  z-index: 800 !important;
+}
+
+
+/* Matches cards transparency restore. */
+html:not([data-theme="light"]) body .matches-view .match-card,
+html:not([data-theme="light"]) body .matches-view .match-card:hover,
+html:not([data-theme="light"]) body .matches-view .match-card:focus-within,
+html:not([data-theme="light"]) body .matches-view .match-card:active {
+  background:
+    radial-gradient(circle at 18% -20%, rgba(255,255,255,.10), transparent 44%),
+    linear-gradient(145deg, rgba(34, 48, 70, .58), rgba(10, 15, 26, .42)) !important;
+  background-color: transparent !important;
+  background-image:
+    radial-gradient(circle at 18% -20%, rgba(255,255,255,.10), transparent 44%),
+    linear-gradient(145deg, rgba(34, 48, 70, .58), rgba(10, 15, 26, .42)) !important;
+  backdrop-filter: blur(16px) saturate(145%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(145%) !important;
+}
+
+/* Global panel rhythm. */
+:root {
+  --app-panel-gap: 16px;
+}
+
+html body .app-content {
+  padding-top: calc(var(--header-height, 58px) + var(--app-panel-gap)) !important;
+}
+
+html body .tab-view,
+html body .matches-view,
+html body .specials-view,
+html body .allspecials-view,
+html body .leaderboard-view,
+html body .compare-view,
+html body .bracket-page,
+html body .admin-panel,
+html body .admin-section-stack {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--app-panel-gap) !important;
+}
+
+html body .tab-view > *,
+html body .matches-view > *,
+html body .specials-view > *,
+html body .allspecials-view > *,
+html body .leaderboard-view > *,
+html body .compare-view > *,
+html body .bracket-page > *,
+html body .admin-panel > *,
+html body .admin-section-stack > * {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+html body .install-banner {
+  margin-bottom: 0 !important;
+}
+
+@media (max-width: 520px) {
+  :root {
+    --app-panel-gap: 16px;
+  }
+  html body .app-content {
+    padding-top: calc(var(--header-height, 66px) + var(--app-panel-gap)) !important;
+  }
+}
+
+@media (max-width: 380px) {
+  html body .app-content {
+    padding-top: calc(var(--header-height, 54px) + var(--app-panel-gap)) !important;
+  }
+}
+
+html.is-mobile-browser body .app-content,
+html.is-mobile-standalone body .app-content,
+html.is-mobile-device body .app-content {
+  padding-top: calc(var(--header-height, 58px) + var(--app-panel-gap)) !important;
+}
+
+
+/* Global bottom fade overlay. */
+html body .app-bottom-fade {
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  height: calc(172px + max(var(--safe-bottom, 0px), var(--browser-bottom-ui, 0px))) !important;
+  z-index: 39 !important;
+  pointer-events: none !important;
+  background: linear-gradient(
+    180deg,
+    rgba(4, 9, 18, 0) 0%,
+    rgba(4, 9, 18, .18) 28%,
+    rgba(4, 9, 18, .66) 68%,
+    rgba(4, 9, 18, .96) 100%
+  ) !important;
+}
+
+@media (max-width: 520px) {
+  html body .app-bottom-fade {
+    height: calc(148px + max(var(--safe-bottom, 0px), var(--browser-bottom-ui, 0px))) !important;
+  }
+}
+
+html.is-mobile-device body .app-bottom-fade,
+html.is-mobile-browser body .app-bottom-fade,
+html.is-mobile-standalone body .app-bottom-fade {
+  height: calc(148px + max(var(--safe-bottom, 0px), var(--browser-bottom-ui, 0px))) !important;
 }

@@ -2813,7 +2813,7 @@ const MatchCard = React.memo(function MatchCard({
       justifySelf: 'center',
       transform: 'translateY(-10px)'
     }
-  }, result ? `${result.home}:${result.away}` : prediction ? `${prediction.home}:${prediction.away}` : 'vs'), React.createElement("div", {
+  }, prediction ? `${prediction.home}:${prediction.away}` : result ? `${result.home}:${result.away}` : 'vs'), React.createElement("div", {
     style: {
       minWidth: 0,
       display: 'flex',
@@ -3243,76 +3243,6 @@ function MatchesView({
     setExpandedId(null);
   }, [phaseFilter, groupFilter, statusFilter, compactDevice]);
   const visibleMatches = compactDevice ? filtered.slice(0, visibleCount) : filtered;
-  useEffect(() => {
-    let frame = 0;
-    const clearCard = card => {
-      card.classList.remove('is-depth-stacked');
-      card.style.removeProperty('--match-stack-scale');
-      card.style.removeProperty('--match-stack-y');
-      card.style.removeProperty('--match-stack-z');
-      card.style.removeProperty('--match-stack-opacity');
-      card.style.removeProperty('--match-stack-shade');
-      card.style.removeProperty('--match-stack-overlap');
-      card.style.removeProperty('--match-stack-level');
-      card.style.removeProperty('--match-stack-order');
-    };
-    const updateStack = () => {
-      frame = 0;
-      const view = document.querySelector('.matches-view');
-      if (!view) return;
-      const cards = Array.from(view.querySelectorAll(':scope > .match-card'));
-      const viewportHeight = window.visualViewport?.height || window.innerHeight || document.documentElement.clientHeight || 0;
-      const nav = document.querySelector('.bottom-nav');
-      const navTop = nav ? nav.getBoundingClientRect().top : viewportHeight;
-      const bottomEdge = Math.max(0, Math.min(viewportHeight, navTop));
-      const zone = Math.max(230, Math.min(390, bottomEdge * 0.36));
-      const start = bottomEdge - zone;
-      const candidates = [];
-      cards.forEach((card, index) => {
-        if (card.classList.contains('expanded')) {
-          clearCard(card);
-          return;
-        }
-        const rect = card.getBoundingClientRect();
-        const rawDepth = (rect.top - start) / zone;
-        const depth = Math.max(0, Math.min(1, rawDepth));
-        if (depth <= 0.02 || rect.bottom < 0 || rect.top > viewportHeight + 80) {
-          clearCard(card);
-          return;
-        }
-        candidates.push({ card, index, depth, top: rect.top });
-      });
-      candidates.sort((a, b) => a.top - b.top);
-      candidates.forEach((item, stackIndex) => {
-        const { card, index, depth } = item;
-        const eased = depth * depth * (3 - 2 * depth);
-        const level = Math.min(3, stackIndex);
-        const levelPush = Math.min(1, eased + level * 0.22);
-        card.classList.add('is-depth-stacked');
-        card.style.setProperty('--match-stack-scale', (1 - levelPush * 0.065).toFixed(3));
-        card.style.setProperty('--match-stack-y', (level * 7 - eased * 8).toFixed(1) + 'px');
-        card.style.setProperty('--match-stack-z', (-levelPush * 110).toFixed(1) + 'px');
-        card.style.setProperty('--match-stack-opacity', (1 - levelPush * 0.10).toFixed(3));
-        card.style.setProperty('--match-stack-shade', levelPush.toFixed(3));
-        card.style.setProperty('--match-stack-overlap', (-(18 + level * 11) * eased).toFixed(1) + 'px');
-        card.style.setProperty('--match-stack-level', String(level));
-        card.style.setProperty('--match-stack-order', String(300 - index));
-      });
-    };
-    const schedule = () => {
-      if (frame) return;
-      frame = requestAnimationFrame(updateStack);
-    };
-    schedule();
-    window.addEventListener('scroll', schedule, { passive: true });
-    window.addEventListener('resize', schedule);
-    return () => {
-      if (frame) cancelAnimationFrame(frame);
-      window.removeEventListener('scroll', schedule);
-      window.removeEventListener('resize', schedule);
-      document.querySelectorAll('.matches-view > .match-card.is-depth-stacked').forEach(clearCard);
-    };
-  }, [visibleMatches.length, expandedId, phaseFilter, groupFilter, statusFilter, compactDevice]);
   const hasMoreMatches = compactDevice && visibleCount < filtered.length;
   const filterBtns = PHASE_FILTER_TABS;
   const filterPanel = React.createElement("div", {
@@ -6418,6 +6348,11 @@ function BottomNav({
   const lastSelectAt = useRef(0);
   const activeIdx = Math.max(0, tabs.findIndex(t => t.k === activeTab));
   const visualIdx = dragging && previewIdx !== null ? previewIdx : activeIdx;
+  const scrollPageTop = useCallback(() => {
+    const behavior = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+    window.scrollTo({ top: 0, left: 0, behavior });
+    document.scrollingElement?.scrollTo?.({ top: 0, left: 0, behavior });
+  }, []);
 
   // Pozycja pastylki jest liczona z faktycznego prostokąta przycisku.
   const positionFor = useCallback(idx => {
@@ -6510,10 +6445,12 @@ function BottomNav({
     });
   };
   const commitSelect = useCallback(tabKey => {
-    if (!tabKey || tabKey === activeTab) return;
+    if (!tabKey) return;
+    scrollPageTop();
+    if (tabKey === activeTab) return;
     const run = () => onSelect(tabKey);
     if (React.startTransition) React.startTransition(run);else run();
-  }, [activeTab, onSelect]);
+  }, [activeTab, onSelect, scrollPageTop]);
   const requestSelect = useCallback(tabKey => {
     if (!tabKey || tabKey === activeTab) return;
     const minGap = 180;
@@ -6581,7 +6518,10 @@ function BottomNav({
       e.stopPropagation();
       return;
     }
-    if (tabKey === activeTab) return;
+    if (tabKey === activeTab) {
+      scrollPageTop();
+      return;
+    }
     const _dropEl = trackRef.current && trackRef.current.querySelector('.nav-droplet');
     if (_dropEl) {
       _dropEl.classList.add('squishing');
@@ -7183,7 +7123,10 @@ function Mundial2026() {
     }),
     onImport: handleImport,
     onLogout: () => { setAdminUnlocked(false); setActiveTab('matches'); }
-  }))), React.createElement(BottomNav, {
+  }))), React.createElement("div", {
+    className: "app-bottom-fade",
+    "aria-hidden": "true"
+  }), React.createElement(BottomNav, {
     tabs: tabs,
     activeTab: activeTab,
     onSelect: setActiveTab
