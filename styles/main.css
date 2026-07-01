@@ -7315,6 +7315,48 @@ html body .profile-modal-overlay-root {
   z-index: 950 !important;
 }
 
+/* Panel "Profil i użytkownicy" (lista) i krok "Zmień nazwę" mają być
+   w tej samej odległości od nagłówka niezależnie od ilości treści.
+   `align-self: center` (i `margin: auto` na mobile) wyśrodkowuje okno
+   względem JEGO WŁASNEJ wysokości, więc krótszy formularz zmiany nazwy
+   ląduje niżej niż długa lista graczy — wymuszamy wyrównanie do góry. */
+html body .login-modal-sheet {
+  align-self: flex-start !important;
+  margin-top: 0 !important;
+  margin-bottom: auto !important;
+}
+
+/* Nagłówek (tytuł "Profil i użytkownicy" + X) potrafił się ściskać z ~60px
+   do 52px, gdy zawartość poniżej (długa lista graczy) zbliżała się do
+   max-height panelu — bo nie miał `flex-shrink: 0`, więc flexbox ściskał
+   go razem z resztą. Krótsza zawartość (np. krok "Zmień nazwę") nie dawała
+   tej presji, więc nagłówek zostawał przy naturalnej wysokości — stąd
+   tytuł i X lądowały ~4px wyżej/niżej zależnie od kroku. Blokujemy
+   ściskanie, żeby nagłówek był zawsze tej samej wysokości. */
+html body .login-modal-sheet > div:first-child {
+  flex-shrink: 0 !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Wspólny system paneli profilu (lista "Profil i użytkownicy", "Dodaj
+   użytkownika", "Zmień nazwę", "Panel administratora"). Wszystkie cztery
+   renderują się przez ten sam <Modal> + <PanelHeader> (patrz app.js) i tę
+   samą klasę .login-modal-sheet (bez wariantu "compact") — to poniżej
+   dopina JEDEN, wspólny rytm odstępów między elementami treści, żeby
+   żaden z nich nie musiał definiować własnego, lokalnego marginesu.
+   ═══════════════════════════════════════════════════════════════ */
+:root {
+  --panel-content-gap: 14px;
+}
+
+html body .login-modal-content > * {
+  margin-top: 0 !important;
+}
+
+html body .login-modal-content > * + * {
+  margin-top: var(--panel-content-gap) !important;
+}
+
 html body .matches-view .phase-filter-panel.filters-sticky,
 html body .matches-view .filters-sticky,
 html body .compare-view .phase-filter-panel.filters-sticky,

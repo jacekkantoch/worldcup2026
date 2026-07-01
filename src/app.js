@@ -2013,6 +2013,25 @@ function Badge({
     className: `inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border ${v[variant] || v.default}`
   }, children);
 }
+// Wspólny nagłówek dla wszystkich paneli/modali (tytuł + przycisk X).
+// Jedno źródło prawdy dla struktury nagłówka — używane przez Modal,
+// więc każdy panel oparty na Modal (lista profili, dodawanie użytkownika,
+// zmiana nazwy, panel admina) ma identyczny nagłówek bez powielania kodu.
+function PanelHeader({ title, onClose }) {
+  return React.createElement("div", {
+    className: "flex items-center justify-between p-4 panel-header"
+  }, React.createElement("h3", {
+    className: "login-modal-title panel-title"
+  }, title), React.createElement("button", {
+    type: "button",
+    onClick: onClose,
+    className: "modal-close-btn panel-close-btn",
+    "aria-label": "Zamknij"
+  }, React.createElement(Icon, {
+    name: "x",
+    size: 18
+  })));
+}
 function Modal({
   open,
   onClose,
@@ -2189,17 +2208,10 @@ function Modal({
       border: '1px solid var(--sep)',
       boxShadow: 'var(--shadow-lg), var(--hl)'
     }
-  }, React.createElement("div", {
-    className: "flex items-center justify-between p-4"
-  }, React.createElement("h3", {
-    className: "login-modal-title font-display text-xl tracking-wide text-stone-900"
-  }, title), React.createElement("button", {
-    onClick: onClose,
-    className: "modal-close-btn"
-  }, React.createElement(Icon, {
-    name: "x",
-    size: 18
-  }))), React.createElement("div", {
+  }, React.createElement(PanelHeader, {
+    title: title,
+    onClose: onClose
+  }), React.createElement("div", {
     className: "login-modal-content overflow-y-auto p-4"
   }, children)));
 }
@@ -4461,40 +4473,39 @@ function PhaseLockPanel({
 // ═══════════════════════════════════════════════════════════════
 //  ADMIN
 // ═══════════════════════════════════════════════════════════════
+// Zawartość panelu admina — renderowana WEWNĄTRZ wspólnego <Modal>,
+// więc dziedziczy dokładnie ten sam nagłówek (tytuł + X), szerokość,
+// padding i tło co pozostałe panele profilu. Struktura (hero z ikoną +
+// pola + przyciski) jest identyczna jak w kroku "Zmień nazwę" — te same
+// klasy .profile-step-hero / .profile-field / .profile-text-input /
+// .profile-step-actions, zero nowych, powielonych stylów.
 function AdminGate({
   adminPassword,
   onUnlock,
-  onSetPassword,
-  onClose
+  onSetPassword
 }) {
   const [input, setInput] = useState('');
   const [confirm, setConfirm] = useState('');
   const [error, setError] = useState('');
-  if (!adminPassword) return React.createElement("div", {
-    className: "admin-gate-card"
-  },
-    React.createElement("button", {
-      type: "button",
-      onClick: onClose,
-      className: "admin-gate-close-btn",
-      title: "Wyjdź z logowania administratora",
-      "aria-label": "Wyjdź z logowania administratora"
-    }, React.createElement(Icon, { name: "x", size: 18 })),
-    React.createElement("div", { className: "admin-gate-hero" },
-      React.createElement("div", { className: "admin-gate-icon" }, React.createElement(Icon, { name: "lock", size: 24 })),
-      React.createElement("h3", { className: "admin-gate-title" }, "Ustaw hasło admina"),
-      React.createElement("p", { className: "admin-gate-subtitle" }, "Jednorazowe — zapamiętaj dobrze!")
+  if (!adminPassword) return React.createElement(React.Fragment, null,
+    React.createElement("div", { className: "profile-step-hero" },
+      React.createElement("div", { className: "profile-step-avatar" }, React.createElement(Icon, { name: "lock", size: 24 })),
+      React.createElement("p", { className: "profile-step-name" }, "Ustaw hasło admina"),
+      React.createElement("p", { className: "profile-step-hint" }, "Jednorazowe — zapamiętaj dobrze!")
     ),
-    React.createElement("div", { className: "admin-gate-field" },
+    React.createElement("div", { className: "profile-field" },
+      React.createElement("label", { className: "profile-label" }, "Nowe hasło"),
       React.createElement("input", {
         type: "password",
         value: input,
         onChange: e => setInput(e.target.value),
         placeholder: "Nowe hasło",
-        className: "profile-text-input"
+        className: "profile-text-input",
+        autoFocus: true
       })
     ),
-    React.createElement("div", { className: "admin-gate-field" },
+    React.createElement("div", { className: "profile-field" },
+      React.createElement("label", { className: "profile-label" }, "Powtórz hasło"),
       React.createElement("input", {
         type: "password",
         value: confirm,
@@ -4504,36 +4515,31 @@ function AdminGate({
       })
     ),
     error && React.createElement("p", { className: "profile-error" }, error),
-    React.createElement("button", {
-      className: "profile-action-btn profile-action-login admin-gate-submit",
-      onClick: () => {
-        if (input.length < 3) {
-          setError('Hasło musi mieć min. 3 znaki');
-          return;
+    React.createElement("div", { className: "profile-step-actions" },
+      React.createElement("button", {
+        className: "profile-action-btn profile-action-login profile-action-full",
+        onClick: () => {
+          if (input.length < 3) {
+            setError('Hasło musi mieć min. 3 znaki');
+            return;
+          }
+          if (input !== confirm) {
+            setError('Hasła nie pasują');
+            return;
+          }
+          onSetPassword(input);
         }
-        if (input !== confirm) {
-          setError('Hasła nie pasują');
-          return;
-        }
-        onSetPassword(input);
-      }
-    }, "Ustaw hasło")
+      }, React.createElement(Icon, { name: "lock", size: 14 }), "Ustaw hasło")
+    )
   );
-  return React.createElement("div", {
-    className: "admin-gate-card"
-  },
-    React.createElement("button", {
-      type: "button",
-      onClick: onClose,
-      className: "admin-gate-close-btn",
-      title: "Wyjdź z logowania administratora",
-      "aria-label": "Wyjdź z logowania administratora"
-    }, React.createElement(Icon, { name: "x", size: 18 })),
-    React.createElement("div", { className: "admin-gate-hero" },
-      React.createElement("div", { className: "admin-gate-icon" }, React.createElement(Icon, { name: "lock", size: 24 })),
-      React.createElement("h3", { className: "admin-gate-title" }, "Panel administratora")
+  return React.createElement(React.Fragment, null,
+    React.createElement("div", { className: "profile-step-hero" },
+      React.createElement("div", { className: "profile-step-avatar" }, React.createElement(Icon, { name: "lock", size: 24 })),
+      React.createElement("p", { className: "profile-step-name" }, "Panel administratora"),
+      React.createElement("p", { className: "profile-step-hint" }, "Wpisz hasło, żeby zarządzać wynikami")
     ),
-    React.createElement("div", { className: "admin-gate-field" },
+    React.createElement("div", { className: "profile-field" },
+      React.createElement("label", { className: "profile-label" }, "Hasło"),
       React.createElement("input", {
         type: "password",
         value: input,
@@ -4545,10 +4551,12 @@ function AdminGate({
       })
     ),
     error && React.createElement("p", { className: "profile-error" }, error),
-    React.createElement("button", {
-      className: "profile-action-btn profile-action-login admin-gate-submit",
-      onClick: () => onUnlock(input, err => setError(err))
-    }, React.createElement(Icon, { name: "unlock", size: 14 }), "Odblokuj")
+    React.createElement("div", { className: "profile-step-actions" },
+      React.createElement("button", {
+        className: "profile-action-btn profile-action-login profile-action-full",
+        onClick: () => onUnlock(input, err => setError(err))
+      }, React.createElement(Icon, { name: "unlock", size: 14 }), "Odblokuj")
+    )
   );
 }
 function AdminMatchRow({
@@ -5627,7 +5635,10 @@ function LoginModal({
   }, [open, activePlayer]);
   const pl = players.find(p => p.id === selected);
   const hasPinHash = pl && pl.pinHash;
-  const isCompactStep = step === 'pin' || step === 'rename';
+  // Krok "rename" ma wyglądać i pozycjonować się dokładnie tak samo jak
+  // panel "Profil i użytkownicy" (ta sama szerokość / ten sam odstęp od
+  // nagłówka) — tylko krok PIN pozostaje wąskim, kompaktowym oknem.
+  const isCompactStep = step === 'pin';
   const handlePick = () => {
     if (!selected) {
       setErr('Wybierz gracza');
@@ -5834,6 +5845,7 @@ function LoginModal({
 function PlayersManager({
   open,
   onClose,
+  onCancel,
   players,
   onAddPlayer
 }) {
@@ -5853,6 +5865,12 @@ function PlayersManager({
   const closeModal = () => {
     reset();
     onClose();
+  };
+  // "Anuluj" wraca do listy "Profil i użytkownicy" zamiast całkiem
+  // zamykać okno — X i kliknięcie w tło nadal zamykają całkowicie.
+  const cancelToList = () => {
+    reset();
+    (onCancel || onClose)();
   };
   const handleAdd = () => {
     const name = newName.trim();
@@ -5879,16 +5897,14 @@ function PlayersManager({
     open: open,
     onClose: closeModal,
     title: "Dodaj u\u017Cytkownika",
-    maxWidth: "max-w-xs",
-    panelClassName: "login-modal-sheet login-modal-compact-sheet",
+    maxWidth: "max-w-sm",
+    panelClassName: "login-modal-sheet",
     overlayClassName: "profile-modal-overlay"
   }, React.createElement("div", {
-    className: "space-y-4"
-  }, React.createElement("div", {
     className: "app-note app-note--warning app-note--compact"
-  }, "Zapami\u0119taj PIN \u2014 nie da si\u0119 go odzyska\u0107."), React.createElement("div", null, React.createElement("label", {
-    className: "text-xs font-semibold text-stone-600 block mb-1"
-  }, "Imi\u0119 i nazwisko"), React.createElement("input", {
+  }, "Zapami\u0119taj PIN \u2014 nie da si\u0119 go odzyska\u0107."), React.createElement("div", {
+    className: "profile-field"
+  }, React.createElement("label", { className: "profile-label" }, "Imi\u0119 i nazwisko"), React.createElement("input", {
     value: newName,
     onChange: e => {
       setNewName(e.target.value);
@@ -5896,10 +5912,10 @@ function PlayersManager({
     },
     placeholder: "np. Jan Kowalski",
     autoFocus: true,
-    className: "w-full px-3 py-2.5 border-2 border-stone-200 rounded-lg focus:border-[#0d1b5e] focus:outline-none text-sm"
-  })), React.createElement("div", null, React.createElement("label", {
-    className: "text-xs font-semibold text-stone-600 block mb-1"
-  }, "PIN (min. 4 znaki)"), React.createElement("input", {
+    className: "profile-text-input"
+  })), React.createElement("div", {
+    className: "profile-field"
+  }, React.createElement("label", { className: "profile-label" }, "PIN (min. 4 znaki)"), React.createElement("input", {
     type: "password",
     inputMode: "numeric",
     value: newPin,
@@ -5909,10 +5925,10 @@ function PlayersManager({
     },
     placeholder: "\u2022\u2022\u2022\u2022",
     maxLength: 8,
-    className: "w-full px-3 py-2.5 border-2 border-stone-200 rounded-lg focus:border-[#0d1b5e] focus:outline-none text-sm tracking-widest"
-  })), React.createElement("div", null, React.createElement("label", {
-    className: "text-xs font-semibold text-stone-600 block mb-1"
-  }, "Powt\xF3rz PIN"), React.createElement("input", {
+    className: "profile-text-input"
+  })), React.createElement("div", {
+    className: "profile-field"
+  }, React.createElement("label", { className: "profile-label" }, "Powt\xF3rz PIN"), React.createElement("input", {
     type: "password",
     inputMode: "numeric",
     value: newPin2,
@@ -5923,23 +5939,19 @@ function PlayersManager({
     onKeyDown: e => e.key === 'Enter' && handleAdd(),
     placeholder: "\u2022\u2022\u2022\u2022",
     maxLength: 8,
-    className: "w-full px-3 py-2.5 border-2 border-stone-200 rounded-lg focus:border-[#0d1b5e] focus:outline-none text-sm tracking-widest"
-  })), error && React.createElement("p", {
-    className: "text-xs text-red-600 font-semibold"
-  }, error), React.createElement("div", {
-    className: "flex gap-2"
-  }, React.createElement(Btn, {
-    variant: "outline",
-    onClick: closeModal,
-    className: "flex-1"
-  }, "Anuluj"), React.createElement(Btn, {
-    variant: "primary",
-    onClick: handleAdd,
-    className: "flex-1"
+    className: "profile-text-input"
+  })), error && React.createElement("p", { className: "profile-error" }, error), React.createElement("div", {
+    className: "profile-step-actions"
+  }, React.createElement("button", {
+    className: "profile-action-btn profile-action-cancel",
+    onClick: cancelToList
+  }, "Anuluj"), React.createElement("button", {
+    className: "profile-action-btn profile-action-login",
+    onClick: handleAdd
   }, React.createElement(Icon, {
     name: "plus",
-    size: 16
-  }), "Utw\xF3rz konto"))));
+    size: 14
+  }), "Utw\xF3rz konto")));
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -7132,12 +7144,14 @@ function Mundial2026() {
     tabs: tabs,
     activeTab: activeTab,
     onSelect: setActiveTab
-  }), adminLoginOpen && !adminUnlocked && React.createElement("div", {
-    className: "admin-gate-overlay"
-  }, React.createElement("div", {
-    className: "admin-gate-backdrop",
-    onClick: () => setAdminLoginOpen(false)
-  }), React.createElement(AdminGate, {
+  }), React.createElement(Modal, {
+    open: adminLoginOpen && !adminUnlocked,
+    onClose: () => setAdminLoginOpen(false),
+    title: adminPasswordHash ? "Panel administratora" : "Ustaw hasło admina",
+    maxWidth: "max-w-sm",
+    panelClassName: "login-modal-sheet",
+    overlayClassName: "profile-modal-overlay"
+  }, React.createElement(AdminGate, {
     adminPassword: adminPasswordHash,
     onUnlock: (pwd, onErr) => {
       if (hashPwd(pwd) === adminPasswordHash) {
@@ -7151,11 +7165,11 @@ function Mundial2026() {
       setAdminUnlocked(true);
       setAdminLoginOpen(false);
       setActiveTab('admin');
-    },
-    onClose: () => setAdminLoginOpen(false)
+    }
   })), React.createElement(PlayersManager, {
     open: playersModal,
     onClose: () => setPlayersModal(false),
+    onCancel: () => { setPlayersModal(false); setLoginModal(true); },
     players: safePlayers,
     onAddPlayer: handleAddPlayer
   }), React.createElement(LoginModal, {
