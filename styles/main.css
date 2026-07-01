@@ -7393,3 +7393,119 @@ html body .matches-view > .match-card.expanded:active {
   opacity: 1 !important;
   z-index: 300 !important;
 }
+
+/* Mobile browser parity overrides. */
+html.is-mobile-browser body {
+  min-height: var(--real-vh, 100dvh) !important;
+  padding-bottom: calc(118px + max(var(--safe-bottom, 0px), var(--browser-bottom-ui, 0px))) !important;
+}
+
+html.is-mobile-browser body .app-header {
+  padding-top: calc(max(var(--safe-top, 0px), var(--browser-top-ui, 0px)) + 9px) !important;
+}
+
+html.is-mobile-browser body .bottom-nav {
+  bottom: calc(12px + max(var(--safe-bottom, 0px), var(--browser-bottom-ui, 0px))) !important;
+}
+
+html.is-mobile-browser body .profile-modal-overlay-root {
+  padding-top: calc(max(var(--safe-top, 0px), var(--browser-top-ui, 0px)) + var(--header-height, 58px) + 60px) !important;
+  padding-bottom: calc(max(var(--safe-bottom, 0px), var(--browser-bottom-ui, 0px)) + 18px) !important;
+}
+
+html.is-mobile-browser body .admin-gate-overlay {
+  padding-top: calc(max(var(--safe-top, 0px), var(--browser-top-ui, 0px)) + var(--header-height, 58px) + 60px) !important;
+  padding-bottom: calc(max(var(--safe-bottom, 0px), var(--browser-bottom-ui, 0px)) + 18px) !important;
+}
+
+html.is-mobile-browser body .profile-modal-overlay-root .login-modal-sheet,
+html.is-mobile-browser body .profile-modal-overlay-root .login-modal-compact-sheet {
+  max-height: calc(var(--real-vh, 100dvh) - max(var(--safe-top, 0px), var(--browser-top-ui, 0px)) - var(--header-height, 58px) - 78px - max(var(--safe-bottom, 0px), var(--browser-bottom-ui, 0px))) !important;
+}
+
+html.is-mobile-browser body .login-modal-sheet:not(.login-modal-compact-sheet),
+html.is-mobile-browser body .admin-gate-card,
+html.is-mobile-browser body .admin-gate-overlay .admin-gate-card {
+  width: min(calc(100% - 26px), 360px) !important;
+  max-width: 360px !important;
+}
+
+html.is-mobile-browser body .filters-sticky {
+  top: var(--header-height, 58px) !important;
+}
+
+html.is-mobile-browser body .matches-view {
+  perspective: 1000px !important;
+}
+
+/* Sticky filter opaque overlay fix. */
+html:not([data-theme="light"]) body .phase-filter-panel.filters-sticky,
+html:not([data-theme="light"]) body .filters-sticky,
+html:not([data-theme="light"]) body .admin-phase-filters {
+  position: sticky !important;
+  isolation: isolate !important;
+  overflow: hidden !important;
+  background:
+    radial-gradient(circle at 18% -20%, rgba(255,255,255,.11), transparent 42%),
+    linear-gradient(145deg, rgba(31, 42, 64, .985), rgba(11, 17, 30, .975)) !important;
+  background-color: rgb(14, 21, 36) !important;
+  border-color: rgba(255,255,255,.09) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html:not([data-theme="light"]) body .phase-filter-panel.filters-sticky::before,
+html:not([data-theme="light"]) body .filters-sticky::before,
+html:not([data-theme="light"]) body .admin-phase-filters::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: -1 !important;
+  border-radius: inherit !important;
+  background:
+    radial-gradient(circle at 20% -24%, rgba(255,255,255,.12), transparent 44%),
+    linear-gradient(145deg, rgb(32, 43, 66), rgb(12, 18, 31)) !important;
+  opacity: 1 !important;
+  pointer-events: none !important;
+}
+
+html body .phase-filter-panel.filters-sticky > *,
+html body .filters-sticky > *,
+html body .admin-phase-filters > * {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Sticky filter z-index above expanded matches. */
+html body .app-header {
+  z-index: 900 !important;
+}
+
+html body .bottom-nav {
+  z-index: 900 !important;
+}
+
+html body .matches-view .phase-filter-panel.filters-sticky,
+html body .matches-view .filters-sticky,
+html body .compare-view .phase-filter-panel.filters-sticky,
+html body .compare-view .filters-sticky {
+  z-index: 800 !important;
+  position: sticky !important;
+}
+
+html body .matches-view > .match-card,
+html body .matches-view > .match-card.is-depth-stacked,
+html body .matches-view > .match-card.expanded {
+  z-index: 1 !important;
+}
+
+html body .matches-view > .match-card.expanded,
+html body .matches-view > .match-card.expanded:hover,
+html body .matches-view > .match-card.expanded:focus-within,
+html body .matches-view > .match-card.expanded:active {
+  z-index: 2 !important;
+}
+
+html body .matches-view > .match-card.is-depth-stacked:not(.expanded) {
+  z-index: var(--match-stack-order, 1) !important;
+}

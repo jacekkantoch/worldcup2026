@@ -3261,7 +3261,7 @@ function MatchesView({
       const view = document.querySelector('.matches-view');
       if (!view) return;
       const cards = Array.from(view.querySelectorAll(':scope > .match-card'));
-      const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+      const viewportHeight = window.visualViewport?.height || window.innerHeight || document.documentElement.clientHeight || 0;
       const nav = document.querySelector('.bottom-nav');
       const navTop = nav ? nav.getBoundingClientRect().top : viewportHeight;
       const bottomEdge = Math.max(0, Math.min(viewportHeight, navTop));
@@ -6681,6 +6681,48 @@ function Mundial2026() {
     if (themeMeta) themeMeta.setAttribute('content', theme === 'light' ? '#f2f2f7' : '#0d2b4a');
   }, [theme]);
   const [activeTab, setActiveTab] = useState('matches');
+  useEffect(() => {
+    const root = document.documentElement;
+    let frame = 0;
+    const updateViewportMode = () => {
+      frame = 0;
+      const vv = window.visualViewport;
+      const standalone = !!(window.navigator && window.navigator.standalone) || window.matchMedia('(display-mode: standalone)').matches;
+      const visualHeight = vv ? vv.height : window.innerHeight;
+      const visualWidth = vv ? vv.width : window.innerWidth;
+      const mobile = (window.matchMedia('(pointer: coarse)').matches && Math.min(window.innerWidth || 0, window.screen?.width || 0) <= 820) || visualWidth <= 620;
+      const topInset = vv ? Math.max(0, vv.offsetTop || 0) : 0;
+      const bottomInset = vv ? Math.max(0, (window.innerHeight || visualHeight) - visualHeight - topInset) : 0;
+      root.classList.toggle('is-mobile-device', !!mobile);
+      root.classList.toggle('is-mobile-browser', !!mobile && !standalone);
+      root.classList.toggle('is-mobile-standalone', !!mobile && !!standalone);
+      root.style.setProperty('--real-vh', `${visualHeight}px`);
+      root.style.setProperty('--real-vw', `${visualWidth}px`);
+      root.style.setProperty('--browser-top-ui', `${topInset}px`);
+      root.style.setProperty('--browser-bottom-ui', `${bottomInset}px`);
+    };
+    const schedule = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(updateViewportMode);
+    };
+    schedule();
+    window.addEventListener('resize', schedule);
+    window.addEventListener('orientationchange', schedule);
+    window.visualViewport && window.visualViewport.addEventListener('resize', schedule);
+    window.visualViewport && window.visualViewport.addEventListener('scroll', schedule);
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener('resize', schedule);
+      window.removeEventListener('orientationchange', schedule);
+      window.visualViewport && window.visualViewport.removeEventListener('resize', schedule);
+      window.visualViewport && window.visualViewport.removeEventListener('scroll', schedule);
+      root.classList.remove('is-mobile-device', 'is-mobile-browser', 'is-mobile-standalone');
+      root.style.removeProperty('--real-vh');
+      root.style.removeProperty('--real-vw');
+      root.style.removeProperty('--browser-top-ui');
+      root.style.removeProperty('--browser-bottom-ui');
+    };
+  }, []);
 
   // Po każdej zmianie głównej zakładki wróć na samą górę strony.
   useEffect(() => {
