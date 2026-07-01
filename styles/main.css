@@ -7307,6 +7307,14 @@ html body .bottom-nav {
   z-index: 900 !important;
 }
 
+/* Modale (panel admina, profil/użytkownicy) muszą przykrywać nagłówek
+   i dolną nawigację (z-index 900), inaczej pasek menu prześwituje przez
+   przyciemnione tło modala. */
+html body .admin-gate-overlay,
+html body .profile-modal-overlay-root {
+  z-index: 950 !important;
+}
+
 html body .matches-view .phase-filter-panel.filters-sticky,
 html body .matches-view .filters-sticky,
 html body .compare-view .phase-filter-panel.filters-sticky,
