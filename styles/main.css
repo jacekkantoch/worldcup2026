@@ -7451,12 +7451,12 @@ html body .match-card-enter {
     opacity: .5;
     transform: perspective(900px) translateY(48px) scale(.85) rotateX(6deg);
   }
-  15% {
-    /* identity — w pełni na ekranie */
+  38% {
+    /* identity — w pełni na ekranie, bliżej środka niż wcześniej */
     opacity: 1;
     transform: perspective(900px) translateY(0) scale(1) rotateX(0deg);
   }
-  85% {
+  62% {
     /* identity — nadal w pełni na ekranie, tuż przed wyjazdem u góry */
     opacity: 1;
     transform: perspective(900px) translateY(0) scale(1) rotateX(0deg);
