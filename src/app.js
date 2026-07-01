@@ -7220,21 +7220,20 @@ ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(
 // bez natywnego animation-timeline (patrz main.css: .match-card-enter). =====
 (function () {
   if (window.CSS && CSS.supports && CSS.supports('animation-timeline', 'view()')) return;
+  // Efekt ma działać TYLKO przy wejściu od dołu — u góry karta ma zostać
+  // płaska (bez animacji), więc reveal jest jednokierunkowy: raz pokazana
+  // karta już nigdy nie wraca do stanu ukrytego (inaczej IntersectionObserver,
+  // nieznający kierunku scrolla, chowałby ją też przy wyjściu/wejściu górą).
   const io = new IntersectionObserver(entries => {
     entries.forEach(entry => {
-      // Przełączamy w obie strony (nie tylko dodajemy), żeby karta chowała
-      // się z powrotem, gdy wyjdzie poza widoczny obszar przy scrollu w górę.
-      entry.target.classList.toggle('is-revealed', entry.isIntersecting);
-    });
-  }, { rootMargin: '0px 0px -10% 0px', threshold: 0.15 });
-  const observed = new WeakSet();
-  const observe = () => {
-    document.querySelectorAll('.match-card-enter').forEach(el => {
-      if (!observed.has(el)) {
-        observed.add(el);
-        io.observe(el);
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-revealed');
+        io.unobserve(entry.target);
       }
     });
+  }, { rootMargin: '0px 0px -10% 0px', threshold: 0.15 });
+  const observe = () => {
+    document.querySelectorAll('.match-card-enter:not(.is-revealed)').forEach(el => io.observe(el));
   };
   observe();
   new MutationObserver(observe).observe(document.body, { childList: true, subtree: true });

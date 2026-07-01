@@ -7415,19 +7415,14 @@ html.is-mobile-standalone body .app-bottom-fade {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   Karty meczów — "wyłanianie z głębi" podczas scrollowania, symetrycznie
-   na DOLNEJ i GÓRNEJ krawędzi ekranu (tunel 3D: środek = pełna ostrość,
-   obie krawędzie = karta zapada się w głąb).
+   Karty meczów — "wyłanianie z głębi" podczas scrollowania. Efekt działa
+   TYLKO na dolnej krawędzi (wejście od dołu); u góry karta znika płasko,
+   bez animacji — zgodnie z pierwotnym zachowaniem.
    Animacja jedzie po wrapperze .match-card-enter (nie po .match-card
    samym), bo .match-card ma `transform: none !important` narzucony
    wyżej dla stabilizacji hover — konflikt priorytetów w kaskadzie
    (Animations < Author !important) uniemożliwiłby animację transformu
    wprost na .match-card.
-   Jedna animacja rozciągnięta na cały zakres "cover" (0% = wejście od
-   dołu, 100% = zejście u góry) zamiast dwóch osobnych na entry/exit —
-   dwie animacje na tych samych właściwościach nadpisywałyby się nawzajem
-   (domyślny tryb "replace" w CSS Animations), więc symetria wymaga
-   jednego zestawu klatek kluczowych z odbiciem lustrzanym na końcach.
    ═══════════════════════════════════════════════════════════════ */
 html body .match-card-enter {
   display: block;
@@ -7439,32 +7434,22 @@ html body .match-card-enter {
     view-timeline-axis: block;
     animation: match-card-depth-reveal linear both;
     animation-timeline: --match-card-reveal;
-    animation-range: cover 0% cover 100%;
+    animation-range: entry 0% cover 38%;
     transform-style: preserve-3d;
     will-change: transform, opacity;
   }
 }
 
 @keyframes match-card-depth-reveal {
-  0% {
+  from {
     /* bottomTrailing — kafelek dopiero wjeżdża od dołu */
     opacity: .5;
     transform: perspective(900px) translateY(48px) scale(.85) rotateX(6deg);
   }
-  38% {
-    /* identity — w pełni na ekranie, bliżej środka niż wcześniej */
+  to {
+    /* identity — w pełni na ekranie */
     opacity: 1;
     transform: perspective(900px) translateY(0) scale(1) rotateX(0deg);
-  }
-  62% {
-    /* identity — nadal w pełni na ekranie, tuż przed wyjazdem u góry */
-    opacity: 1;
-    transform: perspective(900px) translateY(0) scale(1) rotateX(0deg);
-  }
-  100% {
-    /* topLeading — kafelek zapada się w głąb i znika u góry */
-    opacity: .5;
-    transform: perspective(900px) translateY(-48px) scale(.85) rotateX(-6deg);
   }
 }
 
@@ -7492,3 +7477,5 @@ html body .match-card-enter {
     opacity: 1 !important;
   }
 }
+
+
