@@ -2684,6 +2684,8 @@ const MatchCard = React.memo(function MatchCard({
     }
   }[match.phase];
   return React.createElement("div", {
+    className: "match-card-enter"
+  }, React.createElement("div", {
     className: `match-card${expanded ? ' expanded' : ''}`,
     style: {
       background: 'var(--glass-1)',
@@ -2975,7 +2977,7 @@ const MatchCard = React.memo(function MatchCard({
     className: "penalty-choice-panel"
   }, React.createElement("div", {
     className: "penalty-choice-head"
-  }, React.createElement("span", null, "Seria rzutów karnych"), React.createElement("strong", null, "+", POINTS.knockout.penBonus, " pkt")), React.createElement("p", {
+  }, React.createElement("span", null, "Seria rzutów karnych"), React.createElement("strong", null, "+", POINTS.knockout.penBonus, " PKT")), React.createElement("p", {
     className: "penalty-choice-title"
   }, "Kto awansuje po karnych?"), React.createElement("div", {
     className: "penalty-choice-grid"
@@ -3036,7 +3038,7 @@ const MatchCard = React.memo(function MatchCard({
     className: `match-penalty-badge${result.pensHappened && prediction.penWinner === result.advancingTeam ? ' penalty-hit' : result ? ' penalty-miss' : ''}`
   }, FLAG_ABBR[((prediction.penWinner === 'home' ? home : away).flag || '').toLowerCase()] || (prediction.penWinner === 'home' ? home : away).name.slice(0, 3).toUpperCase()), React.createElement("b", {
     className: `match-final-user-points ${quality === 'exact' ? 'is-exact' : quality === 'partial' ? 'is-partial' : 'is-miss'}`
-  }, myPoints > 0 ? `+${myPoints} pkt` : '0 pkt'))), phaseLocked && !result && React.createElement("div", {
+  }, myPoints > 0 ? `+${myPoints} PKT` : '0 PKT'))), phaseLocked && !result && React.createElement("div", {
     className: "text-center text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg p-3 flex items-center justify-center gap-2 app-note app-note--danger app-note--compact app-note--center"
   }, React.createElement(Icon, {
     name: "lock",
@@ -3169,7 +3171,7 @@ const MatchCard = React.memo(function MatchCard({
         color: q === 'exact' ? '#4ade80' : q === 'partial' ? '#fbbf24' : '#f87171'
       }
     }, pts > 0 ? `+${pts}` : '0')));
-  }))))));
+  })))))));
 });
 
 // ═══════════════════════════════════════════════════════════════
@@ -3424,7 +3426,7 @@ function SpecialsView({
     className: "font-display text-lg tracking-wide text-stone-900 mb-1"
   }, "Kolejno\u015B\u0107 w grupach"), React.createElement("p", {
     className: "text-xs text-stone-500 mb-3"
-  }, "1 trafione: ", POINTS.groupOrderOne, " pkt \u2022 2 trafione: ", POINTS.groupOrderTwo, " pkt \u2022 wszystkie 4: ", POINTS.groupOrderAll, " pkt"), React.createElement("div", {
+  }, "1 trafione: ", POINTS.groupOrderOne, " PKT \u2022 2 trafione: ", POINTS.groupOrderTwo, " PKT \u2022 wszystkie 4: ", POINTS.groupOrderAll, " PKT"), React.createElement("div", {
     className: "group-order-filter-row pill-scroll-safe flex gap-1 p-2",
     style: { overflow: 'hidden' }
   }, React.createElement(InfiniteGroupFilter, {
@@ -3505,7 +3507,7 @@ function SpecialsView({
       className: "text-xs font-semibold text-stone-700 flex items-center gap-1.5 mb-1.5"
     }, item.label, " ", React.createElement("span", {
       className: "text-stone-400"
-    }, "(", item.pts, " pkt)"), isCorrect && React.createElement(Badge, {
+    }, "(", item.pts, " PKT)"), isCorrect && React.createElement(Badge, {
       variant: "success"
     }, "+", item.pts)), React.createElement(TeamPicker, {
       value: draft[item.key] || '',
@@ -3532,7 +3534,7 @@ function SpecialsView({
     className: "text-[#0d1b5e]"
   }), "Kr\xF3l strzelc\xF3w ", React.createElement("span", {
     className: "text-stone-400"
-  }, "(", POINTS.topScorer, " pkt)")), React.createElement(AutocompleteInput, {
+  }, "(", POINTS.topScorer, " PKT)")), React.createElement(AutocompleteInput, {
     value: draft.topScorer,
     onChange: v => setDraft(d => ({
       ...d,
@@ -3549,7 +3551,7 @@ function SpecialsView({
     className: "text-amber-500"
   }), "MVP turnieju ", React.createElement("span", {
     className: "text-stone-400"
-  }, "(", POINTS.mvp, " pkt)")), React.createElement(AutocompleteInput, {
+  }, "(", POINTS.mvp, " PKT)")), React.createElement(AutocompleteInput, {
     value: draft.mvp,
     onChange: v => setDraft(d => ({
       ...d,
@@ -3628,7 +3630,7 @@ function SpecialsView({
     className: "text-3xl font-display"
   }, myScores.total), React.createElement("span", {
     className: "text-sm text-[#a0b4e8] ml-1"
-  }, "pkt \u0142\u0105cznie"))));
+  }, "PKT \u0142\u0105cznie"))));
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -3880,7 +3882,7 @@ function LeaderboardView({
     const positionLabel = `#${idx + 1}`;
     return React.createElement("div", {
       key: r.player.id,
-      className: `leaderboard-card deferred-card bg-white border rounded-xl overflow-hidden ${idx === 0 && r.total > 0 ? 'border-amber-400 shadow-md' : 'border-stone-200'}`
+      className: `leaderboard-card deferred-card match-card-enter bg-white border rounded-xl overflow-hidden ${idx === 0 && r.total > 0 ? 'border-amber-400 shadow-md' : 'border-stone-200'}`
     }, React.createElement("div", {
       className: "leaderboard-card-body p-3 sm:p-4"
     }, React.createElement("div", {
@@ -3935,7 +3937,7 @@ function LeaderboardView({
       className: "leaderboard-total-value font-display text-3xl tracking-wider text-stone-900 leading-none"
     }, r.total), React.createElement("div", {
       className: "leaderboard-total-label text-[10px] uppercase tracking-wider text-stone-500"
-    }, "pkt"))), React.createElement("details", {
+    }, "PKT"))), React.createElement("details", {
       className: "leaderboard-phase-details"
     }, React.createElement("summary", {
       className: "leaderboard-phase-summary"
@@ -4167,7 +4169,7 @@ function CompareView({
     const isExpanded = expandedMatches.has(m.id);
     return React.createElement("div", {
       key: m.id,
-      className: `deferred-card compare-match-card${isExpanded ? ' is-expanded' : ''}`
+      className: `deferred-card compare-match-card match-card-enter${isExpanded ? ' is-expanded' : ''}`
     }, React.createElement("div", {
       className: "compare-match-head"
     }, React.createElement("div", {
@@ -4966,7 +4968,7 @@ function AdminScoringField({
     className: "w-full px-3 py-2.5 pr-12 border border-stone-200 rounded-lg text-center text-lg font-bold focus:border-[#0d1b5e] focus:outline-none"
   }), React.createElement("span", {
     className: "absolute right-3 top-1/2 -translate-y-1/2 text-[10px] uppercase tracking-wider text-stone-400"
-  }, "pkt")));
+  }, "PKT")));
 }
 function AdminScoringPanel({
   scoringSettings,
@@ -6177,7 +6179,7 @@ function BracketTree({
     className: "bracket-group-compact-stat-head"
   }, "+/-"), React.createElement("span", {
     className: "bracket-group-compact-stat-head"
-  }, "Pkt")), React.createElement("div", {
+  }, "PKT")), React.createElement("div", {
     className: "bracket-group-compact-rows"
   }, (groupTables[group] || []).map((row, pos) => React.createElement("div", {
     key: row.team.id,
@@ -6280,7 +6282,7 @@ function GroupTablesPanel({ matches, teams, results }) {
             React.createElement("span", null, "Drużyna"),
             React.createElement("span", null, "M"),
             React.createElement("span", null, "+/-"),
-            React.createElement("span", null, "Pkt")
+            React.createElement("span", null, "PKT")
           ),
           rows.map((row, idx) => React.createElement("div", {
             key: row.team.id,
@@ -7212,6 +7214,30 @@ ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(
       Math.min(maxScrollLeft, row.scrollLeft + delta)
     );
   }, { passive: false });
+})();
+
+// ===== Efekt "wyłaniania z głębi" kart meczów: fallback dla przeglądarek
+// bez natywnego animation-timeline (patrz main.css: .match-card-enter). =====
+(function () {
+  if (window.CSS && CSS.supports && CSS.supports('animation-timeline', 'view()')) return;
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      // Przełączamy w obie strony (nie tylko dodajemy), żeby karta chowała
+      // się z powrotem, gdy wyjdzie poza widoczny obszar przy scrollu w górę.
+      entry.target.classList.toggle('is-revealed', entry.isIntersecting);
+    });
+  }, { rootMargin: '0px 0px -10% 0px', threshold: 0.15 });
+  const observed = new WeakSet();
+  const observe = () => {
+    document.querySelectorAll('.match-card-enter').forEach(el => {
+      if (!observed.has(el)) {
+        observed.add(el);
+        io.observe(el);
+      }
+    });
+  };
+  observe();
+  new MutationObserver(observe).observe(document.body, { childList: true, subtree: true });
 })();
 
 // ===== Inline script 4 from original index.html =====

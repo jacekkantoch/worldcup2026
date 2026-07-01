@@ -478,8 +478,11 @@
       box-shadow: var(--shadow-md), var(--hl2), 0 18px 55px rgba(18,93,190,.13) !important;
       transform: translateY(-2px) scale(1.002);
     }
-    .match-card > button:first-child:hover {
+    .match-card:not(.expanded) > button:first-child:hover {
       background: linear-gradient(135deg, rgba(255,255,255,.045), rgba(255,255,255,.012)) !important;
+    }
+    .match-card.expanded > button:first-child:hover {
+      background-color: transparent !important;
     }
 
     section.bg-white,
@@ -3566,17 +3569,7 @@
 
 /* ===== 2. expanded-header-color-fix ===== */
 /* Rozwinięcie sekcji zmienia wyłącznie jej geometrię i pokazuje treść.
-       Nagłówek zachowuje ten sam kolor, tło i cień co przed rozwinięciem. */
-
-    .match-card.expanded > button:first-child,
-    .match-card.expanded > button:first-child:focus,
-    .match-card.expanded > button:first-child:active {
-      background: transparent !important;
-      color: inherit !important;
-      box-shadow: none !important;
-    }
-
-    .admin-match-card.expanded > .admin-match-summary-button,
+       Nagłówek zachowuje ten sam kolor, tło i cień co przed rozwinięciem. */.admin-match-card.expanded > .admin-match-summary-button,
     .admin-match-card.expanded > .admin-match-summary-button:focus,
     .admin-match-card.expanded > .admin-match-summary-button:active {
       background: transparent !important;
@@ -3609,36 +3602,7 @@
 /*
       Rozwijane elementy tworzą jedną kartę. Nagłówek i treść nie mają
       oddzielnych teł, ramek, cieni ani zaokrągleń na styku.
-    */
-
-    /* Publiczne karty meczów */
-    .match-card.expanded {
-      overflow: hidden !important;
-      isolation: isolate;
-      background: var(--glass-1) !important;
-      border-color: var(--border-1) !important;
-      box-shadow: var(--shadow-sm), var(--hl), var(--shadow-glow) !important;
-    }
-    .match-card.expanded > button:first-child,
-    .match-card.expanded > button:first-child:hover,
-    .match-card.expanded > button:first-child:focus,
-    .match-card.expanded > button:first-child:active {
-      border-radius: 0 !important;
-      border: 0 !important;
-      background: transparent !important;
-      box-shadow: none !important;
-      color: inherit !important;
-    }
-    .match-card.expanded > div:last-child {
-      margin-top: 0 !important;
-      border: 0 !important;
-      border-radius: 0 !important;
-      background: transparent !important;
-      box-shadow: none !important;
-              mask-image: none !important;
-    }
-
-    /* Edytor meczu w panelu administratora */
+    *//* Edytor meczu w panelu administratora */
     .admin-match-card.expanded {
       overflow: hidden !important;
       isolation: isolate;
@@ -3752,37 +3716,6 @@
     }
 
     /* Jasny motyw */
-
-/* ===== 4. match-card-single-surface-final-fix ===== */
-/* Karta meczu jest jedną nieprzerwaną powierzchnią także po rozwinięciu. */
-    html body .match-card,
-    html body .match-card.expanded {
-      overflow: hidden !important;
-      background: var(--glass-1) !important;
-      border-color: var(--border-1) !important;
-      box-shadow: var(--shadow-sm), var(--hl), var(--shadow-glow) !important;
-    }
-
-    html body .match-card.expanded > button:first-child,
-    html body .match-card.expanded > button:first-child:hover,
-    html body .match-card.expanded > button:first-child:focus,
-    html body .match-card.expanded > button:first-child:active,
-    html body .match-card.expanded > div:last-child {
-      background: transparent !important;
-      background-color: transparent !important;
-      background-image: none !important;
-      border: 0 !important;
-      border-color: transparent !important;
-      border-radius: 0 !important;
-      box-shadow: none !important;
-      filter: none !important;
-      backdrop-filter: none !important;
-    }
-
-    html body .match-card.expanded > div:last-child {
-      margin-top: 0 !important;
-      outline: 0 !important;
-    }
 
 /* ===== 5. dark-mode-tab-surface-unification ===== */
 /*
@@ -4090,7 +4023,6 @@
       --expanded-match-surface: linear-gradient(145deg, rgba(36, 55, 78, .94), rgba(24, 31, 48, .96)) !important;
     }
 
-    html:not([data-theme="light"]) body .match-card.expanded,
     html:not([data-theme="light"]) body .admin-match-card.expanded,
     html:not([data-theme="light"]) body .compare-match-card {
       background: var(--expanded-match-surface) !important;
@@ -4098,12 +4030,6 @@
       overflow: hidden !important;
       border-color: rgba(255,255,255,.08) !important;
     }
-
-    html:not([data-theme="light"]) body .match-card.expanded > button:first-child,
-    html:not([data-theme="light"]) body .match-card.expanded > button:first-child:hover,
-    html:not([data-theme="light"]) body .match-card.expanded > button:first-child:focus,
-    html:not([data-theme="light"]) body .match-card.expanded > button:first-child:active,
-    html:not([data-theme="light"]) body .match-card.expanded > div:last-child,
     html:not([data-theme="light"]) body .admin-match-card.expanded > .admin-match-summary-button,
     html:not([data-theme="light"]) body .admin-match-card.expanded > .admin-match-summary-button:hover,
     html:not([data-theme="light"]) body .admin-match-card.expanded > .admin-match-summary-button:focus,
@@ -4120,8 +4046,6 @@
       border-top-color: transparent !important;
       box-shadow: none !important;
     }
-
-    html:not([data-theme="light"]) body .match-card.expanded > div:last-child,
     html:not([data-theme="light"]) body .admin-match-card.expanded > .admin-match-details,
     html:not([data-theme="light"]) body .compare-match-toggle[aria-expanded="true"] + .compare-player-list {
       margin-top: 0 !important;
@@ -4560,23 +4484,6 @@ html body .bracket-page .bracket-placeholder {
 }
 
 
-/* Matches: rozwinięta karta zachowuje kolor zwiniętej karty. */
-html:not([data-theme="light"]) body .matches-view .match-card.expanded {
-  background: var(--tab-match-surface-soft) !important;
-  background-image: var(--tab-match-surface-soft) !important;
-}
-
-html:not([data-theme="light"]) body .matches-view .match-card.expanded > button:first-child,
-html:not([data-theme="light"]) body .matches-view .match-card.expanded > button:first-child:hover,
-html:not([data-theme="light"]) body .matches-view .match-card.expanded > button:first-child:focus,
-html:not([data-theme="light"]) body .matches-view .match-card.expanded > button:first-child:active,
-html:not([data-theme="light"]) body .matches-view .match-card.expanded > div:last-child {
-  background: transparent !important;
-  background-color: transparent !important;
-  background-image: none !important;
-}
-
-
 /* Score input number alignment */
 html body .score-input-shell .score-value-input,
 html body .admin-score-controls .score-value-input {
@@ -4916,40 +4823,13 @@ html:not([data-theme="light"]) body .admin-phase-filters {
   background-color: rgba(15, 23, 38, .94) !important;
 }
 
-/* Kafelki meczów: bez prostokątnego paska przy hover/tap. */
-html body .matches-view .match-card,
-html body .matches-view .match-card:hover,
-html body .matches-view .match-card:focus-within,
-html body .matches-view .match-card:active {
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  transform: none !important;
-  background-image: var(--tab-match-surface-soft, var(--glass-1)) !important;
-}
-
-html body .matches-view .match-card > button:first-child,
-html body .matches-view .match-card > button:first-child:hover,
-html body .matches-view .match-card > button:first-child:focus,
-html body .matches-view .match-card > button:first-child:focus-visible,
-html body .matches-view .match-card > button:first-child:active {
-  background: transparent !important;
-  background-color: transparent !important;
-  background-image: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  box-shadow: none !important;
-  filter: none !important;
-  transform: none !important;
-}
-
-html body .matches-view .match-card > button:first-child::before,
-html body .matches-view .match-card > button:first-child::after {
-  content: none !important;
-  display: none !important;
-  background: none !important;
-  background-image: none !important;
-  box-shadow: none !important;
-  filter: none !important;
+/* Karty meczów w zakładce Mecze: ten sam odcień co panel filtrów, ale z lekką
+   przejrzystością (szklany efekt) — w przeciwieństwie do płaskiego panelu filtrów. */
+html:not([data-theme="light"]) body .match-card {
+  background:
+    radial-gradient(circle at 18% -20%, rgba(255,255,255,.20), transparent 42%),
+    linear-gradient(145deg, rgba(29, 39, 58, .34), rgba(13, 19, 32, .26)) !important;
+  background-color: rgba(15, 23, 38, .28) !important;
 }
 
 /* Delikatnie nizszy header. */
@@ -6686,16 +6566,6 @@ html body .compare-view {
   }
 }
 
-/* Compare preview filter-to-card spacing. */
-html body .compare-view .phase-filter-panel + .compare-match-card {
-  margin-top: 6px !important;
-}
-
-@media (max-width: 520px) {
-  html body .compare-view .phase-filter-panel + .compare-match-card {
-    margin-top: 5px !important;
-  }
-}
 
 /* Redesigned leaderboard ranking panels. */
 html body .leaderboard-card {
@@ -7445,82 +7315,6 @@ html body .compare-view .filters-sticky {
   position: sticky !important;
 }
 
-html body .matches-view > .match-card,
-html body .matches-view > .match-card.is-depth-stacked,
-html body .matches-view > .match-card.expanded {
-  z-index: 1 !important;
-}
-
-html body .matches-view > .match-card.expanded,
-html body .matches-view > .match-card.expanded:hover,
-html body .matches-view > .match-card.expanded:focus-within,
-html body .matches-view > .match-card.expanded:active {
-  z-index: 2 !important;
-}
-
-html body .matches-view > .match-card.is-depth-stacked:not(.expanded) {
-  z-index: var(--match-stack-order, 1) !important;
-}
-
-/* Matches stack occlusion fix. */
-html body .matches-view > .match-card {
-  isolation: isolate !important;
-  overflow: hidden !important;
-  background:
-    radial-gradient(circle at 18% -22%, rgba(255,255,255,.105), transparent 42%),
-    linear-gradient(145deg, rgb(32, 43, 66), rgb(12, 18, 31)) !important;
-  background-color: rgb(14, 21, 36) !important;
-  background-image:
-    radial-gradient(circle at 18% -22%, rgba(255,255,255,.105), transparent 42%),
-    linear-gradient(145deg, rgb(32, 43, 66), rgb(12, 18, 31)) !important;
-}
-
-html body .matches-view > .match-card:not(.is-depth-stacked) {
-  z-index: 500 !important;
-}
-
-html body .matches-view > .match-card.is-depth-stacked:not(.expanded) {
-  z-index: var(--match-stack-order, 1) !important;
-}
-
-html body .matches-view > .match-card.expanded,
-html body .matches-view > .match-card.expanded:hover,
-html body .matches-view > .match-card.expanded:focus-within,
-html body .matches-view > .match-card.expanded:active {
-  z-index: 500 !important;
-}
-
-html body .matches-view > .match-card > * {
-  position: relative !important;
-  z-index: 1 !important;
-}
-
-html body .matches-view > .match-card.is-depth-stacked::after {
-  z-index: 2 !important;
-}
-
-html body .matches-view .phase-filter-panel.filters-sticky,
-html body .matches-view .filters-sticky {
-  z-index: 800 !important;
-}
-
-
-/* Matches cards transparency restore. */
-html:not([data-theme="light"]) body .matches-view .match-card,
-html:not([data-theme="light"]) body .matches-view .match-card:hover,
-html:not([data-theme="light"]) body .matches-view .match-card:focus-within,
-html:not([data-theme="light"]) body .matches-view .match-card:active {
-  background:
-    radial-gradient(circle at 18% -20%, rgba(255,255,255,.10), transparent 44%),
-    linear-gradient(145deg, rgba(34, 48, 70, .58), rgba(10, 15, 26, .42)) !important;
-  background-color: transparent !important;
-  background-image:
-    radial-gradient(circle at 18% -20%, rgba(255,255,255,.10), transparent 44%),
-    linear-gradient(145deg, rgba(34, 48, 70, .58), rgba(10, 15, 26, .42)) !important;
-  backdrop-filter: blur(16px) saturate(145%) !important;
-  -webkit-backdrop-filter: blur(16px) saturate(145%) !important;
-}
-
 /* Global panel rhythm. */
 :root {
   --app-panel-gap: 16px;
@@ -7542,6 +7336,13 @@ html body .admin-section-stack {
   display: flex !important;
   flex-direction: column !important;
   gap: var(--app-panel-gap) !important;
+}
+
+/* Panel admina, lista wyników: karty meczów są zagnieżdżone głębiej i nie
+   dostają odstępu z reguły flex powyżej — wyrównujemy do tego samego odstępu
+   co między kartami wszędzie indziej w aplikacji. */
+html body .admin-match-card + .admin-match-card {
+  margin-top: var(--app-panel-gap) !important;
 }
 
 html body .tab-view > *,
@@ -7611,4 +7412,83 @@ html.is-mobile-device body .app-bottom-fade,
 html.is-mobile-browser body .app-bottom-fade,
 html.is-mobile-standalone body .app-bottom-fade {
   height: calc(148px + max(var(--safe-bottom, 0px), var(--browser-bottom-ui, 0px))) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Karty meczów — "wyłanianie z głębi" podczas scrollowania, symetrycznie
+   na DOLNEJ i GÓRNEJ krawędzi ekranu (tunel 3D: środek = pełna ostrość,
+   obie krawędzie = karta zapada się w głąb).
+   Animacja jedzie po wrapperze .match-card-enter (nie po .match-card
+   samym), bo .match-card ma `transform: none !important` narzucony
+   wyżej dla stabilizacji hover — konflikt priorytetów w kaskadzie
+   (Animations < Author !important) uniemożliwiłby animację transformu
+   wprost na .match-card.
+   Jedna animacja rozciągnięta na cały zakres "cover" (0% = wejście od
+   dołu, 100% = zejście u góry) zamiast dwóch osobnych na entry/exit —
+   dwie animacje na tych samych właściwościach nadpisywałyby się nawzajem
+   (domyślny tryb "replace" w CSS Animations), więc symetria wymaga
+   jednego zestawu klatek kluczowych z odbiciem lustrzanym na końcach.
+   ═══════════════════════════════════════════════════════════════ */
+html body .match-card-enter {
+  display: block;
+}
+
+@supports (animation-timeline: view()) {
+  html body .match-card-enter {
+    view-timeline-name: --match-card-reveal;
+    view-timeline-axis: block;
+    animation: match-card-depth-reveal linear both;
+    animation-timeline: --match-card-reveal;
+    animation-range: cover 0% cover 100%;
+    transform-style: preserve-3d;
+    will-change: transform, opacity;
+  }
+}
+
+@keyframes match-card-depth-reveal {
+  0% {
+    /* bottomTrailing — kafelek dopiero wjeżdża od dołu */
+    opacity: .5;
+    transform: perspective(900px) translateY(48px) scale(.85) rotateX(6deg);
+  }
+  15% {
+    /* identity — w pełni na ekranie */
+    opacity: 1;
+    transform: perspective(900px) translateY(0) scale(1) rotateX(0deg);
+  }
+  85% {
+    /* identity — nadal w pełni na ekranie, tuż przed wyjazdem u góry */
+    opacity: 1;
+    transform: perspective(900px) translateY(0) scale(1) rotateX(0deg);
+  }
+  100% {
+    /* topLeading — kafelek zapada się w głąb i znika u góry */
+    opacity: .5;
+    transform: perspective(900px) translateY(-48px) scale(.85) rotateX(-6deg);
+  }
+}
+
+/* Fallback dla przeglądarek bez animation-timeline: JS (IntersectionObserver)
+   przełącza klasę .is-revealed w obie strony — patrz app.js. Próg
+   przecięcia działa symetrycznie na obu krawędziach viewportu. */
+@supports not (animation-timeline: view()) {
+  html body .match-card-enter {
+    opacity: .5;
+    transform: perspective(900px) translateY(48px) scale(.85) rotateX(6deg);
+    transition: opacity .5s cubic-bezier(.22,1,.36,1), transform .5s cubic-bezier(.22,1,.36,1);
+  }
+  html body .match-card-enter.is-revealed {
+    opacity: 1;
+    transform: perspective(900px) translateY(0) scale(1) rotateX(0deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body .match-card-enter,
+  html body .match-card-enter.is-revealed {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
 }
