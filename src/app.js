@@ -1958,8 +1958,8 @@ function ScoreInput({
       width: 62,
       height: 56,
       textAlign: 'center',
-      background: 'var(--bg-3)',
-      border: '1px solid var(--border-2)',
+      background: 'transparent',
+      border: '0',
       borderLeft: 'none',
       borderRight: 'none',
       color: 'white',
@@ -2616,6 +2616,25 @@ const MatchCard = React.memo(function MatchCard({
   const isDraw = isDraft && draft.home === draft.away;
   const needsPen = isKnockout && isDraw;
   const canSave = !locked && teamsAssigned && activePlayerId && isDraft && (!needsPen || draft.penWinner);
+  React.useEffect(() => {
+    if (!expanded) return undefined;
+    let raf = null;
+    const updateOverflow = () => {
+      document.querySelectorAll('.match-final-result-card .match-final-result-name').forEach(el => {
+        el.classList.toggle('is-overflowing', el.scrollWidth > el.clientWidth + 1);
+      });
+    };
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(updateOverflow);
+    };
+    schedule();
+    window.addEventListener('resize', schedule);
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      window.removeEventListener('resize', schedule);
+    };
+  }, [expanded, result, home?.name, away?.name]);
   const myPoints = useMemo(() => !prediction || !result ? null : scoreMatch(prediction, result, match.phase, scoringSettings), [prediction, result, match.phase, scoringSettings]);
   const quality = predictionQuality(prediction, result, match.phase, scoringSettings);
   const phaseColor = {
@@ -2993,11 +3012,13 @@ const MatchCard = React.memo(function MatchCard({
     className: "match-final-result-main"
   }, React.createElement("div", {
     className: "match-final-result-team"
-  }, React.createElement(FlagImg, {
+  }, React.createElement("span", {
+    className: "match-final-result-name"
+  }, home.name), React.createElement(FlagImg, {
     code: home.flag,
     size: 24,
     title: home.name
-  }), React.createElement("span", null, home.name)), React.createElement("div", {
+  })), React.createElement("div", {
     className: "match-final-result-score"
   }, React.createElement("strong", null, result.home), React.createElement("span", null, ":"), React.createElement("strong", null, result.away)), React.createElement("div", {
     className: "match-final-result-team is-away"
@@ -3005,7 +3026,9 @@ const MatchCard = React.memo(function MatchCard({
     code: away.flag,
     size: 24,
     title: away.name
-  }), React.createElement("span", null, away.name))), result.pensHappened && result.advancingTeam && React.createElement("div", {
+  }), React.createElement("span", {
+    className: "match-final-result-name"
+  }, away.name))), result.pensHappened && result.advancingTeam && React.createElement("div", {
     className: "match-final-result-note"
   }, React.createElement("span", null, "Awans po karnych"), React.createElement("strong", null, (result.advancingTeam === 'home' ? home : away).name)), prediction && React.createElement("div", {
     className: "match-final-user-pick"
@@ -3220,6 +3243,76 @@ function MatchesView({
     setExpandedId(null);
   }, [phaseFilter, groupFilter, statusFilter, compactDevice]);
   const visibleMatches = compactDevice ? filtered.slice(0, visibleCount) : filtered;
+  useEffect(() => {
+    let frame = 0;
+    const clearCard = card => {
+      card.classList.remove('is-depth-stacked');
+      card.style.removeProperty('--match-stack-scale');
+      card.style.removeProperty('--match-stack-y');
+      card.style.removeProperty('--match-stack-z');
+      card.style.removeProperty('--match-stack-opacity');
+      card.style.removeProperty('--match-stack-shade');
+      card.style.removeProperty('--match-stack-overlap');
+      card.style.removeProperty('--match-stack-level');
+      card.style.removeProperty('--match-stack-order');
+    };
+    const updateStack = () => {
+      frame = 0;
+      const view = document.querySelector('.matches-view');
+      if (!view) return;
+      const cards = Array.from(view.querySelectorAll(':scope > .match-card'));
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+      const nav = document.querySelector('.bottom-nav');
+      const navTop = nav ? nav.getBoundingClientRect().top : viewportHeight;
+      const bottomEdge = Math.max(0, Math.min(viewportHeight, navTop));
+      const zone = Math.max(230, Math.min(390, bottomEdge * 0.36));
+      const start = bottomEdge - zone;
+      const candidates = [];
+      cards.forEach((card, index) => {
+        if (card.classList.contains('expanded')) {
+          clearCard(card);
+          return;
+        }
+        const rect = card.getBoundingClientRect();
+        const rawDepth = (rect.top - start) / zone;
+        const depth = Math.max(0, Math.min(1, rawDepth));
+        if (depth <= 0.02 || rect.bottom < 0 || rect.top > viewportHeight + 80) {
+          clearCard(card);
+          return;
+        }
+        candidates.push({ card, index, depth, top: rect.top });
+      });
+      candidates.sort((a, b) => a.top - b.top);
+      candidates.forEach((item, stackIndex) => {
+        const { card, index, depth } = item;
+        const eased = depth * depth * (3 - 2 * depth);
+        const level = Math.min(3, stackIndex);
+        const levelPush = Math.min(1, eased + level * 0.22);
+        card.classList.add('is-depth-stacked');
+        card.style.setProperty('--match-stack-scale', (1 - levelPush * 0.065).toFixed(3));
+        card.style.setProperty('--match-stack-y', (level * 7 - eased * 8).toFixed(1) + 'px');
+        card.style.setProperty('--match-stack-z', (-levelPush * 110).toFixed(1) + 'px');
+        card.style.setProperty('--match-stack-opacity', (1 - levelPush * 0.10).toFixed(3));
+        card.style.setProperty('--match-stack-shade', levelPush.toFixed(3));
+        card.style.setProperty('--match-stack-overlap', (-(18 + level * 11) * eased).toFixed(1) + 'px');
+        card.style.setProperty('--match-stack-level', String(level));
+        card.style.setProperty('--match-stack-order', String(300 - index));
+      });
+    };
+    const schedule = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(updateStack);
+    };
+    schedule();
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule);
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', schedule);
+      window.removeEventListener('resize', schedule);
+      document.querySelectorAll('.matches-view > .match-card.is-depth-stacked').forEach(clearCard);
+    };
+  }, [visibleMatches.length, expandedId, phaseFilter, groupFilter, statusFilter, compactDevice]);
   const hasMoreMatches = compactDevice && visibleCount < filtered.length;
   const filterBtns = PHASE_FILTER_TABS;
   const filterPanel = React.createElement("div", {

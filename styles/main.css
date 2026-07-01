@@ -7025,3 +7025,371 @@ html body .leaderboard-view .leaderboard-card .leaderboard-phase-details .leader
   border-bottom-right-radius: 18px !important;
   clip-path: inset(0 round 18px) !important;
 }
+
+/* Final result team order polish. */
+html body .match-final-result-team {
+  justify-content: flex-end !important;
+  text-align: right !important;
+}
+
+html body .match-final-result-team.is-away {
+  justify-content: flex-start !important;
+  text-align: left !important;
+}
+
+/* Remove borders around circular flags. */
+html body .penalty-choice-flag,
+html body .match-final-result-team > span[title],
+html body .compare-match-team > span[title],
+html body .admin-score-team > span[title],
+html body .bracket-team-row > span[title],
+html body .bracket-group-compact-row > span[title],
+html body .bracket-group-team > span[title],
+html body span[title] {
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+
+html body .penalty-choice-flag {
+  background: transparent !important;
+}
+
+html body span[title] > img {
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Final result names fade only when overflowing. */
+html body .match-final-result-name {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  display: block !important;
+  overflow: hidden !important;
+  text-overflow: clip !important;
+  white-space: nowrap !important;
+  mask-image: none !important;
+  -webkit-mask-image: none !important;
+}
+
+html body .match-final-result-name.is-overflowing {
+  mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 24px), transparent 100%) !important;
+  -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 24px), transparent 100%) !important;
+}
+
+html body .match-final-result-team:not(.is-away) .match-final-result-name.is-overflowing {
+  mask-image: linear-gradient(to left, #000 0, #000 calc(100% - 24px), transparent 100%) !important;
+  -webkit-mask-image: linear-gradient(to left, #000 0, #000 calc(100% - 24px), transparent 100%) !important;
+}
+
+html body .match-final-result-team span:last-child:not(.match-final-result-name) {
+  min-width: auto !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  white-space: normal !important;
+}
+
+/* Mobile app profile/admin panel alignment. */
+html body {
+  --floating-modal-header-gap: 60px;
+  --floating-modal-top: calc(var(--safe-top, 0px) + var(--header-height, 88px) + var(--floating-modal-header-gap));
+  --floating-modal-mobile-width: min(calc(100% - 26px), 360px);
+  --floating-modal-desktop-width: min(calc(100% - 42px), 400px);
+}
+
+html body .profile-modal-overlay-root {
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  padding-top: var(--floating-modal-top) !important;
+  padding-bottom: calc(var(--safe-bottom, 0px) + 18px) !important;
+  overflow-y: auto !important;
+}
+
+html body .profile-modal-overlay-root .login-modal-sheet,
+html body .profile-modal-overlay-root .login-modal-compact-sheet {
+  width: var(--floating-modal-desktop-width) !important;
+  max-width: 400px !important;
+  margin: 0 auto !important;
+  max-height: calc(100dvh - var(--floating-modal-top) - var(--safe-bottom, 0px) - 18px) !important;
+}
+
+html body .admin-gate-overlay {
+  align-items: flex-start !important;
+  justify-content: center !important;
+  padding-top: var(--floating-modal-top) !important;
+  padding-bottom: calc(var(--safe-bottom, 0px) + 18px) !important;
+}
+
+html body .admin-gate-card,
+html body .admin-gate-overlay .admin-gate-card {
+  width: var(--floating-modal-desktop-width) !important;
+  max-width: 400px !important;
+  margin: 0 auto !important;
+}
+
+@media (max-width: 520px) {
+  html body .profile-modal-overlay-root .login-modal-sheet,
+  html body .profile-modal-overlay-root .login-modal-compact-sheet,
+  html body .admin-gate-card,
+  html body .admin-gate-overlay .admin-gate-card {
+    width: var(--floating-modal-mobile-width) !important;
+    max-width: 360px !important;
+  }
+}
+
+/* Keep the infinite group filter the same height in Specialne as elsewhere. */
+@media (max-width: 480px) {
+  html body .specials-view .group-order-filter-row.pill-scroll-safe {
+    padding-top: 7px !important;
+    padding-bottom: 7px !important;
+  }
+
+  html body .specials-view .group-order-filter-row .selection-tile {
+    width: 40px !important;
+    height: 40px !important;
+    min-height: 40px !important;
+    gap: 0 !important;
+    line-height: 1 !important;
+  }
+}
+
+/* Penalty label typography. */
+html body .prediction-penalty,
+html body .match-penalty-badge,
+html body .compare-view .compare-player-penalty {
+  font-family: 'DM Sans', system-ui, sans-serif !important;
+  font-size: 10.5px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0 !important;
+  line-height: 1.1 !important;
+}
+
+html body .prediction-penalty::before,
+html body .match-penalty-badge::before,
+html body .compare-view .compare-player-penalty::before {
+  content: "Karne:" !important;
+  font-family: 'DM Sans', system-ui, sans-serif !important;
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  color: rgba(214, 229, 255, .72) !important;
+}
+
+/* Mobile leaderboard banner layout polish. */
+@media (max-width: 620px) {
+  html body .leaderboard-view {
+    gap: 8px !important;
+  }
+
+  html body .leaderboard-card {
+    border-radius: 24px !important;
+  }
+
+  html body .leaderboard-card-body {
+    padding: 12px !important;
+  }
+
+  html body .leaderboard-card-summary {
+    display: grid !important;
+    grid-template-columns: 40px minmax(0, 1fr) 64px !important;
+    grid-template-areas:
+      "rank name total"
+      "stats stats stats" !important;
+    align-items: center !important;
+    column-gap: 9px !important;
+    row-gap: 9px !important;
+    margin-bottom: 8px !important;
+  }
+
+  html body .leaderboard-player-block,
+  html body .leaderboard-player-info {
+    display: contents !important;
+  }
+
+  html body .leaderboard-position-badge {
+    grid-area: rank !important;
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 16px !important;
+    align-self: center !important;
+  }
+
+  html body .leaderboard-player-name {
+    grid-area: name !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    align-self: center !important;
+    font-size: 17px !important;
+    line-height: 1.08 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  html body .leaderboard-total {
+    grid-area: total !important;
+    min-width: 64px !important;
+    min-height: 52px !important;
+    align-self: center !important;
+    padding: 6px 7px !important;
+    border-radius: 18px !important;
+  }
+
+  html body .leaderboard-total-value {
+    font-size: 29px !important;
+    line-height: .85 !important;
+  }
+
+  html body .leaderboard-total-label {
+    margin-top: 3px !important;
+    font-size: 8.5px !important;
+  }
+
+  html body .leaderboard-stats {
+    grid-area: stats !important;
+    width: 100% !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 5px !important;
+    min-width: 0 !important;
+  }
+
+  html body .leaderboard-stats .rank-stat {
+    flex: 1 1 128px !important;
+    min-width: 0 !important;
+    min-height: 24px !important;
+    justify-content: center !important;
+    padding: 0 8px !important;
+    font-size: 9px !important;
+    line-height: 1 !important;
+    text-align: center !important;
+  }
+
+  html body .leaderboard-phase-details {
+    margin-top: 7px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  html body .leaderboard-card-summary {
+    grid-template-columns: 36px minmax(0, 1fr) 58px !important;
+    column-gap: 8px !important;
+  }
+
+  html body .leaderboard-position-badge {
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 14px !important;
+    font-size: 12px !important;
+  }
+
+  html body .leaderboard-player-name {
+    font-size: 16px !important;
+  }
+
+  html body .leaderboard-total {
+    min-width: 58px !important;
+  }
+
+  html body .leaderboard-total-value {
+    font-size: 27px !important;
+  }
+
+  html body .leaderboard-stats .rank-stat {
+    flex-basis: 100% !important;
+  }
+}
+
+/* Profile row tap highlight radius fix. */
+html body .profile-choice-trigger {
+  position: relative !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
+  clip-path: inset(0 round 18px) !important;
+}
+
+html body .profile-choice-shell.is-open .profile-choice-trigger,
+html body .profile-choice-shell.is-open .profile-choice-trigger:hover,
+html body .profile-choice-shell.is-open .profile-choice-trigger:focus,
+html body .profile-choice-shell.is-open .profile-choice-trigger:active {
+  border-radius: 18px !important;
+  overflow: hidden !important;
+  clip-path: inset(0 round 18px) !important;
+}
+
+html body .profile-choice-trigger::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  border-radius: inherit !important;
+  background: rgba(255,255,255,.085) !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity .34s ease !important;
+  z-index: 0 !important;
+}
+
+html body .profile-choice-trigger:active::after {
+  opacity: 1 !important;
+}
+
+html body .profile-choice-trigger > * {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+html body .profile-choice-shell.is-open .profile-choice-actions {
+  border-bottom-left-radius: 18px !important;
+  border-bottom-right-radius: 18px !important;
+  overflow: hidden !important;
+}
+
+/* Matches viewport depth stack. */
+html body .matches-view {
+  perspective: 1000px !important;
+  transform-style: preserve-3d !important;
+}
+
+html body .matches-view > .match-card {
+  --match-stack-scale: 1;
+  --match-stack-y: 0px;
+  --match-stack-z: 0px;
+  --match-stack-opacity: 1;
+  --match-stack-shade: 0;
+  --match-stack-overlap: 0px;
+  --match-stack-level: 0;
+  transform-origin: 50% 100% !important;
+  transition: transform .18s ease, opacity .18s ease, margin-top .18s ease !important;
+}
+
+html body .matches-view > .match-card.is-depth-stacked,
+html body .matches-view > .match-card.is-depth-stacked:hover,
+html body .matches-view > .match-card.is-depth-stacked:focus-within,
+html body .matches-view > .match-card.is-depth-stacked:active {
+  margin-top: var(--match-stack-overlap) !important;
+  transform: translateY(var(--match-stack-y)) translateZ(var(--match-stack-z)) scale(var(--match-stack-scale)) !important;
+  opacity: var(--match-stack-opacity) !important;
+  z-index: var(--match-stack-order, 1) !important;
+}
+
+html body .matches-view > .match-card.is-depth-stacked::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  border-radius: inherit !important;
+  pointer-events: none !important;
+  background: linear-gradient(180deg, rgba(4, 9, 18, 0), rgba(4, 9, 18, .20)) !important;
+  opacity: calc(var(--match-stack-shade) * .75) !important;
+}
+
+html body .matches-view > .match-card.expanded,
+html body .matches-view > .match-card.expanded:hover,
+html body .matches-view > .match-card.expanded:focus-within,
+html body .matches-view > .match-card.expanded:active {
+  margin-top: 0 !important;
+  transform: none !important;
+  opacity: 1 !important;
+  z-index: 300 !important;
+}
