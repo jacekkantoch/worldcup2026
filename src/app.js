@@ -234,15 +234,26 @@ function InfiniteGroupFilter({ selected, onSelect, btnClass }) {
   const ref = React.useRef(null);
   const debounceRef = React.useRef(null);
   const snappingRef = React.useRef(false);
+  const didInitRef = React.useRef(false);
+  const currentGroupRef = React.useRef(selected);
   const [visualCenter, setVisualCenter] = React.useState(selected);
-  const items = [...GROUPS, ...GROUPS, ...GROUPS];
+  const loopCopies = 9;
+  const middleCopy = Math.floor(loopCopies / 2);
+  const items = Array.from({ length: loopCopies }, () => GROUPS).flat();
+
+  const metrics = React.useCallback(() => {
+    const el = ref.current;
+    if (!el) return null;
+    const oneW = el.scrollWidth / loopCopies;
+    const itemW = oneW / GROUPS.length;
+    if (!oneW || !itemW) return null;
+    return { el, oneW, itemW };
+  }, []);
 
   const snapToIndex = React.useCallback((rawIndex, smooth) => {
-    const el = ref.current;
-    if (!el) return;
-    const oneW = el.scrollWidth / 3;
-    const itemW = oneW / GROUPS.length;
-    if (!oneW || !itemW) return;
+    const m = metrics();
+    if (!m) return;
+    const { el, itemW } = m;
     const target = rawIndex * itemW - el.clientWidth / 2 + itemW / 2;
     if (smooth) {
       snappingRef.current = true;
@@ -251,17 +262,17 @@ function InfiniteGroupFilter({ selected, onSelect, btnClass }) {
       setTimeout(() => {
         el.style.scrollBehavior = 'auto';
         snappingRef.current = false;
-      }, 400);
+      }, 360);
     } else {
       el.scrollLeft = target;
     }
-  }, []);
+  }, [metrics]);
 
   const centerGroup = React.useCallback((group, smooth = false) => {
     const idx = GROUPS.indexOf(group);
     if (idx < 0) return;
     setVisualCenter(group);
-    snapToIndex(GROUPS.length + idx, smooth);
+    snapToIndex(middleCopy * GROUPS.length + idx, smooth);
   }, [snapToIndex]);
 
   const selectGroup = React.useCallback((group, smooth = true) => {
@@ -270,35 +281,58 @@ function InfiniteGroupFilter({ selected, onSelect, btnClass }) {
   }, [centerGroup, onSelect]);
 
   React.useEffect(() => {
-    const raf = requestAnimationFrame(() => centerGroup(selected, false));
+    const raf = requestAnimationFrame(() => {
+      centerGroup(selected, false);
+      didInitRef.current = true;
+    });
     return () => cancelAnimationFrame(raf);
+  }, []);
+
+  React.useEffect(() => {
+    currentGroupRef.current = visualCenter;
+  }, [visualCenter]);
+
+  React.useEffect(() => {
+    if (!didInitRef.current) return;
+    if (selected !== currentGroupRef.current) centerGroup(selected, false);
   }, [centerGroup, selected]);
 
   React.useEffect(() => {
-    const el = ref.current;
-    if (!el) return undefined;
-    const recenter = () => requestAnimationFrame(() => centerGroup(selected, false));
+    const m = metrics();
+    if (!m) return undefined;
+    let resizeFrame = null;
+    const recenter = () => {
+      if (resizeFrame) cancelAnimationFrame(resizeFrame);
+      resizeFrame = requestAnimationFrame(() => centerGroup(currentGroupRef.current || selected, false));
+    };
     let ro = null;
     if (typeof ResizeObserver !== 'undefined') {
-      ro = new ResizeObserver(recenter);
-      ro.observe(el);
+      ro = new ResizeObserver(entries => {
+        if (entries && entries.length) recenter();
+      });
+      ro.observe(m.el);
     }
     window.addEventListener('resize', recenter);
     return () => {
+      if (resizeFrame) cancelAnimationFrame(resizeFrame);
       if (ro) ro.disconnect();
       window.removeEventListener('resize', recenter);
       clearTimeout(debounceRef.current);
     };
-  }, [centerGroup, selected]);
+  }, [centerGroup, metrics, selected]);
 
   const onScroll = React.useCallback(() => {
-    const el = ref.current;
-    if (!el) return;
-    const oneW = el.scrollWidth / 3;
-    const itemW = oneW / GROUPS.length;
-    if (!oneW || !itemW) return;
-    if (el.scrollLeft < oneW * 0.4) { el.scrollLeft += oneW; return; }
-    if (el.scrollLeft > oneW * 1.6) { el.scrollLeft -= oneW; return; }
+    const m = metrics();
+    if (!m) return;
+    const { el, oneW, itemW } = m;
+    if (el.scrollLeft < oneW * 2.15) {
+      el.scrollLeft += oneW * 4;
+      return;
+    }
+    if (el.scrollLeft > oneW * (loopCopies - 2.15)) {
+      el.scrollLeft -= oneW * 4;
+      return;
+    }
     const centerXLive = el.scrollLeft + el.clientWidth / 2;
     const rawIndexLive = Math.round(centerXLive / itemW - 0.5);
     const groupIndexLive = ((rawIndexLive % GROUPS.length) + GROUPS.length) % GROUPS.length;
@@ -310,10 +344,12 @@ function InfiniteGroupFilter({ selected, onSelect, btnClass }) {
       const centerX = el.scrollLeft + el.clientWidth / 2;
       const rawIndex = Math.round(centerX / itemW - 0.5);
       const groupIndex = ((rawIndex % GROUPS.length) + GROUPS.length) % GROUPS.length;
-      snapToIndex(rawIndex, true);
-      onSelect(GROUPS[groupIndex]);
-    }, 120);
-  }, [onSelect, snapToIndex]);
+      const group = GROUPS[groupIndex];
+      currentGroupRef.current = group;
+      setVisualCenter(group);
+      onSelect(group);
+    }, 220);
+  }, [metrics, onSelect, snapToIndex]);
 
   const onKeyDown = React.useCallback(e => {
     const current = GROUPS.indexOf(visualCenter);
@@ -344,7 +380,7 @@ function InfiniteGroupFilter({ selected, onSelect, btnClass }) {
     className: 'infinite-group-scroll',
     style: {
       display: 'flex', gap: '4px', overflowX: 'auto', scrollBehavior: 'auto',
-      overscrollBehavior: 'none', scrollSnapType: 'x mandatory', scrollPaddingInline: '50%',
+      overscrollBehavior: 'none', scrollSnapType: 'none', scrollPaddingInline: '50%',
       maxWidth: '480px', width: '100%',
       maskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)',
       WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)'
@@ -2917,11 +2953,13 @@ const MatchCard = React.memo(function MatchCard({
     disabled: locked,
     label: "Gole"
   })))), needsPen && React.createElement("div", {
-    className: "bg-amber-50 border border-amber-200 rounded-lg p-3 mb-3"
-  }, React.createElement("p", {
-    className: "text-xs font-semibold text-amber-900 mb-2 text-center"
-  }, "Kto wygra seri\u0119 rzut\xF3w karnych?"), React.createElement("div", {
-    className: "flex gap-2"
+    className: "penalty-choice-panel"
+  }, React.createElement("div", {
+    className: "penalty-choice-head"
+  }, React.createElement("span", null, "Seria rzutów karnych"), React.createElement("strong", null, "+", POINTS.knockout.penBonus, " pkt")), React.createElement("p", {
+    className: "penalty-choice-title"
+  }, "Kto awansuje po karnych?"), React.createElement("div", {
+    className: "penalty-choice-grid"
   }, ['home', 'away'].map(side => {
     const t = side === 'home' ? home : away;
     const sel = draft.penWinner === side;
@@ -2933,32 +2971,49 @@ const MatchCard = React.memo(function MatchCard({
         penWinner: side
       })),
       disabled: locked,
-      className: `flex-1 px-3 py-2 rounded-lg border-2 text-sm font-semibold transition-all disabled:opacity-60 ${sel ? 'border-amber-500 bg-amber-100 text-amber-900' : 'border-stone-200 bg-white text-stone-700 hover:border-amber-300'}`
-    }, t.name);
+      className: `penalty-choice-card${sel ? ' is-selected' : ''}`
+    }, React.createElement("span", {
+      className: "penalty-choice-flag"
+    }, React.createElement(FlagImg, {
+      code: t.flag,
+      size: 26,
+      title: t.name
+    })), React.createElement("span", {
+      className: "penalty-choice-team"
+    }, t.name), React.createElement("span", {
+      className: "penalty-choice-check"
+    }, sel ? "✓" : ""));
   })), React.createElement("p", {
-    className: "text-[10px] text-amber-700 mt-2"
-  }, "Trafione karne = ", React.createElement("strong", null, "+", POINTS.knockout.penBonus, " pkt bonus"), ", je\u015Bli karne si\u0119 odb\u0119d\u0105.")), locked && result && React.createElement("div", {
-    className: "match-final-result-card bg-stone-900 text-white rounded-lg p-3 mb-3 text-center"
+    className: "penalty-choice-note"
+  }, "Bonus naliczy się tylko wtedy, gdy mecz faktycznie zakończy się karnymi.")), locked && result && React.createElement("div", {
+    className: "match-final-result-card"
   }, React.createElement("div", {
-    className: "text-[10px] uppercase tracking-wider text-stone-400 mb-1"
-  }, "Wynik ko\u0144cowy"), React.createElement("div", {
-    className: "font-display text-3xl tracking-wider"
-  }, result.home, " : ", result.away), result.pensHappened && result.advancingTeam && React.createElement("div", {
-    className: "text-xs text-amber-300 mt-1"
-  }, "Awans po karnych: ", (result.advancingTeam === 'home' ? home : away).name), prediction && React.createElement("div", {
-    className: "mt-2 pt-2 border-t border-stone-700 text-sm"
-  }, "Tw\xF3j typ: ", React.createElement("strong", {
-    className: "font-display text-base"
-  }, prediction.home, ":", prediction.away), prediction.penWinner && React.createElement("span", {
-    className: `match-penalty-badge${result.pensHappened && prediction.penWinner === result.advancingTeam ? ' penalty-hit' : result ? ' penalty-miss' : ''} ml-2`
-  }, FLAG_ABBR[((prediction.penWinner === 'home' ? home : away).flag || '').toLowerCase()] || (prediction.penWinner === 'home' ? home : away).name.slice(0, 3).toUpperCase()), React.createElement("span", {
-    className: `ml-2 font-bold ${quality === 'exact' ? 'text-[#6080d0]' : quality === 'partial' ? 'text-amber-400' : 'text-stone-400'}`
-  }, React.createElement("span", {
-    style: {
-      color: quality === 'exact' ? '#4ade80' : quality === 'partial' ? '#fbbf24' : '#f87171',
-      fontWeight: 800
-    }
-  }, myPoints > 0 ? `+${myPoints} pkt` : '0 pkt')))), phaseLocked && !result && React.createElement("div", {
+    className: "match-final-result-label"
+  }, "Wynik końcowy"), React.createElement("div", {
+    className: "match-final-result-main"
+  }, React.createElement("div", {
+    className: "match-final-result-team"
+  }, React.createElement(FlagImg, {
+    code: home.flag,
+    size: 24,
+    title: home.name
+  }), React.createElement("span", null, home.name)), React.createElement("div", {
+    className: "match-final-result-score"
+  }, React.createElement("strong", null, result.home), React.createElement("span", null, ":"), React.createElement("strong", null, result.away)), React.createElement("div", {
+    className: "match-final-result-team is-away"
+  }, React.createElement(FlagImg, {
+    code: away.flag,
+    size: 24,
+    title: away.name
+  }), React.createElement("span", null, away.name))), result.pensHappened && result.advancingTeam && React.createElement("div", {
+    className: "match-final-result-note"
+  }, React.createElement("span", null, "Awans po karnych"), React.createElement("strong", null, (result.advancingTeam === 'home' ? home : away).name)), prediction && React.createElement("div", {
+    className: "match-final-user-pick"
+  }, React.createElement("span", null, "Twój typ"), React.createElement("strong", null, prediction.home, ":", prediction.away), prediction.penWinner && React.createElement("span", {
+    className: `match-penalty-badge${result.pensHappened && prediction.penWinner === result.advancingTeam ? ' penalty-hit' : result ? ' penalty-miss' : ''}`
+  }, FLAG_ABBR[((prediction.penWinner === 'home' ? home : away).flag || '').toLowerCase()] || (prediction.penWinner === 'home' ? home : away).name.slice(0, 3).toUpperCase()), React.createElement("b", {
+    className: `match-final-user-points ${quality === 'exact' ? 'is-exact' : quality === 'partial' ? 'is-partial' : 'is-miss'}`
+  }, myPoints > 0 ? `+${myPoints} pkt` : '0 pkt'))), phaseLocked && !result && React.createElement("div", {
     className: "text-center text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg p-3 flex items-center justify-center gap-2 app-note app-note--danger app-note--compact app-note--center"
   }, React.createElement(Icon, {
     name: "lock",
@@ -3311,6 +3366,24 @@ function SpecialsView({
   };
   const myScores = useMemo(() => scoreSpecials(mine, specialResults, scoringSettings), [mine, specialResults, scoringSettings]);
   const hasResults = !!(specialResults?.champion || specialResults?.topScorer || Object.keys(specialResults?.groupOrders || {}).length > 0);
+  React.useEffect(() => {
+    let raf = null;
+    const updateOverflow = () => {
+      document.querySelectorAll('.specials-view .specials-team-name').forEach(el => {
+        el.classList.toggle('is-overflowing', el.scrollWidth > el.clientWidth + 1);
+      });
+    };
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(updateOverflow);
+    };
+    schedule();
+    window.addEventListener('resize', schedule);
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      window.removeEventListener('resize', schedule);
+    };
+  }, [activeGroup, draft.groupOrders, specialResults, tournamentLocked, specialsLocked]);
   if (!activePlayerId) return React.createElement("div", {
     className: "text-center text-sm text-stone-600 bg-amber-50 border border-amber-200 rounded-lg p-4 mt-4 app-note app-note--warning app-note--center"
   }, "Wybierz uczestnika na g\xF3rze ekranu");
@@ -3380,7 +3453,7 @@ function SpecialsView({
         size: 16,
         title: t.name
       }), React.createElement("span", {
-        className: "min-w-0 truncate"
+        className: "specials-team-name min-w-0 truncate"
       }, t.name));
     })));
   })), React.createElement("section", {
@@ -3845,11 +3918,12 @@ function LeaderboardView({
       className: "leaderboard-phase-summary"
     }, React.createElement("span", {
       className: "leaderboard-phase-summary-label"
-    }, "Rozk\u0142ad punkt\xF3w"), React.createElement(Icon, {
-      name: "chevdown",
-      size: 16,
+    }, "Rozk\u0142ad punkt\xF3w"), React.createElement("span", {
       className: "leaderboard-phase-chevron"
-    })), React.createElement("div", {
+    }, React.createElement(Icon, {
+      name: "chevdown",
+      size: 16
+    }))), React.createElement("div", {
       className: "leaderboard-phase-content"
     }, React.createElement("div", {
       className: "leaderboard-category-grid grid grid-cols-5 gap-1 text-[11px]"
@@ -4070,114 +4144,40 @@ function CompareView({
     const isExpanded = expandedMatches.has(m.id);
     return React.createElement("div", {
       key: m.id,
-      className: "deferred-card compare-match-card",
-      style: {
-        background: 'rgba(255,255,255,.07)',
-        border: '1px solid rgba(255,255,255,.12)',
-        borderRadius: 22,
-        padding: 14,
-        marginBottom: 8
-      }
+      className: `deferred-card compare-match-card${isExpanded ? ' is-expanded' : ''}`
     }, React.createElement("div", {
-      style: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        marginBottom: 8
-      }
+      className: "compare-match-head"
     }, React.createElement("div", {
-      style: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: 8
-      }
+      className: "compare-match-meta"
     }, React.createElement(Badge, null, phaseBadgeLabel(m)), React.createElement("span", {
-      style: {
-        fontSize: 11,
-        color: 'rgba(255,255,255,.4)'
-      }
+      className: "compare-match-number"
     }, "#", m.num)), result ? React.createElement("div", {
-      style: {
-        fontFamily: 'Bebas Neue,sans-serif',
-        fontSize: 20,
-        letterSpacing: '0.08em',
-        color: 'white',
-        padding: '3px 12px',
-        background: 'rgba(0,160,60,.35)',
-        border: '1px solid rgba(0,220,80,.45)',
-        borderRadius: 16
-      }
-    }, result.home, " : ", result.away) : React.createElement("span", {
-      style: {
-        fontSize: 11,
-        color: 'rgba(255,255,255,.35)',
-        fontStyle: 'italic'
-      }
+      className: "compare-match-result-pill"
+    }, result.home, React.createElement("span", null, ":"), result.away) : React.createElement("span", {
+      className: "compare-match-no-result"
     }, "brak wyniku")), React.createElement("button", {
       type: "button",
       onClick: () => toggleMatchDetails(m.id),
       "aria-expanded": isExpanded,
-      className: "compare-match-toggle",
-      style: {
-        width: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: 10,
-        padding: '7px 9px',
-        margin: '0 0 8px',
-        borderRadius: 20,
-        border: '1px solid rgba(255,255,255,.09)',
-        background: 'rgba(255,255,255,.035)',
-        color: 'inherit',
-        cursor: 'pointer',
-        textAlign: 'left'
-      }
+      className: "compare-match-toggle"
     }, React.createElement("span", {
-      style: {
-        minWidth: 0,
-        display: 'flex',
-        alignItems: 'center',
-        gap: 6,
-        overflow: 'hidden',
-        fontSize: 13,
-        fontWeight: 600,
-        color: 'rgba(255,255,255,.78)'
-      }
+      className: "compare-match-teams"
+    }, React.createElement("span", {
+      className: "compare-match-team"
     }, React.createElement(FlagImg, {
       code: home?.flag,
-      size: 16,
+      size: 18,
       title: home?.name
-    }), React.createElement("span", {
-      style: {
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap'
-      }
-    }, home?.name || '?'), React.createElement("span", {
-      style: {
-        color: 'rgba(255,255,255,.3)',
-        fontWeight: 400,
-        flexShrink: 0
-      }
-    }, "vs"), React.createElement(FlagImg, {
+    }), React.createElement("span", null, home?.name || '?')), React.createElement("span", {
+      className: "compare-match-vs"
+    }, "vs"), React.createElement("span", {
+      className: "compare-match-team is-away"
+    }, React.createElement(FlagImg, {
       code: away?.flag,
-      size: 16,
+      size: 18,
       title: away?.name
-    }), React.createElement("span", {
-      style: {
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap'
-      }
-    }, away?.name || '?')), React.createElement("span", {
-      style: {
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexShrink: 0,
-        color: 'rgba(255,255,255,.52)'
-      }
+    }), React.createElement("span", null, away?.name || '?'))), React.createElement("span", {
+      className: "compare-match-chevron"
     }, React.createElement(Icon, {
       name: isExpanded ? 'chevup' : 'chevdown',
       size: 16
@@ -4719,29 +4719,36 @@ function AdminMatchRow({
   })))), isKO && React.createElement("div", {
     className: "text-[11px] text-stone-500 text-center mb-2"
   }, "Wpisz wynik ", React.createElement("strong", null, "po 120 minutach"), " (regulaminowy + dogrywka)"), isKO && isDraw && React.createElement("div", {
-    className: "bg-amber-50 border border-amber-200 rounded-lg p-3 mb-3"
-  }, React.createElement("p", {
-    className: "text-xs font-semibold text-amber-900 mb-2"
-  }, "Remis po 120 min \u2014 kto awansowa\u0142?"), React.createElement("div", {
-    className: "flex gap-2"
+    className: "penalty-choice-panel admin-penalty-choice-panel"
+  }, React.createElement("div", {
+    className: "penalty-choice-head"
+  }, React.createElement("span", null, "Remis po 120 min"), React.createElement("strong", null, "Awans")), React.createElement("p", {
+    className: "penalty-choice-title"
+  }, "Kto awansował po karnych?"), React.createElement("div", {
+    className: "penalty-choice-grid"
   }, ['home', 'away'].map(side => {
     const t = side === 'home' ? teams[homeId] : teams[awayId];
     const sel = draft.advancingTeam === side;
     return React.createElement("button", {
       key: side,
+      type: "button",
       onClick: () => setDraft(d => ({
         ...d,
         advancingTeam: side,
         pensHappened: true
       })),
-      className: `flex-1 px-3 py-2 rounded-lg border-2 text-sm font-semibold inline-flex items-center justify-center gap-2 min-w-0 ${sel ? 'border-amber-500 bg-amber-100 text-amber-900' : 'border-stone-200 bg-white'}`
+      className: `penalty-choice-card${sel ? ' is-selected' : ''}`
+    }, React.createElement("span", {
+      className: "penalty-choice-flag"
     }, t?.flag && React.createElement(FlagImg, {
       code: t.flag,
-      size: 18,
+      size: 26,
       title: t?.name
-    }), React.createElement("span", {
-      className: "min-w-0 truncate"
-    }, t?.name));
+    })), React.createElement("span", {
+      className: "penalty-choice-team"
+    }, t?.name || "Drużyna"), React.createElement("span", {
+      className: "penalty-choice-check"
+    }, sel ? "✓" : ""));
   }))), React.createElement("div", {
     className: "flex gap-2"
   }, result && React.createElement(Btn, {
@@ -6070,11 +6077,13 @@ function BracketTree({
       awayTeamId: resolveBracketTeamId(id, 'away', matchesById, results, resolvedCache)
     };
   };
-  const xs = [0, 246, 492, 738, 984];
+  const groupX = 0;
+  const knockoutOffset = 238;
+  const xs = [0, 246, 492, 738, 984].map(x => x + knockoutOffset);
   const ys = [[0, 70, 140, 210, 280, 350, 420, 490, 560, 630, 700, 770, 840, 910, 980, 1050], [35, 175, 315, 455, 595, 735, 875, 1015], [105, 385, 665, 945], [245, 805], [525]];
   const cardH = 66;
   const cardW = 192;
-  const boardW = 1176;
+  const boardW = 1414;
   const connectorH = 1120;
   const connectorGap = 8;
   const connectorRadius = 8;
@@ -6105,6 +6114,18 @@ function BracketTree({
       }));
     });
   }
+  const groupTables = buildGroupTables(Object.values(matchesById), teams, results);
+  const advancedThirdTeamIds = new Set();
+  Object.values(matchesById).forEach(match => {
+    if (match?.phase !== 'r32') return;
+    ['homeTeamId', 'awayTeamId'].forEach(key => {
+      const team = teams[match[key]];
+      const groupRows = team?.group ? groupTables[team.group] || [] : [];
+      if (groupRows[2]?.team?.id === team?.id) advancedThirdTeamIds.add(team.id);
+    });
+  });
+  const groupCardH = 88;
+  const groupGap = 6;
   return React.createElement("section", {
     className: "bracket-section bracket-section-unified"
   }, React.createElement("div", {
@@ -6115,7 +6136,40 @@ function BracketTree({
       width: boardW,
       height: 1174
     }
-  }, config.rounds.map((round, idx) => React.createElement("div", {
+  }, React.createElement("div", {
+    className: "bracket-round-label bracket-group-round-label",
+    style: { left: groupX }
+  }, "FAZA GRUPOWA"), React.createElement("div", {
+    className: "bracket-group-column",
+    style: { left: groupX, top: 40, width: cardW }
+  }, GROUPS.map((group, idx) => React.createElement("div", {
+    key: group,
+    className: "bracket-group-compact-card",
+    style: { top: idx * (groupCardH + groupGap), height: groupCardH }
+  }, React.createElement("div", {
+    className: "bracket-group-compact-head"
+  }, React.createElement("span", {
+    className: "bracket-group-compact-title"
+  }, "Grupa ", group), React.createElement("span", {
+    className: "bracket-group-compact-stat-head"
+  }, "+/-"), React.createElement("span", {
+    className: "bracket-group-compact-stat-head"
+  }, "Pkt")), React.createElement("div", {
+    className: "bracket-group-compact-rows"
+  }, (groupTables[group] || []).map((row, pos) => React.createElement("div", {
+    key: row.team.id,
+    className: "bracket-group-compact-row" + (pos < 2 || advancedThirdTeamIds.has(row.team.id) ? " is-advance" : "")
+  }, React.createElement("span", {
+    className: "bracket-group-compact-pos"
+  }, pos + 1), React.createElement(FlagImg, {
+    code: row.team.flag,
+    size: 13,
+    title: row.team.name
+  }), React.createElement("span", {
+    className: "bracket-group-compact-team"
+  }, row.team.name), React.createElement("span", {
+    className: "bracket-group-compact-diff"
+  }, row.gd > 0 ? "+" + row.gd : row.gd), React.createElement("strong", null, row.pts))))))), config.rounds.map((round, idx) => React.createElement("div", {
     key: round.label,
     className: "bracket-round-label",
     style: {
@@ -6155,6 +6209,75 @@ function BracketTree({
     }
   }))));
 }
+function buildGroupTables(matches, teams, results) {
+  const table = Object.fromEntries(GROUPS.map(g => [g, []]));
+  Object.values(teams || {}).forEach(team => {
+    if (!team || !team.group || !table[team.group]) return;
+    table[team.group].push({ team, p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0 });
+  });
+  const byGroupTeam = {};
+  Object.entries(table).forEach(([group, rows]) => {
+    byGroupTeam[group] = Object.fromEntries(rows.map(row => [row.team.id, row]));
+  });
+  (matches || []).filter(match => match.phase === 'group').forEach(match => {
+    const result = results && results[match.id];
+    if (!result || typeof result.home !== 'number' || typeof result.away !== 'number') return;
+    const group = match.group;
+    const home = byGroupTeam[group] && byGroupTeam[group][match.homeTeamId];
+    const away = byGroupTeam[group] && byGroupTeam[group][match.awayTeamId];
+    if (!home || !away) return;
+    home.p += 1; away.p += 1;
+    home.gf += result.home; home.ga += result.away;
+    away.gf += result.away; away.ga += result.home;
+    if (result.home > result.away) { home.w += 1; away.l += 1; home.pts += 3; }
+    else if (result.home < result.away) { away.w += 1; home.l += 1; away.pts += 3; }
+    else { home.d += 1; away.d += 1; home.pts += 1; away.pts += 1; }
+  });
+  Object.values(table).forEach(rows => {
+    rows.forEach(row => { row.gd = row.gf - row.ga; });
+    rows.sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf || a.team.name.localeCompare(b.team.name, 'pl'));
+  });
+  return table;
+}
+
+function GroupTablesPanel({ matches, teams, results }) {
+  const tables = useMemo(() => buildGroupTables(matches, teams, results), [matches, teams, results]);
+  return React.createElement("aside", { className: "bracket-group-tables", "aria-label": "Tabele grup" },
+    React.createElement("div", { className: "bracket-group-tables-head" },
+      React.createElement("h3", null, "Tabele grup"),
+      React.createElement("span", null, "Faza grupowa")
+    ),
+    GROUPS.map(group => {
+      const rows = tables[group] || [];
+      return React.createElement("section", { key: group, className: "bracket-group-table-card" },
+        React.createElement("div", { className: "bracket-group-table-title" }, "Grupa ", group),
+        React.createElement("div", { className: "bracket-group-table" },
+          React.createElement("div", { className: "bracket-group-table-row bracket-group-table-row-head" },
+            React.createElement("span", null, "#"),
+            React.createElement("span", null, "Drużyna"),
+            React.createElement("span", null, "M"),
+            React.createElement("span", null, "+/-"),
+            React.createElement("span", null, "Pkt")
+          ),
+          rows.map((row, idx) => React.createElement("div", {
+            key: row.team.id,
+            className: "bracket-group-table-row" + (idx < 2 ? " is-advance" : idx === 2 ? " is-third" : "")
+          },
+            React.createElement("span", { className: "bracket-group-pos" }, idx + 1),
+            React.createElement("span", { className: "bracket-group-team" },
+              React.createElement(FlagImg, { code: row.team.flag, size: 14, title: row.team.name }),
+              React.createElement("span", null, row.team.name)
+            ),
+            React.createElement("span", null, row.p),
+            React.createElement("span", null, row.gd > 0 ? "+" + row.gd : row.gd),
+            React.createElement("strong", null, row.pts)
+          ))
+        )
+      );
+    })
+  );
+}
+
 function TournamentBracket({
   matches,
   teams,

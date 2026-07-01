@@ -5806,7 +5806,7 @@ html body .bracket-page {
 
 /* Infinite group filter interaction polish. */
 html body .infinite-group-scroll {
-  scroll-snap-type: x mandatory !important;
+  scroll-snap-type: none !important;
   scroll-padding-inline: 50% !important;
   touch-action: pan-x !important;
   -webkit-overflow-scrolling: touch !important;
@@ -5814,11 +5814,1306 @@ html body .infinite-group-scroll {
 
 html body .infinite-group-scroll > button {
   scroll-snap-align: center !important;
-  scroll-snap-stop: always !important;
+  scroll-snap-stop: normal !important;
   cursor: pointer !important;
 }
 
 html body .infinite-group-scroll > button:focus-visible {
   outline: 2px solid rgba(157, 210, 255, .95) !important;
   outline-offset: 3px !important;
+}
+
+/* Mobile special group team labels. */
+html body .specials-view .selection-tile .specials-team-name {
+  display: block !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: clip !important;
+  white-space: nowrap !important;
+  overflow-wrap: normal !important;
+  line-height: 1.05 !important;
+  mask-image: none !important;
+  -webkit-mask-image: none !important;
+}
+
+@media (max-width: 480px) {
+  html body .specials-view .selection-tile {
+    min-height: 44px !important;
+    gap: 8px !important;
+  }
+
+  html body .specials-view .selection-tile .specials-team-name {
+    font-size: 13px !important;
+  }
+}
+
+
+html body .specials-view .selection-tile .specials-team-name.is-overflowing {
+  mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 22px), transparent 100%) !important;
+  -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 22px), transparent 100%) !important;
+}
+
+/* Leaderboard header matches ranking cards. */
+html body .leaderboard-header {
+  background: linear-gradient(145deg, rgba(38,51,78,.76), rgba(16,22,38,.70)) !important;
+  background-color: transparent !important;
+  background-image: linear-gradient(145deg, rgba(38,51,78,.76), rgba(16,22,38,.70)) !important;
+  box-shadow: var(--tab-match-shadow) !important;
+  backdrop-filter: blur(14px) saturate(145%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(145%) !important;
+}
+
+/* Bracket group tables sidebar. */
+html body .bracket-page .bracket-main-layout {
+  display: grid !important;
+  grid-template-columns: minmax(236px, 280px) minmax(0, 1fr) !important;
+  gap: 12px !important;
+  align-items: start !important;
+}
+
+html body .bracket-page .bracket-main-layout > .bracket-section {
+  min-width: 0 !important;
+}
+
+html body .bracket-page .bracket-group-tables {
+  background: var(--bracket-panel) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+  border-radius: 24px !important;
+  padding: 12px !important;
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 8px !important;
+  max-height: calc(100vh - var(--header-height, 88px) - 112px) !important;
+  overflow: auto !important;
+  scrollbar-width: none !important;
+}
+
+html body .bracket-page .bracket-group-tables::-webkit-scrollbar {
+  display: none !important;
+}
+
+html body .bracket-page .bracket-group-tables-head {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: end !important;
+  gap: 8px !important;
+  padding: 2px 2px 4px !important;
+}
+
+html body .bracket-page .bracket-group-tables-head h3 {
+  margin: 0 !important;
+  color: rgba(245,250,255,.98) !important;
+  font-family: 'Bebas Neue', sans-serif !important;
+  font-size: 24px !important;
+  font-weight: 400 !important;
+  letter-spacing: .06em !important;
+  line-height: 1 !important;
+}
+
+html body .bracket-page .bracket-group-tables-head span,
+html body .bracket-page .bracket-group-table-title,
+html body .bracket-page .bracket-group-table-row-head {
+  color: var(--bracket-muted) !important;
+}
+
+html body .bracket-page .bracket-group-tables-head span {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: .04em !important;
+  white-space: nowrap !important;
+}
+
+html body .bracket-page .bracket-group-table-card {
+  background: var(--bracket-card) !important;
+  border: 1px solid var(--bracket-border) !important;
+  border-radius: 16px !important;
+  overflow: hidden !important;
+}
+
+html body .bracket-page .bracket-group-table-title {
+  background: var(--bracket-head) !important;
+  border-bottom: 1px solid var(--bracket-row-sep) !important;
+  padding: 7px 9px !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: .05em !important;
+}
+
+html body .bracket-page .bracket-group-table-row {
+  display: grid !important;
+  grid-template-columns: 22px minmax(0, 1fr) 24px 34px 32px !important;
+  align-items: center !important;
+  gap: 5px !important;
+  min-height: 30px !important;
+  padding: 5px 8px !important;
+  color: rgba(224,235,245,.78) !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  font-variant-numeric: tabular-nums !important;
+}
+
+html body .bracket-page .bracket-group-table-row + .bracket-group-table-row {
+  border-top: 1px solid var(--bracket-row-sep) !important;
+}
+
+html body .bracket-page .bracket-group-table-row-head {
+  min-height: 24px !important;
+  font-size: 9px !important;
+  text-transform: uppercase !important;
+  letter-spacing: .04em !important;
+}
+
+html body .bracket-page .bracket-group-table-row > span:nth-child(n+3),
+html body .bracket-page .bracket-group-table-row > strong {
+  text-align: right !important;
+}
+
+html body .bracket-page .bracket-group-table-row.is-advance {
+  background: rgba(48,209,88,.08) !important;
+  color: rgba(231,255,241,.96) !important;
+}
+
+html body .bracket-page .bracket-group-table-row.is-third {
+  background: rgba(245,200,66,.07) !important;
+}
+
+html body .bracket-page .bracket-group-team {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  min-width: 0 !important;
+}
+
+html body .bracket-page .bracket-group-team span:last-child {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+html body .bracket-page .bracket-group-pos {
+  color: var(--bracket-muted) !important;
+}
+
+@media (max-width: 980px) {
+  html body .bracket-page .bracket-main-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  html body .bracket-page .bracket-group-tables {
+    max-height: none !important;
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 560px) {
+  html body .bracket-page .bracket-group-tables {
+    grid-template-columns: 1fr !important;
+    border-radius: 20px !important;
+    padding: 10px !important;
+  }
+}
+
+/* Bracket group tables integrated column. */
+html body .bracket-page .bracket-group-round-label {
+  width: 192px !important;
+  text-align: center !important;
+}
+
+html body .bracket-page .bracket-group-column {
+  position: absolute !important;
+  width: 192px !important;
+  height: 1120px !important;
+}
+
+html body .bracket-page .bracket-group-compact-card {
+  position: absolute !important;
+  left: 0 !important;
+  width: 192px !important;
+  background: var(--bracket-card) !important;
+  border: 1px solid var(--bracket-border) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 14px 30px rgba(0,0,0,.18) !important;
+  overflow: hidden !important;
+}
+
+html body .bracket-page .bracket-group-compact-head {
+  height: 18px !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 0 8px !important;
+  background: var(--bracket-head) !important;
+  border-bottom: 1px solid var(--bracket-row-sep) !important;
+  color: rgba(236,244,255,.76) !important;
+  font-size: 9px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  letter-spacing: .04em !important;
+  text-transform: uppercase !important;
+}
+
+html body .bracket-page .bracket-group-compact-rows {
+  display: grid !important;
+  grid-template-rows: repeat(4, 1fr) !important;
+  height: calc(100% - 18px) !important;
+}
+
+html body .bracket-page .bracket-group-compact-row {
+  display: grid !important;
+  grid-template-columns: 13px 13px minmax(0, 1fr) 24px 24px !important;
+  align-items: center !important;
+  gap: 4px !important;
+  min-width: 0 !important;
+  padding: 0 7px !important;
+  color: rgba(226,236,248,.72) !important;
+  font-size: 9px !important;
+  font-weight: 800 !important;
+  font-variant-numeric: tabular-nums !important;
+  line-height: 1 !important;
+}
+
+html body .bracket-page .bracket-group-compact-row + .bracket-group-compact-row {
+  border-top: 1px solid rgba(255,255,255,.065) !important;
+}
+
+html body .bracket-page .bracket-group-compact-row.is-advance {
+  background: rgba(48,209,88,.075) !important;
+  color: rgba(234,255,243,.96) !important;
+}
+
+html body .bracket-page .bracket-group-compact-row.is-third {
+  background: rgba(245,200,66,.055) !important;
+}
+
+html body .bracket-page .bracket-group-compact-pos {
+  color: var(--bracket-muted) !important;
+  text-align: right !important;
+}
+
+html body .bracket-page .bracket-group-compact-team {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+html body .bracket-page .bracket-group-compact-diff,
+html body .bracket-page .bracket-group-compact-row strong {
+  text-align: right !important;
+}
+
+html body .bracket-page .bracket-group-compact-row strong {
+  color: rgba(248,252,255,.94) !important;
+  font-size: 10px !important;
+}
+
+/* Bracket integrated group tables polish. */
+html body .bracket-page .bracket-board-unified {
+  min-width: 1414px !important;
+}
+
+html body .bracket-page .bracket-connectors.bracket-connectors-unified {
+  left: 0 !important;
+  top: 40px !important;
+  width: 1414px !important;
+  height: 1120px !important;
+}
+
+html body .bracket-page .bracket-group-compact-card {
+  background: var(--bracket-card) !important;
+  border-color: var(--bracket-border) !important;
+  border-radius: 18px !important;
+  box-shadow: none !important;
+  z-index: 2 !important;
+}
+
+html body .bracket-page .bracket-group-compact-head {
+  height: 19px !important;
+  padding: 2px 8px 0 !important;
+  justify-content: space-between !important;
+  background: var(--bracket-head) !important;
+  border-bottom-color: var(--bracket-row-sep) !important;
+  color: var(--bracket-muted) !important;
+  font-size: 8px !important;
+  font-weight: 800 !important;
+  letter-spacing: .02em !important;
+  text-transform: none !important;
+}
+
+html body .bracket-page .bracket-group-compact-head::after {
+  content: "Pkt";
+  opacity: .72;
+}
+
+html body .bracket-page .bracket-group-compact-rows {
+  height: calc(100% - 19px) !important;
+}
+
+html body .bracket-page .bracket-group-compact-row {
+  grid-template-columns: 14px 14px minmax(0, 1fr) 25px 25px !important;
+  gap: 4px !important;
+  padding: 0 8px !important;
+  color: rgba(224,235,245,.76) !important;
+  font-size: 9px !important;
+  font-weight: 800 !important;
+}
+
+html body .bracket-page .bracket-group-compact-row + .bracket-group-compact-row {
+  border-top-color: var(--bracket-row-sep) !important;
+}
+
+html body .bracket-page .bracket-group-compact-row.is-advance {
+  background: var(--bracket-winner-bg) !important;
+  color: var(--bracket-winner-text) !important;
+}
+
+html body .bracket-page .bracket-group-compact-row.is-third {
+  background: rgba(245,200,66,.075) !important;
+  color: rgba(247,238,205,.92) !important;
+}
+
+html body .bracket-page .bracket-group-compact-pos,
+html body .bracket-page .bracket-group-compact-diff {
+  color: var(--bracket-muted) !important;
+}
+
+html body .bracket-page .bracket-group-compact-row strong {
+  color: inherit !important;
+  font-size: 10px !important;
+}
+
+/* Bracket group cards final match-card parity. */
+html body .bracket-page .bracket-group-compact-card {
+  background: var(--bracket-card-finished) !important;
+  border: 1px solid rgba(255,255,255,.24) !important;
+  border-top-color: rgba(255,255,255,.24) !important;
+  border-right-color: rgba(255,255,255,.24) !important;
+  border-bottom-color: rgba(255,255,255,.24) !important;
+  border-left-color: rgba(255,255,255,.24) !important;
+  border-radius: 18px !important;
+}
+
+html body .bracket-page .bracket-group-compact-head {
+  background: var(--bracket-head) !important;
+  border-bottom: 1px solid var(--bracket-row-sep) !important;
+  color: var(--bracket-muted) !important;
+}
+
+html body .bracket-page .bracket-group-compact-row + .bracket-group-compact-row {
+  border-top: 1px solid var(--bracket-row-sep) !important;
+}
+
+/* Remove gold highlight from non-advancing third places. */
+html body .bracket-page .bracket-group-compact-row.is-third {
+  background: transparent !important;
+  color: rgba(224,235,245,.76) !important;
+}
+
+/* Bracket group table aligned stat headers. */
+html body .bracket-page .bracket-group-compact-head {
+  display: grid !important;
+  grid-template-columns: 14px 14px minmax(0, 1fr) 25px 25px !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 2px 8px 0 !important;
+}
+
+html body .bracket-page .bracket-group-compact-head::after {
+  content: none !important;
+}
+
+html body .bracket-page .bracket-group-compact-title {
+  grid-column: 1 / 4 !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+html body .bracket-page .bracket-group-compact-stat-head {
+  justify-self: end !important;
+  text-align: right !important;
+  white-space: nowrap !important;
+  font-variant-numeric: tabular-nums !important;
+  line-height: 1 !important;
+  opacity: .76 !important;
+}
+
+html body .bracket-page .bracket-group-compact-diff,
+html body .bracket-page .bracket-group-compact-row strong {
+  display: block !important;
+  justify-self: end !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow: visible !important;
+  text-align: right !important;
+  white-space: nowrap !important;
+  font-variant-numeric: tabular-nums !important;
+  line-height: 1 !important;
+}
+
+/* Bracket group table centered stat columns. */
+html body .bracket-page .bracket-group-compact-stat-head,
+html body .bracket-page .bracket-group-compact-diff,
+html body .bracket-page .bracket-group-compact-row strong {
+  justify-self: center !important;
+  text-align: center !important;
+}
+
+/* Bracket intro banner matches bracket panel background. */
+html body .bracket-page .bracket-intro {
+  background: var(--bracket-panel) !important;
+  background-color: transparent !important;
+  background-image: var(--bracket-panel) !important;
+  backdrop-filter: blur(14px) saturate(145%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(145%) !important;
+}
+
+/* Redesigned penalty winner selector. */
+html body .penalty-choice-panel {
+  margin: 14px 0 12px !important;
+  padding: 14px !important;
+  border-radius: 24px !important;
+  background: linear-gradient(145deg, rgba(39,51,78,.72), rgba(14,20,36,.66)) !important;
+  border: 1px solid rgba(255,255,255,.11) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06) !important;
+  backdrop-filter: blur(14px) saturate(145%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(145%) !important;
+}
+
+html body .penalty-choice-head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  margin-bottom: 8px !important;
+  color: rgba(213,226,245,.68) !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  letter-spacing: .04em !important;
+  text-transform: uppercase !important;
+}
+
+html body .penalty-choice-head strong {
+  color: rgba(102, 255, 158, .92) !important;
+  font-size: 11px !important;
+  font-variant-numeric: tabular-nums !important;
+  white-space: nowrap !important;
+}
+
+html body .penalty-choice-title {
+  margin: 0 0 12px !important;
+  color: rgba(248,252,255,.96) !important;
+  font-size: 13px !important;
+  font-weight: 900 !important;
+  text-align: center !important;
+}
+
+html body .penalty-choice-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+}
+
+html body .penalty-choice-card {
+  position: relative !important;
+  min-width: 0 !important;
+  min-height: 64px !important;
+  display: grid !important;
+  grid-template-columns: 34px minmax(0, 1fr) 22px !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 10px 12px !important;
+  border-radius: 18px !important;
+  background: rgba(255,255,255,.045) !important;
+  border: 1px solid rgba(255,255,255,.09) !important;
+  color: rgba(224,235,245,.76) !important;
+  font: inherit !important;
+  cursor: pointer !important;
+  transition: background .16s ease, border-color .16s ease, color .16s ease, transform .16s ease !important;
+}
+
+html body .penalty-choice-card:hover:not(:disabled) {
+  background: rgba(111,196,255,.10) !important;
+  border-color: rgba(111,196,255,.24) !important;
+  color: rgba(245,250,255,.94) !important;
+}
+
+html body .penalty-choice-card.is-selected {
+  background: linear-gradient(90deg, rgba(48,209,88,.20), rgba(111,196,255,.11)) !important;
+  border-color: rgba(102,255,158,.42) !important;
+  color: rgba(232,255,242,.98) !important;
+}
+
+html body .penalty-choice-card:disabled {
+  cursor: default !important;
+  opacity: .64 !important;
+}
+
+html body .penalty-choice-flag {
+  width: 34px !important;
+  height: 34px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 999px !important;
+  background: rgba(255,255,255,.08) !important;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.08) !important;
+}
+
+html body .penalty-choice-team {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  font-size: 13px !important;
+  font-weight: 900 !important;
+  text-align: left !important;
+}
+
+html body .penalty-choice-check {
+  width: 22px !important;
+  height: 22px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 999px !important;
+  background: rgba(255,255,255,.08) !important;
+  color: rgba(102,255,158,.98) !important;
+  font-size: 13px !important;
+  font-weight: 1000 !important;
+}
+
+html body .penalty-choice-card:not(.is-selected) .penalty-choice-check {
+  background: rgba(255,255,255,.045) !important;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.10) !important;
+}
+
+html body .penalty-choice-note {
+  margin: 10px 2px 0 !important;
+  color: rgba(213,226,245,.58) !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  line-height: 1.25 !important;
+  text-align: center !important;
+}
+
+@media (max-width: 420px) {
+  html body .penalty-choice-grid {
+    gap: 8px !important;
+  }
+
+  html body .penalty-choice-card {
+    grid-template-columns: 30px minmax(0, 1fr) 20px !important;
+    min-height: 58px !important;
+    padding: 9px 9px !important;
+  }
+
+  html body .penalty-choice-flag {
+    width: 30px !important;
+    height: 30px !important;
+  }
+
+  html body .penalty-choice-team {
+    font-size: 12px !important;
+  }
+}
+
+/* Admin penalty selector uses match penalty design. */
+html body .admin-penalty-choice-panel {
+  margin-top: 12px !important;
+  margin-bottom: 12px !important;
+}
+
+html body .admin-match-card .admin-penalty-choice-panel .penalty-choice-head strong {
+  color: rgba(102,255,158,.92) !important;
+}
+
+/* Redesigned final result card. */
+html body .match-final-result-card {
+  margin: 14px 0 14px !important;
+  padding: 13px 14px !important;
+  border-radius: 24px !important;
+  background: linear-gradient(145deg, rgba(39,51,78,.64), rgba(14,20,36,.58)) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+  color: rgba(245,250,255,.96) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06) !important;
+  backdrop-filter: blur(14px) saturate(145%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(145%) !important;
+}
+
+html body .match-final-result-label {
+  margin-bottom: 9px !important;
+  color: rgba(213,226,245,.58) !important;
+  font-size: 10px !important;
+  font-weight: 900 !important;
+  letter-spacing: .05em !important;
+  text-align: center !important;
+  text-transform: uppercase !important;
+}
+
+html body .match-final-result-main {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+html body .match-final-result-team {
+  min-width: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+  color: rgba(224,235,245,.78) !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+}
+
+html body .match-final-result-team.is-away {
+  justify-content: flex-start !important;
+}
+
+html body .match-final-result-team span:last-child {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+html body .match-final-result-score {
+  min-width: 74px !important;
+  display: inline-grid !important;
+  grid-template-columns: 1fr auto 1fr !important;
+  align-items: center !important;
+  gap: 7px !important;
+  padding: 7px 13px !important;
+  border-radius: 999px !important;
+  background: rgba(255,255,255,.055) !important;
+  border: 1px solid rgba(255,255,255,.09) !important;
+  font-family: 'Bebas Neue', ui-sans-serif, system-ui, sans-serif !important;
+  font-size: 28px !important;
+  line-height: .9 !important;
+  letter-spacing: .02em !important;
+  font-variant-numeric: tabular-nums !important;
+}
+
+html body .match-final-result-score strong:first-child {
+  text-align: right !important;
+}
+
+html body .match-final-result-score strong:last-child {
+  text-align: left !important;
+}
+
+html body .match-final-result-score span {
+  color: rgba(213,226,245,.54) !important;
+}
+
+html body .match-final-result-note,
+html body .match-final-user-pick {
+  margin-top: 10px !important;
+  padding-top: 9px !important;
+  border-top: 1px solid rgba(255,255,255,.08) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+  color: rgba(213,226,245,.66) !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+}
+
+html body .match-final-result-note strong {
+  color: rgba(102,255,158,.94) !important;
+}
+
+html body .match-final-user-pick {
+  margin-top: 0 !important;
+  border-top-color: transparent !important;
+  padding-top: 7px !important;
+}
+
+html body .match-final-user-pick strong {
+  color: rgba(248,252,255,.96) !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  font-size: 13px !important;
+  font-variant-numeric: tabular-nums !important;
+}
+
+html body .match-final-user-points {
+  font-weight: 1000 !important;
+  white-space: nowrap !important;
+}
+
+html body .match-final-user-points.is-exact {
+  color: #4ade80 !important;
+}
+
+html body .match-final-user-points.is-partial {
+  color: #fbbf24 !important;
+}
+
+html body .match-final-user-points.is-miss {
+  color: #f87171 !important;
+}
+
+@media (max-width: 520px) {
+  html body .match-final-result-card {
+    padding: 12px 10px !important;
+  }
+
+  html body .match-final-result-main {
+    gap: 8px !important;
+  }
+
+  html body .match-final-result-team {
+    font-size: 11px !important;
+    gap: 6px !important;
+  }
+
+  html body .match-final-result-score {
+    min-width: 66px !important;
+    padding: 7px 10px !important;
+    font-size: 25px !important;
+  }
+}
+
+/* Redesigned compare preview match panels. */
+html body .compare-match-card {
+  position: relative !important;
+  margin: 0 0 12px !important;
+  padding: 12px !important;
+  border-radius: 26px !important;
+  background: linear-gradient(145deg, rgba(38,51,78,.74), rgba(16,22,38,.68)) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.055) !important;
+  overflow: hidden !important;
+}
+
+html body .compare-match-card.is-expanded {
+  background: linear-gradient(145deg, rgba(42,56,86,.78), rgba(17,24,42,.72)) !important;
+}
+
+html body .compare-match-head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  min-height: 34px !important;
+  margin-bottom: 9px !important;
+}
+
+html body .compare-match-meta {
+  min-width: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+html body .compare-match-number {
+  color: rgba(213,226,245,.45) !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  white-space: nowrap !important;
+}
+
+html body .compare-match-result-pill {
+  min-width: 66px !important;
+  display: inline-grid !important;
+  grid-template-columns: repeat(3, auto) !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 6px 12px !important;
+  border-radius: 999px !important;
+  background: rgba(7, 108, 63, .72) !important;
+  border: 1px solid rgba(102,255,158,.18) !important;
+  color: rgba(235,255,242,.98) !important;
+  font-family: 'Bebas Neue', ui-sans-serif, system-ui, sans-serif !important;
+  font-size: 24px !important;
+  line-height: .9 !important;
+  letter-spacing: .02em !important;
+  font-variant-numeric: tabular-nums !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08) !important;
+}
+
+html body .compare-match-result-pill span {
+  color: rgba(235,255,242,.58) !important;
+}
+
+html body .compare-match-no-result {
+  color: rgba(213,226,245,.42) !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  font-style: normal !important;
+}
+
+html body .compare-match-toggle {
+  width: 100% !important;
+  min-height: 46px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 28px !important;
+  align-items: center !important;
+  gap: 10px !important;
+  margin: 0 !important;
+  padding: 9px 12px !important;
+  border-radius: 18px !important;
+  border: 1px solid rgba(255,255,255,.075) !important;
+  background: rgba(255,255,255,.04) !important;
+  color: inherit !important;
+  cursor: pointer !important;
+  text-align: left !important;
+}
+
+html body .compare-match-toggle:hover {
+  background: rgba(111,196,255,.075) !important;
+  border-color: rgba(111,196,255,.16) !important;
+}
+
+html body .compare-match-teams {
+  min-width: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  overflow: hidden !important;
+}
+
+html body .compare-match-team {
+  min-width: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  color: rgba(235,243,255,.84) !important;
+  font-size: 13px !important;
+  font-weight: 900 !important;
+}
+
+html body .compare-match-team > span:last-child {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+html body .compare-match-vs {
+  flex: 0 0 auto !important;
+  color: rgba(213,226,245,.38) !important;
+  font-size: 11px !important;
+  font-weight: 900 !important;
+}
+
+html body .compare-match-chevron {
+  width: 28px !important;
+  height: 28px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 999px !important;
+  color: rgba(213,226,245,.62) !important;
+  background: rgba(255,255,255,.035) !important;
+}
+
+html body .compare-match-card .compare-player-list {
+  margin-top: 12px !important;
+  padding-top: 12px !important;
+  border-top: 1px solid rgba(255,255,255,.08) !important;
+}
+
+@media (max-width: 520px) {
+  html body .compare-match-card {
+    padding: 10px !important;
+    border-radius: 24px !important;
+  }
+
+  html body .compare-match-head {
+    min-height: 31px !important;
+    margin-bottom: 8px !important;
+  }
+
+  html body .compare-match-result-pill {
+    min-width: 58px !important;
+    padding: 5px 10px !important;
+    font-size: 21px !important;
+  }
+
+  html body .compare-match-toggle {
+    min-height: 42px !important;
+    padding: 8px 10px !important;
+  }
+
+  html body .compare-match-team {
+    font-size: 12px !important;
+  }
+}
+
+/* Compare preview panel spacing polish. */
+html body .compare-match-card {
+  margin-bottom: 6px !important;
+}
+
+html body .compare-match-card + .compare-match-card {
+  margin-top: 0 !important;
+}
+
+@media (max-width: 520px) {
+  html body .compare-match-card {
+    margin-bottom: 5px !important;
+  }
+}
+
+/* Compare preview parent gap polish. */
+html body .compare-view {
+  gap: 6px !important;
+  row-gap: 6px !important;
+}
+
+@media (max-width: 520px) {
+  html body .compare-view {
+    gap: 5px !important;
+    row-gap: 5px !important;
+  }
+}
+
+/* Compare preview filter-to-card spacing. */
+html body .compare-view .phase-filter-panel + .compare-match-card {
+  margin-top: 6px !important;
+}
+
+@media (max-width: 520px) {
+  html body .compare-view .phase-filter-panel + .compare-match-card {
+    margin-top: 5px !important;
+  }
+}
+
+/* Redesigned leaderboard ranking panels. */
+html body .leaderboard-card {
+  position: relative !important;
+  border-radius: 26px !important;
+  background: linear-gradient(145deg, rgba(38,51,78,.76), rgba(16,22,38,.70)) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.055) !important;
+  overflow: hidden !important;
+}
+
+html body .leaderboard-card:first-of-type {
+  border-color: rgba(245,200,66,.18) !important;
+  background: linear-gradient(145deg, rgba(44,56,82,.82), rgba(17,24,42,.74)) !important;
+}
+
+html body .leaderboard-card-body {
+  padding: 14px 16px !important;
+}
+
+html body .leaderboard-card-summary {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 14px !important;
+  margin-bottom: 10px !important;
+}
+
+html body .leaderboard-player-block {
+  min-width: 0 !important;
+  display: grid !important;
+  grid-template-columns: 44px minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+html body .leaderboard-position-badge {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 16px !important;
+  font-size: 14px !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08) !important;
+}
+
+html body .leaderboard-player-name {
+  color: rgba(248,252,255,.97) !important;
+  font-size: 18px !important;
+  font-weight: 950 !important;
+  line-height: 1.1 !important;
+  margin-bottom: 7px !important;
+}
+
+html body .leaderboard-stats {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+  font-size: 10px !important;
+  line-height: 1 !important;
+}
+
+html body .leaderboard-stats .rank-stat {
+  display: inline-flex !important;
+  align-items: center !important;
+  min-height: 22px !important;
+  padding: 0 8px !important;
+  border-radius: 999px !important;
+  background: rgba(255,255,255,.045) !important;
+  border: 1px solid rgba(255,255,255,.075) !important;
+  font-weight: 850 !important;
+  white-space: nowrap !important;
+}
+
+html body .leaderboard-stats .rank-stat-exact {
+  color: rgba(102,255,158,.94) !important;
+  background: rgba(48,209,88,.09) !important;
+  border-color: rgba(48,209,88,.13) !important;
+}
+
+html body .leaderboard-stats .rank-stat-partial {
+  color: rgba(255,215,92,.96) !important;
+  background: rgba(245,200,66,.075) !important;
+  border-color: rgba(245,200,66,.13) !important;
+}
+
+html body .leaderboard-stats .rank-stat-miss {
+  color: rgba(255,118,128,.94) !important;
+  background: rgba(255,69,88,.075) !important;
+  border-color: rgba(255,69,88,.12) !important;
+}
+
+html body .leaderboard-total {
+  min-width: 82px !important;
+  align-self: stretch !important;
+  display: inline-flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 7px 10px !important;
+  border-radius: 20px !important;
+  background: rgba(255,255,255,.05) !important;
+  border: 1px solid rgba(255,255,255,.08) !important;
+}
+
+html body .leaderboard-total-value {
+  color: rgba(248,252,255,.98) !important;
+  font-size: 34px !important;
+  line-height: .85 !important;
+  letter-spacing: .01em !important;
+  font-variant-numeric: tabular-nums !important;
+}
+
+html body .leaderboard-total-label {
+  margin-top: 4px !important;
+  color: rgba(213,226,245,.62) !important;
+  font-size: 9px !important;
+  font-weight: 900 !important;
+}
+
+html body .leaderboard-phase-details {
+  margin-top: 8px !important;
+  border-radius: 18px !important;
+  background: rgba(255,255,255,.035) !important;
+  border: 1px solid rgba(255,255,255,.07) !important;
+  overflow: hidden !important;
+}
+
+html body .leaderboard-phase-summary {
+  min-height: 40px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  padding: 0 13px !important;
+  color: rgba(213,226,245,.70) !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  list-style: none !important;
+  cursor: pointer !important;
+}
+
+html body .leaderboard-phase-summary::-webkit-details-marker {
+  display: none !important;
+}
+
+html body .leaderboard-phase-details[open] .leaderboard-phase-summary {
+  border-bottom: 1px solid rgba(255,255,255,.07) !important;
+}
+
+html body .leaderboard-phase-chevron {
+  color: rgba(213,226,245,.60) !important;
+  transition: transform .16s ease !important;
+}
+
+html body .leaderboard-phase-details[open] .leaderboard-phase-chevron {
+  transform: rotate(180deg) !important;
+}
+
+html body .leaderboard-phase-content {
+  padding: 11px !important;
+}
+
+html body .leaderboard-category-grid {
+  gap: 8px !important;
+}
+
+html body .leaderboard-category-card {
+  border-radius: 15px !important;
+  background: rgba(255,255,255,.045) !important;
+  border: 1px solid rgba(255,255,255,.075) !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 620px) {
+  html body .leaderboard-card-body {
+    padding: 13px !important;
+  }
+
+  html body .leaderboard-card-summary {
+    gap: 10px !important;
+  }
+
+  html body .leaderboard-player-block {
+    grid-template-columns: 40px minmax(0, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  html body .leaderboard-position-badge {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 15px !important;
+    font-size: 13px !important;
+  }
+
+  html body .leaderboard-player-name {
+    font-size: 16px !important;
+    margin-bottom: 6px !important;
+  }
+
+  html body .leaderboard-stats {
+    gap: 4px !important;
+  }
+
+  html body .leaderboard-stats .rank-stat {
+    min-height: 20px !important;
+    padding: 0 7px !important;
+    font-size: 9px !important;
+  }
+
+  html body .leaderboard-total {
+    min-width: 70px !important;
+    padding: 6px 8px !important;
+    border-radius: 18px !important;
+  }
+
+  html body .leaderboard-total-value {
+    font-size: 30px !important;
+  }
+}
+
+/* Final leaderboard panel surface override. */
+html body .leaderboard-view .leaderboard-card {
+  background: linear-gradient(145deg, rgba(38,51,78,.76), rgba(16,22,38,.70)) !important;
+  background-color: transparent !important;
+  background-image: linear-gradient(145deg, rgba(38,51,78,.76), rgba(16,22,38,.70)) !important;
+  border-color: rgba(255,255,255,.10) !important;
+}
+
+html body .leaderboard-view .leaderboard-card:nth-of-type(2) {
+  background: linear-gradient(145deg, rgba(46,58,84,.82), rgba(18,25,43,.74)) !important;
+  background-color: transparent !important;
+  background-image: linear-gradient(145deg, rgba(46,58,84,.82), rgba(18,25,43,.74)) !important;
+  border-color: rgba(245,200,66,.20) !important;
+}
+
+html body .leaderboard-view .leaderboard-phase-summary {
+  background: rgba(255,255,255,.035) !important;
+  background-image: none !important;
+}
+
+html body .leaderboard-view .leaderboard-category-card {
+  background: rgba(255,255,255,.045) !important;
+  background-image: none !important;
+}
+
+/* Leaderboard summary button matches preview toggle. */
+html body .leaderboard-view .leaderboard-phase-details {
+  border: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  overflow: visible !important;
+}
+
+html body .leaderboard-view .leaderboard-phase-summary {
+  min-height: 46px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 28px !important;
+  align-items: center !important;
+  gap: 10px !important;
+  margin: 0 !important;
+  padding: 9px 12px !important;
+  border-radius: 18px !important;
+  border: 1px solid rgba(255,255,255,.075) !important;
+  background: rgba(255,255,255,.04) !important;
+  background-image: none !important;
+  color: inherit !important;
+  cursor: pointer !important;
+  text-align: left !important;
+}
+
+html body .leaderboard-view .leaderboard-phase-summary:hover {
+  background: rgba(111,196,255,.075) !important;
+  border-color: rgba(111,196,255,.16) !important;
+}
+
+html body .leaderboard-view .leaderboard-phase-summary-label {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  color: rgba(235,243,255,.84) !important;
+  font-size: 13px !important;
+  font-weight: 900 !important;
+}
+
+html body .leaderboard-view .leaderboard-phase-chevron {
+  width: 28px !important;
+  height: 28px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 999px !important;
+  color: rgba(213,226,245,.62) !important;
+  background: rgba(255,255,255,.035) !important;
+  justify-self: end !important;
+}
+
+html body .leaderboard-view .leaderboard-phase-details[open] .leaderboard-phase-summary {
+  border-bottom: 1px solid rgba(255,255,255,.075) !important;
+}
+
+html body .leaderboard-view .leaderboard-phase-content {
+  margin-top: 8px !important;
+  padding: 0 !important;
+}
+
+/* Rounded leaderboard phase highlight fix. */
+html body .leaderboard-view .leaderboard-phase-details {
+  border-radius: 18px !important;
+  overflow: hidden !important;
+  background: transparent !important;
+  background-image: none !important;
+}
+
+html body .leaderboard-view .leaderboard-phase-summary {
+  border-radius: 18px !important;
+  overflow: hidden !important;
+  clip-path: inset(0 round 18px) !important;
+}
+
+html body .leaderboard-view .leaderboard-phase-summary::before,
+html body .leaderboard-view .leaderboard-phase-summary::after {
+  border-radius: inherit !important;
+}
+
+html body .leaderboard-view .leaderboard-card .leaderboard-phase-details .leaderboard-phase-summary {
+  border-bottom-left-radius: 18px !important;
+  border-bottom-right-radius: 18px !important;
+  clip-path: inset(0 round 18px) !important;
 }
