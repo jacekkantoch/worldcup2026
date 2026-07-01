@@ -7047,7 +7047,7 @@ function Mundial2026() {
       scoringSettings: safeScoringSettings
     }),
     onImport: handleImport,
-    onLogout: () => setAdminUnlocked(false)
+    onLogout: () => { setAdminUnlocked(false); setActiveTab('matches'); }
   }))), React.createElement(BottomNav, {
     tabs: tabs,
     activeTab: activeTab,
