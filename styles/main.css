@@ -824,6 +824,11 @@
       padding: 4px 2px;
       overflow-x: auto;
       overflow-y: visible;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .chip-scroll-row::-webkit-scrollbar {
+      display: none;
     }
     .chip-scroll-row.tight {
       padding-top: 6px;
