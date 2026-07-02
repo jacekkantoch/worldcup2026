@@ -4717,12 +4717,18 @@ function AdminTeamRow({
     onSave(cleanName, cleanFlag);
   };
   return React.createElement("div", {
-    className: "bg-stone-50 border border-stone-200 rounded-lg p-2 space-y-1.5"
+    className: "bg-white border border-stone-200 rounded-xl p-3 space-y-2"
   }, React.createElement("div", {
-    className: "text-xs text-stone-500 font-mono"
-  }, team.id, " \xB7 Grupa ", team.group), React.createElement("div", {
-    className: "flex gap-2"
-  }, React.createElement("input", {
+    className: "flex items-center gap-2"
+  }, React.createElement(Badge, null, team.id), React.createElement("span", {
+    className: "text-xs text-stone-500"
+  }, "Grupa ", team.group)), React.createElement("div", {
+    className: "flex items-center gap-2"
+  }, React.createElement(FlagImg, {
+    code: flag,
+    size: 28,
+    title: name || team.name
+  }), React.createElement("input", {
     value: flag,
     onChange: e => setFlag(e.target.value.toLowerCase().replace(/[^a-z-]/g, '')),
     onBlur: () => setFlag(adminFlagCode(flag, name)),
@@ -5010,6 +5016,80 @@ function AdminScoringPanel({
     size: 16
   }), "Zapisz punktacj\u0119")));
 }
+function PhaseLockPanel({
+  matches,
+  phaseLocks,
+  onSavePhaseLocks
+}) {
+  const locks = phaseLocks || {};
+  const phaseCounts = useMemo(() => {
+    const counts = {};
+    (matches || []).forEach(m => {
+      counts[m.phase] = (counts[m.phase] || 0) + 1;
+    });
+    return counts;
+  }, [matches]);
+  const togglePhase = phase => {
+    onSavePhaseLocks(prev => {
+      const base = prev || {};
+      return _extends({}, base, {
+        [phase]: !base[phase]
+      });
+    });
+  };
+  const toggleCompare = () => {
+    onSavePhaseLocks(prev => {
+      const base = prev || {};
+      return _extends({}, base, {
+        compareVisible: !base.compareVisible
+      });
+    });
+  };
+  return React.createElement("div", {
+    className: "space-y-2"
+  }, React.createElement("div", {
+    className: "bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900 app-note app-note--warning"
+  }, "Zablokowana faza uniemo\u017cliwia graczom dodawanie i zmian\u0119 typ\xF3w dla jej mecz\xF3w, niezale\u017cnie od terminu spotkania."), React.createElement("section", {
+    className: "bg-white border border-stone-200 rounded-xl p-4"
+  }, React.createElement("h4", {
+    className: "font-display text-base mb-3"
+  }, "Blokada typowania wg fazy"), React.createElement("div", {
+    className: "space-y-2"
+  }, PHASE_ORDER.map(phase => {
+    const locked = !!locks[phase];
+    const count = phaseCounts[phase] || 0;
+    return React.createElement("div", {
+      key: phase,
+      className: "flex items-center justify-between gap-3 py-1"
+    }, React.createElement("div", {
+      className: "min-w-0"
+    }, React.createElement("div", {
+      className: "text-sm font-semibold text-stone-800"
+    }, PHASE_LABELS[phase]), React.createElement("div", {
+      className: "text-xs text-stone-400"
+    }, count === 1 ? "1 mecz" : `${count} mecz\xF3w`)), React.createElement("button", {
+      type: "button",
+      onClick: () => togglePhase(phase),
+      className: `selection-tile${locked ? ' is-selected' : ''} shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold inline-flex items-center gap-1.5`
+    }, React.createElement(Icon, {
+      name: locked ? "lock" : "unlock",
+      size: 14
+    }), locked ? "Zablokowana" : "Odblokowana"));
+  }))), React.createElement("section", {
+    className: "bg-white border border-stone-200 rounded-xl p-4"
+  }, React.createElement("h4", {
+    className: "font-display text-base mb-1"
+  }, "Por\xF3wnanie typ\xF3w graczy"), React.createElement("p", {
+    className: "text-xs text-stone-400 mb-3"
+  }, "Gdy w\u0142\u0105czone, gracze widz\u0105 typy pozosta\u0142ych uczestnik\xF3w przy zablokowanych meczach w widoku \u201cmecze\u201d."), React.createElement("button", {
+    type: "button",
+    onClick: toggleCompare,
+    className: `selection-tile${locks.compareVisible ? ' is-selected' : ''} px-3 py-1.5 rounded-lg text-xs font-semibold inline-flex items-center gap-1.5`
+  }, React.createElement(Icon, {
+    name: "eye",
+    size: 14
+  }), locks.compareVisible ? "Widoczne dla graczy" : "Ukryte przed graczami")));
+}
 function AdminPanel({
   teams,
   matches,
@@ -5234,11 +5314,11 @@ function AdminPanel({
     className: "app-note app-note--warning app-note--compact"
   }, "Wpisz nazw\u0119 dru\u017Cyny oraz dwuliterowy kod kraju, np. pl, de lub fr."), GROUPS.map(g => React.createElement("div", {
     key: g,
-    className: "bg-white border border-stone-200 rounded-xl p-3"
+    className: "bg-white border border-stone-200 rounded-xl p-4"
   }, React.createElement("h4", {
-    className: "font-display text-lg mb-2"
+    className: "font-display text-base mb-3"
   }, "Grupa ", g), React.createElement("div", {
-    className: "space-y-1.5"
+    className: "space-y-2"
   }, [1, 2, 3, 4].map(i => {
     const t = teams[`${g}${i}`];
     return t ? React.createElement(AdminTeamRow, {
