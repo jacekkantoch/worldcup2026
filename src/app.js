@@ -4706,41 +4706,58 @@ function AdminTeamRow({
 }) {
   const [name, setName] = useState(team.name);
   const [flag, setFlag] = useState(() => adminFlagCode(team.flag, team.name));
+  const [saved, setSaved] = useState(false);
   useEffect(() => {
     setName(team.name);
     setFlag(adminFlagCode(team.flag, team.name));
   }, [team]);
+  useEffect(() => {
+    if (!saved) return;
+    const timer = setTimeout(() => setSaved(false), 1200);
+    return () => clearTimeout(timer);
+  }, [saved]);
   const saveTeam = () => {
     const cleanName = name.trim() || team.id;
     const cleanFlag = adminFlagCode(flag, cleanName) || 'xx';
+    setName(cleanName);
     setFlag(cleanFlag);
     onSave(cleanName, cleanFlag);
+    setSaved(true);
   };
   return React.createElement("div", {
-    className: "bg-stone-50 border border-stone-200 rounded-lg p-2 space-y-1.5"
+    className: "bg-stone-50 rounded-xl p-2"
   }, React.createElement("div", {
-    className: "text-xs text-stone-500 font-mono"
-  }, team.id, " \xB7 Grupa ", team.group), React.createElement("div", {
-    className: "flex gap-2"
-  }, React.createElement("input", {
+    className: "flex items-center gap-1.5"
+  }, React.createElement(FlagImg, {
+    code: flag,
+    size: 30,
+    title: name
+  }), React.createElement("input", {
     value: flag,
     onChange: e => setFlag(e.target.value.toLowerCase().replace(/[^a-z-]/g, '')),
     onBlur: () => setFlag(adminFlagCode(flag, name)),
-    placeholder: "np. pl",
+    placeholder: "kod",
     maxLength: 6,
     autoCapitalize: "none",
     spellCheck: false,
     "aria-label": `Kod flagi dla ${name}`,
-    className: "w-20 px-2 py-2 text-center text-sm font-mono uppercase border border-stone-200 rounded-lg focus:border-[#0d1b5e] focus:outline-none"
+    className: "w-16 shrink-0 py-1.5 text-center text-xs font-bold uppercase focus:outline-none"
   }), React.createElement("input", {
     value: name,
     onChange: e => setName(e.target.value),
     placeholder: "Nazwa dru\u017Cyny",
-    className: "flex-1 px-3 py-2 border border-stone-200 rounded-lg focus:border-[#0d1b5e] focus:outline-none text-sm"
-  }), React.createElement(Btn, {
-    variant: "primary",
-    size: "sm",
-    onClick: saveTeam
+    "aria-label": `Nazwa dru\u017Cyny ${team.id}`,
+    className: "flex-1 min-w-0 px-3 py-1.5 text-xs font-bold focus:outline-none"
+  }), React.createElement("button", {
+    type: "button",
+    onClick: saveTeam,
+    "aria-label": `Zapisz ${name}`,
+    className: "shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white transition-transform active:scale-95",
+    style: {
+      background: 'radial-gradient(circle at 24% 0%, rgba(255,255,255,.34), transparent 42%), linear-gradient(145deg, #2b9cff, #1268ee 55%, #5b4df2)',
+      border: '1px solid rgba(178,222,255,.38)',
+      boxShadow: saved ? '0 0 0 3px rgba(48,209,88,.35), inset 0 1px 0 rgba(255,255,255,.34)' : 'inset 0 1px 0 rgba(255,255,255,.34)'
+    }
   }, React.createElement(Icon, {
     name: "check",
     size: 14
@@ -5010,6 +5027,73 @@ function AdminScoringPanel({
     size: 16
   }), "Zapisz punktacj\u0119")));
 }
+function PhaseLockRow({
+  label,
+  hint,
+  locked,
+  onToggle
+}) {
+  return React.createElement("div", {
+    className: "flex items-center justify-between gap-3 py-2.5 border-b border-stone-100 last:border-0"
+  }, React.createElement("div", null, React.createElement("div", {
+    className: "font-semibold text-sm text-stone-800"
+  }, label), hint && React.createElement("div", {
+    className: "text-xs text-stone-500"
+  }, hint)), React.createElement(Btn, {
+    variant: locked ? 'danger' : 'outline',
+    size: "sm",
+    onClick: onToggle
+  }, React.createElement(Icon, {
+    name: locked ? 'lock' : 'unlock',
+    size: 14
+  }), locked ? 'Zablokowane' : 'Odblokowane'));
+}
+function PhaseLockPanel({
+  matches,
+  phaseLocks,
+  onSavePhaseLocks
+}) {
+  const locks = phaseLocks || {};
+  const togglePhase = key => {
+    onSavePhaseLocks(prev => ({
+      ...(prev || {}),
+      [key]: !(prev && prev[key])
+    }));
+  };
+  const phasesWithMatches = PHASE_ORDER.filter(phase => (matches || []).some(m => m.phase === phase));
+  return React.createElement("div", {
+    className: "space-y-3"
+  }, React.createElement("div", {
+    className: "bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900 app-note app-note--warning"
+  }, "Zablokowanie fazy uniemo\u017cliwia graczom zmian\u0119 typ\u00f3w dla mecz\u00f3w z tej fazy. U\u017cyj tego np. tu\u017c przed rozpocz\u0119ciem pierwszego meczu danej rundy."), React.createElement("section", {
+    className: "bg-white border border-stone-200 rounded-xl p-4"
+  }, React.createElement("h4", {
+    className: "font-display text-base mb-1"
+  }, "Blokady faz mecz\u00f3w"), phasesWithMatches.map(phase => React.createElement(PhaseLockRow, {
+    key: phase,
+    label: phase === 'group' ? 'Faza grupowa' : PHASE_LABELS[phase] || phase,
+    hint: `${(matches || []).filter(m => m.phase === phase).length} mecz\u00f3w`,
+    locked: !!locks[phase],
+    onToggle: () => togglePhase(phase)
+  }))), React.createElement("section", {
+    className: "bg-white border border-stone-200 rounded-xl p-4"
+  }, React.createElement("h4", {
+    className: "font-display text-base mb-1"
+  }, "Ustawienia dodatkowe"), React.createElement(PhaseLockRow, {
+    label: "Typy specjalne",
+    hint: "Blokuje typowanie zwyci\u0119zcy, kr\u00f3la strzelc\u00f3w, MVP i kolejno\u015bci w grupach.",
+    locked: !!locks.specials,
+    onToggle: () => togglePhase('specials')
+  }), React.createElement(PhaseLockRow, {
+    label: "Por\u00f3wnanie graczy",
+    hint: "Udost\u0119pnia graczom zak\u0142adki \u201ePor\u00f3wnanie\u201d i \u201eWszystkie typy specjalne\u201d.",
+    locked: !locks.compareVisible,
+    onToggle: () => onSavePhaseLocks(prev => ({
+      ...(prev || {}),
+      compareVisible: !(prev && prev.compareVisible)
+    }))
+  })));
+}
 function AdminPanel({
   teams,
   matches,
@@ -5234,11 +5318,15 @@ function AdminPanel({
     className: "app-note app-note--warning app-note--compact"
   }, "Wpisz nazw\u0119 dru\u017Cyny oraz dwuliterowy kod kraju, np. pl, de lub fr."), GROUPS.map(g => React.createElement("div", {
     key: g,
-    className: "bg-white border border-stone-200 rounded-xl p-3"
+    className: "bg-white border border-stone-200 rounded-xl p-4"
+  }, React.createElement("div", {
+    className: "flex items-center justify-between mb-1"
   }, React.createElement("h4", {
-    className: "font-display text-lg mb-2"
-  }, "Grupa ", g), React.createElement("div", {
-    className: "space-y-1.5"
+    className: "font-display text-lg"
+  }, "Grupa ", g), React.createElement("span", {
+    className: "text-xs text-stone-400 font-semibold"
+  }, "4 dru\u017Cyny")), React.createElement("div", {
+    className: "space-y-1.5 mt-1.5"
   }, [1, 2, 3, 4].map(i => {
     const t = teams[`${g}${i}`];
     return t ? React.createElement(AdminTeamRow, {
