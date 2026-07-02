@@ -4476,7 +4476,11 @@ function AdminGate({
         onChange: e => setInput(e.target.value),
         placeholder: "Nowe hasło",
         className: "profile-text-input",
-        autoFocus: true
+        autoFocus: true,
+        autoComplete: "new-password",
+        autoCapitalize: "off",
+        autoCorrect: "off",
+        spellCheck: false
       })
     ),
     React.createElement("div", { className: "profile-field" },
@@ -4486,7 +4490,11 @@ function AdminGate({
         value: confirm,
         onChange: e => setConfirm(e.target.value),
         placeholder: "Powtórz hasło",
-        className: "profile-text-input"
+        className: "profile-text-input",
+        autoComplete: "new-password",
+        autoCapitalize: "off",
+        autoCorrect: "off",
+        spellCheck: false
       })
     ),
     error && React.createElement("p", { className: "profile-error" }, error),
@@ -4522,7 +4530,11 @@ function AdminGate({
         onKeyDown: e => e.key === 'Enter' && onUnlock(input, err => setError(err)),
         placeholder: "Hasło",
         className: "profile-text-input",
-        autoFocus: true
+        autoFocus: true,
+        autoComplete: "current-password",
+        autoCapitalize: "off",
+        autoCorrect: "off",
+        spellCheck: false
       })
     ),
     error && React.createElement("p", { className: "profile-error" }, error),
