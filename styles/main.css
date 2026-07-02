@@ -3644,7 +3644,8 @@
     .profile-choice-shell.is-open .profile-choice-trigger:hover,
     .profile-choice-shell.is-open .profile-choice-trigger:focus,
     .profile-choice-shell.is-open .profile-choice-trigger:active,
-    .profile-choice-shell.is-open .profile-choice-actions {
+    .profile-choice-shell.is-open .profile-choice-actions,
+    .profile-choice-shell.is-open .profile-inline-rename {
       width: 100% !important;
       margin: 0 !important;
       border: 0 !important;
@@ -5225,6 +5226,28 @@ html body .login-modal-sheet:not(.login-modal-compact-sheet) .login-modal-conten
   padding: 10px 10px 11px;
   border-top: 1px solid rgba(255,255,255,.08);
   background: rgba(0,0,0,.08);
+}
+
+/* Inline formularz zmiany nazwy — rozwija się pod akcjami tej samej
+   karty gracza, zamiast podmieniać cały widok listy na osobny ekran.
+   Ten sam kolor tła co panel akcji powyżej, żeby wyglądały jak jedna,
+   ciągła rozwinięta sekcja. */
+.profile-inline-rename {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 10px 13px;
+  border-top: 1px solid rgba(255,255,255,.08);
+  background: rgba(0,0,0,.08);
+}
+
+/* PIN w tym formularzu ma być tej samej wysokości co pole imienia
+   i nazwiska — nadpisuje duże, wyśrodkowane .profile-pin-input,
+   które gdzie indziej (ekran logowania PIN-em) zostaje bez zmian. */
+.profile-inline-rename .profile-pin-input {
+  padding: 11px 16px;
+  font-size: 14px;
+  letter-spacing: .3em;
 }
 
 /* Wspólny styl przycisków akcji */

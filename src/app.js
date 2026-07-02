@@ -5591,9 +5591,10 @@ function LoginModal({
   onManagePlayers
 }) {
   const [selected, setSelected] = useState('');
-  const [step, setStep] = useState('pick'); // 'pick' | 'pin' | 'rename'
+  const [step, setStep] = useState('pick'); // 'pick' | 'pin'
   const [pin, setPin] = useState('');
   const [err, setErr] = useState('');
+  const [renamingOpen, setRenamingOpen] = useState(false);
   const [newName, setNewName] = useState('');
   const [renamePin, setRenamePin] = useState('');
   const [renameErr, setRenameErr] = useState('');
@@ -5603,6 +5604,7 @@ function LoginModal({
       setStep('pick');
       setPin('');
       setErr('');
+      setRenamingOpen(false);
       setNewName('');
       setRenamePin('');
       setRenameErr('');
@@ -5610,9 +5612,8 @@ function LoginModal({
   }, [open, activePlayer]);
   const pl = players.find(p => p.id === selected);
   const hasPinHash = pl && pl.pinHash;
-  // Krok "rename" ma wyglądać i pozycjonować się dokładnie tak samo jak
-  // panel "Profil i użytkownicy" (ta sama szerokość / ten sam odstęp od
-  // nagłówka) — tylko krok PIN pozostaje wąskim, kompaktowym oknem.
+  // Krok PIN pozostaje wąskim, kompaktowym oknem — reszta (lista, zmiana
+  // nazwy) zawsze korzysta z tego samego, pełnowymiarowego panelu.
   const isCompactStep = step === 'pin';
   const handlePick = () => {
     if (!selected) {
@@ -5694,7 +5695,11 @@ function LoginModal({
         className: `profile-choice-shell${isOpen ? ' is-open' : ''}${isCurrent ? ' is-current' : ''}`
       },
         React.createElement("button", {
-          onClick: () => { setSelected(prev => prev === p.id ? '' : p.id); setErr(''); },
+          onClick: () => {
+            setSelected(prev => prev === p.id ? '' : p.id);
+            setErr('');
+            setRenamingOpen(false);
+          },
           className: "profile-choice-trigger"
         },
           React.createElement("div", { className: `profile-row-avatar${isCurrent ? ' is-active' : ''}` },
@@ -5725,17 +5730,54 @@ function LoginModal({
           React.createElement("button", {
             className: "profile-action-btn profile-action-rename",
             onClick: () => {
-              setSelected(p.id);
+              setRenamingOpen(prev => !prev);
               setNewName(p.name || '');
               setRenamePin('');
-              setStep('rename');
               setRenameErr('');
             }
           }, React.createElement(Icon, { name: "edit", size: 14 }), "Zmień nazwę"),
-          React.createElement("button", {
+          !renamingOpen && React.createElement("button", {
             className: "profile-action-btn profile-action-cancel profile-action-full",
-            onClick: () => setSelected('')
+            onClick: () => { setSelected(''); setRenamingOpen(false); }
           }, "Anuluj")
+        ),
+        isOpen && renamingOpen && React.createElement("div", { className: "profile-inline-rename" },
+          React.createElement("div", { className: "profile-field" },
+            React.createElement("label", { className: "profile-label" }, "Nowe imię i nazwisko"),
+            React.createElement("input", {
+              autoFocus: true,
+              value: newName,
+              onChange: e => { setNewName(e.target.value); setRenameErr(''); },
+              onKeyDown: e => { if (e.key === 'Enter' && !hasPinHash) handleRenameSubmit(); },
+              placeholder: "np. Jan Kowalski",
+              className: `profile-text-input${renameErr ? ' has-error' : ''}`
+            })
+          ),
+          hasPinHash && React.createElement("div", { className: "profile-field" },
+            React.createElement("label", { className: "profile-label" }, "PIN użytkownika"),
+            React.createElement("input", {
+              type: "password",
+              inputMode: "numeric",
+              value: renamePin,
+              onChange: e => { setRenamePin(e.target.value); setRenameErr(''); },
+              onKeyDown: e => { if (e.key === 'Enter') handleRenameSubmit(); },
+              placeholder: "••••",
+              maxLength: 8,
+              className: `profile-pin-input${renameErr ? ' has-error' : ''}`
+            })
+          ),
+          renameErr && React.createElement("p", { className: "profile-error" }, renameErr),
+          React.createElement("div", { className: "profile-step-actions" },
+            React.createElement("button", {
+              className: "profile-action-btn profile-action-cancel",
+              onClick: () => setRenamingOpen(false)
+            }, "Anuluj"),
+            React.createElement("button", {
+              className: "profile-action-btn profile-action-login",
+              onClick: handleRenameSubmit,
+              disabled: !newName.trim()
+            }, React.createElement(Icon, { name: "check", size: 14 }), "Zapisz nazwę")
+          )
         )
       );
     })),
@@ -5772,48 +5814,6 @@ function LoginModal({
         onClick: handlePin,
         disabled: pin.length < 4
       }, React.createElement(Icon, { name: "unlock", size: 14 }), "Zaloguj")
-    )
-  ), step === 'rename' && React.createElement(React.Fragment, null,
-    React.createElement("div", { className: "profile-step-hero" },
-      React.createElement("div", { className: "profile-step-avatar" }, pl && pl.name.slice(0, 1).toUpperCase()),
-      React.createElement("p", { className: "profile-step-name" }, pl && pl.name),
-      React.createElement("p", { className: "profile-step-hint" }, "Zmiana nazwy użytkownika")
-    ),
-    React.createElement("div", { className: "profile-field" },
-      React.createElement("label", { className: "profile-label" }, "Nowe imię i nazwisko"),
-      React.createElement("input", {
-        autoFocus: true,
-        value: newName,
-        onChange: e => { setNewName(e.target.value); setRenameErr(''); },
-        onKeyDown: e => { if (e.key === 'Enter' && !hasPinHash) handleRenameSubmit(); },
-        placeholder: "np. Jan Kowalski",
-        className: `profile-text-input${renameErr ? ' has-error' : ''}`
-      })
-    ),
-    hasPinHash && React.createElement("div", { className: "profile-field" },
-      React.createElement("label", { className: "profile-label" }, "PIN użytkownika"),
-      React.createElement("input", {
-        type: "password",
-        inputMode: "numeric",
-        value: renamePin,
-        onChange: e => { setRenamePin(e.target.value); setRenameErr(''); },
-        onKeyDown: e => { if (e.key === 'Enter') handleRenameSubmit(); },
-        placeholder: "••••",
-        maxLength: 8,
-        className: `profile-pin-input${renameErr ? ' has-error' : ''}`
-      })
-    ),
-    renameErr && React.createElement("p", { className: "profile-error" }, renameErr),
-    React.createElement("div", { className: "profile-step-actions" },
-      React.createElement("button", {
-        className: "profile-action-btn profile-action-cancel",
-        onClick: () => setStep('pick')
-      }, "Anuluj"),
-      React.createElement("button", {
-        className: "profile-action-btn profile-action-login",
-        onClick: handleRenameSubmit,
-        disabled: !newName.trim()
-      }, React.createElement(Icon, { name: "check", size: 14 }), "Zapisz nazwę")
     )
   )));
 }
