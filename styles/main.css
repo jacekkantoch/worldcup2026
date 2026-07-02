@@ -7263,9 +7263,16 @@ html.is-mobile-browser body .admin-gate-overlay {
   padding-bottom: calc(max(var(--safe-bottom, 0px), var(--browser-bottom-ui, 0px)) + 18px) !important;
 }
 
+/* --real-vh (visualViewport.height) już JEST pomniejszoną, widoczną
+   wysokością — gdy otwiera się klawiatura, ona już to uwzględnia. Odjęcie
+   TAKŻE --browser-top-ui/--browser-bottom-ui (jak było wcześniej) liczyło
+   to przesunięcie podwójnie i przy realnych wymiarach klawiatury dawało
+   ujemną/prawie zerową max-height — panel zapadał się do niewidoczności.
+   Zostają tylko właściwe safe-area inset (notch), których --real-vh nie
+   uwzględnia. */
 html.is-mobile-browser body .profile-modal-overlay-root .login-modal-sheet,
 html.is-mobile-browser body .profile-modal-overlay-root .login-modal-compact-sheet {
-  max-height: calc(var(--real-vh, 100dvh) - max(var(--safe-top, 0px), var(--browser-top-ui, 0px)) - var(--header-height, 58px) - 78px - max(var(--safe-bottom, 0px), var(--browser-bottom-ui, 0px))) !important;
+  max-height: calc(var(--real-vh, 100dvh) - var(--safe-top, 0px) - var(--header-height, 58px) - 78px - var(--safe-bottom, 0px)) !important;
 }
 
 html.is-mobile-browser body .login-modal-sheet:not(.login-modal-compact-sheet),
