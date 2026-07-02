@@ -2107,13 +2107,19 @@ function Modal({
       frame = 0;
       const vv = window.visualViewport;
       const height = vv ? vv.height : window.innerHeight;
-      const offsetTop = vv ? vv.offsetTop || 0 : 0;
-      const keyboardInset = vv ? Math.max(0, (window.innerHeight || height) - height - offsetTop) : 0;
+      const keyboardInset = vv ? Math.max(0, (window.innerHeight || height) - height) : 0;
+
+      const active = document.activeElement;
+      const focusedModalField = active instanceof HTMLElement &&
+        active.matches('input, textarea, select, [contenteditable="true"]') &&
+        !!active.closest('.login-modal-content');
+      const coarsePointer = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+      const likelyKeyboardOpen = keyboardInset > 80 || (focusedModalField && coarsePointer);
 
       root.style.setProperty('--modal-vh', `${Math.max(0, height)}px`);
-      root.style.setProperty('--modal-offset-top', `${Math.max(0, offsetTop)}px`);
+      root.style.setProperty('--modal-offset-top', '0px');
       root.style.setProperty('--modal-keyboard-inset', `${keyboardInset}px`);
-      root.classList.toggle('modal-keyboard-open', keyboardInset > 80);
+      root.classList.toggle('modal-keyboard-open', !!likelyKeyboardOpen);
     };
 
     const scheduleViewportUpdate = () => {

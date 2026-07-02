@@ -7680,20 +7680,25 @@ html body .login-modal-content {
 
 /* Keyboard-open state wins over older mobile-browser header offsets. */
 @media (max-width: 640px), (pointer: coarse) {
+  html body {
+    --modal-safe-pad-top: max(16px, calc(var(--safe-top, 0px) + 12px));
+    --modal-safe-pad-bottom: max(16px, calc(var(--safe-bottom, 0px) + 12px));
+  }
+
   html.modal-keyboard-open body .profile-modal-overlay-root,
   html.modal-keyboard-open body .admin-gate-overlay,
   html.modal-keyboard-open.is-mobile-browser body .profile-modal-overlay-root,
   html.modal-keyboard-open.is-mobile-browser body .admin-gate-overlay,
   html.modal-keyboard-open.is-mobile-device body .profile-modal-overlay-root,
   html.modal-keyboard-open.is-mobile-device body .admin-gate-overlay {
-    top: var(--modal-offset-top, 0px) !important;
+    top: 0 !important;
     bottom: auto !important;
     height: var(--modal-vh, 100dvh) !important;
     min-height: 0 !important;
-    align-items: flex-start !important;
+    align-items: center !important;
     justify-content: center !important;
-    padding-top: calc(var(--safe-top, 0px) + 8px) !important;
-    padding-bottom: calc(var(--safe-bottom, 0px) + 8px) !important;
+    padding-top: var(--modal-safe-pad-top) !important;
+    padding-bottom: var(--modal-safe-pad-bottom) !important;
     overflow: hidden !important;
   }
 
@@ -7712,11 +7717,10 @@ html body .login-modal-content {
   html.modal-keyboard-open.is-mobile-device body .login-modal-sheet:not(.login-modal-compact-sheet),
   html.modal-keyboard-open.is-mobile-device body .admin-gate-card,
   html.modal-keyboard-open.is-mobile-device body .admin-gate-overlay .admin-gate-card {
-    align-self: flex-start !important;
-    max-height: calc(var(--modal-vh, 100dvh) - var(--safe-top, 0px) - var(--safe-bottom, 0px) - 16px) !important;
+    align-self: center !important;
+    max-height: calc(var(--modal-vh, 100dvh) - var(--modal-safe-pad-top) - var(--modal-safe-pad-bottom)) !important;
     margin-top: 0 !important;
     margin-bottom: 0 !important;
     overflow: hidden !important;
   }
 }
-
