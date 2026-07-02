@@ -4,55 +4,13 @@
        Dark mode system colors · No blur · Solid matte surfaces
        Liquid = smooth gradients + organic shapes + fluid transitions
     ═══════════════════════════════════════════════════════════════ */
-        :root {
-      /* Skonsolidowana warstwa tokenow — wszystkie nadrzedne bloki :root scalone.
-         Zwycieska wartosc wg kaskady zachowana. Definicje w @media i w innych
-         selektorach (np. html:not([data-theme="light"])) pozostaja osobno. */
-      --safe-top: env(safe-area-inset-top, 0px);
+    :root {
+      /* Wszystkie pozostałe tokeny z tej bazowej warstwy były nadpisywane
+         przez późniejsze bloki :root (Liquid Glass 363+, flat borders 1166+,
+         unified geometry 1847+, flat-mode !important 4704+). Zostały tylko
+         te dwie zmienne, które nigdzie nie są redefiniowane. */
+      --safe-top:    env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 20px);
-      color-scheme: dark;
-      --bg-0: #05070d;
-      --bg-1: rgba(18, 22, 34, 0.56);
-      --bg-2: rgba(31, 38, 56, 0.58);
-      --bg-3: rgba(51, 61, 84, 0.62);
-      --glass-1: radial-gradient(circle at 16% 0%, rgba(255,255,255,.15), transparent 38%),
-        linear-gradient(145deg, rgba(255,255,255,.105), rgba(255,255,255,.038));
-      --glass-2: radial-gradient(circle at 18% -8%, rgba(255,255,255,.22), transparent 39%),
-        linear-gradient(145deg, rgba(255,255,255,.15), rgba(255,255,255,.055));
-      --glass-3: radial-gradient(circle at 18% -12%, rgba(255,255,255,.26), transparent 42%),
-        linear-gradient(145deg, rgba(255,255,255,.19), rgba(255,255,255,.075));
-      --label-1: rgba(255,255,255,.98);
-      --label-2: rgba(235,241,255,.70);
-      --label-3: rgba(228,236,255,.46);
-      --accent: #70b8ff;
-      --accent-green: #49df7d;
-      --accent-red: #ff6961;
-      --accent-orange: #ffad33;
-      --accent-yellow: #ffd75e;
-      --ease-spring: cubic-bezier(.2,1.28,.35,1);
-      --ease-out: cubic-bezier(.2,.8,.2,1);
-      --border-1: rgba(255,255,255,.14);
-      --border-2: rgba(255,255,255,.18);
-      --sep: rgba(255,255,255,.10);
-      --app-shell-max: 736px;
-      --app-shell-gutter: 12px;
-      --ui-border-width: 1px;
-      --ui-corner-radius: 30px;
-      --radius-sm: var(--ui-corner-radius);
-      --radius-md: var(--ui-corner-radius);
-      --radius-lg: var(--ui-corner-radius);
-      --overflow-fade: 24px;
-      --overflow-fade-small: var(--overflow-fade);
-      --banner-gap: 14px;
-      --expanded-match-surface: linear-gradient(145deg, rgba(36, 55, 78, .94), rgba(24, 31, 48, .96)) !important;
-      --shadow-sm: none !important;
-      --shadow-md: none !important;
-      --shadow-lg: none !important;
-      --shadow-glow: none !important;
-      --hl: none !important;
-      --hl2: none !important;
-      --panel-content-gap: 14px;
-      --app-panel-gap: 16px;
     }
 
     *, *::before, *::after { box-sizing: border-box; }
@@ -84,6 +42,8 @@
     }
 
     /* Matte 2D Liquid Glass */
+    .glass       { background: var(--glass-1); border: 1px solid var(--border-1); box-shadow: var(--shadow-sm), var(--hl); }
+    .glass-strong { background: var(--glass-2); border: 1px solid var(--border-2); box-shadow: var(--shadow-md), var(--hl2); }
 
     /* Header */
     .app-header {
@@ -239,13 +199,16 @@
     .border-amber-200,.border-amber-300 { border-color: rgba(255,159,10,0.35) !important; }
     .text-amber-900,.text-amber-800 { color: var(--accent-yellow) !important; }
     .text-amber-700,.text-amber-400 { color: var(--accent-orange) !important; }
+    .bg-blue-50 { background: rgba(10,132,255,0.10) !important; }
+    .border-blue-200 { border-color: rgba(10,132,255,0.30) !important; }
+    .text-blue-900 { color: var(--accent) !important; }
 
     .border-red-200,.border-red-300,.border-red-400 { border-color: rgba(255,69,58,0.40) !important; }
     .text-red-600,.text-red-700 { color: var(--accent-red) !important; }
-    .bg-emerald-50 { background: rgba(48,209,88,0.10) !important; }
-
+    .bg-emerald-50,.bg-\[\#e6f4ec\],.bg-\[\#e8f4ee\] { background: rgba(48,209,88,0.10) !important; }
+    .text-\[\#006940\],.text-\[\#005a30\] { color: var(--accent-green) !important; }
     .bg-\[\#0d1b5e\],.bg-\[\#162570\] { background: var(--bg-1) !important; }
-
+    .bg-\[\#f0f3fc\],.bg-\[\#eef1fb\] { background: var(--bg-2) !important; }
     .bg-\[\#e8ecf8\] { background: var(--bg-3) !important; }
     .text-\[\#162570\] { color: var(--label-1) !important; }
     tr:hover { background: rgba(255,255,255,0.04); }
@@ -261,18 +224,18 @@
     span[style*="monospace"] { color: var(--label-1) !important; }
     button { background-color: transparent; appearance: none; }
     .hover\:bg-white\/10:hover  { background: rgba(255,255,255,0.08) !important; }
-
+    .hover\:bg-white\/15:hover  { background: rgba(255,255,255,0.12) !important; }
     button:hover,[role="button"]:hover { background-color: rgba(255,255,255,0.06) !important; }
     .bg-\[\#0d1b5e\]:hover { background: var(--bg-2) !important; }
     .bg-amber-500:hover,.bg-amber-600:hover { background: rgba(255,159,10,0.80) !important; }
-    [class*="bg-sky-"] { background: var(--bg-2) !important; color: var(--label-1) !important; }
+    [class*="bg-sky-"],[class*="bg-blue-"],[class*="bg-purple-"],[class*="bg-rose-"],[class*="bg-indigo-"] { background: var(--bg-2) !important; color: var(--label-1) !important; }
     [class*="bg-amber-50"],[class*="bg-amber-100"] { background: rgba(255,159,10,0.14) !important; color: var(--label-1) !important; }
-    [class*="text-sky-"] { color: var(--label-1) !important; }
+    [class*="text-sky-"],[class*="text-blue-"],[class*="text-purple-"],[class*="text-indigo-"],[class*="text-rose-"] { color: var(--label-1) !important; }
     .font-semibold,.font-bold,.font-medium,h1,h2,h3,h4,h5,h6,.font-display,label,th,[class*="text-"] { color: var(--label-1) !important; }
     .text-amber-400,.text-amber-300 { color: var(--accent-yellow) !important; }
-
-    .text-red-600,
-    .text-red-700 { color: var(--accent-red) !important; }
+    .text-\[\#fde68a\] { color: var(--accent-yellow) !important; }
+    .text-red-600,.text-red-700,.text-\[\#fca5a5\] { color: var(--accent-red) !important; }
+    .text-\[\#6ee7b7\] { color: var(--accent-green) !important; }
 
     [class*="bg-amber"] { color: #92400e !important; }
     [class*="bg-red"]   { color: #991b1b !important; }
@@ -314,7 +277,31 @@
       .login-btn > span {
         display: none;
       }
-
+      .mine-match-row {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 5px !important;
+        padding: 8px 9px !important;
+      }
+      .mine-match-teams {
+        width: 100%;
+        min-width: 0;
+      }
+      .mine-teams-line {
+        flex: 1 1 auto;
+        min-width: 0;
+        max-width: 100%;
+      }
+      .mine-team-name {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .mine-match-score {
+        justify-self: end;
+        min-width: 0;
+      }
     }
     @media (max-width: 380px) {
       .app-header .title-group h1 {
@@ -332,6 +319,48 @@
        LIQUID GLASS 2026 · translucent adaptive surface override
        Zachowuje logikę aplikacji, zmienia wyłącznie warstwę prezentacji.
     ═══════════════════════════════════════════════════════════════ */
+    :root {
+      color-scheme: dark;
+      --bg-0: #05070d;
+      --bg-1: rgba(18, 22, 34, 0.56);
+      --bg-2: rgba(31, 38, 56, 0.58);
+      --bg-3: rgba(51, 61, 84, 0.62);
+      --bg-4: rgba(76, 88, 115, 0.66);
+
+      --glass-1:
+        radial-gradient(circle at 16% 0%, rgba(255,255,255,.15), transparent 38%),
+        linear-gradient(145deg, rgba(255,255,255,.105), rgba(255,255,255,.038));
+      --glass-2:
+        radial-gradient(circle at 18% -8%, rgba(255,255,255,.22), transparent 39%),
+        linear-gradient(145deg, rgba(255,255,255,.15), rgba(255,255,255,.055));
+      --glass-3:
+        radial-gradient(circle at 18% -12%, rgba(255,255,255,.26), transparent 42%),
+        linear-gradient(145deg, rgba(255,255,255,.19), rgba(255,255,255,.075));
+      --glass-4:
+        radial-gradient(circle at 18% -12%, rgba(255,255,255,.30), transparent 42%),
+        linear-gradient(145deg, rgba(255,255,255,.24), rgba(255,255,255,.10));
+
+      /* --border-1..3, --hl, --hl2, --sep: nadpisane w bloku "flat borders" (1166+)
+         oraz przez flat-mode !important (4704+) — usunięto martwe definicje. */
+      --label-1: rgba(255,255,255,.98);
+      --label-2: rgba(235,241,255,.70);
+      --label-3: rgba(228,236,255,.46);
+      --label-4: rgba(228,236,255,.24);
+
+      --accent: #70b8ff;
+      --accent-strong: #0a84ff;
+      --accent-green: #49df7d;
+      --accent-red: #ff6961;
+      --accent-orange: #ffad33;
+      --accent-yellow: #ffd75e;
+      --accent-purple: #c67cff;
+      --gold: #ffd75e;
+
+      /* --shadow-sm/md/lg/glow: nadpisane przez flat-mode !important (4705+).
+         --radius-sm..xl: nadpisane przez unified geometry (1852+). Usunięto. */
+      --ease-spring: cubic-bezier(.2,1.28,.35,1);
+      --ease-out: cubic-bezier(.2,.8,.2,1);
+    }
 
     html {
       background: #05070d;
@@ -354,11 +383,24 @@
       isolation: isolate;
       min-height: 100dvh;
     }
+    .glass,
+    .glass-strong,
     .match-card,
     .filters-sticky,
     section.bg-white,
     .install-banner {
       backdrop-filter: blur(28px) saturate(175%);
+    }
+
+    .glass {
+      background: var(--glass-1);
+      border-color: var(--border-1);
+      box-shadow: var(--shadow-sm), var(--hl), var(--shadow-glow);
+    }
+    .glass-strong {
+      background: var(--glass-2);
+      border-color: var(--border-2);
+      box-shadow: var(--shadow-md), var(--hl2), var(--shadow-glow);
     }
 
     /* Floating glass header */
@@ -544,18 +586,12 @@
       transition: opacity .22s ease, transform .22s var(--ease-spring), filter .22s ease, stroke .22s ease;
     }
     .rounded-lg, .rounded-xl, .rounded-2xl, .rounded { background-clip: padding-box; }
+    .pill-soft,
     .selection-tile,
-    input,
-    select,
-    textarea,
-    .login-btn,
-    .players-btn,
-    button.rounded-lg,
-    button.rounded,
-    button.rounded-full,
-    span.rounded,
-    span.rounded-lg,
-    span.rounded-full {
+    input, select, textarea,
+    .login-btn, .players-btn,
+    button.rounded-lg, button.rounded, button.rounded-full,
+    span.rounded, span.rounded-lg, span.rounded-full {
       border-radius: 999px !important;
     }
 
@@ -581,6 +617,8 @@
       box-shadow: 0 0 0 4px rgba(55,142,255,.18), inset 0 1px 0 rgba(255,255,255,.18) !important;
     }
 
+    button {
+    }
     button:not(:disabled) {
       transition: transform .18s var(--ease-out), background .18s ease, border-color .18s ease, box-shadow .18s ease, opacity .18s ease !important;
     }
@@ -633,11 +671,15 @@
       background: rgba(255,255,255,.075) !important;
     }
 
-    [class*="bg-sky-"] {
+    .bg-blue-50,
+    [class*="bg-sky-"],
+    [class*="bg-blue-"] {
       background: linear-gradient(145deg, rgba(10,132,255,.18), rgba(64,118,255,.08)) !important;
       border-color: rgba(112,184,255,.30) !important;
     }
-    .bg-emerald-50 {
+    .bg-emerald-50,
+    .bg-\[\#e6f4ec\],
+    .bg-\[\#e8f4ee\] {
       background: linear-gradient(145deg, rgba(48,209,88,.17), rgba(48,209,88,.065)) !important;
       border-color: rgba(73,223,125,.28) !important;
     }
@@ -692,7 +734,12 @@
     .text-amber-300 { color: var(--accent-yellow) !important; }
     .text-red-600,
     .text-red-700 { color: #ff8b86 !important; }
-    [class*="text-sky-"] { color: #9dd2ff !important; }
+    .text-blue-900,
+    [class*="text-sky-"],
+    [class*="text-blue-"] { color: #9dd2ff !important; }
+    .text-\[\#006940\],
+    .text-\[\#005a30\],
+    .text-\[\#6ee7b7\] { color: #7af0a1 !important; }
 
     /* Modal glass sheet */
     .fixed.inset-0.z-50 > .absolute.inset-0 {
@@ -761,6 +808,8 @@
     }
 
     @media (prefers-reduced-transparency: reduce) {
+      .glass,
+      .glass-strong,
       .match-card,
       .filters-sticky,
       section.bg-white,
@@ -824,11 +873,6 @@
       padding: 4px 2px;
       overflow-x: auto;
       overflow-y: visible;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-    }
-    .chip-scroll-row::-webkit-scrollbar {
-      display: none;
     }
     .chip-scroll-row.tight {
       padding-top: 6px;
@@ -929,6 +973,17 @@
     .selection-tile:disabled {
       transform: none;
       box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+    }
+    .player-choice-avatar {
+      background: rgba(255,255,255,.11);
+      border: 1px solid rgba(255,255,255,.18);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+      transition: inherit;
+    }
+    .player-choice.is-selected .player-choice-avatar {
+      background: linear-gradient(145deg, rgba(111,196,255,.42), rgba(76,103,238,.34));
+      border-color: rgba(181,225,255,.56);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.28), 0 4px 12px rgba(35,121,255,.18);
     }
 
     /* Admin match editor — mobile layout mirrors the public match card */
@@ -1058,7 +1113,16 @@
        FLAT LIQUID GLASS BORDERS — thinner, subtler, less 3D
        Inspired by the attached reference: soft glass with fine outlines.
     ═══════════════════════════════════════════════════════════════ */
+    :root {
+      --border-1: rgba(255,255,255,.14);
+      --border-2: rgba(255,255,255,.18);
+      --border-3: rgba(255,255,255,.24);
+      --sep: rgba(255,255,255,.10);
+      /* --hl/--hl2/--shadow-sm/md/lg/glow: nadpisane przez flat-mode !important (4705+). */
+    }
 
+    .glass,
+    .glass-strong,
     .match-card,
     .filters-sticky,
     section.bg-white,
@@ -1080,6 +1144,7 @@
       box-shadow: 0 12px 28px rgba(0,0,0,.16) !important;
     }
 
+    .glass,
     section.bg-white,
     div.bg-white,
     .match-card,
@@ -1088,6 +1153,7 @@
         linear-gradient(145deg, rgba(255,255,255,.095), rgba(255,255,255,.035)) !important;
     }
 
+    .glass-strong,
     .filters-sticky,
     .bottom-nav,
     .fixed.inset-0.z-50 > .relative,
@@ -1150,7 +1216,9 @@
     }
 
     .match-card:hover,
-    section.bg-white:hover {
+    section.bg-white:hover,
+    .glass:hover,
+    .glass-strong:hover {
       border-color: rgba(255,255,255,.20) !important;
       box-shadow: 0 14px 32px rgba(0,0,0,.18) !important;
     }
@@ -1179,7 +1247,9 @@
     }
 
     /* Final geometry fixes: phase label pill + square score centre. */
-
+    .match-card > button:first-child span[style*="text-transform: uppercase"] {
+      border-radius: 999px !important;
+    }
     .score-input-shell {
       gap: 0 !important;
     }
@@ -1196,6 +1266,8 @@
     .match-card:hover,
     section.bg-white:hover,
     div.bg-white:hover,
+    .glass:hover,
+    .glass-strong:hover,
     .login-btn:hover,
     .players-btn:hover,
     .selection-tile:hover,
@@ -1214,6 +1286,8 @@
     .selection-tile.is-correct:hover,
     .selection-tile.is-wrong,
     .selection-tile.is-wrong:hover,
+    .player-choice.is-selected,
+    .player-choice.is-selected .player-choice-avatar,
     .bottom-nav button.active,
     .nav-droplet,
     .nav-droplet.dragging {
@@ -1239,6 +1313,10 @@
     }
 
     /* Unified shell alignment + flat matte bottom slider */
+    :root {
+      --app-shell-max: 736px;
+      --app-shell-gutter: 12px;
+    }
 
     .app-header,
     .bottom-nav {
@@ -1403,7 +1481,23 @@
       padding: 14px;
       overflow: hidden;
     }
-
+    .bracket-section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .bracket-section-title h3 {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 800;
+    }
+    .bracket-section-title span {
+      font-size: 10px;
+      color: var(--label-3);
+      white-space: nowrap;
+    }
     .bracket-scroll {
       overflow-x: auto;
       overflow-y: hidden;
@@ -1522,7 +1616,11 @@
       line-height: 1;
       color: inherit;
     }
-
+    .bracket-finals-grid {
+      display: grid;
+      grid-template-columns: repeat(2,minmax(0,1fr));
+      gap: 12px;
+    }
     .bracket-final-card {
       position: relative;
       width: 100%;
@@ -1545,11 +1643,21 @@
     }
     .bracket-final-card .bracket-team-name { font-size: 12px; }
     .bracket-final-card .bracket-score { font-size: 20px; }
-
+    .bracket-champion {
+      margin-top: 12px;
+      padding: 13px 14px;
+      border-radius: 999px;
+      text-align: center;
+      background: rgba(238,190,72,.12);
+      border: 1px solid rgba(238,190,72,.24);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .bracket-champion-empty { color: var(--label-3); font-weight: 600; }
     @media (max-width: 620px) {
       .bracket-section { padding: 11px 8px; }
       .bracket-intro { padding: 15px; }
-
+      .bracket-finals-grid { grid-template-columns: 1fr; }
       .bracket-board { margin-left: 0; }
     }
 
@@ -1681,6 +1789,16 @@
        it down to half the element height/width, so compact controls
        become fully rounded pills/circles without separate magic values.
     ═══════════════════════════════════════════════════════════════ */
+    :root {
+      --ui-border-width: 1px;
+      --ui-corner-radius: 30px;
+
+      /* Keep every existing component token on the same geometry. */
+      --radius-sm: var(--ui-corner-radius);
+      --radius-md: var(--ui-corner-radius);
+      --radius-lg: var(--ui-corner-radius);
+      --radius-xl: var(--ui-corner-radius);
+    }
 
     /* Phase navigation, admin navigation and match editors use the same
        outer geometry as every other card in the app. */
@@ -1702,7 +1820,18 @@
     [style*="border:"] {
       border-width: var(--ui-border-width) !important;
     }
-
+    [style*="border-top:"] {
+      border-top-width: var(--ui-border-width) !important;
+    }
+    [style*="border-right:"] {
+      border-right-width: var(--ui-border-width) !important;
+    }
+    [style*="border-bottom:"] {
+      border-bottom-width: var(--ui-border-width) !important;
+    }
+    [style*="border-left:"] {
+      border-left-width: var(--ui-border-width) !important;
+    }
     .spinner { border-width: var(--ui-border-width) !important; }
     .border-0 { border-width: 0 !important; }
 
@@ -1712,6 +1841,8 @@
     .rounded-xl,
     .rounded-2xl,
     .rounded-full,
+    .glass,
+    .glass-strong,
     .match-card,
     .deferred-card,
     .filters-sticky,
@@ -1732,13 +1863,17 @@
     .nav-droplet,
     .bottom-nav button,
     .match-points-badge,
+    .pill-soft,
+    .player-choice-avatar,
     .spinner,
     .loading-icon,
     .bracket-intro,
     .bracket-section,
     .bracket-match,
     .bracket-final-card,
-    .fixed.inset-0.z-50 > .relative {
+    .bracket-champion,
+    .fixed.inset-0.z-50 > .relative,
+    [style*="border-radius"] {
       border-radius: var(--ui-corner-radius) !important;
     }
 
@@ -1789,6 +1924,9 @@
     }
 
     /* This compact status element should remain a full capsule. */
+    .bracket-page .bracket-champion {
+      border-radius: 999px !important;
+    }
 
     @media (max-width: 520px) {
       .bracket-page .bracket-intro,
@@ -1820,6 +1958,9 @@
       scrollbar-width: none;
     }
 
+      display: none;
+    }
+
     .pill-scroll-safe .selection-tile {
       flex: 0 0 auto;
       transform-origin: center;
@@ -1828,6 +1969,8 @@
     /* Final radius-clipping hardening for translucent layers,
        hover/pressed fills and inner bands can visually escape rounded shells.
        Clip those surfaces to the parent radius everywhere this pattern appears. */
+    .glass,
+    .glass-strong,
     .match-card,
     .deferred-card,
     .filters-sticky,
@@ -1868,6 +2011,12 @@
     /* Dedicated card headers get only the upper corners rounded. This is kept
        scoped to explicit header wrappers to avoid clipping ordinary layout rows
        inside filter panels and admin sections. */
+    .table-card > .inner-top-cap,
+    .card-top-cap {
+      border-radius: var(--ui-corner-radius) var(--ui-corner-radius) 0 0 !important;
+      overflow: hidden;
+      background-clip: padding-box;
+    }
 
     /* Match rows and list tiles often contain a clickable surface that receives
        the interaction highlight. Force clipping there as well. */
@@ -1902,10 +2051,22 @@
       overflow: visible !important;
     }
 
+    .edge-safe-button {
+      width: calc(100% - 6px) !important;
+      margin-inline: 3px !important;
+    }
+
     /* Table-like summary cards in special predictions use a coloured top band. */
     .table-card {
       overflow: hidden !important;
       isolation: isolate;
+    }
+
+    .table-card > .inner-top-cap {
+      border-radius: var(--ui-corner-radius) var(--ui-corner-radius) 0 0 !important;
+      overflow: hidden;
+      background-clip: padding-box;
+              mask-image: radial-gradient(white, black);
     }
 
     /* Filter cards and admin tab rows need a little horizontal breathing room
@@ -1920,6 +2081,9 @@
       touch-action: pan-x;
       overscroll-behavior-inline: contain;
       scrollbar-width: none;
+    }
+
+      display: none;
     }
 
     .filters-sticky .chip-scroll-row > *,
@@ -1962,7 +2126,11 @@
     .matches-view .match-card,
     .matches-view .selection-tile,
     .matches-view .match-points-badge,
-    .matches-view [style*="border:"] {
+    .matches-view [style*="border:"],
+    .matches-view [style*="border-top:"],
+    .matches-view [style*="border-right:"],
+    .matches-view [style*="border-bottom:"],
+    .matches-view [style*="border-left:"] {
       border-width: 0 !important;
       border-color: transparent !important;
     }
@@ -2030,6 +2198,10 @@
     .bracket-page .bracket-round-label,
     .bracket-page .bracket-third-place-label {
       z-index: 3;
+    }
+
+    .bracket-section-title-instruction {
+      justify-content: flex-end;
     }
 
     /* Admin match editor uses a separate component and needs the same joined
@@ -2539,6 +2711,11 @@
     }
 
     /* Better contrast for the public specials notice */
+    .allspecials-note {
+      color: #9dd2ff !important;
+      font-weight: 700;
+      letter-spacing: .01em;
+    }
 
     /* Light mode: white text on all dark-blue surfaces */
 
@@ -2629,6 +2806,37 @@
     }
 
     /* Profile action grid — login/logout always occupy the same slot */
+    .profile-choice-action-grid > * {
+      min-height: 42px;
+    }
+    .profile-choice-main-action,
+    .profile-choice-logout {
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border-radius: 18px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .profile-choice-logout {
+      padding: 10px 12px;
+      background: rgba(180,0,0,.18);
+      border: 1px solid rgba(255,105,97,.34);
+      color: #ff8b86;
+    }
+    .profile-choice-cancel {
+      background: rgba(255,255,255,.09) !important;
+      border-color: rgba(255,255,255,.18) !important;
+      color: var(--label-1) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08) !important;
+    }
+    .profile-choice-cancel:hover {
+      background: rgba(255,255,255,.14) !important;
+      border-color: rgba(255,255,255,.25) !important;
+    }
 
     /* Login / profile modal — better mobile layout */
     .login-modal-sheet {
@@ -2678,6 +2886,11 @@
     /* Wciśnięcie: zgniata kciuk */
 
     /* Ikona w kciuku: animacja pop-in przy zmianie motywu */
+    @keyframes icon-swap-in {
+      0%   { transform: scale(.30) rotate(-25deg); opacity: 0; }
+      65%  { transform: scale(1.22) rotate(8deg);  opacity: 1; }
+      100% { transform: scale(1)   rotate(0deg);   opacity: 1; }
+    }
 
     /* Boczne ikony (słońce/księżyc w torze): pulsują gdy aktywne */
 
@@ -2724,11 +2937,16 @@
        SOFT OVERFLOW FADE
        Zamiast wielokropka lub ostrego ucięcia tekst łagodnie zanika.
     ═══════════════════════════════════════════════════════════════ */
+    :root {
+      --overflow-fade: 24px;
+      --overflow-fade-small: var(--overflow-fade);
+    }
 
     /* Elementy wyrównane do lewej — zanikanie przy prawej krawędzi. */
     .truncate,
     .app-header .title-group h1,
     .app-header .title-group small,
+    .mine-team-name,
     .admin-match-summary-teams,
     .bracket-team-name,
     .compare-view .compare-player-name,
@@ -3076,6 +3294,19 @@
        FILTRY — jednolite zanikanie tylko z prawej strony
        Brak zanikania po lewej we wszystkich poziomych menu filtrów.
     ═══════════════════════════════════════════════════════════════ */
+    :root {
+      --filter-right-fade: var(--overflow-fade);
+    }
+
+    .chip-scroll-row,
+    .pill-scroll-safe,
+    .group-order-filter-row,
+    .admin-group-order-filter-row,
+    .phase-filter-panel .overflow-x-auto,
+    .admin-phase-filters .overflow-x-auto,
+    .filters-sticky .overflow-x-auto {
+    }
+
     .admin-group-order-filter-row {
       scrollbar-width: none !important;
       -ms-overflow-style: none !important;
@@ -3094,8 +3325,17 @@
       display: none !important;
     }
 
+    .phase-lock-toggle > span {
+      pointer-events: none;
+    }
+
     /* Pola formularzy — bez chwilowej białej/czarnej otoczki po kliknięciu.
        Pozostaje jedynie kursor tekstowy i normalny kolor samego pola. */
+    input,
+    textarea,
+    select,
+    [contenteditable="true"] {
+    }
 
     input:focus,
     input:focus-visible,
@@ -3112,6 +3352,17 @@
     }
 
     /* Usuń również pierścień dodawany przez klasy focus/ring Tailwinda. */
+    input[class*="focus:ring"]:focus,
+    textarea[class*="focus:ring"]:focus,
+    select[class*="focus:ring"]:focus,
+    input[class*="focus:shadow"]:focus,
+    textarea[class*="focus:shadow"]:focus,
+    select[class*="focus:shadow"]:focus {
+      --tw-ring-offset-shadow: 0 0 transparent !important;
+      --tw-ring-shadow: 0 0 transparent !important;
+      --tw-shadow: 0 0 transparent !important;
+      box-shadow: none !important;
+    }
 
     /* Light mode: górny nagłówek ma dokładnie tę samą szerokość
        co wewnętrzna zawartość aplikacji poniżej. */
@@ -3474,6 +3725,9 @@
       akcentem zaznaczeń i komunikatów, a nie tłem całych banerów.
     */
     html:not([data-theme="light"]) {
+      --tab-match-surface:
+        radial-gradient(circle at 18% -18%, rgba(255,255,255,.145), transparent 43%),
+        linear-gradient(145deg, rgba(27,35,52,.76), rgba(12,17,28,.62));
       --tab-match-surface-soft:
         radial-gradient(circle at 18% -22%, rgba(255,255,255,.105), transparent 44%),
         linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.025));
@@ -3554,6 +3808,11 @@
     }
     html:not([data-theme="light"]) .bracket-team-row.is-winner {
       background: rgba(112,184,255,.095) !important;
+    }
+    html:not([data-theme="light"]) .bracket-champion {
+      background: rgba(255,255,255,.05) !important;
+      color: var(--label-1) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.07) !important;
     }
 
     /* Panel admina: wnętrza sekcji pozostają neutralne; semantyczne komunikaty
@@ -3723,6 +3982,9 @@
     }
 
 /* ===== 11. unified-banner-spacing ===== */
+:root {
+      --banner-gap: 14px;
+    }
 
     .app-content > .install-banner {
       margin-bottom: var(--banner-gap) !important;
@@ -3758,6 +4020,9 @@
     }
 
 /* ===== 12. expanded-table-header-continuation ===== */
+:root {
+      --expanded-match-surface: linear-gradient(145deg, rgba(36, 55, 78, .94), rgba(24, 31, 48, .96)) !important;
+    }
 
     html:not([data-theme="light"]) body .admin-match-card.expanded,
     html:not([data-theme="light"]) body .compare-match-card {
@@ -3925,6 +4190,10 @@ html body .app-header {
     }
 
 /* ===== 16. admin-close-profile-offset-fix ===== */
+html body .admin-panel-actions {
+      flex: 0 0 auto !important;
+    }
+
 
     html body .profile-modal-overlay-root {
       align-items: flex-start !important;
@@ -3964,6 +4233,90 @@ html body .app-header {
     }
 
 /* ===== 17. admin-gate-close-button-fix ===== */
+html body .admin-gate-card {
+      position: relative !important;
+      width: min(calc(100% - 42px), 384px) !important;
+      max-width: none !important;
+      margin: 18px auto !important;
+      padding: 22px 18px 18px !important;
+      border-radius: 30px !important;
+      background:
+        linear-gradient(180deg, rgba(31, 44, 67, .98), rgba(11, 18, 31, .98)) !important;
+      border: 1px solid rgba(255,255,255,.10) !important;
+      box-shadow: var(--shadow-lg) !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 10px !important;
+    }
+
+    html body .admin-gate-hero {
+      text-align: center !important;
+      padding: 4px 0 4px !important;
+    }
+
+    html body .admin-gate-icon {
+      width: 54px !important;
+      height: 54px !important;
+      border-radius: 50% !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      margin: 0 auto 11px !important;
+      color: #eef8ff !important;
+      background: linear-gradient(145deg, rgba(93,188,255,.46), rgba(91,77,242,.38)) !important;
+      border: 1px solid rgba(174,220,255,.46) !important;
+    }
+
+    html body .admin-gate-title {
+      font-size: 17px !important;
+      font-weight: 780 !important;
+      letter-spacing: -.02em !important;
+      color: var(--label-1) !important;
+      margin: 0 !important;
+    }
+
+    html body .admin-gate-subtitle {
+      font-size: 12px !important;
+      color: var(--label-3) !important;
+      margin: 5px 0 0 !important;
+    }
+
+    html body .admin-gate-field { margin: 0 !important; }
+
+    html body .admin-gate-submit {
+      width: 100% !important;
+      margin-top: 4px !important;
+      padding: 11px 16px !important;
+      font-size: 13.5px !important;
+    }
+
+    html body .admin-gate-close-btn {
+      position: absolute !important;
+      top: 9px !important;
+      right: 17px !important;
+      width: 34px !important;
+      height: 34px !important;
+      border: 1px solid rgba(255,255,255,.14) !important;
+      border-radius: 999px !important;
+      background: rgba(255,255,255,.08) !important;
+      color: rgba(255,255,255,.92) !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      cursor: pointer !important;
+      z-index: 2 !important;
+      transition: background .16s var(--ease-out), transform .12s var(--ease-spring) !important;
+    }
+
+    html body .admin-gate-close-btn:hover,
+    html body .admin-gate-close-btn:focus-visible {
+      background: rgba(255,255,255,.16) !important;
+      outline: none !important;
+    }
+
+    html body .admin-gate-close-btn:active {
+      transform: scale(.94) !important;
+    }
 
 /* ===== 18. bottom-nav-soft-blur ===== */
 html body .bottom-nav {
@@ -3977,6 +4330,7 @@ html body .bottom-nav {
         inset 0 1px 0 rgba(255,255,255,.12),
         0 -10px 34px rgba(0,0,0,.24) !important;
     }
+
 
 /* ===== 19. group-filter-letter-size-and-centering ===== */
 html body .group-order-filter-row {
@@ -4037,6 +4391,7 @@ html body .admin-panel .admin-score-team-name {
   overflow-wrap: anywhere !important;
 }
 
+
 /* Bracket color refresh */
 html body .bracket-page {
   /* Skonsolidowane zmienne drabinki — finalne wartości po wcześniej
@@ -4054,6 +4409,7 @@ html body .bracket-page {
   --bracket-loser-text: rgba(215,224,240,.48);
   --bracket-muted: rgba(225,233,248,.68);
   --bracket-placeholder: rgba(225,233,248,.40);
+  --bracket-gold: rgba(245, 200, 66, .96);
 }
 
 html body .bracket-page .bracket-intro,
@@ -4062,10 +4418,12 @@ html body .bracket-page .bracket-section {
   border-color: rgba(154, 213, 255, .18) !important;
 }
 
+html body .bracket-page .bracket-section-title h3,
 html body .bracket-page .bracket-intro h2 {
   color: rgba(245, 250, 255, .98) !important;
 }
 
+html body .bracket-page .bracket-section-title span,
 html body .bracket-page .bracket-round-label,
 html body .bracket-page .bracket-third-place-label,
 html body .bracket-page .bracket-match-head {
@@ -4116,9 +4474,16 @@ html body .bracket-page .bracket-connectors path {
   stroke-width: 1.4 !important;
 }
 
+html body .bracket-page .bracket-champion {
+  background: linear-gradient(145deg, rgba(245, 200, 66, .18), rgba(111, 196, 255, .08)) !important;
+  border-color: rgba(245, 200, 66, .34) !important;
+  color: var(--bracket-gold) !important;
+}
+
 html body .bracket-page .bracket-placeholder {
   color: rgba(183, 211, 235, .42) !important;
 }
+
 
 /* Score input number alignment */
 html body .score-input-shell .score-value-input,
@@ -4150,6 +4515,7 @@ html body .admin-score-controls > div > div:last-child > button {
   outline: none !important;
 }
 
+
 /* Align prediction list headings with player rows */
 html body .prediction-list-title,
 html body .compare-view .compare-player-list-title {
@@ -4164,6 +4530,7 @@ html body .compare-view .compare-player-list-title {
     padding-right: 9px !important;
   }
 }
+
 
 /* Hide bracket horizontal scrollbar */
 html body .bracket-scroll {
@@ -4189,6 +4556,14 @@ html body .admin-panel .admin-match-details button span[class*="truncate"] {
 }
 
 /* Flat mode: bez cieni, poświat, błysków i efektu 3D. */
+:root {
+  --shadow-sm: none !important;
+  --shadow-md: none !important;
+  --shadow-lg: none !important;
+  --shadow-glow: none !important;
+  --hl: none !important;
+  --hl2: none !important;
+}
 
 html body,
 html body *:not(.phase-filter-panel):not(.filters-sticky):not(.admin-phase-filters),
@@ -4438,6 +4813,7 @@ html body [role="button"]:hover {
   filter: none !important;
 }
 
+
 /* Filtry: mniej przejrzyste kafelki. */
 html:not([data-theme="light"]) body .phase-filter-panel,
 html:not([data-theme="light"]) body .filters-sticky,
@@ -4524,6 +4900,7 @@ html body {
   }
 }
 
+
 /* Filtry: normalne cienie odblokowane. */
 html:not([data-theme="light"]) body .phase-filter-panel,
 html:not([data-theme="light"]) body .filters-sticky,
@@ -4534,6 +4911,7 @@ html:not([data-theme="light"]) body .admin-phase-filters {
     0 8px 12px -10px rgba(0, 0, 0, .42) !important;
   filter: none !important;
 }
+
 
 /* Porownaj: panel filtrow z takim samym kryciem jak Mecze. */
 html:not([data-theme="light"]) body .compare-view .phase-filter-panel.filters-sticky {
@@ -5084,13 +5462,42 @@ html body .profile-inline-rename .profile-pin-input {
 }
 
 /* Admin login backdrop matches profile modal overlay. */
+html body .admin-gate-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 70 !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  padding: calc(var(--safe-top) + 118px) 18px calc(var(--safe-bottom) + 96px) !important;
+  pointer-events: none !important;
+}
+
+html body .admin-gate-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 0 !important;
+  background: rgba(2, 7, 16, .56) !important;
+  backdrop-filter: blur(6px) saturate(120%) !important;
+  -webkit-backdrop-filter: blur(6px) saturate(120%) !important;
+  pointer-events: auto !important;
+}
+
+html body .admin-gate-overlay .admin-gate-card {
+  z-index: 1 !important;
+  pointer-events: auto !important;
+  margin: 0 auto !important;
+}
 
 /* Admin login width matches profile modal. */
 @media (max-width: 520px) {
-
+  html body .admin-gate-card {
+    width: min(calc(100% - 26px), 360px) !important;
+  }
 }
 
 /* Admin/profile modal corner radius alignment. */
+html body .admin-gate-card,
 html body .login-modal-sheet:not(.login-modal-compact-sheet) {
   border-radius: 30px !important;
 }
@@ -5101,13 +5508,39 @@ html body .profile-modal-overlay-root {
 }
 
 /* Admin/profile modal color alignment. */
+html body .admin-gate-card,
 html body .login-modal-sheet:not(.login-modal-compact-sheet) {
   background:
     linear-gradient(180deg, rgba(31, 44, 67, .98), rgba(11, 18, 31, .98)) !important;
   border-color: rgba(255,255,255,.10) !important;
 }
 
+html body .admin-gate-close-btn {
+  background: rgba(255,255,255,.10) !important;
+  border-color: rgba(255,255,255,.14) !important;
+  color: rgba(255,255,255,.90) !important;
+}
+
+html body .admin-gate-close-btn:hover,
+html body .admin-gate-close-btn:focus-visible {
+  background: rgba(255,255,255,.16) !important;
+  border-color: rgba(255,255,255,.22) !important;
+}
+
+html body .admin-gate-icon {
+  background: linear-gradient(145deg, rgba(93,188,255,.46), rgba(91,77,242,.38)) !important;
+  border-color: rgba(174,220,255,.46) !important;
+  color: #eef8ff !important;
+}
+
+html body .admin-gate-card .profile-text-input {
+  background: linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.03)) !important;
+  border-color: rgba(255,255,255,.18) !important;
+  color: var(--label-1) !important;
+}
+
 /* Final admin/profile modal surface match. */
+html body .admin-gate-card,
 html body .login-modal-sheet:not(.login-modal-compact-sheet) {
   background: linear-gradient(145deg, rgba(34,45,70,.72), rgba(12,18,31,.58)) !important;
   border-color: transparent !important;
@@ -5159,6 +5592,7 @@ html body .bracket-page .bracket-match-head {
   color: var(--bracket-muted) !important;
 }
 
+html body .bracket-page .bracket-section-title span,
 html body .bracket-page .bracket-round-label,
 html body .bracket-page .bracket-third-place-label {
   color: var(--bracket-muted) !important;
@@ -5184,6 +5618,12 @@ html body .bracket-page .bracket-team-row.is-loser {
 
 html body .bracket-page .bracket-connectors path {
   stroke: var(--bracket-line) !important;
+}
+
+html body .bracket-page .bracket-champion {
+  background: linear-gradient(145deg, rgba(245,200,66,.18), rgba(255,255,255,.045)) !important;
+  border-color: rgba(245,200,66,.28) !important;
+  color: var(--bracket-gold) !important;
 }
 
 html body .bracket-page .bracket-placeholder {
@@ -5233,6 +5673,7 @@ html body .specials-view .selection-tile .specials-team-name {
   }
 }
 
+
 html body .specials-view .selection-tile .specials-team-name.is-overflowing {
   mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 22px), transparent 100%) !important;
   -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 22px), transparent 100%) !important;
@@ -5249,6 +5690,16 @@ html body .leaderboard-header {
 }
 
 /* Bracket group tables sidebar. */
+html body .bracket-page .bracket-main-layout {
+  display: grid !important;
+  grid-template-columns: minmax(236px, 280px) minmax(0, 1fr) !important;
+  gap: 12px !important;
+  align-items: start !important;
+}
+
+html body .bracket-page .bracket-main-layout > .bracket-section {
+  min-width: 0 !important;
+}
 
 html body .bracket-page .bracket-group-tables {
   background: var(--bracket-panel) !important;
@@ -5373,6 +5824,9 @@ html body .bracket-page .bracket-group-pos {
 }
 
 @media (max-width: 980px) {
+  html body .bracket-page .bracket-main-layout {
+    grid-template-columns: 1fr !important;
+  }
 
   html body .bracket-page .bracket-group-tables {
     max-height: none !important;
@@ -6150,6 +6604,7 @@ html body .compare-view {
   }
 }
 
+
 /* Redesigned leaderboard ranking panels. */
 html body .leaderboard-card {
   position: relative !important;
@@ -6567,9 +7022,25 @@ html body .profile-modal-overlay-root .login-modal-compact-sheet {
   max-height: calc(100dvh - var(--floating-modal-top) - var(--safe-bottom, 0px) - 18px) !important;
 }
 
+html body .admin-gate-overlay {
+  align-items: flex-start !important;
+  justify-content: center !important;
+  padding-top: var(--floating-modal-top) !important;
+  padding-bottom: calc(var(--safe-bottom, 0px) + 18px) !important;
+}
+
+html body .admin-gate-card,
+html body .admin-gate-overlay .admin-gate-card {
+  width: var(--floating-modal-desktop-width) !important;
+  max-width: 400px !important;
+  margin: 0 auto !important;
+}
+
 @media (max-width: 520px) {
   html body .profile-modal-overlay-root .login-modal-sheet,
-  html body .profile-modal-overlay-root .login-modal-compact-sheet {
+  html body .profile-modal-overlay-root .login-modal-compact-sheet,
+  html body .admin-gate-card,
+  html body .admin-gate-overlay .admin-gate-card {
     width: var(--floating-modal-mobile-width) !important;
     max-width: 360px !important;
   }
@@ -6802,6 +7273,11 @@ html.is-mobile-browser body .profile-modal-overlay-root {
   padding-bottom: calc(max(var(--safe-bottom, 0px), var(--browser-bottom-ui, 0px)) + 18px) !important;
 }
 
+html.is-mobile-browser body .admin-gate-overlay {
+  padding-top: calc(max(var(--safe-top, 0px), var(--browser-top-ui, 0px)) + var(--header-height, 58px) + 60px) !important;
+  padding-bottom: calc(max(var(--safe-bottom, 0px), var(--browser-bottom-ui, 0px)) + 18px) !important;
+}
+
 /* --real-vh (visualViewport.height) już JEST pomniejszoną, widoczną
    wysokością — gdy otwiera się klawiatura, ona już to uwzględnia. Odjęcie
    TAKŻE --browser-top-ui/--browser-bottom-ui (jak było wcześniej) liczyło
@@ -6814,7 +7290,9 @@ html.is-mobile-browser body .profile-modal-overlay-root .login-modal-compact-she
   max-height: calc(var(--real-vh, 100dvh) - var(--safe-top, 0px) - var(--header-height, 58px) - 78px - var(--safe-bottom, 0px)) !important;
 }
 
-html.is-mobile-browser body .login-modal-sheet:not(.login-modal-compact-sheet) {
+html.is-mobile-browser body .login-modal-sheet:not(.login-modal-compact-sheet),
+html.is-mobile-browser body .admin-gate-card,
+html.is-mobile-browser body .admin-gate-overlay .admin-gate-card {
   width: min(calc(100% - 26px), 360px) !important;
   max-width: 360px !important;
 }
@@ -6877,6 +7355,7 @@ html body .bottom-nav {
 /* Modale (panel admina, profil/użytkownicy) muszą przykrywać nagłówek
    i dolną nawigację (z-index 900), inaczej pasek menu prześwituje przez
    przyciemnione tło modala. */
+html body .admin-gate-overlay,
 html body .profile-modal-overlay-root {
   z-index: 950 !important;
 }
@@ -6911,6 +7390,9 @@ html body .login-modal-sheet > div:first-child {
    dopina JEDEN, wspólny rytm odstępów między elementami treści, żeby
    żaden z nich nie musiał definiować własnego, lokalnego marginesu.
    ═══════════════════════════════════════════════════════════════ */
+:root {
+  --panel-content-gap: 14px;
+}
 
 html body .login-modal-content > * {
   margin-top: 0 !important;
@@ -6929,6 +7411,9 @@ html body .compare-view .filters-sticky {
 }
 
 /* Global panel rhythm. */
+:root {
+  --app-panel-gap: 16px;
+}
 
 html body .app-content {
   padding-top: calc(var(--header-height, 58px) + var(--app-panel-gap)) !important;
@@ -6941,7 +7426,8 @@ html body .allspecials-view,
 html body .leaderboard-view,
 html body .compare-view,
 html body .bracket-page,
-html body .admin-panel {
+html body .admin-panel,
+html body .admin-section-stack {
   display: flex !important;
   flex-direction: column !important;
   gap: var(--app-panel-gap) !important;
@@ -6961,7 +7447,8 @@ html body .allspecials-view > *,
 html body .leaderboard-view > *,
 html body .compare-view > *,
 html body .bracket-page > *,
-html body .admin-panel > * {
+html body .admin-panel > *,
+html body .admin-section-stack > * {
   margin-top: 0 !important;
   margin-bottom: 0 !important;
 }
@@ -7009,6 +7496,7 @@ html.is-mobile-standalone body .app-content,
 html.is-mobile-device body .app-content {
   padding-top: calc(var(--header-height, 58px) + var(--app-panel-gap)) !important;
 }
+
 
 /* Global bottom fade overlay. */
 html body .app-bottom-fade {
@@ -7111,12 +7599,15 @@ html body {
   --modal-keyboard-inset: 0px;
 }
 
-html body .profile-modal-overlay-root {
+html body .profile-modal-overlay-root,
+html body .admin-gate-overlay {
   overscroll-behavior: contain !important;
 }
 
 html body .login-modal-sheet,
-html body .login-modal-compact-sheet {
+html body .login-modal-compact-sheet,
+html body .admin-gate-card,
+html body .admin-gate-overlay .admin-gate-card {
   display: flex !important;
   flex-direction: column !important;
   min-height: 0 !important;
@@ -7139,7 +7630,8 @@ html body .login-modal-content {
 }
 
 @media (max-width: 640px), (pointer: coarse) {
-  html body .profile-modal-overlay-root {
+  html body .profile-modal-overlay-root,
+  html body .admin-gate-overlay {
     position: fixed !important;
     top: var(--modal-offset-top, 0px) !important;
     right: 0 !important;
@@ -7154,14 +7646,17 @@ html body .login-modal-content {
     overflow: hidden !important;
   }
 
-  html.modal-keyboard-open body .profile-modal-overlay-root {
+  html.modal-keyboard-open body .profile-modal-overlay-root,
+  html.modal-keyboard-open body .admin-gate-overlay {
     padding-top: calc(var(--safe-top, 0px) + 8px) !important;
     padding-bottom: calc(var(--safe-bottom, 0px) + 8px) !important;
   }
 
   html body .profile-modal-overlay-root .login-modal-sheet,
   html body .profile-modal-overlay-root .login-modal-compact-sheet,
-  html body .login-modal-sheet:not(.login-modal-compact-sheet) {
+  html body .login-modal-sheet:not(.login-modal-compact-sheet),
+  html body .admin-gate-card,
+  html body .admin-gate-overlay .admin-gate-card {
     align-self: flex-start !important;
     width: min(calc(100% - 26px), 360px) !important;
     max-width: 360px !important;
@@ -7172,7 +7667,9 @@ html body .login-modal-content {
 
   html.modal-keyboard-open body .profile-modal-overlay-root .login-modal-sheet,
   html.modal-keyboard-open body .profile-modal-overlay-root .login-modal-compact-sheet,
-  html.modal-keyboard-open body .login-modal-sheet:not(.login-modal-compact-sheet) {
+  html.modal-keyboard-open body .login-modal-sheet:not(.login-modal-compact-sheet),
+  html.modal-keyboard-open body .admin-gate-card,
+  html.modal-keyboard-open body .admin-gate-overlay .admin-gate-card {
     max-height: calc(var(--modal-vh, 100dvh) - var(--safe-top, 0px) - var(--safe-bottom, 0px) - 16px) !important;
   }
 
@@ -7189,8 +7686,11 @@ html body .login-modal-content {
   }
 
   html.modal-keyboard-open body .profile-modal-overlay-root,
+  html.modal-keyboard-open body .admin-gate-overlay,
   html.modal-keyboard-open.is-mobile-browser body .profile-modal-overlay-root,
-  html.modal-keyboard-open.is-mobile-device body .profile-modal-overlay-root {
+  html.modal-keyboard-open.is-mobile-browser body .admin-gate-overlay,
+  html.modal-keyboard-open.is-mobile-device body .profile-modal-overlay-root,
+  html.modal-keyboard-open.is-mobile-device body .admin-gate-overlay {
     top: 0 !important;
     bottom: auto !important;
     height: var(--modal-vh, 100dvh) !important;
@@ -7205,12 +7705,18 @@ html body .login-modal-content {
   html.modal-keyboard-open body .profile-modal-overlay-root .login-modal-sheet,
   html.modal-keyboard-open body .profile-modal-overlay-root .login-modal-compact-sheet,
   html.modal-keyboard-open body .login-modal-sheet:not(.login-modal-compact-sheet),
+  html.modal-keyboard-open body .admin-gate-card,
+  html.modal-keyboard-open body .admin-gate-overlay .admin-gate-card,
   html.modal-keyboard-open.is-mobile-browser body .profile-modal-overlay-root .login-modal-sheet,
   html.modal-keyboard-open.is-mobile-browser body .profile-modal-overlay-root .login-modal-compact-sheet,
   html.modal-keyboard-open.is-mobile-browser body .login-modal-sheet:not(.login-modal-compact-sheet),
+  html.modal-keyboard-open.is-mobile-browser body .admin-gate-card,
+  html.modal-keyboard-open.is-mobile-browser body .admin-gate-overlay .admin-gate-card,
   html.modal-keyboard-open.is-mobile-device body .profile-modal-overlay-root .login-modal-sheet,
   html.modal-keyboard-open.is-mobile-device body .profile-modal-overlay-root .login-modal-compact-sheet,
-  html.modal-keyboard-open.is-mobile-device body .login-modal-sheet:not(.login-modal-compact-sheet) {
+  html.modal-keyboard-open.is-mobile-device body .login-modal-sheet:not(.login-modal-compact-sheet),
+  html.modal-keyboard-open.is-mobile-device body .admin-gate-card,
+  html.modal-keyboard-open.is-mobile-device body .admin-gate-overlay .admin-gate-card {
     align-self: center !important;
     max-height: calc(var(--modal-vh, 100dvh) - var(--modal-safe-pad-top) - var(--modal-safe-pad-bottom)) !important;
     margin-top: 0 !important;
