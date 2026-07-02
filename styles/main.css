@@ -7457,6 +7457,25 @@ html body .install-banner {
   margin-bottom: 0 !important;
 }
 
+/* Admin inner stacks were still inheriting Tailwind space-y margins, which made
+   the gap after filter/banner blocks differ from the gap between match cards. */
+html body .admin-panel > .space-y-2,
+html body .admin-panel > .space-y-3 {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--app-panel-gap) !important;
+}
+
+html body .admin-panel > .space-y-2 > *,
+html body .admin-panel > .space-y-3 > * {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+html body .admin-panel > .space-y-2 > .admin-match-card + .admin-match-card {
+  margin-top: 0 !important;
+}
+
 @media (max-width: 520px) {
   :root {
     --app-panel-gap: 16px;
@@ -7572,5 +7591,3 @@ html body .match-card-enter {
     opacity: 1 !important;
   }
 }
-
-
