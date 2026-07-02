@@ -2053,71 +2053,46 @@ function Modal({
     if (!open) return;
     const root = document.documentElement;
     const body = document.body;
-    const stateKey = '__wc2026ModalScrollLock';
-    let state = window[stateKey];
 
-    if (!state) {
-      state = window[stateKey] = {
-        count: 0,
-        scrollY: 0,
-        rootOverflow: '',
-        rootOverscroll: '',
-        bodyPosition: '',
-        bodyTop: '',
-        bodyLeft: '',
-        bodyRight: '',
-        bodyWidth: '',
-        bodyOverflow: '',
-        bodyOverscroll: ''
-      };
-    }
+    // Ten modal blokuje scroll TYLKO jeśli strona nie jest już zablokowana
+    // (w tej appce zawsze jest otwarty co najwyżej jeden z tych paneli
+    // naraz). Blokada i odblokowanie są symetryczne w obrębie JEDNEGO
+    // wywołania efektu — bez dzielonego, globalnego licznika, który
+    // wcześniej potrafił się rozjechać z realnym stanem DOM (np. przy
+    // panelu admina) i zostawiać stronę trwale niescrollowalną, mimo że
+    // żaden modal nie był już otwarty.
+    if (root.classList.contains('modal-scroll-locked')) return undefined;
 
-    if (state.count === 0) {
-      state.scrollY = window.scrollY || window.pageYOffset || 0;
-      state.rootOverflow = root.style.overflow;
-      state.rootOverscroll = root.style.overscrollBehavior;
-      state.bodyPosition = body.style.position;
-      state.bodyTop = body.style.top;
-      state.bodyLeft = body.style.left;
-      state.bodyRight = body.style.right;
-      state.bodyWidth = body.style.width;
-      state.bodyOverflow = body.style.overflow;
-      state.bodyOverscroll = body.style.overscrollBehavior;
+    const scrollY = window.scrollY || window.pageYOffset || 0;
 
-      root.classList.add('modal-scroll-locked');
-      body.classList.add('modal-scroll-locked');
+    root.classList.add('modal-scroll-locked');
+    body.classList.add('modal-scroll-locked');
 
-      root.style.setProperty('overflow', 'hidden', 'important');
-      root.style.setProperty('overscroll-behavior', 'none', 'important');
-      body.style.setProperty('position', 'fixed', 'important');
-      body.style.setProperty('top', `-${state.scrollY}px`, 'important');
-      body.style.setProperty('left', '0', 'important');
-      body.style.setProperty('right', '0', 'important');
-      body.style.setProperty('width', '100%', 'important');
-      body.style.setProperty('overflow', 'hidden', 'important');
-      body.style.setProperty('overscroll-behavior', 'none', 'important');
-    }
-
-    state.count += 1;
+    root.style.setProperty('overflow', 'hidden', 'important');
+    root.style.setProperty('overscroll-behavior', 'none', 'important');
+    body.style.setProperty('position', 'fixed', 'important');
+    body.style.setProperty('top', `-${scrollY}px`, 'important');
+    body.style.setProperty('left', '0', 'important');
+    body.style.setProperty('right', '0', 'important');
+    body.style.setProperty('width', '100%', 'important');
+    body.style.setProperty('overflow', 'hidden', 'important');
+    body.style.setProperty('overscroll-behavior', 'none', 'important');
 
     return () => {
-      state.count = Math.max(0, state.count - 1);
-      if (state.count !== 0) return;
-
       root.classList.remove('modal-scroll-locked');
       body.classList.remove('modal-scroll-locked');
 
-      root.style.overflow = state.rootOverflow;
-      root.style.overscrollBehavior = state.rootOverscroll;
-      body.style.position = state.bodyPosition;
-      body.style.top = state.bodyTop;
-      body.style.left = state.bodyLeft;
-      body.style.right = state.bodyRight;
-      body.style.width = state.bodyWidth;
-      body.style.overflow = state.bodyOverflow;
-      body.style.overscrollBehavior = state.bodyOverscroll;
+      root.style.removeProperty('overflow');
+      root.style.removeProperty('overscroll-behavior');
+      body.style.removeProperty('position');
+      body.style.removeProperty('top');
+      body.style.removeProperty('left');
+      body.style.removeProperty('right');
+      body.style.removeProperty('width');
+      body.style.removeProperty('overflow');
+      body.style.removeProperty('overscroll-behavior');
 
-      window.scrollTo(0, state.scrollY);
+      window.scrollTo(0, scrollY);
     };
   }, [open]);
 
@@ -6684,52 +6659,14 @@ function Mundial2026() {
   }, [activeTab]);
   const [adminUnlocked, setAdminUnlocked] = useState(false);
   const [adminLoginOpen, setAdminLoginOpen] = useState(false);
-  useEffect(() => {
-    const shouldLock = adminLoginOpen && !adminUnlocked;
-    const root = document.documentElement;
-    const body = document.body;
-    if (!shouldLock || !root || !body) return;
-
-    const scrollY = window.scrollY || window.pageYOffset || 0;
-    const previous = {
-      rootOverflow: root.style.overflow,
-      rootOverscroll: root.style.overscrollBehavior,
-      bodyPosition: body.style.position,
-      bodyTop: body.style.top,
-      bodyLeft: body.style.left,
-      bodyRight: body.style.right,
-      bodyWidth: body.style.width,
-      bodyOverflow: body.style.overflow,
-      bodyOverscroll: body.style.overscrollBehavior
-    };
-
-    root.classList.add('admin-gate-scroll-locked');
-    body.classList.add('admin-gate-scroll-locked');
-    root.style.setProperty('overflow', 'hidden', 'important');
-    root.style.setProperty('overscroll-behavior', 'none', 'important');
-    body.style.setProperty('position', 'fixed', 'important');
-    body.style.setProperty('top', `-${scrollY}px`, 'important');
-    body.style.setProperty('left', '0', 'important');
-    body.style.setProperty('right', '0', 'important');
-    body.style.setProperty('width', '100%', 'important');
-    body.style.setProperty('overflow', 'hidden', 'important');
-    body.style.setProperty('overscroll-behavior', 'none', 'important');
-
-    return () => {
-      root.classList.remove('admin-gate-scroll-locked');
-      body.classList.remove('admin-gate-scroll-locked');
-      root.style.overflow = previous.rootOverflow;
-      root.style.overscrollBehavior = previous.rootOverscroll;
-      body.style.position = previous.bodyPosition;
-      body.style.top = previous.bodyTop;
-      body.style.left = previous.bodyLeft;
-      body.style.right = previous.bodyRight;
-      body.style.width = previous.bodyWidth;
-      body.style.overflow = previous.bodyOverflow;
-      body.style.overscrollBehavior = previous.bodyOverscroll;
-      window.scrollTo(0, scrollY);
-    };
-  }, [adminLoginOpen, adminUnlocked]);
+  // Blokada scrolla dla panelu admina jest teraz obsługiwana przez wspólny
+  // <Modal> (ten sam mechanizm co pozostałe panele profilu) — osobny,
+  // zdublowany mechanizm blokady, który był tu wcześniej (z czasów, gdy
+  // AdminGate miał własną, bespoke nakładkę), został usunięty. Dwa
+  // niezależne "zamki" na tych samych stylach html/body potrafiły wejść
+  // sobie w drogę (jeden przywracał drugiemu już zablokowany stan),
+  // zostawiając stronę trwale niescrollowalną albo przewiniętą do
+  // nieaktualnej pozycji po przełączeniu zakładki.
   const [playersModal, setPlayersModal] = useState(false);
   const [loginModal, setLoginModal] = useState(false);
   const allLoaded = plLoaded && tLoaded && mLoaded && prLoaded && rLoaded && spLoaded && srLoaded && apLoaded && plkLoaded && scLoaded;
