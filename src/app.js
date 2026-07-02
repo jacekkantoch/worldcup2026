@@ -2099,6 +2099,76 @@ function Modal({
   useEffect(() => {
     if (!open) return;
 
+    const root = document.documentElement;
+    let frame = 0;
+    let focusTimer = 0;
+
+    const updateModalViewport = () => {
+      frame = 0;
+      const vv = window.visualViewport;
+      const height = vv ? vv.height : window.innerHeight;
+      const offsetTop = vv ? vv.offsetTop || 0 : 0;
+      const keyboardInset = vv ? Math.max(0, (window.innerHeight || height) - height - offsetTop) : 0;
+
+      root.style.setProperty('--modal-vh', `${Math.max(0, height)}px`);
+      root.style.setProperty('--modal-offset-top', `${Math.max(0, offsetTop)}px`);
+      root.style.setProperty('--modal-keyboard-inset', `${keyboardInset}px`);
+      root.classList.toggle('modal-keyboard-open', keyboardInset > 80);
+    };
+
+    const scheduleViewportUpdate = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(updateModalViewport);
+    };
+
+    const keepFocusedFieldVisible = event => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      if (!target.matches('input, textarea, select, [contenteditable="true"]')) return;
+
+      window.clearTimeout(focusTimer);
+      focusTimer = window.setTimeout(() => {
+        scheduleViewportUpdate();
+        const content = target.closest('.login-modal-content');
+        if (!content) return;
+        const targetRect = target.getBoundingClientRect();
+        const contentRect = content.getBoundingClientRect();
+        const bottomSlack = 24;
+        const topSlack = 18;
+
+        if (targetRect.bottom > contentRect.bottom - bottomSlack) {
+          content.scrollTop += targetRect.bottom - contentRect.bottom + bottomSlack;
+        } else if (targetRect.top < contentRect.top + topSlack) {
+          content.scrollTop -= contentRect.top + topSlack - targetRect.top;
+        }
+      }, 120);
+    };
+
+    updateModalViewport();
+    window.addEventListener('resize', scheduleViewportUpdate);
+    window.addEventListener('orientationchange', scheduleViewportUpdate);
+    window.visualViewport && window.visualViewport.addEventListener('resize', scheduleViewportUpdate);
+    window.visualViewport && window.visualViewport.addEventListener('scroll', scheduleViewportUpdate);
+    document.addEventListener('focusin', keepFocusedFieldVisible, true);
+
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      window.clearTimeout(focusTimer);
+      window.removeEventListener('resize', scheduleViewportUpdate);
+      window.removeEventListener('orientationchange', scheduleViewportUpdate);
+      window.visualViewport && window.visualViewport.removeEventListener('resize', scheduleViewportUpdate);
+      window.visualViewport && window.visualViewport.removeEventListener('scroll', scheduleViewportUpdate);
+      document.removeEventListener('focusin', keepFocusedFieldVisible, true);
+      root.classList.remove('modal-keyboard-open');
+      root.style.removeProperty('--modal-vh');
+      root.style.removeProperty('--modal-offset-top');
+      root.style.removeProperty('--modal-keyboard-inset');
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+
     let lastTouchY = 0;
 
     const getScrollableModalContent = target => {
