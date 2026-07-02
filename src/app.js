@@ -4359,177 +4359,10 @@ function CompareView({
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  ADMIN: BLOKADY FAZ TYPOWANIA
-// ═══════════════════════════════════════════════════════════════
-function PhaseLockPanel({
-  matches,
-  phaseLocks,
-  onSavePhaseLocks
-}) {
-  const PHASE_DEFS = [{
-    key: 'specials',
-    label: 'Typy specjalne',
-    desc: 'Kolejność grup, podium, król strzelców, MVP',
-    specialNote: true
-  }, {
-    key: 'compareVisible',
-    label: 'Porównanie widoczne',
-    desc: 'Zakładki "Porównanie" i "Typy wszystkich" dostępne dla graczy',
-    compareNote: true
-  }, {
-    key: 'group',
-    label: 'Faza grupowa',
-    desc: 'Mecze 1–72'
-  }, {
-    key: 'r32',
-    label: '1/16 finału',
-    desc: 'Mecze 73–88'
-  }, {
-    key: 'r16',
-    label: '1/8 finału',
-    desc: 'Mecze 89–96'
-  }, {
-    key: 'qf',
-    label: 'Ćwierćfinały',
-    desc: 'Mecze 97–100'
-  }, {
-    key: 'sf',
-    label: 'Półfinały',
-    desc: 'Mecze 101–102'
-  }, {
-    key: 'third',
-    label: 'Mecz o 3. miejsce',
-    desc: 'Mecz 103'
-  }, {
-    key: 'final',
-    label: 'Finał',
-    desc: 'Mecz 104'
-  }];
-
-  // Wyznacz pierwszy mecz każdej fazy
-  const firstMatchDate = useMemo(() => {
-    const map = {};
-    PHASE_DEFS.forEach(({
-      key
-    }) => {
-      const phaseMatches = matches.filter(m => m.phase === key && m.date);
-      if (phaseMatches.length) {
-        const sorted = [...phaseMatches].sort((a, b) => new Date(a.date) - new Date(b.date));
-        map[key] = sorted[0].date;
-      }
-    });
-    return map;
-  }, [matches]);
-  const [localLocks, setLocalLocks] = useState(phaseLocks || {});
-  const [saved, setSaved] = useState(false);
-  useEffect(() => setLocalLocks(phaseLocks || {}), [phaseLocks]);
-  const toggle = key => setLocalLocks(prev => ({
-    ...prev,
-    [key]: !prev[key]
-  }));
-  const handleSave = () => {
-    onSavePhaseLocks(localLocks);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  };
-  const fmtDate = iso => {
-    if (!iso) return '—';
-    try {
-      return new Intl.DateTimeFormat('pl-PL', {
-        timeZone: 'Europe/Warsaw',
-        weekday: 'short',
-        day: 'numeric',
-        month: 'short',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
-      }).format(new Date(iso));
-    } catch (e) {
-      return iso;
-    }
-  };
-  return React.createElement("div", {
-    className: "space-y-3"
-  }, PHASE_DEFS.map(({
-    key,
-    label,
-    desc,
-    specialNote,
-    compareNote
-  }) => {
-    const isLocked = !!localLocks[key];
-    const firstDate = firstMatchDate[key];
-    const changed = isLocked !== !!phaseLocks[key];
-    return React.createElement("div", {
-      key: key,
-      className: `bg-white border-2 rounded-xl p-4 transition-all ${key === 'compareVisible' ? isLocked ? 'border-[#006940] bg-[#e6f4ec]' : 'border-stone-200' : isLocked ? 'border-red-300 bg-red-50' : 'border-stone-200'}`
-    }, React.createElement("div", {
-      className: "flex items-center justify-between gap-3"
-    }, React.createElement("div", {
-      className: "flex items-center min-w-0 flex-1"
-    }, React.createElement("div", {
-      className: "min-w-0"
-    }, React.createElement("div", {
-      className: "font-semibold text-stone-900 text-sm"
-    }, label), React.createElement("div", {
-      className: "text-[11px] text-stone-500"
-    }, desc), compareNote ? React.createElement("div", {
-      className: `text-[11px] mt-0.5 font-medium ${isLocked ? 'text-[#006940]' : 'text-stone-400'}`
-    }, isLocked ? 'Zakładki widoczne dla graczy' : 'Zakładki ukryte dla graczy') : specialNote ? React.createElement("div", {
-      className: `text-[11px] mt-0.5 font-medium ${isLocked ? 'text-red-700' : 'text-amber-700'}`
-    }, isLocked ? 'Zablokowane' : 'Deadline: przed 11.06.2026, godz. 21:00') : firstDate && React.createElement("div", {
-      className: `text-[11px] mt-0.5 font-medium ${isLocked ? 'text-red-700' : 'text-[#0d1b5e]'}`
-    }, isLocked ? 'Zablokowane' : 'Pierwszy mecz: ', !isLocked && fmtDate(firstDate)))), React.createElement("button", {
-      onClick: () => toggle(key),
-      className: `phase-lock-toggle ${isLocked ? key === 'compareVisible' ? 'is-compare-on' : 'is-locked-on' : 'is-off'}`,
-      style: {
-        width: '48px',
-        height: '26px',
-        position: 'relative',
-        borderRadius: '13px',
-        flexShrink: 0,
-        transition: 'background .2s',
-        cursor: 'pointer',
-        border: 'none',
-        outline: 'none',
-        background: isLocked ? key === 'compareVisible' ? '#006940' : '#ef4444' : '#d1d5db'
-      },
-      "aria-label": isLocked ? 'Odblokuj' : 'Zablokuj'
-    }, React.createElement("span", {
-      style: {
-        position: 'absolute',
-        top: '3px',
-        left: isLocked ? '25px' : '3px',
-        width: '20px',
-        height: '20px',
-        background: 'white',
-        borderRadius: '50%',
-        boxShadow: '0 1px 3px rgba(0,0,0,.25)',
-        transition: 'left .2s',
-        display: 'block'
-      }
-    }))), changed && React.createElement("div", {
-      className: "mt-2 text-[11px] text-amber-700 font-semibold"
-    }, "Niezapisana zmiana \u2014 kliknij Zapisz poni\u017Cej"));
-  }), React.createElement("div", {
-    className: "flex gap-2 pt-2"
-  }, React.createElement(Btn, {
-    variant: saved ? 'gold' : 'primary',
-    size: "lg",
-    onClick: handleSave,
-    className: "flex-1"
-  }, saved ? 'Zapisano!' : 'Zapisz blokady')));
-}
-
-// ═══════════════════════════════════════════════════════════════
 //  ADMIN
 // ═══════════════════════════════════════════════════════════════
-// Zawartość panelu admina — renderowana WEWNĄTRZ wspólnego <Modal>,
-// więc dziedziczy dokładnie ten sam nagłówek (tytuł + X), szerokość,
-// padding i tło co pozostałe panele profilu. Struktura (hero z ikoną +
-// pola + przyciski) jest identyczna jak w kroku "Zmień nazwę" — te same
-// klasy .profile-step-hero / .profile-field / .profile-text-input /
-// .profile-step-actions, zero nowych, powielonych stylów.
+// Fresh admin login/setup form. It uses the shared <Modal> shell, but keeps its
+// own internal structure so profile-form spacing never leaks into admin login.
 function AdminGate({
   adminPassword,
   onUnlock,
@@ -4538,89 +4371,80 @@ function AdminGate({
   const [input, setInput] = useState('');
   const [confirm, setConfirm] = useState('');
   const [error, setError] = useState('');
-  if (!adminPassword) return React.createElement(React.Fragment, null,
-    React.createElement("div", { className: "profile-step-hero" },
-      React.createElement("div", { className: "profile-step-avatar" }, React.createElement(Icon, { name: "lock", size: 24 })),
-      React.createElement("p", { className: "profile-step-name" }, "Ustaw hasło admina"),
-      React.createElement("p", { className: "profile-step-hint" }, "Jednorazowe — zapamiętaj dobrze!")
-    ),
-    React.createElement("div", { className: "profile-field" },
-      React.createElement("label", { className: "profile-label" }, "Nowe hasło"),
-      React.createElement("input", {
-        type: "password",
-        value: input,
-        onChange: e => setInput(e.target.value),
-        placeholder: "Nowe hasło",
-        className: "profile-text-input",
-        autoFocus: true,
-        autoComplete: "new-password",
-        autoCapitalize: "off",
-        autoCorrect: "off",
-        spellCheck: false
-      })
-    ),
-    React.createElement("div", { className: "profile-field" },
-      React.createElement("label", { className: "profile-label" }, "Powtórz hasło"),
-      React.createElement("input", {
-        type: "password",
-        value: confirm,
-        onChange: e => setConfirm(e.target.value),
-        placeholder: "Powtórz hasło",
-        className: "profile-text-input",
-        autoComplete: "new-password",
-        autoCapitalize: "off",
-        autoCorrect: "off",
-        spellCheck: false
-      })
-    ),
-    error && React.createElement("p", { className: "profile-error" }, error),
-    React.createElement("div", { className: "profile-step-actions" },
-      React.createElement("button", {
-        className: "profile-action-btn profile-action-login profile-action-full",
-        onClick: () => {
-          if (input.length < 3) {
-            setError('Hasło musi mieć min. 3 znaki');
-            return;
-          }
-          if (input !== confirm) {
-            setError('Hasła nie pasują');
-            return;
-          }
-          onSetPassword(input);
-        }
-      }, React.createElement(Icon, { name: "lock", size: 14 }), "Ustaw hasło")
-    )
-  );
-  return React.createElement(React.Fragment, null,
-    React.createElement("div", { className: "profile-step-hero" },
-      React.createElement("div", { className: "profile-step-avatar" }, React.createElement(Icon, { name: "lock", size: 24 })),
-      React.createElement("p", { className: "profile-step-name" }, "Panel administratora"),
-      React.createElement("p", { className: "profile-step-hint" }, "Wpisz hasło, żeby zarządzać wynikami")
-    ),
-    React.createElement("div", { className: "profile-field" },
-      React.createElement("label", { className: "profile-label" }, "Hasło"),
-      React.createElement("input", {
-        type: "password",
-        value: input,
-        onChange: e => { setInput(e.target.value); setError(''); },
-        onKeyDown: e => e.key === 'Enter' && onUnlock(input, err => setError(err)),
-        placeholder: "Hasło",
-        className: "profile-text-input",
-        autoFocus: true,
-        autoComplete: "current-password",
-        autoCapitalize: "off",
-        autoCorrect: "off",
-        spellCheck: false
-      })
-    ),
-    error && React.createElement("p", { className: "profile-error" }, error),
-    React.createElement("div", { className: "profile-step-actions" },
-      React.createElement("button", {
-        className: "profile-action-btn profile-action-login profile-action-full",
-        onClick: () => onUnlock(input, err => setError(err))
-      }, React.createElement(Icon, { name: "unlock", size: 14 }), "Odblokuj")
-    )
-  );
+  const isSetup = !adminPassword;
+  const handleSubmit = event => {
+    event.preventDefault();
+    const password = input.trim();
+    if (isSetup) {
+      if (password.length < 3) {
+        setError('Hasło musi mieć min. 3 znaki');
+        return;
+      }
+      if (password !== confirm.trim()) {
+        setError('Hasła nie pasują');
+        return;
+      }
+      onSetPassword(password);
+      return;
+    }
+    if (!password) {
+      setError('Wpisz hasło administratora.');
+      return;
+    }
+    onUnlock(password, err => setError(err));
+  };
+  const updateInput = setter => event => {
+    setter(event.target.value);
+    setError('');
+  };
+  return React.createElement('form', {
+    className: 'admin-login-panel' + (isSetup ? ' is-setup' : ' is-login'),
+    onSubmit: handleSubmit
+  }, React.createElement('div', {
+    className: 'admin-login-hero'
+  }, React.createElement('div', {
+    className: 'admin-login-icon'
+  }, React.createElement(Icon, {
+    name: isSetup ? 'lock' : 'unlock',
+    size: 22
+  })), React.createElement('h4', {
+    className: 'admin-login-title'
+  }, isSetup ? 'Ustaw hasło admina' : 'Panel administratora'), React.createElement('p', {
+    className: 'admin-login-subtitle'
+  }, isSetup ? 'Utwórz hasło dostępu do zarządzania wynikami.' : 'Wpisz hasło, żeby zarządzać wynikami.')), React.createElement('label', {
+    className: 'admin-login-field'
+  }, React.createElement('span', null, isSetup ? 'Nowe hasło' : 'Hasło'), React.createElement('input', {
+    type: 'password',
+    value: input,
+    onChange: updateInput(setInput),
+    placeholder: isSetup ? 'Nowe hasło' : 'Hasło',
+    className: 'admin-login-input' + (error ? ' has-error' : ''),
+    autoFocus: true,
+    autoComplete: isSetup ? 'new-password' : 'current-password',
+    autoCapitalize: 'off',
+    autoCorrect: 'off',
+    spellCheck: false
+  })), isSetup && React.createElement('label', {
+    className: 'admin-login-field'
+  }, React.createElement('span', null, 'Powtórz hasło'), React.createElement('input', {
+    type: 'password',
+    value: confirm,
+    onChange: updateInput(setConfirm),
+    placeholder: 'Powtórz hasło',
+    className: 'admin-login-input' + (error ? ' has-error' : ''),
+    autoComplete: 'new-password',
+    autoCapitalize: 'off',
+    autoCorrect: 'off',
+    spellCheck: false
+  })), error && React.createElement('p', {
+    className: 'admin-login-error'
+  }, error), React.createElement('button', {
+    type: 'submit',
+    className: 'admin-login-submit'
+  }, React.createElement(Icon, {
+    name: isSetup ? 'lock' : 'unlock',
+    size: 15
+  }), isSetup ? 'Ustaw hasło' : 'Odblokuj'));
 }
 function AdminMatchRow({
   match,

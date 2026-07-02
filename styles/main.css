@@ -7724,3 +7724,145 @@ html body .login-modal-content {
     overflow: hidden !important;
   }
 }
+
+/* Fresh admin login panel: independent from profile-step form styles. */
+html body .admin-login-panel {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+  width: 100% !important;
+  min-height: 0 !important;
+  padding: 2px 0 0 !important;
+}
+
+html body .admin-login-hero {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 7px !important;
+  text-align: center !important;
+  padding: 2px 4px 3px !important;
+}
+
+html body .admin-login-icon {
+  width: 52px !important;
+  height: 52px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 18px !important;
+  color: #eef8ff !important;
+  background: linear-gradient(145deg, rgba(93,188,255,.42), rgba(91,77,242,.34)) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.16) !important;
+}
+
+html body .admin-login-title {
+  margin: 0 !important;
+  color: var(--label-1) !important;
+  font-size: 16px !important;
+  font-weight: 900 !important;
+  line-height: 1.12 !important;
+  letter-spacing: -.015em !important;
+}
+
+html body .admin-login-subtitle {
+  max-width: 260px !important;
+  margin: 0 !important;
+  color: var(--label-2) !important;
+  font-size: 12px !important;
+  font-weight: 650 !important;
+  line-height: 1.28 !important;
+}
+
+html body .admin-login-field {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  margin: 0 !important;
+}
+
+html body .admin-login-field > span {
+  color: var(--label-2) !important;
+  font-size: 11px !important;
+  font-weight: 850 !important;
+  line-height: 1.1 !important;
+}
+
+html body .admin-login-input {
+  width: 100% !important;
+  min-height: 44px !important;
+  padding: 11px 13px !important;
+  border: 1px solid rgba(255,255,255,.16) !important;
+  border-radius: 15px !important;
+  background: linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.035)) !important;
+  color: var(--label-1) !important;
+  font-size: 16px !important;
+  font-weight: 750 !important;
+  line-height: 1.2 !important;
+  outline: none !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.055) !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+}
+
+html body .admin-login-input:focus {
+  border-color: rgba(112,184,255,.38) !important;
+  background: linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,255,.045)) !important;
+}
+
+html body .admin-login-input.has-error {
+  border-color: rgba(255,105,97,.55) !important;
+}
+
+html body .admin-login-error {
+  margin: -2px 0 0 !important;
+  color: #ff9a93 !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  text-align: center !important;
+  line-height: 1.25 !important;
+}
+
+html body .admin-login-submit {
+  width: 100% !important;
+  min-height: 45px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  margin: 2px 0 0 !important;
+  border: 0 !important;
+  border-radius: 16px !important;
+  background: linear-gradient(145deg, #47a7ff, #355df4 78%) !important;
+  color: #fff !important;
+  font-size: 14px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.24) !important;
+}
+
+html body .admin-login-submit:active {
+  transform: scale(.985) !important;
+}
+
+@media (max-width: 520px) {
+  html body .admin-login-panel {
+    gap: 12px !important;
+  }
+
+  html body .admin-login-icon {
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 17px !important;
+  }
+
+  html body .admin-login-title {
+    font-size: 15px !important;
+  }
+
+  html body .admin-login-subtitle {
+    font-size: 11.5px !important;
+  }
+}
+
