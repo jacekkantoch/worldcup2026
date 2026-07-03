@@ -1,0 +1,9 @@
+# Claude Code local settings (not part of the app)
+.claude/
+
+# Local backups / working files (per README, not meant to be published)
+work/
+
+# OS junk
+.DS_Store
+Thumbs.db
