@@ -2546,7 +2546,15 @@ function TeamPicker({
     className: `min-w-0 flex-1 truncate text-left ${selected ? '' : 'text-stone-400 font-medium'}`
   }, selected ? selected.name : placeholder), selected && React.createElement("span", {
     className: "text-[10px] text-stone-400 shrink-0"
-  }, "Gr. ", selected.group), React.createElement(Icon, {
+  }, "Gr. ", selected.group), status === 'correct' && React.createElement(Icon, {
+    name: "check",
+    size: 14,
+    className: "shrink-0"
+  }), status === 'wrong' && React.createElement(Icon, {
+    name: "x",
+    size: 14,
+    className: "shrink-0"
+  }), React.createElement(Icon, {
     name: open ? 'chevup' : 'chevdown',
     size: 16,
     className: "shrink-0"
@@ -2794,7 +2802,7 @@ const MatchCard = React.memo(function MatchCard({
     style: {
       background: 'rgba(0,160,60,.30)',
       border: '1px solid rgba(0,220,80,.45)',
-      color: '#4ade80',
+      color: '#30d158',
       borderRadius: '999px',
       padding: 0,
       fontSize: 15,
@@ -2805,7 +2813,7 @@ const MatchCard = React.memo(function MatchCard({
     style: {
       background: 'rgba(200,100,0,.30)',
       border: '1px solid rgba(220,140,0,.45)',
-      color: '#fbbf24',
+      color: '#ff9f0a',
       borderRadius: '999px',
       padding: 0,
       fontSize: 15,
@@ -2816,7 +2824,7 @@ const MatchCard = React.memo(function MatchCard({
     style: {
       background: 'rgba(180,0,0,.28)',
       border: '1px solid rgba(220,0,0,.40)',
-      color: '#f87171',
+      color: '#ff453a',
       borderRadius: '999px',
       padding: 0,
       fontSize: 15,
@@ -3231,7 +3239,7 @@ const MatchCard = React.memo(function MatchCard({
         width: '28px',
         textAlign: 'right',
         fontWeight: 800,
-        color: q === 'exact' ? '#4ade80' : q === 'partial' ? '#fbbf24' : '#f87171'
+        color: q === 'exact' ? '#30d158' : q === 'partial' ? '#ff9f0a' : '#ff453a'
       }
     }, pts > 0 ? `+${pts}` : '0')));
   })))))));
@@ -3529,11 +3537,11 @@ function SpecialsView({
         style: correct ? {
           background: 'rgba(0,160,60,.30)',
           borderColor: 'rgba(0,220,80,.45)',
-          color: '#4ade80'
+          color: '#30d158'
         } : wrong ? {
           background: 'rgba(180,0,0,.28)',
           borderColor: 'rgba(220,0,0,.40)',
-          color: '#f87171'
+          color: '#ff453a'
         } : {},
         className: `selection-tile${correct ? ' is-correct' : wrong ? ' is-wrong' : sel ? ' is-selected' : ''} px-2 py-2 rounded-lg text-xs font-semibold border transition-all disabled:opacity-60 inline-flex items-center gap-2 justify-start min-w-0`
       }, React.createElement(FlagImg, {
@@ -3542,7 +3550,15 @@ function SpecialsView({
         title: t.name
       }), React.createElement("span", {
         className: "specials-team-name min-w-0 truncate"
-      }, t.name));
+      }, t.name), correct && React.createElement(Icon, {
+        name: "check",
+        size: 13,
+        className: "shrink-0"
+      }), wrong && React.createElement(Icon, {
+        name: "x",
+        size: 13,
+        className: "shrink-0"
+      }));
     })));
   })), React.createElement("section", {
     className: "bg-white border border-stone-200 rounded-xl p-4"
@@ -3762,7 +3778,7 @@ function SpecialsAllView({
         key: i,
         className: "px-2 py-2 text-center"
       }, tid ? React.createElement("span", {
-        className: statusClass,
+        className: `${statusClass} inline-flex items-center justify-center gap-0.5`,
         style: {
           fontSize: 11,
           fontFamily: 'monospace',
@@ -3770,7 +3786,13 @@ function SpecialsAllView({
           verticalAlign: 'middle'
         },
         title: teamName(tid)
-      }, teamAbbr(tid)) : React.createElement("span", {
+      }, teamAbbr(tid), isOk && React.createElement(Icon, {
+        name: "check",
+        size: 9
+      }), isWrong && React.createElement(Icon, {
+        name: "x",
+        size: 9
+      })) : React.createElement("span", {
         className: "text-stone-300"
       }, "\u2014"));
     }));
@@ -3808,7 +3830,7 @@ function SpecialsAllView({
         key: key,
         className: "px-2 py-2 text-center"
       }, sp[key] ? React.createElement("span", {
-        className: statusClass,
+        className: `${statusClass} inline-flex items-center justify-center gap-0.5`,
         style: {
           fontSize: 11,
           fontFamily: 'monospace',
@@ -3816,7 +3838,13 @@ function SpecialsAllView({
           verticalAlign: 'middle'
         },
         title: teamName(sp[key])
-      }, teamAbbr(sp[key])) : React.createElement("span", {
+      }, teamAbbr(sp[key]), isOk && React.createElement(Icon, {
+        name: "check",
+        size: 9
+      }), isWrong && React.createElement(Icon, {
+        name: "x",
+        size: 9
+      })) : React.createElement("span", {
         className: "text-stone-300"
       }, "\u2014"));
     }));
@@ -3841,20 +3869,38 @@ function SpecialsAllView({
     const norm = s => (s || '').trim().toLowerCase();
     const okScorer = !!specialResults?.topScorer && norm(sp.topScorer) === norm(specialResults.topScorer);
     const okMvp = !!specialResults?.mvp && norm(sp.mvp) === norm(specialResults.mvp);
+    const scorerWrong = !!specialResults?.topScorer && !!sp.topScorer && !okScorer;
+    const mvpWrong = !!specialResults?.mvp && !!sp.mvp && !okMvp;
     return React.createElement("tr", {
       key: pl.id,
       className: "border-b border-stone-100 last:border-0"
     }, React.createElement("td", {
       className: "px-3 py-2 font-semibold text-stone-800 truncate max-w-[80px]"
     }, pl.name), React.createElement("td", {
-      className: `px-3 py-2 ${okScorer ? 'all-special-status-correct' : specialResults?.topScorer && sp.topScorer && !okScorer ? 'all-special-status-wrong' : ''}`
+      className: "px-3 py-2"
+    }, React.createElement("span", {
+      className: `inline-flex items-center gap-1 ${okScorer ? 'all-special-status-correct' : scorerWrong ? 'all-special-status-wrong' : ''}`
     }, sp.topScorer || React.createElement("span", {
       className: "text-stone-300"
-    }, "\u2014")), React.createElement("td", {
-      className: `px-3 py-2 ${okMvp ? 'all-special-status-correct' : specialResults?.mvp && sp.mvp && !okMvp ? 'all-special-status-wrong' : ''}`
+    }, "\u2014"), okScorer && React.createElement(Icon, {
+      name: "check",
+      size: 11
+    }), scorerWrong && React.createElement(Icon, {
+      name: "x",
+      size: 11
+    }))), React.createElement("td", {
+      className: "px-3 py-2"
+    }, React.createElement("span", {
+      className: `inline-flex items-center gap-1 ${okMvp ? 'all-special-status-correct' : mvpWrong ? 'all-special-status-wrong' : ''}`
     }, sp.mvp || React.createElement("span", {
       className: "text-stone-300"
-    }, "\u2014")));
+    }, "\u2014"), okMvp && React.createElement(Icon, {
+      name: "check",
+      size: 11
+    }), mvpWrong && React.createElement(Icon, {
+      name: "x",
+      size: 11
+    }))));
   }))))));
 }
 
@@ -3982,17 +4028,17 @@ function LeaderboardView({
     }, React.createElement("span", {
       className: "rank-stat rank-stat-exact",
       style: {
-        color: '#4ade80'
+        color: '#30d158'
       }
     }, "Dok\u0142adne wyniki: ", r.exact), React.createElement("span", {
       className: "rank-stat rank-stat-partial",
       style: {
-        color: '#fbbf24'
+        color: '#ff9f0a'
       }
     }, "Trafione rozstrzygni\u0119cia: ", r.partial), React.createElement("span", {
       className: "rank-stat rank-stat-miss",
       style: {
-        color: '#f87171'
+        color: '#ff453a'
       }
     }, "Niepoprawne typy: ", r.incorrect)))), React.createElement("div", {
       className: "leaderboard-total text-right shrink-0"
@@ -4068,7 +4114,7 @@ function LeaderboardView({
         borderRadius: 16,
         padding: '7px 3px',
         textAlign: 'center',
-        minHeight: done ? 88 : 70,
+        minHeight: done ? 94 : 76,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -4091,14 +4137,14 @@ function LeaderboardView({
     }, v), React.createElement("span", {
       className: "leaderboard-category-max",
       style: {
-        fontSize: 9.5,
+        fontSize: 10.5,
         fontWeight: 700,
         color: done ? 'rgba(255,255,255,.32)' : 'rgba(255,255,255,.68)'
       }
     }, " / ", max, star ? '*' : '')), React.createElement("div", {
       className: "leaderboard-category-title",
       style: {
-        fontSize: 8.2,
+        fontSize: 9.5,
         textTransform: 'uppercase',
         letterSpacing: '0.025em',
         color: done ? 'rgba(235,241,255,.34)' : accent,
@@ -4110,17 +4156,17 @@ function LeaderboardView({
     }, title), done && React.createElement("div", {
       className: "leaderboard-category-done",
       style: {
-        fontSize: 7.5,
+        fontSize: 8.5,
         fontWeight: 900,
         letterSpacing: '0.075em',
-        color: '#86efac',
+        color: '#30d158',
         marginTop: 6,
         lineHeight: 1
       }
     }, "ZAKO\u0143CZONO")))), React.createElement("div", {
       className: "leaderboard-footnote",
       style: {
-        fontSize: 8.5,
+        fontSize: 9.5,
         color: 'rgba(235,241,255,.48)',
         marginTop: 5,
         textAlign: 'right',
@@ -4351,7 +4397,7 @@ function CompareView({
         style: {
           fontWeight: 800,
           fontSize: 14,
-          color: pts === null ? 'transparent' : q === 'exact' ? '#4ade80' : q === 'partial' ? '#fbbf24' : '#f87171'
+          color: pts === null ? 'transparent' : q === 'exact' ? '#30d158' : q === 'partial' ? '#ff9f0a' : '#ff453a'
         }
       }, pts === null ? '0' : pts > 0 ? `+${pts}` : '0')));
     })));
@@ -4725,7 +4771,7 @@ function AdminTeamRow({
     setSaved(true);
   };
   return React.createElement("div", {
-    className: "bg-stone-50 rounded-xl p-2"
+    className: "admin-team-row bg-stone-50 rounded-xl p-2"
   }, React.createElement("div", {
     className: "flex items-center gap-1.5"
   }, React.createElement(FlagImg, {
@@ -5007,7 +5053,7 @@ function AdminScoringPanel({
   }))), saved && React.createElement("div", {
     className: "bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-center text-sm font-semibold app-note app-note--success app-note--compact app-note--center",
     style: {
-      color: '#7af0a1'
+      color: '#30d158'
     }
   }, "Punktacja zosta\u0142a zapisana."), React.createElement("div", {
     className: "grid grid-cols-2 gap-2"
@@ -5571,7 +5617,10 @@ function AdminPanel({
     onClick: confirmResetAll,
     disabled: !resetPassword || resetBusy,
     className: "flex-1"
-  }, resetBusy ? 'Resetowanie…' : 'TAK, RESETUJ'))))));
+  }, resetBusy && React.createElement("span", {
+    className: "btn-spinner",
+    "aria-hidden": "true"
+  }), resetBusy ? 'Resetowanie…' : 'TAK, RESETUJ'))))));
 }
 
 // ═══════════════════════════════════════════════════════════════

@@ -347,13 +347,13 @@
       --label-3: rgba(228,236,255,.46);
       --label-4: rgba(228,236,255,.24);
 
-      --accent: #70b8ff;
+      --accent: #0a84ff;
       --accent-strong: #0a84ff;
-      --accent-green: #49df7d;
-      --accent-red: #ff6961;
-      --accent-orange: #ffad33;
-      --accent-yellow: #ffd75e;
-      --accent-purple: #c67cff;
+      --accent-green: #30d158;
+      --accent-red: #ff453a;
+      --accent-orange: #ff9f0a;
+      --accent-yellow: #ffd60a;
+      --accent-purple: #bf5af2;
       --gold: #ffd75e;
 
       /* --shadow-sm/md/lg/glow: nadpisane przez flat-mode !important (4705+).
@@ -739,7 +739,7 @@
     [class*="text-blue-"] { color: #9dd2ff !important; }
     .text-\[\#006940\],
     .text-\[\#005a30\],
-    .text-\[\#6ee7b7\] { color: #7af0a1 !important; }
+    .text-\[\#6ee7b7\] { color: #30d158 !important; }
 
     /* Modal glass sheet */
     .fixed.inset-0.z-50 > .absolute.inset-0 {
@@ -950,7 +950,7 @@
     .selection-tile.is-correct:hover {
       background: rgba(0,160,60,.30) !important;
       border-color: rgba(0,220,80,.45) !important;
-      color: #4ade80 !important;
+      color: #30d158 !important;
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,.14),
         0 7px 18px rgba(0,160,60,.10);
@@ -960,7 +960,7 @@
     .selection-tile.is-wrong:hover {
       background: rgba(180,0,0,.28) !important;
       border-color: rgba(220,0,0,.40) !important;
-      color: #f87171 !important;
+      color: #ff453a !important;
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,.10),
         0 7px 18px rgba(180,0,0,.08);
@@ -1669,13 +1669,13 @@
     span.all-special-status-correct,
     td.all-special-status-correct,
     .all-special-status-correct {
-      color: #4ade80 !important;
+      color: #30d158 !important;
       font-weight: 800 !important;
     }
     span.all-special-status-wrong,
     td.all-special-status-wrong,
     .all-special-status-wrong {
-      color: #f87171 !important;
+      color: #ff453a !important;
       font-weight: 800 !important;
     }
     span.all-special-status-neutral,
@@ -2148,6 +2148,28 @@
       border-color: transparent !important;
     }
 
+    /* Spinners need a visible ring to show motion — restore their border
+       despite the blanket "no element borders" rule above. Without this,
+       the loading-screen spinner rotates with nothing visible to see. */
+    html body .spinner:not(#__border_restore__) {
+      border: 2.5px solid rgba(255,255,255,.10) !important;
+      border-top-color: var(--accent-green) !important;
+      border-right-color: var(--accent) !important;
+      border-style: solid !important;
+      border-width: 2.5px !important;
+    }
+    html body .btn-spinner:not(#__border_restore__) {
+      display: inline-block !important;
+      width: 14px !important;
+      height: 14px !important;
+      border-radius: 50% !important;
+      border: 2px solid rgba(255,255,255,.35) !important;
+      border-top-color: #fff !important;
+      border-style: solid !important;
+      border-width: 2px !important;
+      animation: spin .7s linear infinite !important;
+    }
+
     /* Tournament bracket finishing pass: visible 1 px outlines and connectors
        that stop before translucent match cards. */
     .bracket-page .bracket-intro,
@@ -2355,13 +2377,13 @@
 
     /* Ranking status colours match point colours used in the other tabs. */
     html:not([data-theme="light"]) .rank-stat-exact {
-      color: #4ade80 !important;
+      color: #30d158 !important;
     }
     html:not([data-theme="light"]) .rank-stat-partial {
-      color: #fbbf24 !important;
+      color: #ff9f0a !important;
     }
     html:not([data-theme="light"]) .rank-stat-miss {
-      color: #f87171 !important;
+      color: #ff453a !important;
     }
 
     /* Light mode: leaderboard place badges in the same blue glass style as other primary accents */
@@ -2483,11 +2505,11 @@
       opacity: .8;
     }
     .prediction-row-exact .prediction-points,
-    .prediction-row-exact .compare-player-points { color: #4ade80 !important; }
+    .prediction-row-exact .compare-player-points { color: #30d158 !important; }
     .prediction-row-partial .prediction-points,
-    .prediction-row-partial .compare-player-points { color: #fbbf24 !important; }
+    .prediction-row-partial .compare-player-points { color: #ff9f0a !important; }
     .prediction-row-miss .prediction-points,
-    .prediction-row-miss .compare-player-points { color: #f87171 !important; }
+    .prediction-row-miss .compare-player-points { color: #ff453a !important; }
     .prediction-row-empty .prediction-empty-label,
     .prediction-row-empty .compare-player-points,
     .prediction-row-pending .prediction-points,
@@ -3413,7 +3435,7 @@
       --note-right-glow: rgba(70,125,255,.14);
     }
     .app-note--danger {
-      --note-color: #3a0604;
+      --note-color: #ffd9d6;
       --note-border: rgba(180,50,40,.50);
       --note-left-glow: rgba(255,180,160,.16);
       --note-right-glow: rgba(255,80,60,.14);
@@ -4700,12 +4722,12 @@ html body .compare-view .prediction-row-pending {
 /* Kolor skrótu drużyny wskazanej w karnych. */
 html body .prediction-penalty.penalty-hit,
 html body .compare-view .compare-player-penalty.penalty-hit {
-  color: #4ade80 !important;
+  color: #30d158 !important;
 }
 
 html body .prediction-penalty.penalty-miss,
 html body .compare-view .compare-player-penalty.penalty-miss {
-  color: #f87171 !important;
+  color: #ff453a !important;
 }
 
 /* Stabilizacja hover: bez przypadkowych podswietlen poza elementem. */
@@ -5045,8 +5067,8 @@ html body .login-modal-sheet:not(.login-modal-compact-sheet) .login-modal-conten
 
 /* Przycisk zamknięcia (X) modali — okrągłe szklane tło */
 .modal-close-btn {
-  width: 34px;
-  height: 34px;
+  width: 44px;
+  height: 44px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -6376,15 +6398,15 @@ html body .match-final-user-points {
 }
 
 html body .match-final-user-points.is-exact {
-  color: #4ade80 !important;
+  color: #30d158 !important;
 }
 
 html body .match-final-user-points.is-partial {
-  color: #fbbf24 !important;
+  color: #ff9f0a !important;
 }
 
 html body .match-final-user-points.is-miss {
-  color: #f87171 !important;
+  color: #ff453a !important;
 }
 
 @media (max-width: 520px) {
@@ -7816,7 +7838,7 @@ html body .admin-login-input.has-error {
 
 html body .admin-login-error {
   margin: -2px 0 0 !important;
-  color: #ff9a93 !important;
+  color: #ff453a !important;
   font-size: 12px !important;
   font-weight: 800 !important;
   text-align: center !important;
@@ -7864,5 +7886,79 @@ html body .admin-login-submit:active {
   html body .admin-login-subtitle {
     font-size: 11.5px !important;
   }
+}
+
+/* ===== N. concentric-geometry-pass ===== */
+/*
+   Apple's Liquid Glass guidance calls for concentric corner radii: a
+   surface nested inside a card should use a visibly smaller radius than
+   its container, not the same one, so corners "nest" together instead of
+   duplicating the same curve. The unified 30px geometry above deliberately
+   keeps every pill-shaped control (buttons, inputs, chips, selection
+   tiles, nav) on one shared radius so they always render as full
+   capsules — that stays untouched here, since `.rounded-lg`/`.rounded-xl`
+   are reused interchangeably on those pill controls throughout the app
+   and can't be safely repurposed as a generic card-size scale without
+   breaking their capsule shape. Instead this pass fixes the few concrete
+   spots that genuinely need it, using the same named-selector technique
+   already proven on the tournament bracket page.
+*/
+
+/* rounded-full must always be a true capsule, not just "coincidentally
+   exceeds half the element's height at 30px" — matches its Tailwind
+   meaning and stays correct even for taller full-round elements. */
+html body .rounded-full {
+  border-radius: 999px !important;
+}
+
+/* The app icon and loading mark are meant to read as a rounded-square
+   app-icon shape, per Apple's own app icon guidance — not a circle. */
+html body .app-header .logo-icon,
+html body .loading-icon {
+  border-radius: 11px !important;
+}
+
+/* Admin "Drużyny" tab: each team row nests inside the Grupa X card.
+   Give it a visibly smaller radius than its parent so the two curves
+   read as concentric instead of identical. */
+html body .admin-team-row.rounded-xl {
+  border-radius: 15px !important;
+}
+
+/* ===== content-layer-no-glass ===== */
+/*
+   Apple's Materials guidance: Liquid Glass (the blur/frosted look) is a
+   distinct functional layer for navigation — header, bottom nav, sticky
+   filter/tab bars, and modal sheets/scrims that float above content.
+   Using it INSIDE the content layer creates "unnecessary complexity and
+   a confusing visual hierarchy". These selectors are all content-layer
+   cards, not navigation, so their blur is removed; the tinted gradient
+   background stays, matching a flat "standard material" look instead.
+   Navigation stays untouched: .app-header, .bottom-nav, .login-btn,
+   .players-btn, .admin-tabs-shell, .admin-phase-filters, .filters-sticky,
+   .toast-bar, and modal scrims/sheets (.fixed.inset-0.z-50 *,
+   .profile-modal-overlay, .admin-gate-backdrop) are left as-is.
+*/
+html:not([data-theme="light"]) body .match-card,
+html:not([data-theme="light"]) body .glass,
+html:not([data-theme="light"]) body .glass-strong,
+html:not([data-theme="light"]) body section.bg-white,
+html:not([data-theme="light"]) body .install-banner,
+html:not([data-theme="light"]) body .leaderboard-header,
+html:not([data-theme="light"]) body .leaderboard-card,
+html:not([data-theme="light"]) body .compare-match-card,
+html:not([data-theme="light"]) body .table-card,
+html:not([data-theme="light"]) body .admin-match-card,
+html:not([data-theme="light"]) body .specials-view > section,
+html:not([data-theme="light"]) body .allspecials-view > .table-card,
+html:not([data-theme="light"]) body .bracket-page .bracket-intro,
+html:not([data-theme="light"]) body .bracket-page .bracket-section,
+html:not([data-theme="light"]) body .bracket-page .bracket-match,
+html:not([data-theme="light"]) body .bracket-page .bracket-final-card,
+html:not([data-theme="light"]) body .bracket-page .bracket-champion,
+html:not([data-theme="light"]) body .penalty-choice-panel,
+html:not([data-theme="light"]) body .match-final-result-card {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
