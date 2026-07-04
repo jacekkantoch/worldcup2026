@@ -2399,6 +2399,15 @@ const FLAG_ABBR = {
   'gh': 'GHA',
   'pa': 'PAN'
 };
+function getTeamAbbr(team) {
+  if (!team) return '???';
+  const flag = (team.flag || '').toLowerCase();
+  if (flag && FLAG_ABBR[flag]) return FLAG_ABBR[flag];
+  const name = team.name || '';
+  const nameAbbr = NAME_TO_ABBR[name.toLowerCase()];
+  if (nameAbbr) return nameAbbr;
+  return name ? name.slice(0, 3).toUpperCase() : '???';
+}
 function normalizeFlagValue(value) {
   const raw = String(value || '').trim();
   if (!raw) return {
@@ -2448,8 +2457,8 @@ function normalizeFlagValue(value) {
   };
 }
 const FLAG_COLOR_CACHE = {};
-function getFlagDominantColor(code) {
-  if (!code) return Promise.resolve(null);
+function getFlagColors(code) {
+  if (!code) return Promise.resolve({ colors: [], hasWhite: false });
   if (FLAG_COLOR_CACHE[code]) return FLAG_COLOR_CACHE[code];
   const promise = new Promise(resolve => {
     const img = new Image();
@@ -2464,13 +2473,17 @@ function getFlagDominantColor(code) {
         ctx.drawImage(img, 0, 0, size, size);
         const { data } = ctx.getImageData(0, 0, size, size);
         const buckets = {};
+        let opaqueCount = 0;
+        let whiteCount = 0;
         for (let i = 0; i < data.length; i += 4) {
           const r = data[i], g = data[i + 1], b = data[i + 2], a = data[i + 3];
           if (a < 200) continue;
+          opaqueCount++;
           const brightness = (r + g + b) / 3;
           const max = Math.max(r, g, b), min = Math.min(r, g, b);
           const saturation = max === 0 ? 0 : (max - min) / max;
-          if (brightness > 235 || brightness < 20 || saturation < 0.15) continue;
+          if (brightness > 235) { whiteCount++; continue; }
+          if (brightness < 20 || saturation < 0.15) continue;
           const key = `${r >> 5}-${g >> 5}-${b >> 5}`;
           if (!buckets[key]) buckets[key] = { count: 0, r: 0, g: 0, b: 0 };
           buckets[key].count++;
@@ -2478,36 +2491,88 @@ function getFlagDominantColor(code) {
           buckets[key].g += g;
           buckets[key].b += b;
         }
-        let best = null;
-        Object.values(buckets).forEach(bucket => {
-          if (!best || bucket.count > best.count) best = bucket;
-        });
-        if (!best) { resolve(null); return; }
-        resolve(`${Math.round(best.r / best.count)}, ${Math.round(best.g / best.count)}, ${Math.round(best.b / best.count)}`);
+        const sorted = Object.values(buckets)
+          .sort((a, b) => b.count - a.count)
+          .map(bucket => `${Math.round(bucket.r / bucket.count)}, ${Math.round(bucket.g / bucket.count)}, ${Math.round(bucket.b / bucket.count)}`);
+        const hasWhite = opaqueCount > 0 && whiteCount / opaqueCount >= 0.12;
+        resolve({ colors: sorted, hasWhite });
       } catch (e) {
-        resolve(null);
+        resolve({ colors: [], hasWhite: false });
       }
     };
-    img.onerror = () => resolve(null);
+    img.onerror = () => resolve({ colors: [], hasWhite: false });
     img.src = `https://cdn.jsdelivr.net/gh/HatScripts/circle-flags@gh-pages/flags/${code}.svg`;
   });
   FLAG_COLOR_CACHE[code] = promise;
   return promise;
 }
+function rgbToHsl(rgbStr) {
+  const [r, g, b] = rgbStr.split(',').map(v => Number(v) / 255);
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  let h, s;
+  const l = (max + min) / 2;
+  if (max === min) { h = s = 0; } else {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
+    else if (max === g) h = (b - r) / d + 2;
+    else h = (r - g) / d + 4;
+    h /= 6;
+  }
+  return [h * 360, s, l];
+}
+function hslToRgbStr(h, s, l) {
+  const hue2rgb = (p, q, t) => {
+    if (t < 0) t += 1;
+    if (t > 1) t -= 1;
+    if (t < 1 / 6) return p + (q - p) * 6 * t;
+    if (t < 1 / 2) return q;
+    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+    return p;
+  };
+  const hn = ((h % 360) + 360) % 360 / 360;
+  let r, g, b;
+  if (s === 0) { r = g = b = l; } else {
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+    r = hue2rgb(p, q, hn + 1 / 3);
+    g = hue2rgb(p, q, hn);
+    b = hue2rgb(p, q, hn - 1 / 3);
+  }
+  return `${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(b * 255)}`;
+}
+function hueDistance(h1, h2) {
+  const d = Math.abs(h1 - h2) % 360;
+  return d > 180 ? 360 - d : d;
+}
+const FLAG_HUE_MIN_DISTANCE = 35;
+const FLAG_COLORS_EMPTY = { colors: [], hasWhite: false };
 function useFlagGradient(homeFlag, awayFlag) {
-  const [colors, setColors] = React.useState({ home: null, away: null });
+  const [colors, setColors] = React.useState({ home: FLAG_COLORS_EMPTY, away: FLAG_COLORS_EMPTY });
   const homeCode = normalizeFlagValue(homeFlag).code;
   const awayCode = normalizeFlagValue(awayFlag).code;
   React.useEffect(() => {
     let alive = true;
-    Promise.all([getFlagDominantColor(homeCode), getFlagDominantColor(awayCode)]).then(([home, away]) => {
+    Promise.all([getFlagColors(homeCode), getFlagColors(awayCode)]).then(([home, away]) => {
       if (alive) setColors({ home, away });
     });
     return () => { alive = false; };
   }, [homeCode, awayCode]);
-  if (!colors.home && !colors.away) return null;
-  const homeRgb = colors.home || colors.away;
-  const awayRgb = colors.away || colors.home;
+  const homeRgb = colors.home.colors[0] || colors.away.colors[0];
+  if (!homeRgb) return null;
+  const homeHue = rgbToHsl(homeRgb)[0];
+  let awayRgb = colors.away.colors[0] || colors.home.colors[0];
+  if (awayRgb && hueDistance(homeHue, rgbToHsl(awayRgb)[0]) < FLAG_HUE_MIN_DISTANCE) {
+    const distinct = colors.away.colors.find(c => hueDistance(homeHue, rgbToHsl(c)[0]) >= FLAG_HUE_MIN_DISTANCE);
+    if (distinct) {
+      awayRgb = distinct;
+    } else if (colors.away.hasWhite) {
+      awayRgb = '255, 255, 255';
+    } else {
+      const [, s, l] = rgbToHsl(awayRgb);
+      awayRgb = hslToRgbStr(homeHue + 130, Math.max(s, 0.45), Math.min(Math.max(l, 0.35), 0.6));
+    }
+  }
   return `linear-gradient(115deg, rgba(${homeRgb}, 0.24) 0%, rgba(${homeRgb}, 0.05) 32%, rgba(${awayRgb}, 0.05) 68%, rgba(${awayRgb}, 0.24) 100%)`;
 }
 function FlagImg({
@@ -3207,7 +3272,7 @@ const MatchCard = React.memo(function MatchCard({
     className: "match-final-user-pick"
   }, React.createElement("span", null, "Twój typ"), React.createElement("strong", null, prediction.home, ":", prediction.away), prediction.penWinner && React.createElement("span", {
     className: `match-penalty-badge${result.pensHappened && prediction.penWinner === result.advancingTeam ? ' penalty-hit' : result ? ' penalty-miss' : ''}`
-  }, FLAG_ABBR[((prediction.penWinner === 'home' ? home : away).flag || '').toLowerCase()] || (prediction.penWinner === 'home' ? home : away).name.slice(0, 3).toUpperCase()), React.createElement("b", {
+  }, getTeamAbbr(prediction.penWinner === 'home' ? home : away)), React.createElement("b", {
     className: `match-final-user-points ${quality === 'exact' ? 'is-exact' : quality === 'partial' ? 'is-partial' : 'is-miss'}`
   }, myPoints > 0 ? `+${myPoints} PKT` : '0 PKT'))), phaseLocked && !result && React.createElement("div", {
     className: "text-center text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg p-3 flex items-center justify-center gap-2 app-note app-note--danger app-note--compact app-note--center"
@@ -3333,7 +3398,7 @@ const MatchCard = React.memo(function MatchCard({
         fontSize: 11,
         whiteSpace: 'nowrap'
       }
-    }, pp.penWinner ? FLAG_ABBR[((pp.penWinner === 'home' ? home : away)?.flag || '').toLowerCase()] || ((pp.penWinner === 'home' ? home : away)?.name || '').slice(0, 3).toUpperCase() : ''), React.createElement("span", {
+    }, pp.penWinner ? getTeamAbbr(pp.penWinner === 'home' ? home : away) : ''), React.createElement("span", {
       className: "prediction-points",
       style: {
         width: '28px',
@@ -4503,7 +4568,7 @@ function CompareView({
         style: {
           opacity: pp.penWinner?.length ? 0.8 : 0
         }
-      }, pp.penWinner ? FLAG_ABBR[(penaltyTeam?.flag || '').toLowerCase()] || (penaltyTeam?.name || '').slice(0, 3).toUpperCase() : ''), React.createElement("span", {
+      }, pp.penWinner ? getTeamAbbr(penaltyTeam) : ''), React.createElement("span", {
         className: "compare-player-points",
         style: {
           fontWeight: 800,

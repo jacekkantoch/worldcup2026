@@ -165,13 +165,6 @@
     .install-banner button:active { transform: scale(.96); opacity: .85; }
 
     #loading { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; min-height: 100dvh; width: 100%; flex-direction: column; gap: 14px; background: var(--bg-0); overflow: hidden; }
-    .loading-orb {
-      position: absolute; top: 50%; left: 50%; width: 340px; height: 340px;
-      transform: translate(-50%,-50%); border-radius: 50%; pointer-events: none; z-index: 0;
-      background: radial-gradient(circle, rgba(10,132,255,.20) 0%, transparent 68%);
-      animation: orbBreathe 4.8s ease-in-out infinite;
-    }
-    @keyframes orbBreathe { 0%,100%{ transform: translate(-50%,-50%) scale(0.92); opacity: .70; } 50%{ transform: translate(-50%,-50%) scale(1.10); opacity: 1; } }
     .loading-icon {
       position: relative; z-index: 1;
       width: 76px; height: 76px; background: linear-gradient(145deg, #fff 0%, #e4edff 100%);
@@ -799,14 +792,7 @@
     }
 
     #loading {
-      background:
-        radial-gradient(circle at 50% 14%, rgba(10,132,255,.25), transparent 38%),
-        radial-gradient(circle at 15% 85%, rgba(48,209,88,.11), transparent 35%),
-        radial-gradient(circle at 85% 82%, rgba(191,90,242,.12), transparent 35%),
-        #05070d;
-    }
-    .loading-orb {
-      background: radial-gradient(circle, rgba(93,188,255,.30) 0%, rgba(157,76,255,.10) 55%, transparent 72%);
+      background: #05070d;
     }
     .loading-icon {
       background:
