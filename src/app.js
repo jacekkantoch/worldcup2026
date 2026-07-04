@@ -2457,51 +2457,76 @@ function normalizeFlagValue(value) {
   };
 }
 const FLAG_COLOR_CACHE = {};
+// Limit współbieżnych pobrań flag do analizy koloru — bez tego montowanie
+// wielu kart naraz (zmiana zakładki, obrót telefonu, filtr "Wszystkie")
+// odpalało dziesiątki równoległych żądań do CDN i na słabszym mobilnym
+// połączeniu potrafiło skończyć się błędem "za dużo zapytań".
+const FLAG_FETCH_QUEUE = [];
+let flagFetchActive = 0;
+const FLAG_FETCH_CONCURRENCY = 4;
+function runFlagFetchQueue() {
+  while (flagFetchActive < FLAG_FETCH_CONCURRENCY && FLAG_FETCH_QUEUE.length) {
+    const job = FLAG_FETCH_QUEUE.shift();
+    flagFetchActive++;
+    job().finally(() => {
+      flagFetchActive--;
+      runFlagFetchQueue();
+    });
+  }
+}
 function getFlagColors(code) {
   if (!code) return Promise.resolve({ colors: [], hasWhite: false });
   if (FLAG_COLOR_CACHE[code]) return FLAG_COLOR_CACHE[code];
   const promise = new Promise(resolve => {
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.onload = () => {
-      try {
-        const size = 24;
-        const canvas = document.createElement('canvas');
-        canvas.width = size;
-        canvas.height = size;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, size, size);
-        const { data } = ctx.getImageData(0, 0, size, size);
-        const buckets = {};
-        let opaqueCount = 0;
-        let whiteCount = 0;
-        for (let i = 0; i < data.length; i += 4) {
-          const r = data[i], g = data[i + 1], b = data[i + 2], a = data[i + 3];
-          if (a < 200) continue;
-          opaqueCount++;
-          const brightness = (r + g + b) / 3;
-          const max = Math.max(r, g, b), min = Math.min(r, g, b);
-          const saturation = max === 0 ? 0 : (max - min) / max;
-          if (brightness > 235) { whiteCount++; continue; }
-          if (brightness < 20 || saturation < 0.15) continue;
-          const key = `${r >> 5}-${g >> 5}-${b >> 5}`;
-          if (!buckets[key]) buckets[key] = { count: 0, r: 0, g: 0, b: 0 };
-          buckets[key].count++;
-          buckets[key].r += r;
-          buckets[key].g += g;
-          buckets[key].b += b;
+    FLAG_FETCH_QUEUE.push(() => new Promise(done => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.referrerPolicy = 'no-referrer';
+      img.onload = () => {
+        try {
+          const size = 24;
+          const canvas = document.createElement('canvas');
+          canvas.width = size;
+          canvas.height = size;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, size, size);
+          const { data } = ctx.getImageData(0, 0, size, size);
+          const buckets = {};
+          let opaqueCount = 0;
+          let whiteCount = 0;
+          for (let i = 0; i < data.length; i += 4) {
+            const r = data[i], g = data[i + 1], b = data[i + 2], a = data[i + 3];
+            if (a < 200) continue;
+            opaqueCount++;
+            const brightness = (r + g + b) / 3;
+            const max = Math.max(r, g, b), min = Math.min(r, g, b);
+            const saturation = max === 0 ? 0 : (max - min) / max;
+            if (brightness > 235) { whiteCount++; continue; }
+            if (brightness < 20 || saturation < 0.15) continue;
+            const key = `${r >> 5}-${g >> 5}-${b >> 5}`;
+            if (!buckets[key]) buckets[key] = { count: 0, r: 0, g: 0, b: 0 };
+            buckets[key].count++;
+            buckets[key].r += r;
+            buckets[key].g += g;
+            buckets[key].b += b;
+          }
+          const sorted = Object.values(buckets)
+            .sort((a, b) => b.count - a.count)
+            .map(bucket => `${Math.round(bucket.r / bucket.count)}, ${Math.round(bucket.g / bucket.count)}, ${Math.round(bucket.b / bucket.count)}`);
+          const hasWhite = opaqueCount > 0 && whiteCount / opaqueCount >= 0.12;
+          resolve({ colors: sorted, hasWhite });
+        } catch (e) {
+          resolve({ colors: [], hasWhite: false });
         }
-        const sorted = Object.values(buckets)
-          .sort((a, b) => b.count - a.count)
-          .map(bucket => `${Math.round(bucket.r / bucket.count)}, ${Math.round(bucket.g / bucket.count)}, ${Math.round(bucket.b / bucket.count)}`);
-        const hasWhite = opaqueCount > 0 && whiteCount / opaqueCount >= 0.12;
-        resolve({ colors: sorted, hasWhite });
-      } catch (e) {
+        done();
+      };
+      img.onerror = () => {
         resolve({ colors: [], hasWhite: false });
-      }
-    };
-    img.onerror = () => resolve({ colors: [], hasWhite: false });
-    img.src = `https://cdn.jsdelivr.net/gh/HatScripts/circle-flags@gh-pages/flags/${code}.svg`;
+        done();
+      };
+      img.src = `https://cdn.jsdelivr.net/gh/HatScripts/circle-flags@gh-pages/flags/${code}.svg`;
+    }));
+    runFlagFetchQueue();
   });
   FLAG_COLOR_CACHE[code] = promise;
   return promise;
@@ -2623,7 +2648,8 @@ function FlagImg({
     alt: fallback,
     loading: "lazy",
     decoding: "async",
-    referrerPolicy: "no-referrer"
+    referrerPolicy: "no-referrer",
+    crossOrigin: "anonymous"
   }) : React.createElement("span", {
     style: {
       fontSize: Math.round(size * (fallbackIsEmoji ? 0.56 : 0.27)),
@@ -3037,9 +3063,11 @@ const MatchCard = React.memo(function MatchCard({
     style: {
       padding: '8px 18px',
       borderRadius: 'var(--radius-md)',
-      background: 'var(--bg-3)',
-      border: '1px solid var(--border-2)',
-      boxShadow: 'var(--hl), 0 2px 8px rgba(0,0,0,.50)',
+      background: 'rgba(255, 255, 255, 0.10)',
+      border: '1px solid rgba(255,255,255,.22)',
+      boxShadow: 'var(--hl), 0 2px 8px rgba(0,0,0,.35)',
+      backdropFilter: 'blur(6px)',
+      WebkitBackdropFilter: 'blur(6px)',
       fontFamily: 'Bebas Neue,sans-serif',
       fontSize: 26,
       color: 'white',
@@ -3459,7 +3487,7 @@ function MatchesView({
       if (statusFilter === 'pending' && results[m.id]) return false;
       if (statusFilter === 'done' && !results[m.id]) return false;
       return true;
-    }).sort((a, b) => (PHASE_RANK[a.phase] ?? 99) - (PHASE_RANK[b.phase] ?? 99) || a.num - b.num);
+    }).sort((a, b) => (PHASE_RANK[a.phase] ?? 99) - (PHASE_RANK[b.phase] ?? 99) || new Date(a.date) - new Date(b.date) || a.num - b.num);
   }, [matches, phaseFilter, groupFilter, statusFilter, results]);
   const comparisonVisible = !!(phaseLocks && phaseLocks.compareVisible);
   // Mapa matchId -> { playerId: typ } liczona raz na zmianę `predictions`.
@@ -4167,7 +4195,9 @@ function LeaderboardView({
     const positionLabel = `#${idx + 1}`;
     return React.createElement("div", {
       key: r.player.id,
-      className: `leaderboard-card deferred-card match-card-enter bg-white border rounded-xl overflow-hidden ${idx === 0 && r.total > 0 ? 'border-amber-400 shadow-md' : 'border-stone-200'}`
+      className: "match-card-enter"
+    }, React.createElement("div", {
+      className: `leaderboard-card deferred-card bg-white border rounded-xl overflow-hidden ${idx === 0 && r.total > 0 ? 'border-amber-400 shadow-md' : 'border-stone-200'}`
     }, React.createElement("div", {
       className: "leaderboard-card-body p-3 sm:p-4"
     }, React.createElement("div", {
@@ -4348,7 +4378,7 @@ function LeaderboardView({
         textAlign: 'right',
         lineHeight: 1.2
       }
-    }, "* bez bonus\xF3w za rzuty karne")))));
+    }, "* bez bonus\xF3w za rzuty karne"))))));
   }));
 }
 
@@ -4392,7 +4422,7 @@ function CompareView({
       if (statusFilter === 'pending' && results[m.id]) return false;
       if (statusFilter === 'done' && !results[m.id]) return false;
       return true;
-    }).sort((a, b) => (PHASE_RANK[a.phase] ?? 99) - (PHASE_RANK[b.phase] ?? 99) || a.num - b.num);
+    }).sort((a, b) => (PHASE_RANK[a.phase] ?? 99) - (PHASE_RANK[b.phase] ?? 99) || new Date(a.date) - new Date(b.date) || a.num - b.num);
   }, [matches, phaseFilter, groupFilter, statusFilter, results]);
   useEffect(() => {
     setExpandedMatches(new Set());
@@ -5371,7 +5401,7 @@ function AdminPanel({
         return hn.includes(q) || an.includes(q) || m.id.toLowerCase().includes(q);
       }
       return true;
-    }).sort((a, b) => (PHASE_RANK[a.phase] ?? 99) - (PHASE_RANK[b.phase] ?? 99) || a.num - b.num);
+    }).sort((a, b) => (PHASE_RANK[a.phase] ?? 99) - (PHASE_RANK[b.phase] ?? 99) || new Date(a.date) - new Date(b.date) || a.num - b.num);
   }, [matches, teams, mPhase, matchSearch]);
   const handleExport = () => {
     const data = {
@@ -6163,8 +6193,8 @@ function PlayersManager({
 
 // Dokładne przejścia zwycięzców zgodne z kolejnością gałęzi TVP.
 const BRACKET_FEEDS = {
-  M89: [['M75', 'winner'], ['M78', 'winner']],
-  M90: [['M73', 'winner'], ['M76', 'winner']],
+  M89: [['M73', 'winner'], ['M76', 'winner']],
+  M90: [['M75', 'winner'], ['M78', 'winner']],
   M91: [['M74', 'winner'], ['M77', 'winner']],
   M92: [['M79', 'winner'], ['M80', 'winner']],
   M93: [['M84', 'winner'], ['M83', 'winner']],
@@ -6215,8 +6245,8 @@ const BRACKET_SOURCES = {
   M86: ['2. miejsce grupy D', '2. miejsce grupy G'],
   M87: ['1. miejsce grupy J', '2. miejsce grupy H'],
   M88: ['1. miejsce grupy K', '3. miejsce: D/E/I/J/L'],
-  M89: ['Zwycięzca M75', 'Zwycięzca M78'],
-  M90: ['Zwycięzca M73', 'Zwycięzca M76'],
+  M89: ['Zwycięzca M73', 'Zwycięzca M76'],
+  M90: ['Zwycięzca M75', 'Zwycięzca M78'],
   M91: ['Zwycięzca M74', 'Zwycięzca M77'],
   M92: ['Zwycięzca M79', 'Zwycięzca M80'],
   M93: ['Zwycięzca M84', 'Zwycięzca M83'],

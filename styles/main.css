@@ -397,7 +397,7 @@
       position: relative;
       isolation: isolate;
       padding-bottom: calc(106px + var(--safe-bottom));
-      background: linear-gradient(180deg, #07101d 0%, #070a12 48%, #04060b 100%);
+      background: #000000;
       background-attachment: scroll;
     }
 
@@ -1375,7 +1375,7 @@
 
     .nav-droplet,
     .nav-droplet.dragging {
-      background: linear-gradient(145deg, rgba(62,174,255,.55), rgba(36,101,242,.42)) !important;
+      background: linear-gradient(145deg, rgba(93,184,255,.55), rgba(52,106,240,.42) 58%, rgba(114,83,241,.34)) !important;
       border: 0 !important;
       outline: 0 !important;
       box-shadow: none !important;
@@ -4374,7 +4374,7 @@ html body .admin-gate-card {
 html body .bottom-nav {
       background:
         linear-gradient(160deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%),
-        rgba(14,20,35,0.20) !important;
+        rgba(20,20,22,0.35) !important;
       backdrop-filter: blur(12px) saturate(150%) !important;
       -webkit-backdrop-filter: blur(12px) saturate(150%) !important;
       border: 1px solid rgba(255,255,255,.10) !important;
@@ -4890,9 +4890,9 @@ html:not([data-theme="light"]) body .phase-filter-panel,
 html:not([data-theme="light"]) body .filters-sticky,
 html:not([data-theme="light"]) body .admin-phase-filters {
   background:
-    radial-gradient(circle at 18% -20%, rgba(255,255,255,.12), transparent 42%),
-    linear-gradient(145deg, rgba(29, 39, 58, .94), rgba(13, 19, 32, .90)) !important;
-  background-color: rgba(15, 23, 38, .94) !important;
+    radial-gradient(circle at 18% -20%, rgba(255,255,255,.10), transparent 42%),
+    linear-gradient(145deg, rgba(44, 44, 46, .94), rgba(20, 20, 22, .92)) !important;
+  background-color: rgba(24, 24, 26, .94) !important;
 }
 
 /* Karty meczów w zakładce Mecze — ten sam token tła co karty w Rankingu,
@@ -4989,9 +4989,9 @@ html:not([data-theme="light"]) body .admin-phase-filters {
 html:not([data-theme="light"]) body .compare-view .phase-filter-panel.filters-sticky {
   opacity: 1 !important;
   background:
-    radial-gradient(circle at 18% -20%, rgba(255,255,255,.12), transparent 42%),
-    linear-gradient(145deg, rgba(29, 39, 58, .94), rgba(13, 19, 32, .90)) !important;
-  background-color: rgba(15, 23, 38, .94) !important;
+    radial-gradient(circle at 18% -20%, rgba(255,255,255,.10), transparent 42%),
+    linear-gradient(145deg, rgba(44, 44, 46, .94), rgba(20, 20, 22, .92)) !important;
+  background-color: rgba(24, 24, 26, .94) !important;
   border-color: transparent !important;
 }
 
@@ -6568,8 +6568,16 @@ html body .compare-match-toggle {
 }
 
 html body .compare-match-toggle:hover {
-  background: rgba(111,196,255,.075) !important;
-  border-color: rgba(111,196,255,.16) !important;
+  background: rgba(255,255,255,.04) !important;
+  border-color: rgba(255,255,255,.075) !important;
+}
+
+/* Podświetlenie kliknięcia — hover celowo bez zmian (spójnie z Rankingiem),
+   ale samo kliknięcie ma dawać wyraźny, neutralny feedback. */
+html body .compare-match-toggle:active {
+  background: rgba(255,255,255,.14) !important;
+  border-color: rgba(255,255,255,.32) !important;
+  transform: scale(.985) !important;
 }
 
 html body .compare-match-teams {
@@ -6946,8 +6954,17 @@ html body .leaderboard-view .leaderboard-phase-summary {
 }
 
 html body .leaderboard-view .leaderboard-phase-summary:hover {
-  background: rgba(111,196,255,.075) !important;
-  border-color: rgba(111,196,255,.16) !important;
+  background: rgba(255,255,255,.04) !important;
+  border-color: rgba(255,255,255,.075) !important;
+}
+
+/* Podświetlenie kliknięcia (rozwijanie "Rozkład punktów") — hover celowo
+   zostaje bez zmian, ale samo kliknięcie/przytrzymanie ma dawać wyraźny
+   feedback, inaczej rozwijanie wygląda jak martwy element. */
+html body .leaderboard-view .leaderboard-phase-summary:active {
+  background: rgba(255,255,255,.14) !important;
+  border-color: rgba(255,255,255,.32) !important;
+  transform: scale(.985) !important;
 }
 
 html body .leaderboard-view .leaderboard-phase-summary-label {
@@ -7391,9 +7408,9 @@ html:not([data-theme="light"]) body .admin-phase-filters {
   isolation: isolate !important;
   overflow: hidden !important;
   background:
-    radial-gradient(circle at 18% -20%, rgba(255,255,255,.11), transparent 42%),
-    linear-gradient(145deg, rgba(31, 42, 64, .985), rgba(11, 17, 30, .975)) !important;
-  background-color: rgb(14, 21, 36) !important;
+    radial-gradient(circle at 18% -20%, rgba(255,255,255,.10), transparent 42%),
+    linear-gradient(145deg, rgba(46, 46, 48, .985), rgba(18, 18, 20, .975)) !important;
+  background-color: rgb(22, 22, 24) !important;
   border-color: rgba(255,255,255,.09) !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
@@ -7408,8 +7425,8 @@ html:not([data-theme="light"]) body .admin-phase-filters::before {
   z-index: -1 !important;
   border-radius: inherit !important;
   background:
-    radial-gradient(circle at 20% -24%, rgba(255,255,255,.12), transparent 44%),
-    linear-gradient(145deg, rgb(32, 43, 66), rgb(12, 18, 31)) !important;
+    radial-gradient(circle at 20% -24%, rgba(255,255,255,.11), transparent 44%),
+    linear-gradient(145deg, rgb(48, 48, 50), rgb(18, 18, 20)) !important;
   opacity: 1 !important;
   pointer-events: none !important;
 }
@@ -7575,9 +7592,9 @@ html body .specials-score-banner {
   padding: 16px !important;
   border-radius: 30px !important;
   background:
-    radial-gradient(circle at 22% 0%, rgba(111,196,255,.20), transparent 45%),
-    linear-gradient(145deg, rgba(24,45,74,.82), rgba(10,18,32,.82)) !important;
-  border: 1px solid rgba(111,196,255,.30) !important;
+    radial-gradient(circle at 22% 0%, rgba(93,184,255,.28), transparent 45%),
+    linear-gradient(145deg, rgba(52,106,240,.30), rgba(114,83,241,.22)) !important;
+  border: 1px solid rgba(93,184,255,.34) !important;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.07) !important;
   color: rgba(255,255,255,.98) !important;
 }
