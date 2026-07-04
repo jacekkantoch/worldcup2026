@@ -405,9 +405,8 @@
       isolation: isolate;
       padding-bottom: calc(106px + var(--safe-bottom));
       background:
-        radial-gradient(ellipse 100% 58% at 50% -13%, rgba(158,90,255,.26), transparent 62%),
-        radial-gradient(ellipse 66% 46% at -8% 68%, rgba(255,159,10,.14), transparent 69%),
-        radial-gradient(ellipse 68% 46% at 108% 78%, rgba(255,55,95,.15), transparent 68%),
+        radial-gradient(ellipse 70% 160% at -8% 50%, rgba(255,159,10,.20), transparent 82%),
+        radial-gradient(ellipse 70% 160% at 108% 50%, rgba(255,55,95,.20), transparent 82%),
         linear-gradient(180deg, #07101d 0%, #070a12 48%, #04060b 100%);
       background-attachment: scroll;
     }

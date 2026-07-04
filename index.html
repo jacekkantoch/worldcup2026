@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
-  <title>FIFA WORLD CUP 2026 – Typer</title>
+  <title>FIFA WORLD CUP 2026 – Typer v6</title>
   <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin />
   <link rel="preconnect" href="https://www.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
@@ -13,9 +13,12 @@
   <link rel="dns-prefetch" href="//cdn.jsdelivr.net" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" />
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" /></noscript>
+  <!-- Tylko Bebas Neue (wyświetlacz wyniku/logo) — cały pozostały tekst
+       używa systemowego stosu fontów (patrz --font-family-base w main.css),
+       więc nie pobieramy już DM Sans ani żadnego zamiennika SF Pro. -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet" /></noscript>
 
   <meta name="application-name" content="FIFA WORLD CUP 2026"/>
   <meta name="theme-color" content="#0d2b4a"/>
@@ -29,11 +32,23 @@
   <link rel="apple-touch-icon" href="./mundial2026-app-icon-v2-192.png"/>
   <link rel="icon" type="image/png" sizes="32x32" href="./mundial2026-app-icon-v2-32.png"/>
   <link rel="icon" type="image/png" sizes="192x192" href="./mundial2026-app-icon-v2-192.png"/>
+  <link rel="manifest" href="./manifest.json"/>
   <script>
     (function(){
-      var theme='dark'; // light mode wyłączony
-      document.documentElement.setAttribute('data-theme',theme);
-      document.documentElement.style.backgroundColor = '#05070d';
+      // Ta sama reguła co w src/app.js: 'auto' śledzi prefers-color-scheme,
+      // domyślnie zostajemy przy ciemnym wyglądzie. Ustawione tu synchronicznie
+      // (przed pierwszym malowaniem), żeby uniknąć błysku złego motywu.
+      var pref = 'dark';
+      try {
+        var stored = localStorage.getItem('wc2026:theme');
+        if (stored === 'light' || stored === 'dark' || stored === 'auto') pref = stored;
+      } catch (e) {}
+      var theme = pref === 'auto'
+        ? (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+        : pref;
+      document.documentElement.setAttribute('data-theme', theme);
+      document.documentElement.style.colorScheme = theme;
+      document.documentElement.style.backgroundColor = theme === 'light' ? '#f2f2f7' : '#05070d';
     })();
   </script>
   <link rel="stylesheet" href="./styles/main.css" />
@@ -59,10 +74,10 @@
 </head>
 <body>
   <div id="loading">
-    <div class="loading-icon">⚽</div>
+    <div class="loading-orb" aria-hidden="true"></div>
     <div class="loading-title">FIFA WORLD CUP 2026</div>
     <div class="loading-sub">USA · KANADA · MEKSYK</div>
-    <div class="spinner" style="margin-top:4px;"></div>
+    <div class="loading-dots" aria-hidden="true"><span></span><span></span><span></span></div>
     <div id="loading-slow" style="display:none;margin-top:14px;font-size:0.72rem;color:rgba(255,196,90,.75);text-align:center;">Wolne połączenie z bazą danych…<br>Aplikacja załaduje się automatycznie.</div>
   </div>
   <div id="root" style="display:none;"></div>
