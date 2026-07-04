@@ -76,6 +76,7 @@ const ICONS = {
   eye: ['M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8', 'M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6'],
   settings: ['M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16', 'M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4', 'M12 2v2', 'M12 20v2', 'M4.93 4.93l1.41 1.41', 'M17.66 17.66l1.41 1.41', 'M2 12h2', 'M20 12h2', 'M6.34 17.66l-1.41 1.41', 'M19.07 4.93l-1.41 1.41'],
   plus: 'M12 5v14M5 12h14',
+  minus: 'M5 12h14',
   trash: ['M3 6h18', 'M19 6l-1 14H6L5 6', 'M8 6V4h8v2'],
   edit: ['M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7', 'M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z'],
   lock: ['M19 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2z', 'M7 11V7a5 5 0 0 1 10 0v4'],
@@ -1976,7 +1977,7 @@ function ScoreInput({
       userSelect: 'none',
       transition: 'background .12s'
     }
-  }, "\u2212"), React.createElement("div", {
+  }, React.createElement(Icon, { name: "minus", size: 18 })), React.createElement("div", {
     role: "spinbutton",
     "aria-valuemin": 0,
     "aria-valuemax": 99,
@@ -2023,7 +2024,7 @@ function ScoreInput({
       userSelect: 'none',
       transition: 'background .12s'
     }
-  }, "+")));
+  }, React.createElement(Icon, { name: "plus", size: 18 }))));
 }
 function Badge({
   children,
@@ -3409,9 +3410,20 @@ function MatchesView({
     type: "button",
     onClick: () => setVisibleCount(count => count + 18),
     className: "selection-tile w-full rounded-xl px-4 py-3 text-sm font-semibold"
-  }, "Poka\u017C kolejne mecze (", filtered.length - visibleCount, ")"), filtered.length === 0 && React.createElement("div", {
-    className: "text-center text-stone-500 py-12 app-note app-note--info app-note--center"
-  }, "Brak mecz\xF3w dla wybranych filtr\xF3w"));
+  }, "Poka\u017C kolejne mecze (", filtered.length - visibleCount, ")"), filtered.length === 0 && React.createElement(React.Fragment, null, React.createElement("div", {
+    className: "text-center text-stone-500 app-note app-note--info app-note--center matches-empty-note",
+    style: {
+      minHeight: 130,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center"
+    }
+  }, "Brak mecz\xF3w dla wybranych filtr\xF3w"), React.createElement("div", {
+    "aria-hidden": "true",
+    style: {
+      minHeight: "calc(100dvh - var(--header-height, 80px) - 310px)"
+    }
+  })));
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -6998,8 +7010,6 @@ function Mundial2026() {
   }, React.createElement("div", {
     className: "logo"
   }, React.createElement("div", {
-    className: "logo-icon"
-  }, "\u26BD"), React.createElement("div", {
     className: "title-group"
   }, React.createElement("h1", null, "FIFA WORLD CUP 2026"))), React.createElement("div", {
     className: "player-row"
