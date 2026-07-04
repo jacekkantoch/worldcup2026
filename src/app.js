@@ -117,6 +117,34 @@ const Icon = React.memo(function Icon({
     style: style
   });
 });
+// Wypełnione (nie kreskowe) ikony kłódki — spójne z pełnymi ikonami dolnej
+// nawigacji (patrz NavIcon), w przeciwieństwie do reszty ikon w Icon/Ico,
+// które są rysowane jako kontury (stroke).
+const LOCK_ICON_PATHS = {
+  lock: 'M12 1.5a5.25 5.25 0 0 0-5.25 5.25v3a3 3 0 0 0-3 3v6.75a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3v-6.75a3 3 0 0 0-3-3v-3c0-2.9-2.35-5.25-5.25-5.25Zm3.75 8.25v-3a3.75 3.75 0 1 0-7.5 0v3h7.5Z',
+  unlock: 'M18 1.5c2.9 0 5.25 2.35 5.25 5.25v3.75a.75.75 0 0 1-1.5 0V6.75a3.75 3.75 0 1 0-7.5 0v3a3 3 0 0 1 3 3v6.75a3 3 0 0 1-3 3H3.75a3 3 0 0 1-3-3v-6.75a3 3 0 0 1 3-3h9v-3c0-2.9 2.35-5.25 5.25-5.25Z'
+};
+const LockIcon = React.memo(function LockIcon({
+  name,
+  size = 16,
+  className = '',
+  style
+}) {
+  return React.createElement("svg", {
+    width: size,
+    height: size,
+    viewBox: "0 0 24 24",
+    fill: "currentColor",
+    stroke: "none",
+    className: `inline-block ${className}`,
+    style: style,
+    "aria-hidden": "true"
+  }, React.createElement("path", {
+    d: LOCK_ICON_PATHS[name] || LOCK_ICON_PATHS.lock,
+    fillRule: "evenodd",
+    clipRule: "evenodd"
+  }));
+});
 const FILLED_THEME_ICONS = {
   sun: 'M11 1h2v3h-2zM11 20h2v3h-2zM1 11h3v2H1zM20 11h3v2h-3zM4.22 5.64l1.41-1.41 2.12 2.12-1.41 1.41zM16.24 17.66l1.41-1.41 2.12 2.12-1.41 1.41zM16.24 6.34l2.12-2.12 1.41 1.41-2.12 2.12zM4.22 18.36l2.12-2.12 1.41 1.41-2.12 2.12zM12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10z',
   moon: 'M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79Z'
@@ -2626,7 +2654,7 @@ function AutocompleteInput({
     onFocus: () => setOpen(true),
     disabled: disabled,
     placeholder: placeholder,
-    className: "w-full px-3 py-2.5 border-2 border-stone-200 rounded-lg focus:border-[#0d1b5e] focus:outline-none text-sm disabled:bg-stone-100"
+    className: "selection-tile w-full px-3 py-2.5 rounded-full border text-sm font-semibold disabled:opacity-60"
   }), open && filtered.length > 0 && React.createElement("div", {
     className: "absolute z-20 left-0 right-0 mt-1 bg-white border border-stone-200 rounded-lg shadow-lg max-h-48 overflow-y-auto"
   }, filtered.map(s => React.createElement("button", {
@@ -3111,7 +3139,7 @@ const MatchCard = React.memo(function MatchCard({
     className: `match-final-user-points ${quality === 'exact' ? 'is-exact' : quality === 'partial' ? 'is-partial' : 'is-miss'}`
   }, myPoints > 0 ? `+${myPoints} PKT` : '0 PKT'))), phaseLocked && !result && React.createElement("div", {
     className: "text-center text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg p-3 flex items-center justify-center gap-2 app-note app-note--danger app-note--compact app-note--center"
-  }, React.createElement(Icon, {
+  }, React.createElement(LockIcon, {
     name: "lock",
     size: 16
   }), React.createElement("span", null, "Typowanie tej fazy zosta\u0142o zamkni\u0119te przez admina.")), !locked && React.createElement("div", {
@@ -3487,7 +3515,7 @@ function SpecialsView({
     className: "specials-view space-y-4"
   }, (tournamentLocked || specialsLocked) && React.createElement("div", {
     className: "bg-[#0d1b5e] text-white rounded-lg p-3 text-sm flex items-center gap-2 mb-3 app-note app-note--danger app-note--compact"
-  }, React.createElement(Icon, {
+  }, React.createElement(LockIcon, {
     name: "lock",
     size: 16,
     className: "text-amber-400"
@@ -3512,7 +3540,7 @@ function SpecialsView({
     const isCorrect = hasResults && realOrder[pos] && realOrder[pos] === selected;
     return React.createElement("div", {
       key: pos,
-      className: "border-2 rounded-lg p-2 mb-2 border-stone-200 bg-stone-50",
+      className: "specials-position-card",
       style: isCorrect ? {
         background: 'rgba(0,160,60,.30)',
         borderColor: 'rgba(0,220,80,.45)'
@@ -3686,7 +3714,7 @@ function SpecialsView({
     name: "save",
     size: 18
   }), "Zapisz typy specjalne")), hasResults && React.createElement("div", {
-    className: "specials-score-banner bg-[#0d1b5e] text-white rounded-xl p-4"
+    className: "specials-score-banner"
   }, React.createElement("h4", {
     className: "font-display text-base tracking-wide mb-2 text-[#c8d4f4]"
   }, "Twoje punkty specjalne"), React.createElement("div", {
@@ -4450,8 +4478,8 @@ function AdminGate({
     className: 'admin-login-hero'
   }, React.createElement('div', {
     className: 'admin-login-icon'
-  }, React.createElement(Icon, {
-    name: isSetup ? 'lock' : 'unlock',
+  }, React.createElement(LockIcon, {
+    name: 'lock',
     size: 22
   })), React.createElement('h4', {
     className: 'admin-login-title'
@@ -4487,7 +4515,7 @@ function AdminGate({
   }, error), React.createElement('button', {
     type: 'submit',
     className: 'admin-login-submit'
-  }, React.createElement(Icon, {
+  }, React.createElement(LockIcon, {
     name: isSetup ? 'lock' : 'unlock',
     size: 15
   }), isSetup ? 'Ustaw hasło' : 'Odblokuj'));
@@ -5089,7 +5117,7 @@ function PhaseLockRow({
     variant: locked ? 'danger' : 'outline',
     size: "sm",
     onClick: onToggle
-  }, React.createElement(Icon, {
+  }, React.createElement(LockIcon, {
     name: locked ? 'lock' : 'unlock',
     size: 14
   }), locked ? 'Zablokowane' : 'Odblokowane'));
@@ -5292,7 +5320,7 @@ function AdminPanel({
     className: "admin-panel-banner bg-stone-900 text-white rounded-xl p-3 flex items-center justify-between"
   }, React.createElement("div", {
     className: "flex items-center gap-2"
-  }, React.createElement(Icon, {
+  }, React.createElement(LockIcon, {
     name: "unlock",
     size: 18,
     className: "text-[#6080d0]"
@@ -5862,7 +5890,7 @@ function LoginModal({
         className: "profile-action-btn profile-action-login",
         onClick: handlePin,
         disabled: pin.length < 4
-      }, React.createElement(Icon, { name: "unlock", size: 14 }), "Zaloguj")
+      }, React.createElement(LockIcon, { name: "unlock", size: 14 }), "Zaloguj")
     )
   )));
 }
@@ -6648,7 +6676,13 @@ function Mundial2026() {
     } catch (e) {}
     setActivePlayerState(id);
   }, []);
-  const [theme, setTheme] = useState('dark');
+  const [theme, setTheme] = useState(() => {
+    try {
+      const stored = localStorage.getItem('wc2026:theme');
+      if (stored === 'light' || stored === 'dark' || stored === 'auto') return stored;
+    } catch (e) {}
+    return 'dark';
+  });
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
     document.documentElement.style.colorScheme = theme;
@@ -7214,6 +7248,27 @@ ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(
       Math.min(maxScrollLeft, row.scrollLeft + delta)
     );
   }, { passive: false });
+})();
+
+// ===== Rozmyty brzeg sygnalizujący, że wiersz chipów (filtry faz/statusu)
+// albo plansza drabinki da się przewinąć w poziomie dalej — patrz
+// main.css: .chip-scroll-row / .bracket-scroll. Klasy has-scroll-start/
+// has-scroll-end nadawane tylko, gdy w danym kierunku faktycznie jest
+// nadmiar treści. =====
+(function () {
+  const SELECTOR = '.chip-scroll-row, .bracket-scroll';
+  const update = row => {
+    const maxScrollLeft = row.scrollWidth - row.clientWidth;
+    row.classList.toggle('has-scroll-start', maxScrollLeft > 1 && row.scrollLeft > 1);
+    row.classList.toggle('has-scroll-end', maxScrollLeft > 1 && row.scrollLeft < maxScrollLeft - 1);
+  };
+  const updateAll = () => document.querySelectorAll(SELECTOR).forEach(update);
+  document.addEventListener('scroll', event => {
+    if (event.target instanceof Element && event.target.matches(SELECTOR)) update(event.target);
+  }, { passive: true, capture: true });
+  window.addEventListener('resize', updateAll);
+  updateAll();
+  new MutationObserver(updateAll).observe(document.body, { childList: true, subtree: true });
 })();
 
 // ===== Efekt "wyłaniania z głębi" kart meczów: fallback dla przeglądarek

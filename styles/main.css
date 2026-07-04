@@ -15,6 +15,7 @@
 
     *, *::before, *::after { box-sizing: border-box; }
     html, body { overscroll-behavior: none; margin: 0; padding: 0; }
+    html { overflow-x: hidden; }
     * { -webkit-tap-highlight-color: transparent; }
 
     html {
@@ -873,6 +874,29 @@
       padding: 4px 2px;
       overflow-x: auto;
       overflow-y: visible;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .chip-scroll-row::-webkit-scrollbar {
+      display: none;
+    }
+    /* Gdy chipsy nie mieszczą się w wierszu, ostatni bywa ucięty w połowie
+       bez żadnej wskazówki, że da się przewinąć dalej — wygląda jak błąd
+       layoutu. Rozmyty brzeg sygnalizuje przewijalność niezależnie od tła
+       (w tym pod backdrop-filter, gdzie stałokolorowy gradient by nie pasował).
+       Klasy nadaje JS (patrz app.js) tylko, gdy jest faktyczny nadmiar w danym
+       kierunku — żeby brzeg nie migał, gdy wszystkie chipsy się mieszczą. */
+    .chip-scroll-row.has-scroll-start {
+      -webkit-mask-image: linear-gradient(to right, transparent 0, black 20px);
+      mask-image: linear-gradient(to right, transparent 0, black 20px);
+    }
+    .chip-scroll-row.has-scroll-end {
+      -webkit-mask-image: linear-gradient(to right, black calc(100% - 22px), transparent 100%);
+      mask-image: linear-gradient(to right, black calc(100% - 22px), transparent 100%);
+    }
+    .chip-scroll-row.has-scroll-start.has-scroll-end {
+      -webkit-mask-image: linear-gradient(to right, transparent 0, black 20px, black calc(100% - 22px), transparent 100%);
+      mask-image: linear-gradient(to right, transparent 0, black 20px, black calc(100% - 22px), transparent 100%);
     }
     .chip-scroll-row.tight {
       padding-top: 6px;
@@ -1335,7 +1359,7 @@
 
     .nav-droplet,
     .nav-droplet.dragging {
-      background: rgba(84, 132, 188, .42) !important;
+      background: linear-gradient(145deg, rgba(62,174,255,.55), rgba(36,101,242,.42)) !important;
       border: 0 !important;
       outline: 0 !important;
       box-shadow: none !important;
@@ -2939,7 +2963,7 @@
       transform: scale(1) translateY(0) !important;
     }
     .bottom-nav button.active svg.nav-icon {
-      transform: scale(1.18) translateY(-2px) !important;
+      transform: scale(1) translateY(0) !important;
     }
 
     /* Etykieta aktywnej zakładki: fade-in */
@@ -4422,11 +4446,11 @@ html body .bracket-page {
   --bracket-panel: linear-gradient(145deg, rgba(34,45,70,.72), rgba(12,18,31,.58));
   --bracket-card: linear-gradient(145deg, rgba(37,47,72,.64), rgba(15,20,36,.70));
   --bracket-card-finished: linear-gradient(145deg, rgba(45,55,84,.74), rgba(20,25,43,.78));
-  --bracket-line: rgba(158, 181, 224, .48);
+  --bracket-line: rgba(255, 255, 255, .30);
   --bracket-border: rgba(255,255,255,.13);
   --bracket-head: rgba(255,255,255,.06);
   --bracket-row-sep: rgba(255,255,255,.09);
-  --bracket-winner-bg: linear-gradient(90deg, rgba(48, 209, 88, .20), rgba(111, 196, 255, .11));
+  --bracket-winner-bg: linear-gradient(90deg, rgba(48, 209, 88, .22), transparent);
   --bracket-winner-text: rgba(231, 255, 241, .98);
   --bracket-loser-text: rgba(215,224,240,.48);
   --bracket-muted: rgba(225,233,248,.68);
@@ -4564,6 +4588,25 @@ html body .bracket-scroll::-webkit-scrollbar {
   display: none !important;
   width: 0 !important;
   height: 0 !important;
+}
+
+/* Plansza drabinki jest zawsze szersza niż ekran, a treść (nagłówki rund,
+   karty meczów) była twardo obcinana na krawędzi — wyglądało jak błąd
+   renderowania, a nie jak "przewiń dalej", mimo podpowiedzi tekstowej
+   ("Przeciągnij drabinkę poziomo..."). Ten sam rozmyty brzeg co
+   .chip-scroll-row (patrz wyżej), sterowany tymi samymi klasami JS
+   (app.js) — pojawia się tylko tam, gdzie faktycznie jest co przewinąć. */
+html body .bracket-scroll.has-scroll-start {
+  -webkit-mask-image: linear-gradient(to right, transparent 0, black 28px);
+  mask-image: linear-gradient(to right, transparent 0, black 28px);
+}
+html body .bracket-scroll.has-scroll-end {
+  -webkit-mask-image: linear-gradient(to right, black calc(100% - 30px), transparent 100%);
+  mask-image: linear-gradient(to right, black calc(100% - 30px), transparent 100%);
+}
+html body .bracket-scroll.has-scroll-start.has-scroll-end {
+  -webkit-mask-image: linear-gradient(to right, transparent 0, black 28px, black calc(100% - 30px), transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, black 28px, black calc(100% - 30px), transparent 100%);
 }
 
 /* Admin: bez zanikania nazw drużyn w wyborze awansu po karnych. */
@@ -4846,13 +4889,14 @@ html:not([data-theme="light"]) body .admin-phase-filters {
   background-color: rgba(15, 23, 38, .94) !important;
 }
 
-/* Karty meczów w zakładce Mecze: ten sam odcień co panel filtrów, ale z lekką
-   przejrzystością (szklany efekt) — w przeciwieństwie do płaskiego panelu filtrów. */
+/* Karty meczów w zakładce Mecze — ten sam token tła co karty w Rankingu,
+   Specjalnych i Drabince (--tab-match-surface-soft), zamiast osobnego,
+   bardziej przejrzystego wariantu "szklanego" używanego wcześniej tylko
+   tutaj. Panel filtrów (.phase-filter-panel/.filters-sticky) zostaje
+   celowo odrębny — to pasek narzędzi, nie karta treści. */
 html:not([data-theme="light"]) body .match-card {
-  background:
-    radial-gradient(circle at 18% -20%, rgba(255,255,255,.20), transparent 42%),
-    linear-gradient(145deg, rgba(29, 39, 58, .34), rgba(13, 19, 32, .26)) !important;
-  background-color: rgba(15, 23, 38, .28) !important;
+  background: var(--tab-match-surface-soft) !important;
+  background-color: transparent !important;
 }
 
 /* Delikatnie nizszy header. */
@@ -6124,7 +6168,7 @@ html body .penalty-choice-panel {
   margin: 14px 0 12px !important;
   padding: 14px !important;
   border-radius: 24px !important;
-  background: linear-gradient(145deg, rgba(39,51,78,.72), rgba(14,20,36,.66)) !important;
+  background: var(--tab-match-surface-soft) !important;
   border: 1px solid rgba(255,255,255,.11) !important;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.06) !important;
   backdrop-filter: blur(14px) saturate(145%) !important;
@@ -6190,7 +6234,7 @@ html body .penalty-choice-card:hover:not(:disabled) {
 }
 
 html body .penalty-choice-card.is-selected {
-  background: linear-gradient(90deg, rgba(48,209,88,.20), rgba(111,196,255,.11)) !important;
+  background: linear-gradient(90deg, rgba(48,209,88,.22), transparent) !important;
   border-color: rgba(102,255,158,.42) !important;
   color: rgba(232,255,242,.98) !important;
 }
@@ -6284,7 +6328,7 @@ html body .match-final-result-card {
   margin: 14px 0 14px !important;
   padding: 13px 14px !important;
   border-radius: 24px !important;
-  background: linear-gradient(145deg, rgba(39,51,78,.64), rgba(14,20,36,.58)) !important;
+  background: var(--tab-match-surface-soft) !important;
   border: 1px solid rgba(255,255,255,.10) !important;
   color: rgba(245,250,255,.96) !important;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.06) !important;
@@ -7479,6 +7523,53 @@ html body .install-banner {
   margin-bottom: 0 !important;
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   Przeprojektowanie zakładki "Typy specjalne" — dotąd jedyna zakładka
+   wciąż na przedreformowych płaskich .bg-white/border-stone-200 kartach
+   (12px promień, jednolite tło) zamiast szklanej karty z gradientem, jakiej
+   używają Mecze/Ranking/Porównanie (30px promień — patrz .rounded-xl
+   powyżej — gradient + subtelna obwódka). Stylujemy strukturalnie po
+   `.specials-view > section`, więc nie dotykamy .bg-white/.rounded-xl
+   gdzie indziej (Drabinka/Admin nadal ich używają).
+   ═══════════════════════════════════════════════════════════════ */
+html body .specials-view > section {
+  border-radius: 30px !important;
+  background: linear-gradient(145deg, rgba(38,51,78,.76), rgba(16,22,38,.70)) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.055) !important;
+}
+
+/* Karty pozycji ("1./2./3./4. miejsce") w sekcji Kolejność w grupach —
+   zamiast grubej 2px obwódki i płaskiego bg-stone-50, zagnieżdżona karta
+   spójna z .leaderboard-category-card (subtelne tło, 1px obwódka). Stan
+   poprawny/błędny nadal dochodzi z inline style w app.js (SpecialsView). */
+html body .specials-position-card {
+  border-radius: 18px !important;
+  background: rgba(255,255,255,.035) !important;
+  border: 1px solid rgba(255,255,255,.08) !important;
+  padding: 10px !important;
+  margin-bottom: 8px !important;
+}
+html body .specials-position-card:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* Baner "Twoje punkty specjalne" pożyczał .bg-[#0d1b5e], klasę, którą
+   reszta arkusza od dawna nadpisuje na jaskrawy gradient przycisku primary
+   (patrz reguła .bg-\[\#0d1b5e\]) — w efekcie karta podsumowania wyglądała
+   jak wielki przycisk CTA, nie jak podsumowanie. Własne, fioletowe
+   (--color-accent) szkło zamiast tego. */
+html body .specials-score-banner {
+  padding: 16px !important;
+  border-radius: 30px !important;
+  background:
+    radial-gradient(circle at 22% 0%, rgba(111,196,255,.20), transparent 45%),
+    linear-gradient(145deg, rgba(24,45,74,.82), rgba(10,18,32,.82)) !important;
+  border: 1px solid rgba(111,196,255,.30) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.07) !important;
+  color: rgba(255,255,255,.98) !important;
+}
+
 /* Admin inner stacks were still inheriting Tailwind space-y margins, which made
    the gap after filter/banner blocks differ from the gap between match cards. */
 html body .admin-panel > .space-y-2,
@@ -7564,6 +7655,13 @@ html body .match-card-enter {
   display: block;
 }
 
+/* Wszystkie karty (Mecze, Ranking, Porównanie) dostają tę samą natywną
+   animację sterowaną scrollem — łącznie z kartami, których wysokość
+   zmienia się po rozwinięciu (np. "Rozkład punktów" w rankingu). Wiadomo,
+   że to sprawia, iż postęp animacji (liczony jako % pokrycia względem
+   wysokości karty) "gubi się" przy zmianie wysokości i efekt bywa
+   przerywany w połowie drogi — to świadomie zachowany, lubiany quirk,
+   spójny w całej aplikacji, a nie coś do naprawienia. */
 @supports (animation-timeline: view()) {
   html body .match-card-enter {
     view-timeline-name: --match-card-reveal;
@@ -7589,9 +7687,9 @@ html body .match-card-enter {
   }
 }
 
-/* Fallback dla przeglądarek bez animation-timeline: JS (IntersectionObserver)
-   przełącza klasę .is-revealed w obie strony — patrz app.js. Próg
-   przecięcia działa symetrycznie na obu krawędziach viewportu. */
+/* Fallback dla przeglądarek bez animation-timeline ORAZ stały tryb dla kart
+   z rozwijalną zawartością (patrz wyżej): JS (IntersectionObserver)
+   przełącza klasę .is-revealed. */
 @supports not (animation-timeline: view()) {
   html body .match-card-enter {
     opacity: .5;
@@ -7960,5 +8058,182 @@ html:not([data-theme="light"]) body .penalty-choice-panel,
 html:not([data-theme="light"]) body .match-final-result-card {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Przeprojektowanie zakładki "Drabinka" — wizualna spójność z kartą
+   "Typy specjalne". Karty główne dostają dokładnie ten sam token tła co
+   .specials-view > section (--tab-match-surface-soft — współdzielony z
+   Meczami/Rankingiem/Porównaniem), a nie osobną, bardziej niebieską
+   paletę (--bracket-panel/--bracket-card) używaną dotąd tylko tutaj.
+   Karty zagnieżdżone (tabela grupy / mecz) dostają tę samą filozofię co
+   .specials-position-card — subtelne tło zamiast obwódki.
+
+   Promień i obwódka .bracket-intro/.bracket-section/.bracket-match miały
+   już wcześniej reguły podbite sztuczką specyficzności ID
+   (`:not(#__bracket_border_restore__)`, patrz wyżej w pliku) — zwykła
+   reguła klasowa, nawet z !important, przegrywa z nią przy remisie
+   ważności (specyficzność rozstrzyga przed kolejnością), więc trzeba
+   użyć tej samej sztuczki, żeby realnie wygrać. */
+html body .bracket-page .bracket-intro:not(#__bracket_border_restore__),
+html body .bracket-page .bracket-section:not(#__bracket_border_restore__) {
+  border-radius: 30px !important;
+}
+
+html:not([data-theme="light"]) .bracket-page .bracket-intro,
+html:not([data-theme="light"]) .bracket-page .bracket-section {
+  background: var(--tab-match-surface-soft) !important;
+  background-color: transparent !important;
+  box-shadow: var(--tab-match-shadow) !important;
+  backdrop-filter: blur(14px) saturate(145%) !important;
+}
+
+html body .bracket-page .bracket-group-compact-card,
+html body .bracket-page .bracket-match,
+html body .bracket-page .bracket-final-card {
+  background: rgba(255,255,255,.035) !important;
+}
+
+html body .bracket-page .bracket-match.is-finished,
+html body .bracket-page .bracket-final-card.is-finished {
+  background: rgba(255,255,255,.05) !important;
+}
+
+html body .bracket-page .bracket-match:not(#__bracket_border_restore__),
+html body .bracket-page .bracket-final-card:not(#__bracket_border_restore__) {
+  border: 1px solid rgba(255,255,255,.14) !important;
+}
+
+html body .bracket-page .bracket-match.is-finished:not(#__bracket_border_restore__),
+html body .bracket-page .bracket-final-card.is-finished:not(#__bracket_border_restore__) {
+  border-color: rgba(255,255,255,.22) !important;
+}
+
+html body .bracket-page .bracket-group-compact-card:not(#__bracket_border_restore__) {
+  border: 1px solid rgba(255,255,255,.14) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Przeprojektowanie zakładki "Ranking" — wizualna spójność z kartami
+   "Typy specjalne" i "Drabinka": ten sam token tła co reszta appki
+   (--tab-match-surface-soft) zamiast osobnej granatowej palety.
+
+   Po drodze wyszedł realny bug: `.leaderboard-view .leaderboard-card
+   :nth-of-type(2)` miał dawać kafelkowi #2 w rankingu inny gradient, ale
+   :nth-of-type liczy WSZYSTKIE <div>, nie tylko .leaderboard-card — a
+   pierwszym div-em w kontenerze jest .leaderboard-header, więc reguła
+   faktycznie trafiała w kartę #1 (pierwszą .leaderboard-card, czyli
+   drugi <div> z rzędu), a nie w #2. Efekt: karta lidera miała przez
+   pomyłkę inny, bardziej niebieski gradient niż wszystkie pozostałe.
+   Usuwamy oba osobne warianty (bazowy i :first-of-type) na rzecz jednego
+   wspólnego tła. */
+html:not([data-theme="light"]) .leaderboard-header,
+html:not([data-theme="light"]) .leaderboard-card,
+html:not([data-theme="light"]) .leaderboard-card:first-of-type,
+html:not([data-theme="light"]) .leaderboard-view .leaderboard-card,
+html:not([data-theme="light"]) .leaderboard-view .leaderboard-card:nth-of-type(2) {
+  background: var(--tab-match-surface-soft) !important;
+  background-color: transparent !important;
+  background-image: var(--tab-match-surface-soft) !important;
+  box-shadow: var(--tab-match-shadow) !important;
+}
+
+html body .leaderboard-header {
+  border-radius: 30px !important;
+}
+
+/* Karty zagnieżdżone ("Faza grupowa"/"Faza pucharowa" itd.) — ta sama
+   filozofia co .specials-position-card i zagnieżdżone karty drabinki. */
+html body .leaderboard-category-card {
+  border-radius: 18px !important;
+  background: rgba(255,255,255,.035) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Przeprojektowanie zakładki "Porównanie" — wizualna spójność z Meczami/
+   Rankingiem/Specjalnymi/Drabinką. Karta miała własny, prawie
+   nieprzezroczysty gradient (--expanded-match-surface, pomyślany
+   pierwotnie dla ROZWINIĘTEGO stanu kart, ale zastosowany też do zwykłego
+   stanu .compare-match-card) i 24px promień na mobile (@media max-width:
+   520px) zamiast 30px używanych wszędzie indziej. */
+html:not([data-theme="light"]) body .compare-match-card {
+  background: var(--tab-match-surface-soft) !important;
+  background-image: var(--tab-match-surface-soft) !important;
+  background-color: transparent !important;
+}
+
+html body .compare-match-card {
+  border-radius: 30px !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Przeprojektowanie modala "Profil i użytkownicy" — wizualna spójność
+   z kartami Meczy/Rankingu/Specjalnych/Drabinki/Porównania (ten sam
+   token tła i promień), PLUS wyśrodkowanie w pionie i poziomie względem
+   ekranu (wcześniej: `align-items: flex-start` + spory `padding-top`,
+   czyli panel przyklejony blisko góry ekranu zamiast na środku —
+   zarówno na desktopie, jak i w wariancie mobilnym/dotykowym).
+   Stan `.modal-keyboard-open` (klawiatura ekranowa otwarta) zostaje
+   nietknięty — to osobna, funkcjonalna logika, nie kwestia wyglądu. */
+html body .profile-modal-overlay-root {
+  align-items: center !important;
+  justify-content: center !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+html body .profile-modal-overlay-root .login-modal-sheet,
+html body .profile-modal-overlay-root .login-modal-compact-sheet {
+  align-self: center !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+@media (max-width: 640px), (pointer: coarse) {
+  html body .profile-modal-overlay-root {
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  html body .profile-modal-overlay-root .login-modal-sheet,
+  html body .profile-modal-overlay-root .login-modal-compact-sheet {
+    align-self: center !important;
+  }
+}
+
+/* Realne przeglądarki mobilne (`.is-mobile-browser`, wykrywane przez JS)
+   mają WŁASNĄ, bardziej swoistą regułę doliczającą wysokość paska
+   adresu/nagłówka do padding-top — bije zwykłą `.profile-modal-overlay-root`
+   powyżej mimo !important (dodatkowa klasa na <html> = wyższa
+   specyficzność). Zastępujemy ją małym, symetrycznym marginesem
+   uwzględniającym tylko safe-area (notch), żeby panel realnie się
+   wyśrodkował zamiast lądować tuż pod nagłówkiem. */
+html.is-mobile-browser body .profile-modal-overlay-root {
+  align-items: center !important;
+  justify-content: center !important;
+  padding-top: calc(var(--safe-top, 0px) + 12px) !important;
+  padding-bottom: calc(var(--safe-bottom, 0px) + 12px) !important;
+}
+
+/* Prawdziwy zwycięzca tła/obwódki/cienia dla WSZYSTKICH modali w appce to
+   strukturalny, bardzo swoisty selektor `.fixed.inset-0.z-50 > .relative`
+   (specyficzność 4 klasy — patrz "Redesigned compare..." itd. wcześniej w
+   pliku) — dopisywanie reguł po nazwie `.login-modal-sheet` (2 klasy) nigdy
+   go nie pokona, niezależnie od kolejności czy !important. Dopisujemy więc
+   `.login-modal-sheet`/`.login-modal-compact-sheet` do TEGO SAMEGO
+   strukturalnego selektora, żeby mieć gwarantowaną wyższą specyficzność
+   (5 klas), scope'owaną tylko do modala profilu — panel admina
+   (.admin-gate-card) zostaje nietknięty. */
+html body .fixed.inset-0.z-50 > .relative.login-modal-sheet,
+html body .fixed.inset-0.z-50 > .relative.login-modal-compact-sheet {
+  background: var(--tab-match-surface-soft) !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: var(--tab-match-shadow) !important;
+}
+
+html body .login-modal-sheet,
+html body .login-modal-compact-sheet {
+  border-radius: 30px !important;
 }
 
