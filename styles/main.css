@@ -404,10 +404,7 @@
       position: relative;
       isolation: isolate;
       padding-bottom: calc(106px + var(--safe-bottom));
-      background:
-        radial-gradient(ellipse 55% 130% at -8% 50%, rgba(255,159,10,.14), transparent 78%),
-        radial-gradient(ellipse 55% 130% at 108% 50%, rgba(255,55,95,.14), transparent 78%),
-        linear-gradient(180deg, #07101d 0%, #070a12 48%, #04060b 100%);
+      background: linear-gradient(180deg, #07101d 0%, #070a12 48%, #04060b 100%);
       background-attachment: scroll;
     }
 
@@ -4918,7 +4915,7 @@ html:not([data-theme="light"]) body .admin-phase-filters {
    tutaj. Panel filtrów (.phase-filter-panel/.filters-sticky) zostaje
    celowo odrębny — to pasek narzędzi, nie karta treści. */
 html:not([data-theme="light"]) body .match-card {
-  background: var(--tab-match-surface-soft) !important;
+  background: var(--match-flag-gradient, var(--tab-match-surface-soft)) !important;
   background-color: transparent !important;
 }
 
@@ -7073,6 +7070,17 @@ html body .match-final-result-name {
 html body .match-final-result-name.is-overflowing {
   mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 24px), transparent 100%) !important;
   -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 24px), transparent 100%) !important;
+}
+
+/* Match list team names: fade instead of "..." when a long name is clipped. */
+html body .match-list-team-name {
+  mask-image: none !important;
+  -webkit-mask-image: none !important;
+}
+
+html body .match-list-team-name.is-overflowing {
+  mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 14px), transparent 100%) !important;
+  -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 14px), transparent 100%) !important;
 }
 
 html body .match-final-result-team span:last-child:not(.match-final-result-name) {

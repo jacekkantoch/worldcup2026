@@ -2447,6 +2447,69 @@ function normalizeFlagValue(value) {
     fallback: raw
   };
 }
+const FLAG_COLOR_CACHE = {};
+function getFlagDominantColor(code) {
+  if (!code) return Promise.resolve(null);
+  if (FLAG_COLOR_CACHE[code]) return FLAG_COLOR_CACHE[code];
+  const promise = new Promise(resolve => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      try {
+        const size = 24;
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, size, size);
+        const { data } = ctx.getImageData(0, 0, size, size);
+        const buckets = {};
+        for (let i = 0; i < data.length; i += 4) {
+          const r = data[i], g = data[i + 1], b = data[i + 2], a = data[i + 3];
+          if (a < 200) continue;
+          const brightness = (r + g + b) / 3;
+          const max = Math.max(r, g, b), min = Math.min(r, g, b);
+          const saturation = max === 0 ? 0 : (max - min) / max;
+          if (brightness > 235 || brightness < 20 || saturation < 0.15) continue;
+          const key = `${r >> 5}-${g >> 5}-${b >> 5}`;
+          if (!buckets[key]) buckets[key] = { count: 0, r: 0, g: 0, b: 0 };
+          buckets[key].count++;
+          buckets[key].r += r;
+          buckets[key].g += g;
+          buckets[key].b += b;
+        }
+        let best = null;
+        Object.values(buckets).forEach(bucket => {
+          if (!best || bucket.count > best.count) best = bucket;
+        });
+        if (!best) { resolve(null); return; }
+        resolve(`${Math.round(best.r / best.count)}, ${Math.round(best.g / best.count)}, ${Math.round(best.b / best.count)}`);
+      } catch (e) {
+        resolve(null);
+      }
+    };
+    img.onerror = () => resolve(null);
+    img.src = `https://cdn.jsdelivr.net/gh/HatScripts/circle-flags@gh-pages/flags/${code}.svg`;
+  });
+  FLAG_COLOR_CACHE[code] = promise;
+  return promise;
+}
+function useFlagGradient(homeFlag, awayFlag) {
+  const [colors, setColors] = React.useState({ home: null, away: null });
+  const homeCode = normalizeFlagValue(homeFlag).code;
+  const awayCode = normalizeFlagValue(awayFlag).code;
+  React.useEffect(() => {
+    let alive = true;
+    Promise.all([getFlagDominantColor(homeCode), getFlagDominantColor(awayCode)]).then(([home, away]) => {
+      if (alive) setColors({ home, away });
+    });
+    return () => { alive = false; };
+  }, [homeCode, awayCode]);
+  if (!colors.home && !colors.away) return null;
+  const homeRgb = colors.home || colors.away;
+  const awayRgb = colors.away || colors.home;
+  return `linear-gradient(115deg, rgba(${homeRgb}, 0.24) 0%, rgba(${homeRgb}, 0.05) 32%, rgba(${awayRgb}, 0.05) 68%, rgba(${awayRgb}, 0.24) 100%)`;
+}
 function FlagImg({
   code,
   size = 34,
@@ -2704,6 +2767,7 @@ const MatchCard = React.memo(function MatchCard({
   }, [prediction, activePlayerId, expanded]);
   const home = teams[match.homeTeamId],
     away = teams[match.awayTeamId];
+  const flagGradient = useFlagGradient(home?.flag, away?.flag);
   const teamsAssigned = !!(home && away);
   const phaseLocked = !!(phaseLocks && phaseLocks[match.phase]);
   const comparisonVisible = !!(phaseLocks && phaseLocks.compareVisible);
@@ -2717,10 +2781,14 @@ const MatchCard = React.memo(function MatchCard({
   const needsPen = isKnockout && isDraw;
   const canSave = !locked && teamsAssigned && activePlayerId && isDraft && (!needsPen || draft.penWinner);
   React.useEffect(() => {
-    if (!expanded) return undefined;
     let raf = null;
     const updateOverflow = () => {
-      document.querySelectorAll('.match-final-result-card .match-final-result-name').forEach(el => {
+      if (expanded) {
+        document.querySelectorAll('.match-final-result-card .match-final-result-name').forEach(el => {
+          el.classList.toggle('is-overflowing', el.scrollWidth > el.clientWidth + 1);
+        });
+      }
+      document.querySelectorAll('.match-list-team-name').forEach(el => {
         el.classList.toggle('is-overflowing', el.scrollWidth > el.clientWidth + 1);
       });
     };
@@ -2788,7 +2856,8 @@ const MatchCard = React.memo(function MatchCard({
   }, React.createElement("div", {
     className: `match-card${expanded ? ' expanded' : ''}`,
     style: {
-      background: 'var(--glass-1)',
+      background: flagGradient ? `${flagGradient}, var(--glass-1)` : 'var(--glass-1)',
+      '--match-flag-gradient': flagGradient ? `${flagGradient}, var(--tab-match-surface-soft)` : undefined,
       border: '1px solid var(--border-1)',
       borderRadius: 30,
       overflow: 'hidden',
@@ -2888,13 +2957,14 @@ const MatchCard = React.memo(function MatchCard({
     size: 32,
     title: home?.name
   }), React.createElement("span", {
+    className: "match-list-team-name",
     style: {
       fontSize: 11.5,
       fontWeight: 700,
       color: 'rgba(255,255,255,.85)',
       textAlign: 'center',
       overflow: 'hidden',
-      textOverflow: 'ellipsis',
+      textOverflow: 'clip',
       whiteSpace: 'nowrap',
       maxWidth: '100%'
     }
@@ -2929,13 +2999,14 @@ const MatchCard = React.memo(function MatchCard({
     size: 32,
     title: away?.name
   }), React.createElement("span", {
+    className: "match-list-team-name",
     style: {
       fontSize: 11.5,
       fontWeight: 700,
       color: 'rgba(255,255,255,.85)',
       textAlign: 'center',
       overflow: 'hidden',
-      textOverflow: 'ellipsis',
+      textOverflow: 'clip',
       whiteSpace: 'nowrap',
       maxWidth: '100%'
     }
