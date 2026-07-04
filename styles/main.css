@@ -405,8 +405,8 @@
       isolation: isolate;
       padding-bottom: calc(106px + var(--safe-bottom));
       background:
-        radial-gradient(ellipse 70% 160% at -8% 50%, rgba(255,159,10,.20), transparent 82%),
-        radial-gradient(ellipse 70% 160% at 108% 50%, rgba(255,55,95,.20), transparent 82%),
+        radial-gradient(ellipse 55% 130% at -8% 50%, rgba(255,159,10,.14), transparent 78%),
+        radial-gradient(ellipse 55% 130% at 108% 50%, rgba(255,55,95,.14), transparent 78%),
         linear-gradient(180deg, #07101d 0%, #070a12 48%, #04060b 100%);
       background-attachment: scroll;
     }
