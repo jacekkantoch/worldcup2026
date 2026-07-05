@@ -6213,7 +6213,7 @@ const BRACKET_FEEDS = {
 const BRACKET_LAYOUT = {
   rounds: [{
     label: '1/16 finału',
-    ids: ['M75', 'M78', 'M73', 'M76', 'M84', 'M83', 'M82', 'M81', 'M74', 'M77', 'M79', 'M80', 'M87', 'M86', 'M85', 'M88']
+    ids: ['M73', 'M76', 'M75', 'M78', 'M84', 'M83', 'M82', 'M81', 'M74', 'M77', 'M79', 'M80', 'M87', 'M86', 'M85', 'M88']
   }, {
     label: '1/8 finału',
     ids: ['M89', 'M90', 'M93', 'M94', 'M91', 'M92', 'M95', 'M96']

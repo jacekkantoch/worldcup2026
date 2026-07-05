@@ -3803,14 +3803,15 @@
       backdrop-filter: blur(14px) saturate(145%) !important;
     }
 
-    /* Filtry w porównaniu i panelu administratora odpowiadają filtrom z Meczy. */
+    /* Filtry w porównaniu i panelu administratora — taka sama szklana
+       powierzchnia jak Ranking/Drabinka, bez cienia. */
     html:not([data-theme="light"]) .compare-view .filters-sticky,
     html:not([data-theme="light"]) .admin-phase-filters,
     html:not([data-theme="light"]) .phase-filter-panel {
       background:
-        radial-gradient(circle at 18% -20%, rgba(255,255,255,.16), transparent 42%),
-        linear-gradient(145deg, rgba(28,36,54,.74), rgba(14,19,31,.60)) !important;
-      box-shadow: var(--shadow-md), var(--hl2), 0 0 0 1px rgba(0,0,0,.10) !important;
+        radial-gradient(circle at 18% -22%, rgba(255,255,255,.106), transparent 44%),
+        linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.024)) !important;
+      box-shadow: none !important;
     }
 
     /* Ranking: usuń wielobarwne tła kategorii, pozostawiając czytelne dane. */
@@ -4885,14 +4886,14 @@ html body [role="button"]:hover {
 }
 
 
-/* Filtry: mniej przejrzyste kafelki. */
+/* Filtry: taka sama szklana powierzchnia jak baner "Drabinka turnieju". */
 html:not([data-theme="light"]) body .phase-filter-panel,
 html:not([data-theme="light"]) body .filters-sticky,
 html:not([data-theme="light"]) body .admin-phase-filters {
   background:
-    radial-gradient(circle at 18% -20%, rgba(255,255,255,.10), transparent 42%),
-    linear-gradient(145deg, rgba(44, 44, 46, .94), rgba(20, 20, 22, .92)) !important;
-  background-color: rgba(24, 24, 26, .94) !important;
+    radial-gradient(circle at 18% -22%, rgba(255,255,255,.106), transparent 44%),
+    linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.024)) !important;
+  background-color: transparent !important;
 }
 
 /* Karty meczów w zakładce Mecze — ten sam token tła co karty w Rankingu,
@@ -4973,14 +4974,12 @@ html body {
 }
 
 
-/* Filtry: normalne cienie odblokowane. */
+/* Filtry: bez cienia — spójnie z banerem "Drabinka turnieju" (.bracket-intro). */
 html:not([data-theme="light"]) body .phase-filter-panel,
 html:not([data-theme="light"]) body .filters-sticky,
 html:not([data-theme="light"]) body .admin-phase-filters {
   overflow: visible !important;
-  box-shadow:
-    0 18px 24px -16px rgba(0, 0, 0, .62),
-    0 8px 12px -10px rgba(0, 0, 0, .42) !important;
+  box-shadow: none !important;
   filter: none !important;
 }
 
@@ -4989,9 +4988,9 @@ html:not([data-theme="light"]) body .admin-phase-filters {
 html:not([data-theme="light"]) body .compare-view .phase-filter-panel.filters-sticky {
   opacity: 1 !important;
   background:
-    radial-gradient(circle at 18% -20%, rgba(255,255,255,.10), transparent 42%),
-    linear-gradient(145deg, rgba(44, 44, 46, .94), rgba(20, 20, 22, .92)) !important;
-  background-color: rgba(24, 24, 26, .94) !important;
+    radial-gradient(circle at 18% -22%, rgba(255,255,255,.106), transparent 44%),
+    linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.024)) !important;
+  background-color: transparent !important;
   border-color: transparent !important;
 }
 
@@ -7408,10 +7407,10 @@ html:not([data-theme="light"]) body .admin-phase-filters {
   isolation: isolate !important;
   overflow: hidden !important;
   background:
-    radial-gradient(circle at 18% -20%, rgba(255,255,255,.10), transparent 42%),
-    linear-gradient(145deg, rgba(46, 46, 48, .985), rgba(18, 18, 20, .975)) !important;
-  background-color: rgb(22, 22, 24) !important;
-  border-color: rgba(255,255,255,.09) !important;
+    radial-gradient(circle at 18% -22%, rgba(255,255,255,.106), transparent 44%),
+    linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.024)) !important;
+  background-color: transparent !important;
+  border-color: transparent !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
@@ -7424,9 +7423,7 @@ html:not([data-theme="light"]) body .admin-phase-filters::before {
   inset: 0 !important;
   z-index: -1 !important;
   border-radius: inherit !important;
-  background:
-    radial-gradient(circle at 20% -24%, rgba(255,255,255,.11), transparent 44%),
-    linear-gradient(145deg, rgb(48, 48, 50), rgb(18, 18, 20)) !important;
+  background: #000 !important;
   opacity: 1 !important;
   pointer-events: none !important;
 }
