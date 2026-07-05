@@ -2031,7 +2031,7 @@
       overflow: hidden !important;
       isolation: isolate;
       background-clip: padding-box;
-              mask-image: radial-gradient(white, black);
+              mask-image: radial-gradient(white, white);
     }
 
     /* Interactive headers / first rows inside rounded cards should inherit
@@ -2061,7 +2061,7 @@
     .match-card > button:first-child,
     .deferred-card,
     .selection-tile {
-              mask-image: radial-gradient(white, black);
+              mask-image: radial-gradient(white, white);
     }
 
     /* Expanded match card join fix — when a match is opened, the summary row
@@ -2077,7 +2077,7 @@
       border-radius: 0 0 var(--ui-corner-radius) var(--ui-corner-radius) !important;
       overflow: hidden !important;
       background-clip: padding-box;
-              mask-image: radial-gradient(white, black);
+              mask-image: radial-gradient(white, white);
     }
 
     /* Keep the divider seam visually clean in the expanded state. */
@@ -2104,7 +2104,7 @@
       border-radius: var(--ui-corner-radius) var(--ui-corner-radius) 0 0 !important;
       overflow: hidden;
       background-clip: padding-box;
-              mask-image: radial-gradient(white, black);
+              mask-image: radial-gradient(white, white);
     }
 
     /* Filter cards and admin tab rows need a little horizontal breathing room
@@ -2262,7 +2262,7 @@
       overflow: hidden !important;
       isolation: isolate;
       background-clip: padding-box;
-              mask-image: radial-gradient(white, black);
+              mask-image: radial-gradient(white, white);
     }
 
     .admin-match-card > .admin-match-summary-button {
@@ -2280,7 +2280,7 @@
       overflow: hidden !important;
       margin-top: 0 !important;
       background-clip: padding-box;
-              mask-image: radial-gradient(white, black);
+              mask-image: radial-gradient(white, white);
     }
 
     /* Admin expanded-card seam fix: the generic rounded-card header selector
@@ -3812,7 +3812,6 @@
 
     /* Filtry: ciemnoszare tło. */
     html:not([data-theme="light"]) .compare-view .filters-sticky,
-    html:not([data-theme="light"]) .admin-phase-filters,
     html:not([data-theme="light"]) .phase-filter-panel {
       background: rgba(28,28,30,.92) !important;
       box-shadow: none !important;
@@ -4693,6 +4692,17 @@ html body .admin-panel-banner {
   opacity: 1 !important;
 }
 
+/* Kolorowe warianty (warning/danger/info/success) mają zachować swój żywy
+   kolor cały czas, nie tylko po najechaniu — poniższe tło/obwódka dotyczy
+   więc tylko domyślnego (bezbarwnego) banera i innych powierzchni "flat". */
+html body .app-note:not(.app-note--warning):not(.app-note--danger):not(.app-note--success):not(.app-note--info),
+html body .install-banner,
+html body .specials-score-banner,
+html body .admin-panel-banner {
+  background: var(--tab-match-surface-soft) !important;
+  border-color: rgba(255,255,255,.10) !important;
+}
+
 html body .app-note:is(:hover, :focus, :focus-visible, :focus-within, :active),
 html body .install-banner:is(:hover, :focus, :focus-visible, :focus-within, :active),
 html body .specials-score-banner:is(:hover, :focus, :focus-visible, :focus-within, :active),
@@ -4892,8 +4902,7 @@ html body [role="button"]:hover {
 
 /* Filtry: ciemnoszare tło. */
 html:not([data-theme="light"]) body .phase-filter-panel,
-html:not([data-theme="light"]) body .filters-sticky,
-html:not([data-theme="light"]) body .admin-phase-filters {
+html:not([data-theme="light"]) body .filters-sticky {
   background: rgba(28,28,30,.92) !important;
   background-color: transparent !important;
 }
@@ -5728,7 +5737,7 @@ html body .specials-view .selection-tile .specials-team-name {
   text-overflow: clip !important;
   white-space: nowrap !important;
   overflow-wrap: normal !important;
-  line-height: 1.05 !important;
+  line-height: 1.35 !important;
   mask-image: none !important;
   -webkit-mask-image: none !important;
 }
@@ -7413,10 +7422,10 @@ html.is-mobile-browser body .matches-view {
   perspective: 1000px !important;
 }
 
-/* Sticky filter opaque overlay fix. */
+/* Sticky filter opaque overlay fix. Panel filtrów w admin nie jest sticky
+   i ma zachować swoje własne tło — celowo pominięty w tym bloku. */
 html:not([data-theme="light"]) body .phase-filter-panel.filters-sticky,
-html:not([data-theme="light"]) body .filters-sticky,
-html:not([data-theme="light"]) body .admin-phase-filters {
+html:not([data-theme="light"]) body .filters-sticky {
   position: sticky !important;
   isolation: isolate !important;
   overflow: hidden !important;
@@ -7428,8 +7437,7 @@ html:not([data-theme="light"]) body .admin-phase-filters {
 }
 
 html:not([data-theme="light"]) body .phase-filter-panel.filters-sticky::before,
-html:not([data-theme="light"]) body .filters-sticky::before,
-html:not([data-theme="light"]) body .admin-phase-filters::before {
+html:not([data-theme="light"]) body .filters-sticky::before {
   content: "" !important;
   position: absolute !important;
   inset: 0 !important;
@@ -7441,10 +7449,15 @@ html:not([data-theme="light"]) body .admin-phase-filters::before {
 }
 
 html body .phase-filter-panel.filters-sticky > *,
-html body .filters-sticky > *,
-html body .admin-phase-filters > * {
+html body .filters-sticky > * {
   position: relative !important;
   z-index: 1 !important;
+}
+
+/* Panel filtrów w administratorze: taki sam układ/rozmiar jak w
+   Meczach/Porównaj, ale bez sticky i z własnym tłem. */
+html body .admin-phase-filters {
+  position: static !important;
 }
 
 /* Sticky filter z-index above expanded matches. */
@@ -8245,8 +8258,12 @@ html body .profile-modal-overlay-root .login-modal-compact-sheet {
    powyżej mimo !important (dodatkowa klasa na <html> = wyższa
    specyficzność). Zastępujemy ją małym, symetrycznym marginesem
    uwzględniającym tylko safe-area (notch), żeby panel realnie się
-   wyśrodkował zamiast lądować tuż pod nagłówkiem. */
-html.is-mobile-browser body .profile-modal-overlay-root {
+   wyśrodkował zamiast lądować tuż pod nagłówkiem. Ta sama poprawka dotyczy
+   `.is-mobile-standalone` (PWA odpalone z ekranu głównego) — to ta sama
+   dodatkowa klasa na <html> podbijająca specyficzność, więc bez tego wpisu
+   panel wracał do niewyśrodkowanego wariantu tylko w trybie standalone. */
+html.is-mobile-browser body .profile-modal-overlay-root,
+html.is-mobile-standalone body .profile-modal-overlay-root {
   align-items: center !important;
   justify-content: center !important;
   padding-top: calc(var(--safe-top, 0px) + 12px) !important;
@@ -8294,21 +8311,23 @@ html body .app-note.matches-empty-note {
    (segmented control w "torze", jak natywny iOS) i licznik wyników
    (mała plakietka zamiast osamotnionego tekstu).
    ═══════════════════════════════════════════════════════════════ */
-.phase-filter-panel {
-  padding: 14px !important;
+.phase-filter-panel,
+.admin-phase-filters {
+  padding: 9px !important;
 }
 
 .phase-filter-panel > div:first-child {
-  gap: 10px !important;
+  gap: 6px !important;
 }
 
-/* Chipy faz: trochę więcej oddechu i wyraźniejszy odstęp między nimi. */
-.phase-filter-panel .chip-scroll-row {
-  gap: 7px !important;
+.admin-phase-filters {
+  position: static !important;
 }
 
-.phase-filter-panel .chip-scroll-row .selection-tile {
-  min-height: 32px;
+/* Chipy faz: kompaktowe, bez dodatkowego wymuszonego odstępu/wysokości. */
+.phase-filter-panel .chip-scroll-row,
+.admin-phase-filters .chip-scroll-row {
+  gap: 6px !important;
 }
 
 /* Status (Wszystkie/Nadchodzące/Zakończone): wspólny, wgłębiony "tor",
@@ -8317,8 +8336,8 @@ html body .app-note.matches-empty-note {
   background: rgba(255,255,255,.05) !important;
   border: 1px solid rgba(255,255,255,.08) !important;
   border-radius: 999px !important;
-  padding: 4px !important;
-  min-height: 40px !important;
+  padding: 3px !important;
+  min-height: 30px !important;
   box-shadow: inset 0 1px 4px rgba(0,0,0,.45) !important;
   gap: 2px !important;
 }
@@ -8340,15 +8359,18 @@ html body .app-note.matches-empty-note {
   box-shadow: none !important;
 }
 
-/* Licznik wyników: mała plakietka zamiast samotnego tekstu. */
-.phase-filter-panel > div:last-child {
-  margin: 10px auto 0 !important;
-  padding: 4px 12px !important;
+/* Licznik wyników: mała plakietka obok paska statusu, nie osobna linia. */
+.phase-filter-panel .match-count-badge {
+  margin: 0 !important;
+  padding: 2px 10px !important;
   width: fit-content !important;
   border-radius: 999px !important;
   background: rgba(255,255,255,.06) !important;
   color: rgba(235,241,255,.60) !important;
   font-weight: 700 !important;
   letter-spacing: .01em !important;
+  font-size: 10px !important;
+  line-height: 1.5 !important;
+  white-space: nowrap !important;
 }
 

@@ -424,14 +424,11 @@ function InfiniteGroupFilter({ selected, onSelect, btnClass }) {
       WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)'
     }
   }, items.map((g, i) =>
-    React.createElement('button', {
+    React.createElement('div', {
       key: i,
-      type: 'button',
       role: 'tab',
       'aria-selected': visualCenter === g,
-      'aria-pressed': visualCenter === g,
       'aria-label': `Grupa ${g}`,
-      onClick: () => selectGroup(g),
       className: `${btnClass}${visualCenterIndex === i ? ' is-selected' : ''}`,
       style: { scrollSnapAlign: 'center', scrollSnapStop: 'always' }
     }, g)
@@ -1973,8 +1970,8 @@ function ScoreInput({
       width: 44,
       height: 56,
       borderRadius: '22px 0 0 22px',
-      background: 'var(--glass-3)',
-      border: '1px solid var(--border-2)',
+      background: 'rgba(255, 255, 255, 0.10)',
+      border: '1px solid rgba(255,255,255,.22)',
       borderRight: 'none',
       color: 'var(--label-1)',
       fontWeight: 700,
@@ -2020,8 +2017,8 @@ function ScoreInput({
       width: 44,
       height: 56,
       borderRadius: '0 22px 22px 0',
-      background: 'var(--glass-3)',
-      border: '1px solid var(--border-2)',
+      background: 'rgba(255, 255, 255, 0.10)',
+      border: '1px solid rgba(255,255,255,.22)',
       borderLeft: 'none',
       color: 'var(--label-1)',
       fontWeight: 700,
@@ -3521,7 +3518,7 @@ function MatchesView({
   const hasMoreMatches = compactDevice && visibleCount < filtered.length;
   const filterBtns = PHASE_FILTER_TABS;
   const filterPanel = React.createElement("div", {
-    className: "phase-filter-panel fixed-filter-portal-panel bg-white border border-[#b0bce8] rounded-xl p-3 filters-sticky shadow-sm"
+    className: "phase-filter-panel fixed-filter-portal-panel bg-white border border-[#b0bce8] rounded-xl p-2 filters-sticky shadow-sm"
   }, React.createElement("div", {
     className: "flex flex-col gap-1"
   }, React.createElement("div", {
@@ -3529,22 +3526,24 @@ function MatchesView({
   }, filterBtns.map(t => React.createElement("button", {
     key: t.k,
     onClick: () => handlePhaseFilter(t.k),
-    className: `selection-tile${phaseFilter === t.k ? ' is-selected' : ''} shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold`
+    className: `selection-tile${phaseFilter === t.k ? ' is-selected' : ''} shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold`
   }, t.l))), phaseFilter === 'group' && React.createElement("div", {
     className: "chip-scroll-row tight"
   }, React.createElement("button", {
     onClick: () => {
       setGroupFilter('all');
     },
-    className: `selection-tile${groupFilter === 'all' ? ' is-selected' : ''} shrink-0 px-2.5 py-1 rounded-lg text-xs font-bold`
+    className: `selection-tile${groupFilter === 'all' ? ' is-selected' : ''} shrink-0 px-2.5 py-0.5 rounded-lg text-xs font-bold`
   }, "Wszystkie"), GROUPS.map(g => React.createElement("button", {
     key: g,
     onClick: () => {
       setGroupFilter(g);
     },
-    className: `selection-tile${groupFilter === g ? ' is-selected' : ''} shrink-0 w-8 h-7 rounded-lg text-xs font-bold`
+    className: `selection-tile${groupFilter === g ? ' is-selected' : ''} shrink-0 w-7 h-6 rounded-lg text-xs font-bold`
   }, g))), React.createElement("div", {
-    className: "edge-safe-row flex gap-1 items-center py-0.5"
+    className: "flex items-center gap-1.5"
+  }, React.createElement("div", {
+    className: "edge-safe-row flex gap-1 items-center py-0.5 flex-1 min-w-0"
   }, [{
     k: 'all',
     l: 'Wszystkie'
@@ -3560,9 +3559,9 @@ function MatchesView({
       setStatusFilter(t.k);
     },
     className: `selection-tile${statusFilter === t.k ? ' is-selected' : ''} flex-1 px-2 py-1 rounded-lg text-xs font-medium`
-  }, t.l)))), React.createElement("div", {
-    className: "text-[11px] text-stone-500 mt-1 text-center"
-  }, filtered.length, " ", plMecze(filtered.length)));
+  }, t.l))), React.createElement("div", {
+    className: "match-count-badge shrink-0"
+  }, filtered.length, " ", plMecze(filtered.length)))));
   return React.createElement("div", {
     className: "matches-view space-y-3"
   }, filterPanel, visibleMatches.map(m => React.createElement(MatchCard, {
@@ -4407,6 +4406,14 @@ function CompareView({
   const [statusFilter, setStatusFilter] = useState('all');
   const autoPhaseFilterRef = useRef('all');
   const phaseFilterTouchedRef = useRef(false);
+  const [compactDevice, setCompactDevice] = useState(() => typeof window !== "undefined" && (window.innerWidth <= 700 || window.matchMedia("(pointer: coarse)").matches));
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const check = () => setCompactDevice(window.innerWidth <= 700 || window.matchMedia("(pointer: coarse)").matches);
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+  const [visibleCount, setVisibleCount] = useState(() => compactDevice ? 18 : Number.MAX_SAFE_INTEGER);
   const [expandedMatches, setExpandedMatches] = useState(() => new Set());
   const toggleMatchDetails = useCallback(matchId => {
     setExpandedMatches(prev => {
@@ -4435,14 +4442,17 @@ function CompareView({
   }, [matches, phaseFilter, groupFilter, statusFilter, results]);
   useEffect(() => {
     setExpandedMatches(new Set());
-  }, [phaseFilter, groupFilter, statusFilter]);
+    setVisibleCount(compactDevice ? 18 : Number.MAX_SAFE_INTEGER);
+  }, [phaseFilter, groupFilter, statusFilter, compactDevice]);
+  const visibleMatches = compactDevice ? filtered.slice(0, visibleCount) : filtered;
+  const hasMoreMatches = compactDevice && visibleCount < filtered.length;
   if (players.length === 0) return React.createElement("div", {
     className: "text-center text-stone-500 py-12 app-note app-note--info app-note--center"
   }, "Dodaj graczy, \u017Ceby por\xF3wnywa\u0107 typy.");
   return React.createElement("div", {
     className: "compare-view space-y-3"
   }, React.createElement("div", {
-    className: "phase-filter-panel bg-white border border-[#b0bce8] rounded-xl p-3 filters-sticky shadow-sm"
+    className: "phase-filter-panel bg-white border border-[#b0bce8] rounded-xl p-2 filters-sticky shadow-sm"
   }, React.createElement("div", {
     className: "flex flex-col gap-1"
   }, React.createElement("div", {
@@ -4453,22 +4463,24 @@ function CompareView({
       phaseFilterTouchedRef.current = true;
       setPhaseFilter(t.k);
     },
-    className: `selection-tile${phaseFilter === t.k ? ' is-selected' : ''} shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold`
+    className: `selection-tile${phaseFilter === t.k ? ' is-selected' : ''} shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold`
   }, t.l))), phaseFilter === 'group' && React.createElement("div", {
     className: "chip-scroll-row tight"
   }, React.createElement("button", {
     onClick: () => {
       setGroupFilter('all');
     },
-    className: `selection-tile${groupFilter === 'all' ? ' is-selected' : ''} shrink-0 px-2.5 py-1 rounded-lg text-xs font-bold`
+    className: `selection-tile${groupFilter === 'all' ? ' is-selected' : ''} shrink-0 px-2.5 py-0.5 rounded-lg text-xs font-bold`
   }, "Wszystkie"), GROUPS.map(g => React.createElement("button", {
     key: g,
     onClick: () => {
       setGroupFilter(g);
     },
-    className: `selection-tile${groupFilter === g ? ' is-selected' : ''} shrink-0 w-8 h-7 rounded-lg text-xs font-bold`
+    className: `selection-tile${groupFilter === g ? ' is-selected' : ''} shrink-0 w-7 h-6 rounded-lg text-xs font-bold`
   }, g))), React.createElement("div", {
-    className: "edge-safe-row flex gap-1 items-center py-0.5"
+    className: "flex items-center gap-1.5"
+  }, React.createElement("div", {
+    className: "edge-safe-row flex gap-1 items-center py-0.5 flex-1 min-w-0"
   }, [{
     k: 'all',
     l: 'Wszystkie'
@@ -4484,9 +4496,9 @@ function CompareView({
       setStatusFilter(t.k);
     },
     className: `selection-tile${statusFilter === t.k ? ' is-selected' : ''} flex-1 px-2 py-1 rounded-lg text-xs font-medium`
-  }, t.l)))), React.createElement("div", {
-    className: "text-[11px] text-stone-500 mt-1 text-center"
-  }, filtered.length, " ", plMecze(filtered.length))), filtered.map(m => {
+  }, t.l))), React.createElement("div", {
+    className: "match-count-badge shrink-0"
+  }, filtered.length, " ", plMecze(filtered.length))))), visibleMatches.map(m => {
     const home = teams[m.homeTeamId],
       away = teams[m.awayTeamId],
       result = results[m.id];
@@ -4616,7 +4628,11 @@ function CompareView({
         }
       }, pts === null ? '0' : pts > 0 ? `+${pts}` : '0')));
     })));
-  }));
+  }), hasMoreMatches && React.createElement("button", {
+    type: "button",
+    onClick: () => setVisibleCount(count => count + 18),
+    className: "selection-tile w-full rounded-xl px-4 py-3 text-sm font-semibold"
+  }, "Pokaż kolejne mecze (", filtered.length - visibleCount, ")"));
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -5479,17 +5495,17 @@ function AdminPanel({
     groupOrders: {}
   }), [specialResults]);
   const tabs = [{
-    k: 'locks',
-    l: 'Blokady faz'
-  }, {
     k: 'results',
     l: 'Mecze i wyniki'
+  }, {
+    k: 'specials',
+    l: 'Wyniki specjalne'
   }, {
     k: 'teams',
     l: 'Drużyny'
   }, {
-    k: 'specials',
-    l: 'Wyniki specjalne'
+    k: 'locks',
+    l: 'Blokady faz'
   }, {
     k: 'scoring',
     l: 'Punktacja',
@@ -5602,21 +5618,23 @@ function AdminPanel({
   }, React.createElement("h4", {
     className: "font-display text-base mb-2"
   }, "Kolejno\u015B\u0107 w grupach"), React.createElement("div", {
-    className: "admin-group-order-filter-row flex gap-1 mb-3",
+    className: "group-order-filter-row pill-scroll-safe flex gap-1 p-2 mb-3",
     style: { overflow: 'hidden' }
   }, React.createElement(InfiniteGroupFilter, {
     selected: spGroup,
     onSelect: setSpGroup,
-    btnClass: 'selection-tile shrink-0 w-9 h-9 rounded-lg font-bold'
+    btnClass: 'selection-tile shrink-0 w-10 h-10 rounded-lg font-bold'
   })), [0, 1, 2, 3].map(pos => {
     const gTeams = Object.values(teams).filter(t => t && t.group === spGroup);
     return React.createElement("div", {
       key: pos,
-      className: "mb-2"
-    }, React.createElement("label", {
+      className: "specials-position-card"
+    }, React.createElement("div", {
+      className: "flex items-center justify-between mb-1.5"
+    }, React.createElement("span", {
       className: "text-xs font-bold text-stone-700"
-    }, ['1.', '2.', '3.', '4.'][pos], " miejsce"), React.createElement("div", {
-      className: "grid grid-cols-2 gap-1 mt-1"
+    }, ['1.', '2.', '3.', '4.'][pos], " miejsce")), React.createElement("div", {
+      className: "grid grid-cols-2 sm:grid-cols-4 gap-1.5"
     }, gTeams.map(t => {
       const sel = spDraft.groupOrders?.[spGroup]?.[pos] === t.id;
       return React.createElement("button", {
@@ -5633,13 +5651,13 @@ function AdminPanel({
             }
           };
         }),
-        className: `selection-tile${sel ? ' is-selected' : ''} px-2 py-1.5 rounded-lg text-xs font-semibold border inline-flex items-center gap-2 justify-start min-w-0`
+        className: `selection-tile${sel ? ' is-selected' : ''} px-2 py-2 rounded-lg text-xs font-semibold border transition-all inline-flex items-center gap-2 justify-start min-w-0`
       }, React.createElement(FlagImg, {
         code: t.flag,
         size: 16,
         title: t.name
       }), React.createElement("span", {
-        className: "min-w-0 truncate"
+        className: "specials-team-name min-w-0 truncate"
       }, t.name));
     })));
   })), React.createElement("div", {
