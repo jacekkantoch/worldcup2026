@@ -164,7 +164,7 @@
     .install-banner button { background: var(--accent); color: white; border: none; border-radius: 10px; padding: 9px 16px; font-weight: 700; font-size: 13px; cursor: pointer; white-space: nowrap; transition: opacity .15s, transform .12s; }
     .install-banner button:active { transform: scale(.96); opacity: .85; }
 
-    #loading { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; min-height: 100dvh; width: 100%; flex-direction: column; gap: 14px; background: var(--bg-0); overflow: hidden; }
+    #loading { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; min-height: 100dvh; width: 100%; flex-direction: column; gap: 14px; background: #000; overflow: hidden; }
     .loading-icon {
       position: relative; z-index: 1;
       width: 76px; height: 76px; background: linear-gradient(145deg, #fff 0%, #e4edff 100%);
@@ -792,7 +792,7 @@
     }
 
     #loading {
-      background: #05070d;
+      background: #000;
     }
     .loading-icon {
       background:
@@ -3459,10 +3459,14 @@
         rgba(190,145,20,.88) !important;
     }
     .app-note--info {
-      --note-color: #a9d8ff;
-      --note-border: rgba(112,184,255,.24);
-      --note-left-glow: rgba(0,190,225,.22);
-      --note-right-glow: rgba(70,125,255,.14);
+      --note-color: #5a3e00;
+      --note-border: rgba(200,160,40,.50);
+      --note-left-glow: rgba(255,255,180,.18);
+      --note-right-glow: rgba(255,200,0,.14);
+      background:
+        radial-gradient(circle at -6% 50%, var(--note-left-glow), transparent 34%),
+        radial-gradient(circle at 106% 50%, var(--note-right-glow), transparent 30%),
+        rgba(190,145,20,.88) !important;
     }
     .app-note--danger {
       --note-color: #ffd9d6;
@@ -3565,10 +3569,13 @@
       outline: none !important;
     }
 
-    /* Warning i danger zachowują swój kolor przy hover/active */
+    /* Warning, info i danger zachowują swój kolor przy hover/active */
     .app-note--warning:is(:hover, :active, :focus, :focus-visible, :focus-within),
     div.app-note--warning:is(:hover, :active),
-    section.app-note--warning:is(:hover, :active) {
+    section.app-note--warning:is(:hover, :active),
+    .app-note--info:is(:hover, :active, :focus, :focus-visible, :focus-within),
+    div.app-note--info:is(:hover, :active),
+    section.app-note--info:is(:hover, :active) {
       background:
         radial-gradient(circle at -6% 50%, var(--note-left-glow), transparent 34%),
         radial-gradient(circle at 106% 50%, var(--note-right-glow), transparent 30%),
@@ -3803,14 +3810,11 @@
       backdrop-filter: blur(14px) saturate(145%) !important;
     }
 
-    /* Filtry w porównaniu i panelu administratora — taka sama szklana
-       powierzchnia jak Ranking/Drabinka, bez cienia. */
+    /* Filtry: ciemnoszare tło. */
     html:not([data-theme="light"]) .compare-view .filters-sticky,
     html:not([data-theme="light"]) .admin-phase-filters,
     html:not([data-theme="light"]) .phase-filter-panel {
-      background:
-        radial-gradient(circle at 18% -22%, rgba(255,255,255,.106), transparent 44%),
-        linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.024)) !important;
+      background: rgba(28,28,30,.92) !important;
       box-shadow: none !important;
     }
 
@@ -4886,13 +4890,11 @@ html body [role="button"]:hover {
 }
 
 
-/* Filtry: taka sama szklana powierzchnia jak baner "Drabinka turnieju". */
+/* Filtry: ciemnoszare tło. */
 html:not([data-theme="light"]) body .phase-filter-panel,
 html:not([data-theme="light"]) body .filters-sticky,
 html:not([data-theme="light"]) body .admin-phase-filters {
-  background:
-    radial-gradient(circle at 18% -22%, rgba(255,255,255,.106), transparent 44%),
-    linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.024)) !important;
+  background: rgba(28,28,30,.92) !important;
   background-color: transparent !important;
 }
 
@@ -4987,9 +4989,7 @@ html:not([data-theme="light"]) body .admin-phase-filters {
 /* Porownaj: panel filtrow z takim samym kryciem jak Mecze. */
 html:not([data-theme="light"]) body .compare-view .phase-filter-panel.filters-sticky {
   opacity: 1 !important;
-  background:
-    radial-gradient(circle at 18% -22%, rgba(255,255,255,.106), transparent 44%),
-    linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.024)) !important;
+  background: rgba(28,28,30,.92) !important;
   background-color: transparent !important;
   border-color: transparent !important;
 }
@@ -6571,12 +6571,19 @@ html body .compare-match-toggle:hover {
   border-color: rgba(255,255,255,.075) !important;
 }
 
-/* Podświetlenie kliknięcia — hover celowo bez zmian (spójnie z Rankingiem),
-   ale samo kliknięcie ma dawać wyraźny, neutralny feedback. */
+/* Bez podświetlenia po kliknięciu — tak samo jak przy zwykłym najechaniu. */
 html body .compare-match-toggle:active {
-  background: rgba(255,255,255,.14) !important;
-  border-color: rgba(255,255,255,.32) !important;
-  transform: scale(.985) !important;
+  background: rgba(255,255,255,.04) !important;
+  border-color: rgba(255,255,255,.075) !important;
+  transform: none !important;
+}
+
+/* Fokus (zostaje "przyklejony" po tapnięciu na telefonie) nie może
+   zostawiać przycisku bez tła. */
+html body .compare-match-toggle:focus,
+html body .compare-match-toggle:focus-visible {
+  background: rgba(255,255,255,.04) !important;
+  border-color: rgba(255,255,255,.075) !important;
 }
 
 html body .compare-match-teams {
@@ -6957,13 +6964,20 @@ html body .leaderboard-view .leaderboard-phase-summary:hover {
   border-color: rgba(255,255,255,.075) !important;
 }
 
-/* Podświetlenie kliknięcia (rozwijanie "Rozkład punktów") — hover celowo
-   zostaje bez zmian, ale samo kliknięcie/przytrzymanie ma dawać wyraźny
-   feedback, inaczej rozwijanie wygląda jak martwy element. */
+/* Bez podświetlenia po kliknięciu — tak samo jak przy zwykłym najechaniu. */
 html body .leaderboard-view .leaderboard-phase-summary:active {
-  background: rgba(255,255,255,.14) !important;
-  border-color: rgba(255,255,255,.32) !important;
-  transform: scale(.985) !important;
+  background: rgba(255,255,255,.04) !important;
+  border-color: rgba(255,255,255,.075) !important;
+  transform: none !important;
+}
+
+/* Fokus (zostaje "przyklejony" po tapnięciu na telefonie) nie może
+   zostawiać przycisku bez tła — inaczej po zwinięciu/rozwinięciu na
+   mobile przycisk wygląda jakby zniknął jego kolor. */
+html body .leaderboard-view .leaderboard-phase-summary:focus,
+html body .leaderboard-view .leaderboard-phase-summary:focus-visible {
+  background: rgba(255,255,255,.04) !important;
+  border-color: rgba(255,255,255,.075) !important;
 }
 
 html body .leaderboard-view .leaderboard-phase-summary-label {
@@ -7406,10 +7420,8 @@ html:not([data-theme="light"]) body .admin-phase-filters {
   position: sticky !important;
   isolation: isolate !important;
   overflow: hidden !important;
-  background:
-    radial-gradient(circle at 18% -22%, rgba(255,255,255,.106), transparent 44%),
-    linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.024)) !important;
-  background-color: transparent !important;
+  background: rgba(28,28,30,.92) !important;
+  background-color: rgb(28,28,30) !important;
   border-color: transparent !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
@@ -7423,7 +7435,7 @@ html:not([data-theme="light"]) body .admin-phase-filters::before {
   inset: 0 !important;
   z-index: -1 !important;
   border-radius: inherit !important;
-  background: #000 !important;
+  background: rgb(28,28,30) !important;
   opacity: 1 !important;
   pointer-events: none !important;
 }
@@ -7648,10 +7660,10 @@ html body .app-bottom-fade {
   pointer-events: none !important;
   background: linear-gradient(
     180deg,
-    rgba(4, 9, 18, 0) 0%,
-    rgba(4, 9, 18, .18) 28%,
-    rgba(4, 9, 18, .66) 68%,
-    rgba(4, 9, 18, .96) 100%
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, .18) 28%,
+    rgba(0, 0, 0, .66) 68%,
+    rgba(0, 0, 0, .96) 100%
   ) !important;
 }
 
@@ -8273,5 +8285,70 @@ html body .app-note.matches-empty-note {
   border-radius: 30px !important;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.055) !important;
   color: var(--label-2) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Przeprojektowanie panelu filtrów (Mecze/Porównaj/Admin).
+   Cel: rozdzielić trzy różne rzeczy, które wcześniej wyglądały jak
+   jeden stos identycznych pigułek — fazy (przewijane chipy), status
+   (segmented control w "torze", jak natywny iOS) i licznik wyników
+   (mała plakietka zamiast osamotnionego tekstu).
+   ═══════════════════════════════════════════════════════════════ */
+.phase-filter-panel {
+  padding: 14px !important;
+}
+
+.phase-filter-panel > div:first-child {
+  gap: 10px !important;
+}
+
+/* Chipy faz: trochę więcej oddechu i wyraźniejszy odstęp między nimi. */
+.phase-filter-panel .chip-scroll-row {
+  gap: 7px !important;
+}
+
+.phase-filter-panel .chip-scroll-row .selection-tile {
+  min-height: 32px;
+}
+
+/* Status (Wszystkie/Nadchodzące/Zakończone): wspólny, wgłębiony "tor",
+   z płaskimi przyciskami wewnątrz — wyskakuje tylko ten zaznaczony. */
+.phase-filter-panel .edge-safe-row {
+  background: rgba(255,255,255,.05) !important;
+  border: 1px solid rgba(255,255,255,.08) !important;
+  border-radius: 999px !important;
+  padding: 4px !important;
+  min-height: 40px !important;
+  box-shadow: inset 0 1px 4px rgba(0,0,0,.45) !important;
+  gap: 2px !important;
+}
+
+.phase-filter-panel .edge-safe-row .selection-tile {
+  border-radius: 999px !important;
+}
+
+.phase-filter-panel .edge-safe-row .selection-tile:not(.is-selected) {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  color: rgba(235,241,255,.62) !important;
+}
+
+.phase-filter-panel .edge-safe-row .selection-tile:not(.is-selected):hover {
+  background: rgba(255,255,255,.06) !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Licznik wyników: mała plakietka zamiast samotnego tekstu. */
+.phase-filter-panel > div:last-child {
+  margin: 10px auto 0 !important;
+  padding: 4px 12px !important;
+  width: fit-content !important;
+  border-radius: 999px !important;
+  background: rgba(255,255,255,.06) !important;
+  color: rgba(235,241,255,.60) !important;
+  font-weight: 700 !important;
+  letter-spacing: .01em !important;
 }
 

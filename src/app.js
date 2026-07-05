@@ -269,6 +269,12 @@ function InfiniteGroupFilter({ selected, onSelect, btnClass }) {
   const loopCopies = 9;
   const middleCopy = Math.floor(loopCopies / 2);
   const items = Array.from({ length: loopCopies }, () => GROUPS).flat();
+  // Podświetlenie liczone po dokładnym indeksie kopii, nie po samej literze
+  // grupy — inaczej (skoro litera powtarza się we wszystkich 9 kopiach pętli)
+  // wszystkie kopie danej grupy podświetlały się naraz, co przy kliknięciu
+  // w kopię inną niż środkowa wyglądało jak "glitch" (dwa podświetlone
+  // kółka naraz, dopóki animacja scrolla nie dojedzie do środka).
+  const [visualCenterIndex, setVisualCenterIndex] = React.useState(middleCopy * GROUPS.length);
 
   const metrics = React.useCallback(() => {
     const el = ref.current;
@@ -301,6 +307,7 @@ function InfiniteGroupFilter({ selected, onSelect, btnClass }) {
     const idx = GROUPS.indexOf(group);
     if (idx < 0) return;
     setVisualCenter(group);
+    setVisualCenterIndex(middleCopy * GROUPS.length + idx);
     snapToIndex(middleCopy * GROUPS.length + idx, smooth);
   }, [snapToIndex]);
 
@@ -366,6 +373,7 @@ function InfiniteGroupFilter({ selected, onSelect, btnClass }) {
     const rawIndexLive = Math.round(centerXLive / itemW - 0.5);
     const groupIndexLive = ((rawIndexLive % GROUPS.length) + GROUPS.length) % GROUPS.length;
     setVisualCenter(GROUPS[groupIndexLive]);
+    setVisualCenterIndex(Math.max(0, Math.min(items.length - 1, rawIndexLive)));
     if (snappingRef.current) return;
     clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
@@ -376,6 +384,7 @@ function InfiniteGroupFilter({ selected, onSelect, btnClass }) {
       const group = GROUPS[groupIndex];
       currentGroupRef.current = group;
       setVisualCenter(group);
+      setVisualCenterIndex(Math.max(0, Math.min(items.length - 1, rawIndex)));
       onSelect(group);
     }, 220);
   }, [metrics, onSelect, snapToIndex]);
@@ -423,7 +432,7 @@ function InfiniteGroupFilter({ selected, onSelect, btnClass }) {
       'aria-pressed': visualCenter === g,
       'aria-label': `Grupa ${g}`,
       onClick: () => selectGroup(g),
-      className: `${btnClass}${visualCenter === g ? ' is-selected' : ''}`,
+      className: `${btnClass}${visualCenterIndex === i ? ' is-selected' : ''}`,
       style: { scrollSnapAlign: 'center', scrollSnapStop: 'always' }
     }, g)
   )));
