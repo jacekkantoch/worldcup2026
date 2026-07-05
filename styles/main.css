@@ -5718,19 +5718,40 @@ html body .infinite-group-scroll {
   -webkit-overflow-scrolling: touch !important;
 }
 
-html body .infinite-group-scroll > button {
+html body .infinite-group-scroll > div {
   scroll-snap-align: center !important;
   scroll-snap-stop: normal !important;
-  cursor: pointer !important;
+  cursor: default !important;
 }
 
-html body .infinite-group-scroll > button:focus-visible {
-  outline: 2px solid rgba(157, 210, 255, .95) !important;
-  outline-offset: 3px !important;
+/* Kółka grup reagują tylko na przewijanie karuzeli — środkowe (wybrane)
+   ma zawsze zostać niebieskie, pozostałe NIE mają się podświetlać ani po
+   najechaniu, ani po kliknięciu (i tak nieklikalne, ale są to zwykłe divy
+   z klasą .selection-tile, więc bez tego nadpisania dziedziczyłyby
+   ogólny hover). */
+html body .infinite-group-scroll > div.selection-tile:not(.is-selected):hover {
+  background: linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.03)) !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  transform: none !important;
 }
 
-/* Mobile special group team labels. */
-html body .specials-view .selection-tile .specials-team-name {
+html body .infinite-group-scroll > div.selection-tile.is-selected,
+html body .infinite-group-scroll > div.selection-tile.is-selected:hover {
+  background:
+    linear-gradient(145deg, rgba(93,184,255,.30), rgba(52,106,240,.20) 58%, rgba(114,83,241,.16)) !important;
+  border-color: transparent !important;
+  box-shadow: 0 8px 20px rgba(26,106,255,.14) !important;
+  transform: none !important;
+}
+
+/* Mobile special group team labels. Ten sam wzorzec (.specials-position-card
+   > .selection-tile > .specials-team-name) jest współdzielony przez widok
+   gracza ("Typy specjalne") i panel admina ("Wyniki specjalne") — rozmiar
+   pól ma być wszędzie taki jak w panelu admina (bez wymuszania min-height
+   ani większej czcionki na mobile), więc selektor obejmuje oba miejsca. */
+html body .specials-view .selection-tile .specials-team-name,
+html body .specials-position-card .selection-tile .specials-team-name {
   display: block !important;
   min-width: 0 !important;
   overflow: hidden !important;
@@ -5742,19 +5763,8 @@ html body .specials-view .selection-tile .specials-team-name {
   -webkit-mask-image: none !important;
 }
 
-@media (max-width: 480px) {
-  html body .specials-view .selection-tile {
-    min-height: 44px !important;
-    gap: 8px !important;
-  }
-
-  html body .specials-view .selection-tile .specials-team-name {
-    font-size: 13px !important;
-  }
-}
-
-
-html body .specials-view .selection-tile .specials-team-name.is-overflowing {
+html body .specials-view .selection-tile .specials-team-name.is-overflowing,
+html body .specials-position-card .selection-tile .specials-team-name.is-overflowing {
   mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 22px), transparent 100%) !important;
   -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 22px), transparent 100%) !important;
 }
@@ -8339,7 +8349,7 @@ html body .app-note.matches-empty-note {
   padding: 3px !important;
   min-height: 30px !important;
   box-shadow: inset 0 1px 4px rgba(0,0,0,.45) !important;
-  gap: 2px !important;
+  gap: 6px !important;
 }
 
 .phase-filter-panel .edge-safe-row .selection-tile {
