@@ -1838,9 +1838,9 @@ function scoreSpecials(special, results, points = POINTS) {
   };
 }
 
-// Kolejność rozstrzygania remisów w klasyfikacji:
-// 1) liczba dokładnych wyników, 2) punkty za TOP 3,
-// 3) punkty za nagrody indywidualne, 4) punkty za miejsca w grupach.
+// Sortowanie klasyfikacji: najpierw suma punktów (total). Przy remisie kolejno:
+// 1) liczba dokładnych wyników, 2) punkty za TOP 3, 3) nagrody indywidualne,
+// 4) punkty za miejsca w grupach, 5) nazwa gracza (alfabetycznie).
 function compareRankingEntries(a, b) {
   const value = (entry, key) => Number(entry?.[key]) || 0;
   const groupPoints = entry => Number(entry?.go ?? entry?.groupOrders ?? 0) || 0;
@@ -1959,7 +1959,7 @@ function ScoreInput({
   return React.createElement("div", {
     className: "flex flex-col items-center gap-1"
   }, label && React.createElement("span", {
-    className: "text-[10px] uppercase tracking-wider text-stone-500 font-medium"
+    className: "text-[11px] uppercase tracking-wider text-stone-500 font-medium"
   }, label), React.createElement("div", {
     className: "flex items-center gap-0 score-input-shell"
   }, React.createElement("button", {
@@ -2734,7 +2734,7 @@ function TeamPicker({
   }), React.createElement("span", {
     className: `min-w-0 flex-1 truncate text-left ${selected ? '' : 'text-stone-400 font-medium'}`
   }, selected ? selected.name : placeholder), selected && React.createElement("span", {
-    className: "text-[10px] text-stone-400 shrink-0"
+    className: "text-[11px] text-stone-400 shrink-0"
   }, "Gr. ", selected.group), status === 'correct' && React.createElement(Icon, {
     name: "check",
     size: 14,
@@ -2775,7 +2775,7 @@ function TeamPicker({
   }), React.createElement("span", {
     className: "min-w-0 flex-1 truncate"
   }, t.name), React.createElement("span", {
-    className: "text-[10px] text-stone-400 shrink-0"
+    className: "text-[11px] text-stone-400 shrink-0"
   }, "Gr. ", t.group)))));
 }
 function AutocompleteInput({
@@ -2868,8 +2868,11 @@ const MatchCard = React.memo(function MatchCard({
   const teamsAssigned = !!(home && away);
   const phaseLocked = !!(phaseLocks && phaseLocks[match.phase]);
   const comparisonVisible = !!(phaseLocks && phaseLocks.compareVisible);
-  const locked = !!result || phaseLocked;
-  const lockReason = result ? 'wynik' : 'faza zablokowana przez admina';
+  // Blokada po rozpoczęciu meczu (#2): typu nie da się już edytować od momentu
+  // rozpoczęcia, niezależnie od tego, czy admin wpisał wynik / zablokował fazę.
+  const kickoffPassed = !!(match.date && Date.now() >= new Date(match.date).getTime());
+  const locked = !!result || phaseLocked || kickoffPassed;
+  const lockReason = result ? 'wynik' : phaseLocked ? 'faza zablokowana przez admina' : 'mecz się rozpoczął';
   const activePl = players && players.find && players.find(p => p.id === activePlayerId);
   const needsPin = !!(activePl && activePl.pinHash);
   const isKnockout = match.phase !== 'group';
@@ -2979,7 +2982,7 @@ const MatchCard = React.memo(function MatchCard({
       alignItems: 'center',
       padding: '3px 10px',
       borderRadius: 999,
-      fontSize: 10,
+      fontSize: 11,
       textTransform: 'uppercase',
       letterSpacing: '0.06em',
       fontWeight: 800,
@@ -2987,7 +2990,7 @@ const MatchCard = React.memo(function MatchCard({
       lineHeight: 1.25
     }
   }, match.phase === 'group' ? `Grupa ${match.group}` : PHASE_LABELS[match.phase]), React.createElement("span", {
-    className: "text-[10px] text-stone-500 font-mono"
+    className: "text-[11px] text-stone-500 font-mono"
   }, "#", match.num)), React.createElement("div", {
     className: "flex items-center gap-1.5"
   }, prediction && !locked && React.createElement(Badge, {
@@ -3344,7 +3347,7 @@ const MatchCard = React.memo(function MatchCard({
   }), prediction ? 'Zaktualizuj typ' : 'Zapisz typ')), locked && comparisonVisible && matchPredictions && players && React.createElement("div", {
     className: "prediction-list-wrap mt-4 pt-3 border-t border-stone-200"
   }, React.createElement("p", {
-    className: "prediction-list-title text-[10px] uppercase tracking-wider font-bold text-stone-500 mb-2"
+    className: "prediction-list-title text-[11px] uppercase tracking-wider font-bold text-stone-500 mb-2"
   }, "Typy wszystkich graczy"), React.createElement("div", {
     className: "prediction-list space-y-1"
   }, players.map(pl => {
@@ -3360,20 +3363,20 @@ const MatchCard = React.memo(function MatchCard({
     const q = predictionQuality(pp, result, match.phase, scoringSettings);
     const pts = scoreMatch(pp, result, match.phase, scoringSettings);
     const bgStyle = q === 'exact' ? {
-      background: 'rgba(0,160,60,.30)',
-      border: '1px solid rgba(0,220,80,.45)',
+      background: 'rgb(15,72,38)',
+      border: '1px solid rgb(40,150,80)',
       color: 'white'
     } : q === 'partial' ? {
-      background: 'rgba(200,100,0,.30)',
-      border: '1px solid rgba(220,140,0,.45)',
+      background: 'rgb(105,62,10)',
+      border: '1px solid rgb(150,100,20)',
       color: 'white'
     } : result ? {
-      background: 'rgba(180,0,0,.28)',
-      border: '1px solid rgba(220,0,0,.40)',
+      background: 'rgb(90,18,18)',
+      border: '1px solid rgb(140,30,30)',
       color: 'white'
     } : {
-      background: 'rgba(255,255,255,.04)',
-      border: '1px solid rgba(255,255,255,.08)',
+      background: 'rgb(30,30,34)',
+      border: '1px solid rgb(55,55,60)',
       color: 'rgba(255,255,255,.7)'
     };
     const rowState = q === 'exact' ? 'exact' : q === 'partial' ? 'partial' : result ? 'miss' : 'pending';
@@ -3906,15 +3909,15 @@ function SpecialsView({
   }, React.createElement("div", null, React.createElement("div", {
     className: "text-2xl font-display"
   }, myScores.groupOrders), React.createElement("div", {
-    className: "text-[10px] uppercase text-[#a0b4e8]"
+    className: "text-[11px] uppercase text-[#a0b4e8]"
   }, "Grupy")), React.createElement("div", null, React.createElement("div", {
     className: "text-2xl font-display"
   }, myScores.podium), React.createElement("div", {
-    className: "text-[10px] uppercase text-[#a0b4e8]"
+    className: "text-[11px] uppercase text-[#a0b4e8]"
   }, "Podium")), React.createElement("div", null, React.createElement("div", {
     className: "text-2xl font-display"
   }, myScores.awards), React.createElement("div", {
-    className: "text-[10px] uppercase text-[#a0b4e8]"
+    className: "text-[11px] uppercase text-[#a0b4e8]"
   }, "Nagrody"))), React.createElement("div", {
     className: "text-center mt-2 pt-2 border-t border-[#162570]"
   }, React.createElement("span", {
@@ -4259,7 +4262,7 @@ function LeaderboardView({
     }, React.createElement("div", {
       className: "leaderboard-total-value font-display text-3xl tracking-wider text-stone-900 leading-none"
     }, r.total), React.createElement("div", {
-      className: "leaderboard-total-label text-[10px] uppercase tracking-wider text-stone-500"
+      className: "leaderboard-total-label text-[11px] uppercase tracking-wider text-stone-500"
     }, "PKT"))), React.createElement("details", {
       className: "leaderboard-phase-details"
     }, React.createElement("summary", {
@@ -4575,16 +4578,16 @@ function CompareView({
       const q = predictionQuality(pp, result, m.phase, scoringSettings);
       const pts = result ? scoreMatch(pp, result, m.phase, scoringSettings) : null;
       const rowBg = !result ? {
-        background: 'rgba(255,255,255,.04)',
+        background: 'rgb(30,30,34)',
         color: 'rgba(255,255,255,.7)'
       } : q === 'exact' ? {
-        background: 'rgba(0,160,60,.30)',
+        background: 'rgb(15,72,38)',
         color: 'white'
       } : q === 'partial' ? {
-        background: 'rgba(200,100,0,.30)',
+        background: 'rgb(105,62,10)',
         color: 'white'
       } : {
-        background: 'rgba(180,0,0,.28)',
+        background: 'rgb(90,18,18)',
         color: 'white'
       };
       const rowState = !result ? 'pending' : q === 'exact' ? 'exact' : q === 'partial' ? 'partial' : 'miss';
@@ -4870,7 +4873,7 @@ function AdminMatchRow({
     name: "save",
     size: 14
   }), pairChanged ? 'Zapisz parę bez wyniku' : 'Para drużyn zapisana'), React.createElement("p", {
-    className: "text-[10px] text-amber-300 mt-2 text-center font-semibold"
+    className: "text-[11px] text-amber-300 mt-2 text-center font-semibold"
   }, "Zapisanie pary nie ustawia wyniku ko\u0144cowego. Po zapisaniu gracze mog\u0105 od razu obstawia\u0107 ten mecz.")), teamsReady ? React.createElement(React.Fragment, null, React.createElement("div", {
     className: "admin-score-editor"
   }, React.createElement("div", {
@@ -5031,8 +5034,8 @@ function AdminTeamRow({
     "aria-label": `Zapisz ${name}`,
     className: "shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white transition-transform active:scale-95",
     style: {
-      background: 'radial-gradient(circle at 24% 0%, rgba(255,255,255,.34), transparent 42%), linear-gradient(145deg, #2b9cff, #1268ee 55%, #5b4df2)',
-      border: '1px solid rgba(178,222,255,.38)',
+      background: 'radial-gradient(circle at 24% 0%, rgba(255,255,255,.34), transparent 42%), linear-gradient(145deg, #d38bff, #bf5af2 55%, #8b3ff0)',
+      border: '1px solid rgba(214,170,255,.38)',
       boxShadow: saved ? '0 0 0 3px rgba(48,209,88,.35), inset 0 1px 0 rgba(255,255,255,.34)' : 'inset 0 1px 0 rgba(255,255,255,.34)'
     }
   }, React.createElement(Icon, {
@@ -5094,7 +5097,7 @@ function AdminPlayerRow({
   }, React.createElement("p", {
     className: "text-xs text-red-700 font-semibold mb-2"
   }, "Usun\u0105\u0107 gracza \u201E", player.name, "\" i wszystkie jego typy?"), React.createElement("label", {
-    className: "block text-[10px] uppercase tracking-wider font-bold text-stone-500 mb-1",
+    className: "block text-[11px] uppercase tracking-wider font-bold text-stone-500 mb-1",
     htmlFor: `admin-delete-password-${player.id}`
   }, "Has\u0142o administratora"), React.createElement("input", {
     id: `admin-delete-password-${player.id}`,
@@ -5143,7 +5146,7 @@ function AdminScoringField({
   }, React.createElement("span", {
     className: "text-xs font-semibold text-stone-700"
   }, label), note && React.createElement("span", {
-    className: "block text-[10px] text-stone-500 mt-0.5"
+    className: "block text-[11px] text-stone-500 mt-0.5"
   }, note), React.createElement("div", {
     className: "relative mt-1"
   }, React.createElement("input", {
@@ -5156,7 +5159,7 @@ function AdminScoringField({
     onChange: e => onChange(e.target.value),
     className: "w-full px-3 py-2.5 pr-12 border border-stone-200 rounded-lg text-center text-lg font-bold focus:border-[#0d1b5e] focus:outline-none"
   }), React.createElement("span", {
-    className: "absolute right-3 top-1/2 -translate-y-1/2 text-[10px] uppercase tracking-wider text-stone-400"
+    className: "absolute right-3 top-1/2 -translate-y-1/2 text-[11px] uppercase tracking-wider text-stone-400"
   }, "PKT")));
 }
 function AdminScoringPanel({
@@ -5817,7 +5820,7 @@ function AdminPanel({
   }, React.createElement("p", {
     className: "text-xs font-bold text-red-900 text-center"
   }, "Na pewno? Wpisz has\u0142o administratora, aby usun\u0105\u0107 wszystkie dane."), React.createElement("label", {
-    className: "block text-[10px] uppercase tracking-wider font-bold text-stone-500",
+    className: "block text-[11px] uppercase tracking-wider font-bold text-stone-500",
     htmlFor: "admin-reset-password"
   }, "Has\u0142o administratora"), React.createElement("input", {
     id: "admin-reset-password",
@@ -6527,9 +6530,41 @@ function buildGroupTables(matches, teams, results) {
     else if (result.home < result.away) { away.w += 1; home.l += 1; away.pts += 3; }
     else { home.d += 1; away.d += 1; home.pts += 1; away.pts += 1; }
   });
-  Object.values(table).forEach(rows => {
+  Object.entries(table).forEach(([group, rows]) => {
     rows.forEach(row => { row.gd = row.gf - row.ga; });
-    rows.sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf || a.team.name.localeCompare(b.team.name, 'pl'));
+    const groupMatches = (matches || []).filter(m => m.phase === 'group' && m.group === group);
+    // Mini-tabela bezpośrednich meczów między remisującymi drużynami (#6).
+    const headToHead = (ids) => {
+      const acc = {}; ids.forEach(id => { acc[id] = { pts: 0, gd: 0, gf: 0 }; });
+      groupMatches.forEach(m => {
+        const r = results && results[m.id];
+        if (!r || typeof r.home !== 'number' || typeof r.away !== 'number') return;
+        if (!acc[m.homeTeamId] || !acc[m.awayTeamId]) return; // tylko mecze w obrębie remisujących
+        acc[m.homeTeamId].gf += r.home; acc[m.homeTeamId].gd += r.home - r.away;
+        acc[m.awayTeamId].gf += r.away; acc[m.awayTeamId].gd += r.away - r.home;
+        if (r.home > r.away) acc[m.homeTeamId].pts += 3;
+        else if (r.home < r.away) acc[m.awayTeamId].pts += 3;
+        else { acc[m.homeTeamId].pts += 1; acc[m.awayTeamId].pts += 1; }
+      });
+      return acc;
+    };
+    rows.sort((a, b) => {
+      if (b.pts !== a.pts) return b.pts - a.pts;
+      if (b.gd !== a.gd) return b.gd - a.gd;
+      if (b.gf !== a.gf) return b.gf - a.gf;
+      // Równe pkt/różnica/bramki → o kolejności decyduje bezpośredni mecz.
+      const tiedIds = rows.filter(r => r.pts === a.pts && r.gd === a.gd && r.gf === a.gf).map(r => r.team.id);
+      if (tiedIds.length > 1) {
+        const mini = headToHead(tiedIds);
+        const ma = mini[a.team.id], mb = mini[b.team.id];
+        if (ma && mb) {
+          if (mb.pts !== ma.pts) return mb.pts - ma.pts;
+          if (mb.gd !== ma.gd) return mb.gd - ma.gd;
+          if (mb.gf !== ma.gf) return mb.gf - ma.gf;
+        }
+      }
+      return a.team.name.localeCompare(b.team.name, 'pl');
+    });
   });
   return table;
 }
@@ -6857,9 +6892,9 @@ function Mundial2026() {
   const [players, setPlayers, plLoaded] = useFirebaseState(FB.players, []);
   const [teams, setTeams, tLoaded] = useFirebaseState(FB.teams, generateInitialTeams());
   const [matches, setMatches, mLoaded] = useFirebaseState(FB.matches, generateInitialMatches());
-  const [predictions, setPredictions, prLoaded, setPredictionChild] = useFirebaseState(FB.predictions, {});
+  const [predictions, setPredictions, prLoaded, setPredictionChild, removePredictionChild] = useFirebaseState(FB.predictions, {});
   const [results, setResults, rLoaded, setResultChild, removeResultChild] = useFirebaseState(FB.results, {});
-  const [specialPredictions, setSpecialPredictions, spLoaded, setSpecialChild] = useFirebaseState(FB.specialPredictions, {});
+  const [specialPredictions, setSpecialPredictions, spLoaded, setSpecialChild, removeSpecialChild] = useFirebaseState(FB.specialPredictions, {});
   const [specialResults, setSpecialResults, srLoaded] = useFirebaseState(FB.specialResults, {
     groupOrders: {}
   });
@@ -6994,23 +7029,13 @@ function Mundial2026() {
   const handleRemovePlayer = useCallback(id => {
     setPlayers(prev => (Array.isArray(prev) ? prev : []).filter(p => p.id !== id));
     if (activePlayer === id) setActivePlayer('');
-    setPredictions(prev => {
-      const n = {
-        ...prev
-      };
-      Object.keys(n).forEach(k => {
-        if (k.startsWith(`${id}:`)) delete n[k];
-      });
-      return n;
+    // Usuwamy tylko klucze tego gracza (child-remove), żeby równoległy zapis typu
+    // z innego urządzenia nie został skasowany pełnym .set() całej kolekcji (#4).
+    Object.keys(predictions || {}).forEach(k => {
+      if (k.startsWith(`${id}:`)) removePredictionChild(k);
     });
-    setSpecialPredictions(prev => {
-      const n = {
-        ...prev
-      };
-      delete n[id];
-      return n;
-    });
-  }, [setPlayers, activePlayer, setActivePlayer, setPredictions, setSpecialPredictions]);
+    removeSpecialChild(id);
+  }, [setPlayers, activePlayer, setActivePlayer, predictions, removePredictionChild, removeSpecialChild]);
   const handleSavePrediction = useCallback(async (matchId, payload, pin, onErr, onSuccess) => {
     if (!activePlayer) return;
     const pl = (Array.isArray(players) ? players : []).find(p => p.id === activePlayer);
@@ -7240,6 +7265,7 @@ function Mundial2026() {
       else setAdminLoginOpen(true);
     },
     title: "Panel admina (wyniki)",
+    "aria-label": "Panel admina (wyniki)",
     style: {
       background: activeTab === 'admin' || adminLoginOpen ? 'rgba(124,58,237,.3)' : 'rgba(0,0,0,.2)',
       borderColor: activeTab === 'admin' || adminLoginOpen ? '#a78bfa' : 'rgba(255,255,255,.25)'
@@ -7303,7 +7329,7 @@ function Mundial2026() {
     specialPredictions: safeSpecialPredictions,
     specialResults: safeSpecialResults,
     onSaveSpecial: onSaveSpecialCb,
-    tournamentLocked: false,
+    tournamentLocked: (safeMatches || []).some(m => m && m.date && Date.now() >= new Date(m.date).getTime()),
     specialsLocked: !!(phaseLocks && phaseLocks['specials']),
     scoringSettings: safeScoringSettings
   }), activeTab === 'leaderboard' && React.createElement(LeaderboardView, {

@@ -216,8 +216,8 @@
     }
     input::placeholder, textarea::placeholder { color: var(--label-3) !important; }
     input:focus, select:focus, textarea:focus {
-      border-color: var(--accent) !important; background: var(--bg-3) !important;
-      box-shadow: 0 0 0 3px rgba(10,132,255,0.22) !important; outline: none;
+      border-color: var(--accent-purple) !important; background: var(--bg-3) !important;
+      box-shadow: 0 0 0 3px rgba(150,60,240,0.22) !important; outline: none;
     }
     select option { background: var(--bg-2); color: var(--label-1); }
 
@@ -238,7 +238,7 @@
     .bg-\[\#f0f3fc\],.bg-\[\#eef1fb\] { background: var(--bg-2) !important; }
     .bg-\[\#e8ecf8\] { background: var(--bg-3) !important; }
     .text-\[\#162570\] { color: var(--label-1) !important; }
-    tr:hover { background: rgba(255,255,255,0.04); }
+    @media (hover: hover) { tr:hover { background: rgba(255,255,255,0.04); } }
     th { color: var(--label-2) !important; border-color: var(--sep) !important; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
     td { border-color: var(--sep) !important; color: var(--label-1) !important; }
     ::selection { background: rgba(10,132,255,0.32); color: white; }
@@ -250,11 +250,13 @@
     .space-y-1\.5 > div { box-shadow: none !important; }
     span[style*="monospace"] { color: var(--label-1) !important; }
     button { background-color: transparent; appearance: none; }
+    @media (hover: hover) {
     .hover\:bg-white\/10:hover  { background: rgba(255,255,255,0.08) !important; }
     .hover\:bg-white\/15:hover  { background: rgba(255,255,255,0.12) !important; }
     button:hover,[role="button"]:hover { background-color: rgba(255,255,255,0.06) !important; }
     .bg-\[\#0d1b5e\]:hover { background: var(--bg-2) !important; }
     .bg-amber-500:hover,.bg-amber-600:hover { background: rgba(255,159,10,0.80) !important; }
+    }
     [class*="bg-sky-"],[class*="bg-blue-"],[class*="bg-purple-"],[class*="bg-rose-"],[class*="bg-indigo-"] { background: var(--bg-2) !important; color: var(--label-1) !important; }
     [class*="bg-amber-50"],[class*="bg-amber-100"] { background: rgba(255,159,10,0.14) !important; color: var(--label-1) !important; }
     [class*="text-sky-"],[class*="text-blue-"],[class*="text-purple-"],[class*="text-indigo-"],[class*="text-rose-"] { color: var(--label-1) !important; }
@@ -332,7 +334,7 @@
     }
     @media (max-width: 380px) {
       .app-header .title-group h1 {
-        font-size: 10.5px;
+        font-size: 11px;
         letter-spacing: -.015em;
       }
       .app-header .logo { gap: 7px; }
@@ -340,7 +342,7 @@
     }
 
     @media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
-    :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 8px; }
+    :focus-visible { outline: 2px solid var(--accent-purple); outline-offset: 3px; border-radius: 8px; }
 
     /* ═══════════════════════════════════════════════════════════════
        LIQUID GLASS 2026 · translucent adaptive surface override
@@ -354,18 +356,22 @@
       --bg-3: rgba(51, 61, 84, 0.62);
       --bg-4: rgba(76, 88, 115, 0.66);
 
+      /* #17 — nieprzezroczyste, matowe stopnie systemowej szarości Apple
+         (secondarySystemBackground → systemGray3). Ton karty nie zależy już
+         od tego, co prześwituje z tła. Delikatny radial = subtelny „lit from
+         top" połysk, nie przezroczysty nalot. */
       --glass-1:
-        radial-gradient(circle at 16% 0%, rgba(255,255,255,.15), transparent 38%),
-        linear-gradient(145deg, rgba(255,255,255,.105), rgba(255,255,255,.038));
+        radial-gradient(circle at 16% 0%, rgba(255,255,255,.05), transparent 40%),
+        #1c1c1e;
       --glass-2:
-        radial-gradient(circle at 18% -8%, rgba(255,255,255,.22), transparent 39%),
-        linear-gradient(145deg, rgba(255,255,255,.15), rgba(255,255,255,.055));
+        radial-gradient(circle at 18% -8%, rgba(255,255,255,.06), transparent 42%),
+        #2c2c2e;
       --glass-3:
-        radial-gradient(circle at 18% -12%, rgba(255,255,255,.26), transparent 42%),
-        linear-gradient(145deg, rgba(255,255,255,.19), rgba(255,255,255,.075));
+        radial-gradient(circle at 18% -12%, rgba(255,255,255,.07), transparent 42%),
+        #3a3a3c;
       --glass-4:
-        radial-gradient(circle at 18% -12%, rgba(255,255,255,.30), transparent 42%),
-        linear-gradient(145deg, rgba(255,255,255,.24), rgba(255,255,255,.10));
+        radial-gradient(circle at 18% -12%, rgba(255,255,255,.08), transparent 42%),
+        #48484a;
 
       /* --border-1..3, --hl, --hl2, --sep: nadpisane w bloku "flat borders" (1166+)
          oraz przez flat-mode !important (4704+) — usunięto martwe definicje. */
@@ -444,9 +450,9 @@
       border-radius: 15px;
       background:
         radial-gradient(circle at 28% 18%, rgba(255,255,255,.95), rgba(255,255,255,.34) 38%, transparent 39%),
-        linear-gradient(145deg, rgba(103,190,255,.95), rgba(45,106,255,.72) 52%, rgba(154,77,255,.72));
+        linear-gradient(145deg, rgba(211,139,255,.95), rgba(191,90,242,.72) 52%, rgba(157,78,221,.72));
       border: 1px solid rgba(255,255,255,.40);
-      box-shadow: inset 0 1px 1px rgba(255,255,255,.48), 0 7px 22px rgba(33,112,255,.30);
+      box-shadow: inset 0 1px 1px rgba(255,255,255,.48), 0 7px 22px rgba(150,60,240,.30);
       text-shadow: 0 2px 8px rgba(0,0,0,.35);
     }
 
@@ -552,13 +558,13 @@
       border-radius: 999px;
       background:
         radial-gradient(circle at 28% 0%, rgba(255,255,255,.38), transparent 42%),
-        linear-gradient(145deg, rgba(82,178,255,.39), rgba(35,105,248,.25) 58%, rgba(133,82,245,.18));
-      border: 1px solid rgba(158,216,255,.55);
+        linear-gradient(145deg, rgba(211,139,255,.39), rgba(191,90,242,.25) 58%, rgba(139,63,240,.18));
+      border: 1px solid rgba(214,170,255,.55);
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,.38),
         inset 0 -1px 0 rgba(255,255,255,.07),
-        0 7px 20px rgba(28,112,255,.22),
-        0 0 0 1px rgba(77,160,255,.08);
+        0 7px 20px rgba(150,60,240,.22),
+        0 0 0 1px rgba(200,150,255,.08);
       will-change: left, width, transform;
       transform: translateZ(0);
     }
@@ -635,9 +641,9 @@
     input:focus,
     select:focus,
     textarea:focus {
-      background: linear-gradient(145deg, rgba(102,177,255,.16), rgba(255,255,255,.065)) !important;
-      border-color: rgba(112,184,255,.78) !important;
-      box-shadow: 0 0 0 4px rgba(55,142,255,.18), inset 0 1px 0 rgba(255,255,255,.18) !important;
+      background: linear-gradient(145deg, rgba(211,139,255,.16), rgba(255,255,255,.065)) !important;
+      border-color: rgba(191,90,242,.78) !important;
+      box-shadow: 0 0 0 4px rgba(150,60,240,.18), inset 0 1px 0 rgba(255,255,255,.18) !important;
     }
 
     button {
@@ -651,18 +657,18 @@
     .bg-\[\#0d1b5e\] {
       background:
         radial-gradient(circle at 24% 0%, rgba(255,255,255,.34), transparent 42%),
-        linear-gradient(145deg, #2b9cff, #1268ee 55%, #5b4df2) !important;
+        linear-gradient(145deg, #d38bff, #bf5af2 55%, #8b3ff0) !important;
       color: white !important;
-      border: 1px solid rgba(178,222,255,.38) !important;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.34), 0 10px 28px rgba(15,105,240,.27) !important;
+      border: 1px solid rgba(214,170,255,.38) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.34), 0 10px 28px rgba(150,60,240,.27) !important;
     }
     .bg-\[\#0d1b5e\]:hover,
     .bg-\[\#162570\]:hover {
       background:
         radial-gradient(circle at 24% 0%, rgba(255,255,255,.42), transparent 42%),
-        linear-gradient(145deg, #45aaff, #1875f5 55%, #6a56f5) !important;
+        linear-gradient(145deg, #e6b0ff, #cf7bf5 55%, #9d55e8) !important;
       transform: translateY(-1px);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.42), 0 14px 36px rgba(15,105,240,.34) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.42), 0 14px 36px rgba(150,60,240,.34) !important;
     }
     .bg-amber-500,
     .bg-amber-600 {
@@ -807,7 +813,7 @@
 
     ::selection { background: rgba(54,145,255,.42); }
     :focus-visible {
-      outline: 2px solid rgba(112,184,255,.92);
+      outline: 2px solid rgba(200,150,255,.92);
       outline-offset: 3px;
     }
 
@@ -879,7 +885,7 @@
       }
     }
     @media (max-width: 380px) {
-      .app-header .title-group h1 { font-size: 10.5px !important; letter-spacing: -.015em !important; }
+      .app-header .title-group h1 { font-size: 11px !important; letter-spacing: -.015em !important; }
     }
 
     /* Spacing helpers for chip rows and admin tabs */
@@ -961,12 +967,14 @@
       box-shadow: inset 0 1px 0 rgba(255,255,255,.075), 0 2px 8px rgba(0,0,0,.10);
       transition: background .18s var(--ease-out), border-color .18s var(--ease-out), box-shadow .18s var(--ease-out), color .18s var(--ease-out), transform .14s var(--ease-spring) !important;
     }
+    @media (hover: hover) {
     .selection-tile:hover {
       background:
         radial-gradient(circle at 22% -20%, rgba(255,255,255,.17), transparent 45%),
         linear-gradient(145deg, rgba(255,255,255,.115), rgba(255,255,255,.050)) !important;
       border-color: rgba(255,255,255,.22) !important;
       box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 5px 14px rgba(0,0,0,.14);
+    }
     }
     .selection-tile:active {
       transform: scale(.97);
@@ -975,15 +983,15 @@
     .selection-tile.is-selected:hover {
       background:
         radial-gradient(circle at 24% -8%, rgba(255,255,255,.34), transparent 45%),
-        linear-gradient(145deg, rgba(62,174,255,.58), rgba(36,101,242,.43) 58%, rgba(108,73,238,.34)) !important;
-      border-color: rgba(151,211,255,.58) !important;
+        linear-gradient(145deg, rgba(211,139,255,.58), rgba(191,90,242,.43) 58%, rgba(139,63,240,.34)) !important;
+      border-color: rgba(214,170,255,.58) !important;
       color: #f5fbff !important;
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,.34),
         inset 0 -1px 0 rgba(255,255,255,.07),
-        0 7px 18px rgba(22,112,255,.22),
-        0 0 0 1px rgba(65,151,255,.10);
-      text-shadow: 0 1px 8px rgba(48,143,255,.22);
+        0 7px 18px rgba(150,60,240,.22),
+        0 0 0 1px rgba(200,150,255,.10);
+      text-shadow: 0 1px 8px rgba(150,60,240,.22);
     }
 
     .selection-tile.is-correct,
@@ -1007,7 +1015,7 @@
       text-shadow: none;
     }
     .selection-tile:focus-visible {
-      outline: 2px solid rgba(132,204,255,.90);
+      outline: 2px solid rgba(200,150,255,.90);
       outline-offset: 2px;
     }
     .selection-tile:disabled {
@@ -1235,13 +1243,13 @@
     .selection-tile.is-selected:hover,
     .bottom-nav button.active {
       border-color: rgba(160,214,255,.44) !important;
-      box-shadow: 0 8px 20px rgba(26,106,255,.14) !important;
+      box-shadow: 0 8px 20px rgba(150,60,240,.14) !important;
     }
 
     .selection-tile.is-selected,
     .selection-tile.is-selected:hover {
       background:
-        linear-gradient(145deg, rgba(93,184,255,.30), rgba(52,106,240,.20) 58%, rgba(114,83,241,.16)) !important;
+        linear-gradient(145deg, rgba(211,139,255,.30), rgba(191,90,242,.20) 58%, rgba(139,63,240,.16)) !important;
       text-shadow: none !important;
     }
 
@@ -1344,7 +1352,7 @@
 
     .selection-tile.is-selected,
     .selection-tile.is-selected:hover {
-      border-color: rgba(151,211,255,.52) !important;
+      border-color: rgba(214,170,255,.52) !important;
     }
 
     .nav-droplet,
@@ -1375,7 +1383,7 @@
 
     .nav-droplet,
     .nav-droplet.dragging {
-      background: linear-gradient(145deg, rgba(93,184,255,.55), rgba(52,106,240,.42) 58%, rgba(114,83,241,.34)) !important;
+      background: linear-gradient(145deg, rgba(211,139,255,.55), rgba(191,90,242,.42) 58%, rgba(139,63,240,.34)) !important;
       border: 0 !important;
       outline: 0 !important;
       box-shadow: none !important;
@@ -1463,9 +1471,9 @@
       color: rgba(255,255,255,.96);
     }
     .profile-menu-btn.is-authenticated .profile-avatar {
-      background: linear-gradient(145deg, rgba(93,188,255,.46), rgba(91,77,242,.38));
-      border-color: rgba(174,220,255,.46);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.28), 0 4px 12px rgba(35,121,255,.16);
+      background: linear-gradient(145deg, rgba(211,139,255,.46), rgba(139,63,240,.38));
+      border-color: rgba(214,170,255,.46);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.28), 0 4px 12px rgba(150,60,240,.16);
     }
     .profile-avatar .nav-icon {
       opacity: .96;
@@ -1534,7 +1542,7 @@
       font-weight: 800;
     }
     .bracket-section-title span {
-      font-size: 10px;
+      font-size: 11px;
       color: var(--label-3);
       white-space: nowrap;
     }
@@ -1562,7 +1570,7 @@
       top: 0;
       width: 192px;
       text-align: center;
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 800;
       letter-spacing: .06em;
       text-transform: uppercase;
@@ -1572,7 +1580,7 @@
       position: absolute;
       width: 192px;
       text-align: center;
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 800;
       letter-spacing: .045em;
       color: var(--label-2);
@@ -1643,7 +1651,7 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      font-size: 10px;
+      font-size: 11px;
     }
     .bracket-placeholder {
       color: var(--label-3);
@@ -1674,7 +1682,7 @@
     .bracket-final-card .bracket-match-head {
       height: 25px;
       padding: 4px 10px 0;
-      font-size: 9px;
+      font-size: 11px;
     }
     .bracket-final-card .bracket-team-row {
       height: 34px;
@@ -2120,7 +2128,8 @@
       overscroll-behavior-inline: contain;
       scrollbar-width: none;
     }
-
+    .filters-sticky .chip-scroll-row::-webkit-scrollbar,
+    .filters-sticky .pill-scroll-safe::-webkit-scrollbar {
       display: none;
     }
 
@@ -2338,7 +2347,7 @@
     }
     .compare-view .compare-player-list-title {
       margin: 0 0 5px;
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 700;
       letter-spacing: .08em;
       line-height: 1.2;
@@ -2449,7 +2458,7 @@
     .prediction-list-title,
     .compare-view .compare-player-list-title {
       margin: 0 0 5px !important;
-      font-size: 10px !important;
+      font-size: 11px !important;
       font-weight: 800 !important;
       letter-spacing: .08em !important;
       line-height: 1.2 !important;
@@ -2617,7 +2626,7 @@
         display: grid !important;
         grid-template-columns: 1fr !important;
         gap: 2px !important;
-        font-size: 10.5px !important;
+        font-size: 11px !important;
         line-height: 1.18 !important;
       }
       .leaderboard-stats .rank-stat {
@@ -2638,7 +2647,7 @@
       }
       .leaderboard-total-label {
         margin-top: 5px !important;
-        font-size: 10px !important;
+        font-size: 11px !important;
       }
       .leaderboard-category-grid {
         display: grid !important;
@@ -2757,7 +2766,7 @@
       }
       .app-header .title-group small {
         display: block !important;
-        font-size: 10px !important;
+        font-size: 11px !important;
         letter-spacing: .10em !important;
       }
     }
@@ -2925,7 +2934,7 @@
     }
 
     /* Fix 11 — czytelniejsze etykiety dolnej nawigacji przy 7 zakładkach */
-    .bottom-nav button { font-size: 9px; }
+    .bottom-nav button { font-size: 11px; }
     @media (max-width: 420px) { .bottom-nav button { font-size: 8.5px; } }
     @media (max-width: 360px) { .bottom-nav button { font-size: 8px; } }
 
@@ -3086,7 +3095,7 @@
         font-size: 12px !important;
       }
       .app-header .title-group small {
-        font-size: 10px !important;
+        font-size: 11px !important;
         letter-spacing: .10em !important;
       }
     }
@@ -3248,7 +3257,7 @@
       scroll-padding-left: calc(var(--horizontal-edge-fade) + 3px);
       scroll-padding-right: calc(var(--horizontal-edge-fade) + 3px);
       color: var(--label-1);
-      font-size: 9px;
+      font-size: 11px;
       font-weight: 900;
       letter-spacing: 0;
       flex: 0 0 auto;
@@ -3300,7 +3309,7 @@
       border-radius: 999px;
       background: rgba(112,184,255,.28);
       color: var(--label-1);
-      font-size: 9px;
+      font-size: 11px;
       font-weight: 900;
       letter-spacing: 0;
       flex: 0 0 auto;
@@ -3318,7 +3327,7 @@
       background: none !important;
       border-radius: 0 !important;
       color: rgba(214, 229, 255, .82) !important;
-      font-size: 10px !important;
+      font-size: 11px !important;
       font-weight: 900 !important;
       letter-spacing: .02em !important;
       margin-right: 4px !important;
@@ -5222,8 +5231,8 @@ html body .login-modal-sheet:not(.login-modal-compact-sheet) .login-modal-conten
   background: linear-gradient(145deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
 }
 .profile-choice-shell.is-current {
-  border-color: rgba(112,184,255,.32);
-  background: linear-gradient(145deg, rgba(93,188,255,.10), rgba(91,77,242,.065));
+  border-color: rgba(191,90,242,.32);
+  background: linear-gradient(145deg, rgba(211,139,255,.10), rgba(139,63,240,.065));
 }
 
 /* Trigger (wiersz gracza) */
@@ -5258,8 +5267,8 @@ html body .login-modal-sheet:not(.login-modal-compact-sheet) .login-modal-conten
   transition: background .18s, border-color .18s;
 }
 .profile-row-avatar.is-active {
-  background: linear-gradient(145deg, rgba(93,188,255,.46), rgba(91,77,242,.38));
-  border-color: rgba(174,220,255,.46);
+  background: linear-gradient(145deg, rgba(211,139,255,.46), rgba(139,63,240,.38));
+  border-color: rgba(214,170,255,.46);
   color: #eef8ff;
 }
 
@@ -5370,15 +5379,15 @@ html body .profile-inline-rename .profile-pin-input {
   transform: none;
 }
 
-/* Zaloguj — niebieskie */
+/* Zaloguj — akcent fioletowy (#12, spójne z primary) */
 .profile-action-login {
-  background: linear-gradient(145deg, rgba(62,174,255,.46), rgba(36,101,242,.34));
-  border-color: rgba(151,211,255,.44);
+  background: linear-gradient(145deg, rgba(211,139,255,.46), rgba(191,90,242,.34));
+  border-color: rgba(214,170,255,.44);
   color: #eef8ff;
 }
 .profile-action-login:hover {
-  background: linear-gradient(145deg, rgba(82,188,255,.58), rgba(46,118,252,.44));
-  border-color: rgba(165,220,255,.58);
+  background: linear-gradient(145deg, rgba(223,160,255,.58), rgba(201,110,247,.44));
+  border-color: rgba(220,175,255,.58);
 }
 
 /* Wyloguj — czerwone */
@@ -5482,8 +5491,8 @@ html body .profile-inline-rename .profile-pin-input {
   transition: border-color .18s, box-shadow .18s;
 }
 .profile-pin-input:focus {
-  border-color: rgba(112,184,255,.78);
-  box-shadow: 0 0 0 3px rgba(55,142,255,.18);
+  border-color: rgba(191,90,242,.78);
+  box-shadow: 0 0 0 3px rgba(150,60,240,.18);
   outline: none;
 }
 .profile-pin-input.has-error {
@@ -5519,8 +5528,8 @@ html body .profile-inline-rename .profile-pin-input {
   transition: border-color .18s, box-shadow .18s;
 }
 .profile-text-input:focus {
-  border-color: rgba(112,184,255,.78);
-  box-shadow: 0 0 0 3px rgba(55,142,255,.18);
+  border-color: rgba(191,90,242,.78);
+  box-shadow: 0 0 0 3px rgba(150,60,240,.18);
   outline: none;
 }
 .profile-text-input.has-error {
@@ -5608,8 +5617,8 @@ html body .admin-gate-close-btn:focus-visible {
 }
 
 html body .admin-gate-icon {
-  background: linear-gradient(145deg, rgba(93,188,255,.46), rgba(91,77,242,.38)) !important;
-  border-color: rgba(174,220,255,.46) !important;
+  background: linear-gradient(145deg, rgba(211,139,255,.46), rgba(139,63,240,.38)) !important;
+  border-color: rgba(214,170,255,.46) !important;
   color: #eef8ff !important;
 }
 
@@ -5739,9 +5748,9 @@ html body .infinite-group-scroll > div.selection-tile:not(.is-selected):hover {
 html body .infinite-group-scroll > div.selection-tile.is-selected,
 html body .infinite-group-scroll > div.selection-tile.is-selected:hover {
   background:
-    linear-gradient(145deg, rgba(93,184,255,.30), rgba(52,106,240,.20) 58%, rgba(114,83,241,.16)) !important;
+    linear-gradient(145deg, rgba(211,139,255,.30), rgba(191,90,242,.20) 58%, rgba(139,63,240,.16)) !important;
   border-color: transparent !important;
-  box-shadow: 0 8px 20px rgba(26,106,255,.14) !important;
+  box-shadow: 0 8px 20px rgba(150,60,240,.14) !important;
   transform: none !important;
 }
 
@@ -5876,7 +5885,7 @@ html body .bracket-page .bracket-group-table-row + .bracket-group-table-row {
 
 html body .bracket-page .bracket-group-table-row-head {
   min-height: 24px !important;
-  font-size: 9px !important;
+  font-size: 11px !important;
   text-transform: uppercase !important;
   letter-spacing: .04em !important;
 }
@@ -5963,7 +5972,7 @@ html body .bracket-page .bracket-group-compact-head {
   background: var(--bracket-head) !important;
   border-bottom: 1px solid var(--bracket-row-sep) !important;
   color: rgba(236,244,255,.76) !important;
-  font-size: 9px !important;
+  font-size: 11px !important;
   font-weight: 900 !important;
   line-height: 1 !important;
   letter-spacing: .04em !important;
@@ -5984,7 +5993,7 @@ html body .bracket-page .bracket-group-compact-row {
   min-width: 0 !important;
   padding: 0 7px !important;
   color: rgba(226,236,248,.72) !important;
-  font-size: 9px !important;
+  font-size: 11px !important;
   font-weight: 800 !important;
   font-variant-numeric: tabular-nums !important;
   line-height: 1 !important;
@@ -6022,7 +6031,7 @@ html body .bracket-page .bracket-group-compact-row strong {
 
 html body .bracket-page .bracket-group-compact-row strong {
   color: rgba(248,252,255,.94) !important;
-  font-size: 10px !important;
+  font-size: 11px !important;
 }
 
 /* Bracket integrated group tables polish. */
@@ -6072,7 +6081,7 @@ html body .bracket-page .bracket-group-compact-row {
   gap: 4px !important;
   padding: 0 8px !important;
   color: rgba(224,235,245,.76) !important;
-  font-size: 9px !important;
+  font-size: 11px !important;
   font-weight: 800 !important;
 }
 
@@ -6097,7 +6106,7 @@ html body .bracket-page .bracket-group-compact-diff {
 
 html body .bracket-page .bracket-group-compact-row strong {
   color: inherit !important;
-  font-size: 10px !important;
+  font-size: 11px !important;
 }
 
 /* Bracket group cards final match-card parity. */
@@ -6206,7 +6215,7 @@ html body .penalty-choice-head {
   gap: 10px !important;
   margin-bottom: 8px !important;
   color: rgba(213,226,245,.68) !important;
-  font-size: 10px !important;
+  font-size: 11px !important;
   font-weight: 800 !important;
   letter-spacing: .04em !important;
   text-transform: uppercase !important;
@@ -6310,7 +6319,7 @@ html body .penalty-choice-card:not(.is-selected) .penalty-choice-check {
 html body .penalty-choice-note {
   margin: 10px 2px 0 !important;
   color: rgba(213,226,245,.58) !important;
-  font-size: 10px !important;
+  font-size: 11px !important;
   font-weight: 700 !important;
   line-height: 1.25 !important;
   text-align: center !important;
@@ -6363,7 +6372,7 @@ html body .match-final-result-card {
 html body .match-final-result-label {
   margin-bottom: 9px !important;
   color: rgba(213,226,245,.58) !important;
-  font-size: 10px !important;
+  font-size: 11px !important;
   font-weight: 900 !important;
   letter-spacing: .05em !important;
   text-align: center !important;
@@ -6765,7 +6774,7 @@ html body .leaderboard-stats {
   display: flex !important;
   flex-wrap: wrap !important;
   gap: 6px !important;
-  font-size: 10px !important;
+  font-size: 11px !important;
   line-height: 1 !important;
 }
 
@@ -6823,7 +6832,7 @@ html body .leaderboard-total-value {
 html body .leaderboard-total-label {
   margin-top: 4px !important;
   color: rgba(213,226,245,.62) !important;
-  font-size: 9px !important;
+  font-size: 11px !important;
   font-weight: 900 !important;
 }
 
@@ -6914,7 +6923,7 @@ html body .leaderboard-category-card {
   html body .leaderboard-stats .rank-stat {
     min-height: 20px !important;
     padding: 0 7px !important;
-    font-size: 9px !important;
+    font-size: 11px !important;
   }
 
   html body .leaderboard-total {
@@ -7194,7 +7203,7 @@ html body .prediction-penalty,
 html body .match-penalty-badge,
 html body .compare-view .compare-player-penalty {
   font-family: 'DM Sans', system-ui, sans-serif !important;
-  font-size: 10.5px !important;
+  font-size: 11px !important;
   font-weight: 800 !important;
   letter-spacing: 0 !important;
   line-height: 1.1 !important;
@@ -7205,7 +7214,7 @@ html body .match-penalty-badge::before,
 html body .compare-view .compare-player-penalty::before {
   content: "Karne:" !important;
   font-family: 'DM Sans', system-ui, sans-serif !important;
-  font-size: 10.5px !important;
+  font-size: 11px !important;
   font-weight: 700 !important;
   letter-spacing: 0 !important;
   text-transform: none !important;
@@ -7297,7 +7306,7 @@ html body .compare-view .compare-player-penalty::before {
     min-height: 24px !important;
     justify-content: center !important;
     padding: 0 8px !important;
-    font-size: 9px !important;
+    font-size: 11px !important;
     line-height: 1 !important;
     text-align: center !important;
   }
@@ -7624,9 +7633,9 @@ html body .specials-score-banner {
   padding: 16px !important;
   border-radius: 30px !important;
   background:
-    radial-gradient(circle at 22% 0%, rgba(93,184,255,.28), transparent 45%),
-    linear-gradient(145deg, rgba(52,106,240,.30), rgba(114,83,241,.22)) !important;
-  border: 1px solid rgba(93,184,255,.34) !important;
+    radial-gradient(circle at 22% 0%, rgba(211,139,255,.28), transparent 45%),
+    linear-gradient(145deg, rgba(191,90,242,.30), rgba(139,63,240,.22)) !important;
+  border: 1px solid rgba(214,170,255,.34) !important;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.07) !important;
   color: rgba(255,255,255,.98) !important;
 }
@@ -7933,7 +7942,7 @@ html body .admin-login-icon {
   justify-content: center !important;
   border-radius: 18px !important;
   color: #eef8ff !important;
-  background: linear-gradient(145deg, rgba(93,188,255,.42), rgba(91,77,242,.34)) !important;
+  background: linear-gradient(145deg, rgba(211,139,255,.42), rgba(139,63,240,.34)) !important;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.16) !important;
 }
 
@@ -7987,7 +7996,7 @@ html body .admin-login-input {
 }
 
 html body .admin-login-input:focus {
-  border-color: rgba(112,184,255,.38) !important;
+  border-color: rgba(191,90,242,.38) !important;
   background: linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,255,.045)) !important;
 }
 
@@ -8014,7 +8023,7 @@ html body .admin-login-submit {
   margin: 2px 0 0 !important;
   border: 0 !important;
   border-radius: 16px !important;
-  background: linear-gradient(145deg, #47a7ff, #355df4 78%) !important;
+  background: linear-gradient(145deg, #d38bff, #9d4edd 78%) !important;
   color: #fff !important;
   font-size: 14px !important;
   font-weight: 900 !important;
@@ -8379,8 +8388,94 @@ html body .app-note.matches-empty-note {
   color: rgba(235,241,255,.60) !important;
   font-weight: 700 !important;
   letter-spacing: .01em !important;
-  font-size: 10px !important;
+  font-size: 11px !important;
   line-height: 1.5 !important;
   white-space: nowrap !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   POPRAWKI DOSTĘPNOŚCI (audyt HIG)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Tap-targety filtrów — chipy faz i segmenty statusu miały ~24px wysokości,
+   poniżej absolutnego minimum Apple (28pt). Podnosimy pole dotyku do 32px:
+   powyżej progu 28pt, ale panel filtrów pozostaje kompaktowy. (#chips) */
+.chip-scroll-row .selection-tile,
+.edge-safe-row .selection-tile {
+  min-height: 32px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Kompaktowy panel filtrów — mniej wysokości: ciaśniejszy padding i odstęp
+   między wierszem faz a wierszem statusu. Promień rogów koncentryczny z
+   pigułkami wewnątrz (padding 6px + promień pigułki ~16px ≈ 22px), zamiast
+   globalnych 30px, które przy ciasnym paddingu wyglądały nie-koncentrycznie. */
+html body .phase-filter-panel:not(#__concentric__) {
+  padding: 6px !important;
+  border-radius: 22px !important;
+}
+html body .phase-filter-panel > div {
+  gap: 5px !important;
+}
+html body .phase-filter-panel .chip-scroll-row .selection-tile {
+  padding-top: 3px !important;
+  padding-bottom: 3px !important;
+}
+
+/* #13 — tryb podwyższonego kontrastu: rozjaśniamy przygaszone poziomy tekstu
+   i wzmacniamy separatory oraz pierścień fokusu. */
+@media (prefers-contrast: more) {
+  :root {
+    --label-2: rgba(242,246,255,.94);
+    --label-3: rgba(238,244,255,.82);
+    --label-4: rgba(238,244,255,.64);
+    --sep: rgba(255,255,255,.34);
+  }
+  html body *:focus-visible {
+    outline-width: 3px !important;
+    outline-offset: 2px !important;
+  }
+}
+
+/* #14 — Windows High Contrast / forced-colors: przywracamy systemowe obrysy
+   na powierzchniach nawigacji i kartach oraz systemowy kolor fokusu, żeby
+   granice elementów były widoczne, gdy kolory są nadpisane przez system. */
+@media (forced-colors: active) {
+  .match-card,
+  .app-header,
+  .bottom-nav,
+  dialog.app-dialog,
+  .selection-tile {
+    border: 1px solid CanvasText !important;
+  }
+  html body *:focus-visible {
+    outline: 2px solid Highlight !important;
+    outline-offset: 2px !important;
+  }
+}
+
+/* Widoczny fioletowy pierścień fokusu na polach formularzy. Bije wcześniejszy
+   reset `input:focus { box-shadow:none !important }` wyższą swoistością
+   (html body …) — bez niego pola nie miały żadnego widocznego wskaźnika
+   fokusu (problem dostępności). Pokazuje się po kliknięciu i po Tabie. */
+html body input:not(#__focus_ring__):focus,
+html body select:not(#__focus_ring__):focus,
+html body textarea:not(#__focus_ring__):focus,
+html body [contenteditable="true"]:not(#__focus_ring__):focus {
+  box-shadow: 0 0 0 3px rgba(150,60,240,.32) !important;
+  border-color: rgba(191,90,242,.75) !important;
+  outline: none !important;
+}
+
+/* Pola-autocomplete mają klasę .selection-tile, więc łapały osobny pierścień
+   `.selection-tile:focus-visible`. Wyłączamy go dla pól tekstowych, żeby
+   pokazywały tę samą fioletową poświatę co pozostałe pola (spójność). */
+html body input.selection-tile:not(#__focus_ring__):focus,
+html body input.selection-tile:not(#__focus_ring__):focus-visible,
+html body textarea.selection-tile:not(#__focus_ring__):focus,
+html body textarea.selection-tile:not(#__focus_ring__):focus-visible {
+  outline: none !important;
 }
 
