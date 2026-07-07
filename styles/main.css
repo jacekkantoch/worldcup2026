@@ -502,6 +502,7 @@
       transition: transform .28s var(--ease-out), border-color .28s ease, box-shadow .28s ease, background .28s ease !important;
     }
 
+    @media (hover: hover) {
     .match-card:hover {
       border-color: rgba(255,255,255,.23) !important;
       box-shadow: var(--shadow-md), var(--hl2), 0 18px 55px rgba(18,93,190,.13) !important;
@@ -513,6 +514,7 @@
     .match-card.expanded > button:first-child:hover {
       background-color: transparent !important;
     }
+    }
 
     section.bg-white,
     div.bg-white {
@@ -520,8 +522,10 @@
       border-color: var(--border-1) !important;
       box-shadow: var(--shadow-sm), var(--hl), var(--shadow-glow);
     }
+    @media (hover: hover) {
     section.bg-white:hover {
       border-color: rgba(255,255,255,.20) !important;
+    }
     }
 
     .install-banner {
@@ -1263,12 +1267,14 @@
       box-shadow: 0 8px 18px rgba(180,0,0,.08) !important;
     }
 
+    @media (hover: hover) {
     .match-card:hover,
     section.bg-white:hover,
     .glass:hover,
     .glass-strong:hover {
       border-color: rgba(255,255,255,.20) !important;
       box-shadow: 0 14px 32px rgba(0,0,0,.18) !important;
+    }
     }
 
     .nav-droplet {
@@ -8477,5 +8483,24 @@ html body input.selection-tile:not(#__focus_ring__):focus-visible,
 html body textarea.selection-tile:not(#__focus_ring__):focus,
 html body textarea.selection-tile:not(#__focus_ring__):focus-visible {
   outline: none !important;
+}
+
+/* Toast: potwierdzenia (np. „Para meczu zapisana") na fioletowo — akcent app;
+   błędy na czerwono. Klasa dobierana z treści komunikatu w app.js. */
+html body .toast-bar.toast-success:not(#__toast__) {
+  background:
+    radial-gradient(circle at 22% 0%, rgba(255,255,255,.20), transparent 44%),
+    linear-gradient(145deg, rgba(58,40,86,.90), rgba(24,14,40,.84)) !important;
+  border-color: rgba(191,90,242,.55) !important;
+  box-shadow: 0 12px 30px rgba(0,0,0,.40), inset 0 1px 0 rgba(255,255,255,.14),
+    0 0 34px rgba(150,60,240,.30) !important;
+}
+html body .toast-bar.toast-error:not(#__toast__) {
+  background:
+    radial-gradient(circle at 22% 0%, rgba(255,255,255,.18), transparent 44%),
+    linear-gradient(145deg, rgba(86,34,40,.90), rgba(40,14,18,.84)) !important;
+  border-color: rgba(255,69,58,.55) !important;
+  box-shadow: 0 12px 30px rgba(0,0,0,.40), inset 0 1px 0 rgba(255,255,255,.14),
+    0 0 34px rgba(255,69,58,.28) !important;
 }
 

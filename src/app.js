@@ -2604,7 +2604,7 @@ function useFlagGradient(homeFlag, awayFlag) {
       awayRgb = hslToRgbStr(homeHue + 130, Math.max(s, 0.45), Math.min(Math.max(l, 0.35), 0.6));
     }
   }
-  return `linear-gradient(115deg, rgba(${homeRgb}, 0.24) 0%, rgba(${homeRgb}, 0.05) 32%, rgba(${awayRgb}, 0.05) 68%, rgba(${awayRgb}, 0.24) 100%)`;
+  return `linear-gradient(115deg, rgba(${homeRgb}, 0.24) 0%, rgba(${awayRgb}, 0.24) 100%)`;
 }
 function FlagImg({
   code,
@@ -3450,6 +3450,69 @@ const MatchCard = React.memo(function MatchCard({
 // ═══════════════════════════════════════════════════════════════
 //  WIDOK: MECZE
 // ═══════════════════════════════════════════════════════════════
+function NextMatchCountdown({ matches, teams }) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  const sorted = useMemo(
+    () => (Array.isArray(matches) ? matches : []).filter(m => m && m.date).sort((a, b) => new Date(a.date) - new Date(b.date)),
+    [matches]
+  );
+  const next = sorted.find(m => new Date(m.date).getTime() > now);
+  if (!next) return null;
+  const home = teams && teams[next.homeTeamId];
+  const away = teams && teams[next.awayTeamId];
+  const diff = Math.max(0, new Date(next.date).getTime() - now);
+  const totalSec = Math.floor(diff / 1000);
+  const dd = Math.floor(totalSec / 86400);
+  const hh = Math.floor((totalSec % 86400) / 3600);
+  const mm = Math.floor((totalSec % 3600) / 60);
+  const ss = totalSec % 60;
+  const pad = n => String(n).padStart(2, '0');
+  const clock = (dd > 0 ? `${dd} ${dd === 1 ? 'dzień' : 'dni'} ` : '') + `${pad(hh)}:${pad(mm)}:${pad(ss)}`;
+  const nameStyle = { fontSize: 13, fontWeight: 700, color: 'var(--label-1)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 90 };
+  return React.createElement("div", {
+    className: "next-match-countdown",
+    style: {
+      background: 'var(--glass-1)',
+      borderRadius: 22,
+      padding: '11px 15px',
+      marginBottom: 12,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: 12
+    }
+  }, React.createElement("div", {
+    style: { minWidth: 0 }
+  }, React.createElement("div", {
+    style: { fontSize: 10, fontWeight: 800, letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--label-3)', marginBottom: 5 }
+  }, "Następny mecz"), React.createElement("div", {
+    style: { display: 'flex', alignItems: 'center', gap: 7, minWidth: 0 }
+  }, React.createElement("span", {
+    style: nameStyle
+  }, home?.name || 'TBD'), React.createElement(FlagImg, { code: home?.flag, size: 20, title: home?.name }), React.createElement("span", {
+    style: { fontSize: 11, color: 'var(--label-3)', flexShrink: 0 }
+  }, "vs"), React.createElement(FlagImg, { code: away?.flag, size: 20, title: away?.name }), React.createElement("span", {
+    style: nameStyle
+  }, away?.name || 'TBD')), React.createElement("div", {
+    style: { fontSize: 11, color: 'var(--label-3)', marginTop: 4 }
+  }, formatDate(next.date))), React.createElement("div", {
+    style: {
+      fontFamily: "'Bebas Neue', sans-serif",
+      fontSize: 32,
+      lineHeight: 1,
+      letterSpacing: '.03em',
+      color: 'var(--label-1)',
+      whiteSpace: 'nowrap',
+      fontVariantNumeric: 'tabular-nums',
+      flexShrink: 0
+    },
+    "aria-label": `Do rozpoczęcia: ${clock}`
+  }, clock));
+}
 function MatchesView({
   matches,
   teams,
@@ -3567,7 +3630,10 @@ function MatchesView({
   }, filtered.length, " ", plMecze(filtered.length)))));
   return React.createElement("div", {
     className: "matches-view space-y-3"
-  }, filterPanel, visibleMatches.map(m => React.createElement(MatchCard, {
+  }, React.createElement(NextMatchCountdown, {
+    matches: matches,
+    teams: teams
+  }), filterPanel, visibleMatches.map(m => React.createElement(MatchCard, {
     key: m.id,
     match: m,
     teams: teams,
@@ -7274,7 +7340,9 @@ function Mundial2026() {
     name: "settings",
     size: 17
   })))), toast && React.createElement("div", {
-    className: "toast-bar"
+    className: "toast-bar" + (/^Nie uda/i.test(toast) ? " toast-error" : " toast-success"),
+    role: "status",
+    "aria-live": "polite"
   }, toast), React.createElement("div", {
     className: "app-content"
   }, showInstall && React.createElement("div", {
