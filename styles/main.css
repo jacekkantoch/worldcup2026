@@ -142,6 +142,279 @@
       box-shadow: inset 0 1px 0 rgba(255,255,255,.12);
     }
 
+    .leaderboard-stats-expanded {
+      margin-bottom: 8px;
+    }
+
+    .next-match-countdown {
+      cursor: pointer;
+      user-select: none;
+      touch-action: manipulation;
+      background: var(--tab-match-surface-soft) !important;
+      box-shadow: none !important;
+      transition: none !important;
+    }
+    .next-match-countdown:hover,
+    .next-match-countdown:focus,
+    .next-match-countdown:focus-visible,
+    .next-match-countdown:active,
+    .next-match-countdown.is-expanded {
+      background: var(--tab-match-surface-soft) !important;
+      box-shadow: none !important;
+      filter: none !important;
+      transform: none !important;
+      outline: none !important;
+    }
+    .next-match-details {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255,255,255,.08);
+      animation: nextMatchDetailsIn .18s var(--ease-out) both;
+    }
+    .next-match-prediction-card,
+    .next-match-predictions-card {
+      min-width: 0;
+      padding: 0;
+      border-radius: 0;
+      background: transparent;
+      border: 0;
+      overflow: hidden;
+    }
+    .next-match-prediction-card.is-empty {
+      opacity: .86;
+    }
+    .next-match-prediction-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+      color: var(--label-3);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+    }
+    .next-match-prediction-grid {
+      display: grid;
+      grid-template-columns: minmax(0,1fr) auto minmax(0,1fr);
+      align-items: center;
+      gap: 8px;
+    }
+    .next-match-prediction-team {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .next-match-prediction-team:first-child {
+      justify-content: flex-end;
+      text-align: right;
+    }
+    .next-match-prediction-team:last-child {
+      justify-content: flex-start;
+      text-align: left;
+    }
+    .next-match-prediction-team span {
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: rgba(255,255,255,.86);
+      font-size: 11.5px;
+      font-weight: 800;
+      text-align: center;
+    }
+    .next-match-prediction-score {
+      min-width: 70px;
+      padding: 8px 14px;
+      border-radius: var(--radius-md);
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.20);
+      color: white;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 27px;
+      line-height: 1;
+      letter-spacing: .03em;
+      text-align: center;
+    }
+    .next-match-penalty-note {
+      margin-top: 9px;
+      color: var(--label-3);
+      font-size: 11px;
+      font-weight: 800;
+      text-align: center;
+    }
+    .next-match-player-picks {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .next-match-player-pick {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto auto;
+      align-items: center;
+      gap: 8px;
+      min-height: 38px;
+      padding: 7px 9px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.045);
+      border: 1px solid rgba(255,255,255,.07);
+    }
+    .next-match-player-pick.is-active-player {
+      background: rgba(191,90,242,.14);
+      border-color: rgba(191,90,242,.24);
+    }
+    .next-match-player-pick.is-empty {
+      opacity: .66;
+    }
+    .next-match-player-name {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: rgba(255,255,255,.86);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .next-match-player-score {
+      min-width: 54px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.10);
+      color: white;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 21px;
+      line-height: 1;
+      letter-spacing: .03em;
+      text-align: center;
+    }
+    .next-match-player-pick.is-empty .next-match-player-score {
+      font-family: inherit;
+      min-width: 76px;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--label-3);
+      letter-spacing: 0;
+    }
+    .next-match-player-penalty {
+      min-width: 34px;
+      color: var(--label-3);
+      font-size: 11px;
+      font-weight: 800;
+      text-align: right;
+    }
+    .next-match-no-players {
+      padding: 10px;
+      color: var(--label-3);
+      font-size: 12px;
+      font-weight: 800;
+      text-align: center;
+    }
+    .next-match-details.compare-view .next-match-player-picks {
+      gap: 3px !important;
+      padding-top: 0 !important;
+    }
+    .next-match-details.compare-view .next-match-player-pick {
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      gap: 10px !important;
+      min-height: 31px !important;
+      padding: 6px 10px !important;
+      margin-bottom: 0 !important;
+      border-radius: 16px !important;
+      background: rgba(255,255,255,.045) !important;
+      color: rgba(255,255,255,.70) !important;
+    }
+    .next-match-details.compare-view .next-match-player-pick.is-active-player {
+      background: rgba(191,90,242,.13) !important;
+    }
+    .next-match-details.compare-view .next-match-player-name {
+      flex: 1 1 auto !important;
+      min-width: 0 !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      white-space: nowrap !important;
+      color: var(--label-2) !important;
+      font-size: 13px !important;
+      font-weight: 600 !important;
+    }
+    .next-match-details.compare-view .next-match-player-score {
+      display: grid !important;
+      grid-template-columns: 44px 70px 28px !important;
+      column-gap: 8px !important;
+      align-items: center !important;
+      justify-items: end !important;
+      justify-content: end !important;
+      width: 150px !important;
+      min-width: 150px !important;
+      flex: 0 0 150px !important;
+      padding: 0 !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      color: inherit !important;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+      font-size: 13px !important;
+      line-height: normal !important;
+      letter-spacing: 0 !important;
+      text-align: right !important;
+      font-variant-numeric: tabular-nums !important;
+    }
+    .next-match-details.compare-view .next-match-player-score-value,
+    .next-match-details.compare-view .next-match-player-penalty,
+    .next-match-details.compare-view .compare-player-points {
+      display: block !important;
+      width: 100% !important;
+      text-align: right !important;
+      white-space: nowrap !important;
+      font-variant-numeric: tabular-nums !important;
+    }
+    .next-match-details.compare-view .next-match-player-penalty {
+      min-width: 0 !important;
+      color: var(--label-3) !important;
+      font-size: 11px !important;
+      font-weight: 800 !important;
+      opacity: .8;
+    }
+    .next-match-details.compare-view .prediction-empty-label {
+      color: var(--label-3) !important;
+      font-size: 12px !important;
+      font-style: italic !important;
+    }
+    @media (max-width: 380px) {
+      .next-match-details.compare-view .next-match-player-score {
+        grid-template-columns: 40px 58px 26px !important;
+        column-gap: 5px !important;
+        width: 132px !important;
+        min-width: 132px !important;
+        flex-basis: 132px !important;
+      }
+    }
+    .next-match-meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 6px 14px;
+      color: var(--label-3);
+      font-size: 11px;
+      font-weight: 700;
+      text-align: center;
+    }
+    .next-match-meta-row span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    @keyframes nextMatchDetailsIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     .toast-bar {
       position: fixed; top: calc(var(--safe-top) + 70px); left: 50%; transform: translateX(-50%); z-index: 100;
       background: var(--bg-3); border: 1px solid var(--border-2);
@@ -7227,6 +7500,74 @@ html body .compare-view .compare-player-penalty::before {
   color: rgba(214, 229, 255, .72) !important;
 }
 
+/* Leaderboard banner layout refresh. */
+html body .leaderboard-view .leaderboard-card-body {
+  padding: 13px !important;
+}
+
+html body .leaderboard-view .leaderboard-card-summary {
+  display: grid !important;
+  grid-template-columns: 48px minmax(0, 1fr) 86px !important;
+  grid-template-areas: "rank name total" !important;
+  align-items: center !important;
+  column-gap: 13px !important;
+  row-gap: 0 !important;
+  margin-bottom: 9px !important;
+}
+
+html body .leaderboard-view .leaderboard-player-block,
+html body .leaderboard-view .leaderboard-player-info {
+  display: contents !important;
+}
+
+html body .leaderboard-view .leaderboard-position-badge {
+  grid-area: rank !important;
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 17px !important;
+  align-self: center !important;
+}
+
+html body .leaderboard-view .leaderboard-player-name {
+  grid-area: name !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  align-self: center !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  font-size: 18px !important;
+  line-height: 1.08 !important;
+}
+
+html body .leaderboard-view .leaderboard-total {
+  grid-area: total !important;
+  min-width: 86px !important;
+  min-height: 58px !important;
+  justify-self: end !important;
+  align-self: center !important;
+  padding: 7px 10px !important;
+  border-radius: 19px !important;
+  background:
+    radial-gradient(circle at 28% 0%, rgba(255,255,255,.12), transparent 48%),
+    rgba(255,255,255,.055) !important;
+  border: 1px solid rgba(255,255,255,.08) !important;
+}
+
+html body .leaderboard-view .leaderboard-total-value {
+  font-size: 34px !important;
+  line-height: .88 !important;
+}
+
+html body .leaderboard-view .leaderboard-total-label {
+  margin-top: 3px !important;
+  font-size: 9px !important;
+}
+
+html body .leaderboard-view .leaderboard-phase-details {
+  margin-top: 7px !important;
+}
+
 /* Mobile leaderboard banner layout polish. */
 @media (max-width: 620px) {
   html body .leaderboard-view {
@@ -7244,12 +7585,10 @@ html body .compare-view .compare-player-penalty::before {
   html body .leaderboard-card-summary {
     display: grid !important;
     grid-template-columns: 40px minmax(0, 1fr) 64px !important;
-    grid-template-areas:
-      "rank name total"
-      "stats stats stats" !important;
+    grid-template-areas: "rank name total" !important;
     align-items: center !important;
     column-gap: 9px !important;
-    row-gap: 9px !important;
+    row-gap: 0 !important;
     margin-bottom: 8px !important;
   }
 
@@ -7296,27 +7635,6 @@ html body .compare-view .compare-player-penalty::before {
     margin-top: 3px !important;
     font-size: 8.5px !important;
   }
-
-  html body .leaderboard-stats {
-    grid-area: stats !important;
-    width: 100% !important;
-    display: flex !important;
-    flex-wrap: wrap !important;
-    gap: 5px !important;
-    min-width: 0 !important;
-  }
-
-  html body .leaderboard-stats .rank-stat {
-    flex: 1 1 128px !important;
-    min-width: 0 !important;
-    min-height: 24px !important;
-    justify-content: center !important;
-    padding: 0 8px !important;
-    font-size: 11px !important;
-    line-height: 1 !important;
-    text-align: center !important;
-  }
-
   html body .leaderboard-phase-details {
     margin-top: 7px !important;
   }
@@ -7347,9 +7665,6 @@ html body .compare-view .compare-player-penalty::before {
     font-size: 27px !important;
   }
 
-  html body .leaderboard-stats .rank-stat {
-    flex-basis: 100% !important;
-  }
 }
 
 /* Profile row tap highlight radius fix. */
@@ -8503,4 +8818,3 @@ html body .toast-bar.toast-error:not(#__toast__) {
   box-shadow: 0 12px 30px rgba(0,0,0,.40), inset 0 1px 0 rgba(255,255,255,.14),
     0 0 34px rgba(255,69,58,.28) !important;
 }
-

@@ -3450,68 +3450,187 @@ const MatchCard = React.memo(function MatchCard({
 // ═══════════════════════════════════════════════════════════════
 //  WIDOK: MECZE
 // ═══════════════════════════════════════════════════════════════
-function NextMatchCountdown({ matches, teams }) {
+function NextMatchCountdown({ matches, teams, predictions, players, activePlayerId }) {
   const [now, setNow] = useState(() => Date.now());
+  const [expandedId, setExpandedId] = useState(null);
+  const longPressTimer = useRef(null);
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
+  }, []);
+  useEffect(() => () => {
+    if (longPressTimer.current) clearTimeout(longPressTimer.current);
   }, []);
   const sorted = useMemo(
     () => (Array.isArray(matches) ? matches : []).filter(m => m && m.date).sort((a, b) => new Date(a.date) - new Date(b.date)),
     [matches]
   );
-  const next = sorted.find(m => new Date(m.date).getTime() > now);
-  if (!next) return null;
-  const home = teams && teams[next.homeTeamId];
-  const away = teams && teams[next.awayTeamId];
-  const diff = Math.max(0, new Date(next.date).getTime() - now);
-  const totalSec = Math.floor(diff / 1000);
-  const dd = Math.floor(totalSec / 86400);
-  const hh = Math.floor((totalSec % 86400) / 3600);
-  const mm = Math.floor((totalSec % 3600) / 60);
-  const ss = totalSec % 60;
-  const pad = n => String(n).padStart(2, '0');
-  const clock = (dd > 0 ? `${dd} ${dd === 1 ? 'dzień' : 'dni'} ` : '') + `${pad(hh)}:${pad(mm)}:${pad(ss)}`;
+  const liveWindowMs = 3 * 60 * 60 * 1000;
+  const liveMatches = sorted.filter(m => {
+    const start = new Date(m.date).getTime();
+    return start <= now && now < start + liveWindowMs;
+  });
+  const firstLiveStart = liveMatches.length ? new Date(liveMatches[0].date).getTime() : null;
+  const firstFuture = sorted.find(m => new Date(m.date).getTime() > now);
+  const firstFutureStart = firstFuture ? new Date(firstFuture.date).getTime() : null;
+  const displayMatches = firstLiveStart !== null
+    ? liveMatches.filter(m => new Date(m.date).getTime() === firstLiveStart)
+    : firstFutureStart !== null
+      ? sorted.filter(m => new Date(m.date).getTime() === firstFutureStart)
+      : [];
+  if (!displayMatches.length) return null;
+  const allPlayers = Array.isArray(players) ? players : [];
   const nameStyle = { fontSize: 13, fontWeight: 700, color: 'var(--label-1)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 90 };
-  return React.createElement("div", {
-    className: "next-match-countdown",
-    style: {
-      background: 'var(--glass-1)',
-      borderRadius: 22,
-      padding: '11px 15px',
-      marginBottom: 12,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      gap: 12
-    }
-  }, React.createElement("div", {
-    style: { minWidth: 0 }
-  }, React.createElement("div", {
-    style: { fontSize: 10, fontWeight: 800, letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--label-3)', marginBottom: 5 }
-  }, "Następny mecz"), React.createElement("div", {
-    style: { display: 'flex', alignItems: 'center', gap: 7, minWidth: 0 }
-  }, React.createElement("span", {
-    style: nameStyle
-  }, home?.name || 'TBD'), React.createElement(FlagImg, { code: home?.flag, size: 20, title: home?.name }), React.createElement("span", {
-    style: { fontSize: 11, color: 'var(--label-3)', flexShrink: 0 }
-  }, "vs"), React.createElement(FlagImg, { code: away?.flag, size: 20, title: away?.name }), React.createElement("span", {
-    style: nameStyle
-  }, away?.name || 'TBD')), React.createElement("div", {
-    style: { fontSize: 11, color: 'var(--label-3)', marginTop: 4 }
-  }, formatDate(next.date))), React.createElement("div", {
-    style: {
-      fontFamily: "'Bebas Neue', sans-serif",
-      fontSize: 32,
-      lineHeight: 1,
-      letterSpacing: '.03em',
-      color: 'var(--label-1)',
-      whiteSpace: 'nowrap',
-      fontVariantNumeric: 'tabular-nums',
-      flexShrink: 0
-    },
-    "aria-label": `Do rozpoczęcia: ${clock}`
-  }, clock));
+  const pad = n => String(n).padStart(2, '0');
+  const cancelLongPress = () => {
+    if (!longPressTimer.current) return;
+    clearTimeout(longPressTimer.current);
+    longPressTimer.current = null;
+  };
+  const startLongPress = matchId => {
+    if (longPressTimer.current) clearTimeout(longPressTimer.current);
+    longPressTimer.current = setTimeout(() => {
+      setExpandedId(prev => prev === matchId ? null : matchId);
+      longPressTimer.current = null;
+    }, 520);
+  };
+  const renderPanel = match => {
+    const matchStart = new Date(match.date).getTime();
+    const isLive = matchStart <= now && now < matchStart + liveWindowMs;
+    const diff = Math.max(0, isLive ? matchStart + liveWindowMs - now : matchStart - now);
+    const totalSec = Math.floor(diff / 1000);
+    const dd = Math.floor(totalSec / 86400);
+    const hh = Math.floor((totalSec % 86400) / 3600);
+    const mm = Math.floor((totalSec % 3600) / 60);
+    const ss = totalSec % 60;
+    const clock = isLive ? "W TRAKCIE" : (dd > 0 ? `${dd} ${dd === 1 ? 'dzień' : 'dni'} ` : '') + `${pad(hh)}:${pad(mm)}:${pad(ss)}`;
+    const home = teams && teams[match.homeTeamId];
+    const away = teams && teams[match.awayTeamId];
+    const expanded = expandedId === match.id;
+    return React.createElement("div", {
+      key: match.id,
+      className: `next-match-countdown${expanded ? ' is-expanded' : ''}`,
+      role: "button",
+      tabIndex: 0,
+      "aria-expanded": expanded,
+      "aria-label": expanded ? "Zwiń typy graczy" : "Przytrzymaj, aby rozwinąć typy graczy",
+      onPointerDown: () => startLongPress(match.id),
+      onPointerUp: cancelLongPress,
+      onPointerCancel: cancelLongPress,
+      onPointerLeave: cancelLongPress,
+      onContextMenu: e => e.preventDefault(),
+      onKeyDown: e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          setExpandedId(prev => prev === match.id ? null : match.id);
+        }
+      },
+      style: {
+        background: 'var(--glass-1)',
+        borderRadius: 22,
+        padding: '11px 15px',
+        marginBottom: 12,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'stretch',
+        gap: 12
+      }
+    }, React.createElement("div", {
+      className: "next-match-summary",
+      style: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 12
+      }
+    }, React.createElement("div", {
+      style: { minWidth: 0 }
+    }, React.createElement("div", {
+      style: { fontSize: 10, fontWeight: 800, letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--label-3)', marginBottom: 5 }
+    }, isLive ? "Mecz w trakcie" : "Następny mecz"), React.createElement("div", {
+      style: { display: 'flex', alignItems: 'center', gap: 7, minWidth: 0 }
+    }, React.createElement("span", {
+      style: nameStyle
+    }, home?.name || 'TBD'), React.createElement(FlagImg, { code: home?.flag, size: 20, title: home?.name }), React.createElement("span", {
+      style: { fontSize: 11, color: 'var(--label-3)', flexShrink: 0 }
+    }, "vs"), React.createElement(FlagImg, { code: away?.flag, size: 20, title: away?.name }), React.createElement("span", {
+      style: nameStyle
+    }, away?.name || 'TBD')), React.createElement("div", {
+      style: { fontSize: 11, color: 'var(--label-3)', marginTop: 4 }
+    }, formatDate(match.date))), React.createElement("div", {
+      style: {
+        fontFamily: "'Bebas Neue', sans-serif",
+        fontSize: isLive ? 25 : 32,
+        lineHeight: 1,
+        letterSpacing: '.03em',
+        color: isLive ? 'var(--accent-purple)' : 'var(--label-1)',
+        whiteSpace: 'nowrap',
+        fontVariantNumeric: 'tabular-nums',
+        flexShrink: 0
+      },
+      "aria-label": isLive ? "Mecz w trakcie" : `Do rozpoczęcia: ${clock}`
+    }, clock)), expanded && React.createElement("div", {
+      className: "next-match-details compare-view"
+    }, React.createElement("div", {
+      className: "next-match-predictions-card"
+    }, React.createElement("div", {
+      className: "compare-player-list-title next-match-prediction-head"
+    }, React.createElement("span", null, "Typy wszystkich graczy"), React.createElement("span", null, match.num ? `#${match.num}` : match.id)), allPlayers.length ? React.createElement("div", {
+      className: "compare-player-list next-match-player-picks"
+    }, allPlayers.map(player => {
+      const pick = predictions && predictions[`${player.id}:${match.id}`];
+      const penaltyTeam = pick?.penWinner ? pick.penWinner === 'home' ? home : away : null;
+      if (!pick) return React.createElement("div", {
+        key: player.id,
+        className: `compare-player-row compare-player-row-empty prediction-row prediction-row-empty next-match-player-pick${player.id === activePlayerId ? ' is-active-player' : ''}`,
+        style: {
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }
+      }, React.createElement("span", {
+        className: "compare-player-name next-match-player-name"
+      }, player.name), React.createElement("span", {
+        className: "prediction-empty-label"
+      }, "brak"));
+      return React.createElement("div", {
+        key: player.id,
+        className: `compare-player-row prediction-row prediction-row-pending next-match-player-pick${player.id === activePlayerId ? ' is-active-player' : ''}`,
+        style: {
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }
+      }, React.createElement("span", {
+        className: "compare-player-name next-match-player-name"
+      }, player.name), React.createElement("span", {
+        className: "compare-player-score next-match-player-score"
+      }, React.createElement("strong", {
+        className: "compare-player-score-value"
+      }, pick.home, ":", pick.away), React.createElement("span", {
+        className: "compare-player-penalty next-match-player-penalty",
+        style: {
+          opacity: pick.penWinner?.length ? 0.8 : 0
+        }
+      }, pick.penWinner ? getTeamAbbr(penaltyTeam) : ''), React.createElement("span", {
+        className: "compare-player-points",
+        style: {
+          color: 'transparent'
+        }
+      }, "0")));
+    })) : React.createElement("div", {
+      className: "next-match-no-players"
+    }, "Brak graczy")), React.createElement("div", {
+      className: "next-match-meta-row"
+    }, React.createElement("span", null, React.createElement(Icon, {
+      name: "calendar",
+      size: 11
+    }), formatDate(match.date)), match.city && React.createElement("span", null, React.createElement(Icon, {
+      name: "mappin",
+      size: 11
+    }), match.city))));
+  };
+  return React.createElement(React.Fragment, null, displayMatches.map(renderPanel));
 }
 function MatchesView({
   matches,
@@ -3632,7 +3751,10 @@ function MatchesView({
     className: "matches-view space-y-3"
   }, React.createElement(NextMatchCountdown, {
     matches: matches,
-    teams: teams
+    teams: teams,
+    predictions: predictions,
+    players: players,
+    activePlayerId: activePlayerId
   }), filterPanel, visibleMatches.map(m => React.createElement(MatchCard, {
     key: m.id,
     match: m,
@@ -4301,29 +4423,7 @@ function LeaderboardView({
       className: "leaderboard-player-info min-w-0 flex-1"
     }, React.createElement("div", {
       className: "leaderboard-player-name font-semibold text-stone-900 truncate"
-    }, r.player.name), React.createElement("div", {
-      className: "leaderboard-stats text-[11px] leading-snug",
-      style: {
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: '2px 6px'
-      }
-    }, React.createElement("span", {
-      className: "rank-stat rank-stat-exact",
-      style: {
-        color: '#30d158'
-      }
-    }, "Dok\u0142adne wyniki: ", r.exact), React.createElement("span", {
-      className: "rank-stat rank-stat-partial",
-      style: {
-        color: '#ff9f0a'
-      }
-    }, "Trafione rozstrzygni\u0119cia: ", r.partial), React.createElement("span", {
-      className: "rank-stat rank-stat-miss",
-      style: {
-        color: '#ff453a'
-      }
-    }, "Niepoprawne typy: ", r.incorrect)))), React.createElement("div", {
+    }, r.player.name))), React.createElement("div", {
       className: "leaderboard-total text-right shrink-0"
     }, React.createElement("div", {
       className: "leaderboard-total-value font-display text-3xl tracking-wider text-stone-900 leading-none"
@@ -4343,6 +4443,28 @@ function LeaderboardView({
     }))), React.createElement("div", {
       className: "leaderboard-phase-content"
     }, React.createElement("div", {
+      className: "leaderboard-stats leaderboard-stats-expanded text-[11px] leading-snug",
+      style: {
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: '6px'
+      }
+    }, React.createElement("span", {
+      className: "rank-stat rank-stat-exact",
+      style: {
+        color: '#30d158'
+      }
+    }, "Dok\u0142adne wyniki: ", r.exact), React.createElement("span", {
+      className: "rank-stat rank-stat-partial",
+      style: {
+        color: '#ff9f0a'
+      }
+    }, "Trafione rozstrzygni\u0119cia: ", r.partial), React.createElement("span", {
+      className: "rank-stat rank-stat-miss",
+      style: {
+        color: '#ff453a'
+      }
+    }, "Niepoprawne typy: ", r.incorrect)), React.createElement("div", {
       className: "leaderboard-category-grid grid grid-cols-5 gap-1 text-[11px]"
     }, [{
       v: r.gm,
@@ -4452,7 +4574,7 @@ function LeaderboardView({
         fontSize: 9.5,
         color: 'rgba(235,241,255,.48)',
         marginTop: 5,
-        textAlign: 'right',
+        textAlign: 'center',
         lineHeight: 1.2
       }
     }, "* bez bonus\xF3w za rzuty karne"))))));
