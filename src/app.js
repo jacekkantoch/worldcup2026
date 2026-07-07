@@ -3453,13 +3453,9 @@ const MatchCard = React.memo(function MatchCard({
 function NextMatchCountdown({ matches, teams, predictions, players, activePlayerId }) {
   const [now, setNow] = useState(() => Date.now());
   const [expandedId, setExpandedId] = useState(null);
-  const longPressTimer = useRef(null);
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
-  }, []);
-  useEffect(() => () => {
-    if (longPressTimer.current) clearTimeout(longPressTimer.current);
   }, []);
   const sorted = useMemo(
     () => (Array.isArray(matches) ? matches : []).filter(m => m && m.date).sort((a, b) => new Date(a.date) - new Date(b.date)),
@@ -3482,18 +3478,6 @@ function NextMatchCountdown({ matches, teams, predictions, players, activePlayer
   const allPlayers = Array.isArray(players) ? players : [];
   const nameStyle = { fontSize: 13, fontWeight: 700, color: 'var(--label-1)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 90 };
   const pad = n => String(n).padStart(2, '0');
-  const cancelLongPress = () => {
-    if (!longPressTimer.current) return;
-    clearTimeout(longPressTimer.current);
-    longPressTimer.current = null;
-  };
-  const startLongPress = matchId => {
-    if (longPressTimer.current) clearTimeout(longPressTimer.current);
-    longPressTimer.current = setTimeout(() => {
-      setExpandedId(prev => prev === matchId ? null : matchId);
-      longPressTimer.current = null;
-    }, 520);
-  };
   const renderPanel = match => {
     const matchStart = new Date(match.date).getTime();
     const isLive = matchStart <= now && now < matchStart + liveWindowMs;
@@ -3513,12 +3497,8 @@ function NextMatchCountdown({ matches, teams, predictions, players, activePlayer
       role: "button",
       tabIndex: 0,
       "aria-expanded": expanded,
-      "aria-label": expanded ? "Zwiń typy graczy" : "Przytrzymaj, aby rozwinąć typy graczy",
-      onPointerDown: () => startLongPress(match.id),
-      onPointerUp: cancelLongPress,
-      onPointerCancel: cancelLongPress,
-      onPointerLeave: cancelLongPress,
-      onContextMenu: e => e.preventDefault(),
+      "aria-label": expanded ? "Zwiń typy graczy" : "Rozwiń typy graczy",
+      onClick: () => setExpandedId(prev => prev === match.id ? null : match.id),
       onKeyDown: e => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
@@ -4823,7 +4803,20 @@ function CompareView({
     type: "button",
     onClick: () => setVisibleCount(count => count + 18),
     className: "selection-tile w-full rounded-xl px-4 py-3 text-sm font-semibold"
-  }, "Pokaż kolejne mecze (", filtered.length - visibleCount, ")"));
+  }, "Pokaż kolejne mecze (", filtered.length - visibleCount, ")"), filtered.length === 0 && React.createElement(React.Fragment, null, React.createElement("div", {
+    className: "text-center text-stone-500 app-note app-note--info app-note--center matches-empty-note",
+    style: {
+      minHeight: 130,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center"
+    }
+  }, "Brak mecz\xF3w dla wybranych filtr\xF3w"), React.createElement("div", {
+    "aria-hidden": "true",
+    style: {
+      minHeight: "calc(100dvh - var(--header-height, 80px) - 310px)"
+    }
+  })));
 }
 
 // ═══════════════════════════════════════════════════════════════
