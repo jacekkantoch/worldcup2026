@@ -171,7 +171,6 @@ const FilledThemeIcon = React.memo(function FilledThemeIcon({
     clipRule: "evenodd"
   }));
 });
-
 // Czyste, wypełnione ikony dolnej nawigacji. Każdy symbol jest malowany
 // jako jeden kształt, dzięki czemu linie nie nakładają się i nie jaśnieją.
 const NAV_ICON_PATHS = {
@@ -4294,6 +4293,258 @@ function SpecialsAllView({
 //  WIDOK: RANKING
 // ═══════════════════════════════════════════════════════════════
 
+// Wypełniona (nie kreskowa) ikonka medalu — spójna z pełnymi ikonami dolnej
+// nawigacji (patrz NavIcon), w przeciwieństwie do konturowych ikon w Icon/Ico.
+const FILLED_MEDAL_PATHS = ['M8.21 13.89L7 23l5-3 5 3-1.21-9.12z', 'M12 15a7 7 0 1 0 0-14 7 7 0 0 0 0 14z'];
+const FilledMedalIcon = React.memo(function FilledMedalIcon({
+  size = 16,
+  className = '',
+  style
+}) {
+  return React.createElement("svg", {
+    width: size,
+    height: size,
+    viewBox: "0 0 24 24",
+    fill: "currentColor",
+    stroke: "none",
+    className: `inline-block ${className}`,
+    style: style,
+    "aria-hidden": "true"
+  }, FILLED_MEDAL_PATHS.map((d, i) => React.createElement("path", {
+    key: i,
+    d: d
+  })));
+});
+const RANK_MEDAL_THEME = [{
+  bg: 'rgba(217,119,6,.5)',
+  color: '#fde68a',
+  ring: 'rgba(253,230,138,.4)'
+}, {
+  bg: 'rgba(156,163,175,.25)',
+  color: '#e5e7eb',
+  ring: 'rgba(229,231,235,.2)'
+}, {
+  bg: 'rgba(180,83,9,.35)',
+  color: '#fdba74',
+  ring: 'rgba(253,186,116,.3)'
+}];
+const RANK_OTHER_THEME = {
+  bg: 'rgba(191,90,242,.28)',
+  color: '#d8b4fe',
+  ring: 'rgba(191,90,242,.45)'
+};
+function rankTheme(idx) {
+  return RANK_MEDAL_THEME[idx] || RANK_OTHER_THEME;
+}
+function buildRankCategories(r, categoryMaximums, categoryCompletion) {
+  return [{
+    key: 'gm',
+    v: r.gm,
+    max: categoryMaximums.gm,
+    title: 'Faza grupowa',
+    done: categoryCompletion.gm,
+    color: '#7dd3fc'
+  }, {
+    key: 'km',
+    v: r.km,
+    max: categoryMaximums.km,
+    title: 'Faza pucharowa',
+    star: true,
+    done: categoryCompletion.km,
+    color: '#38bdf8'
+  }, {
+    key: 'go',
+    v: r.go,
+    max: categoryMaximums.go,
+    title: 'Kolejność w grupach',
+    done: categoryCompletion.go,
+    color: '#d8b4fe'
+  }, {
+    key: 'podium',
+    v: r.podium,
+    max: categoryMaximums.podium,
+    title: 'Podium turnieju',
+    done: categoryCompletion.podium,
+    color: '#fcd34d'
+  }, {
+    key: 'awards',
+    v: r.awards,
+    max: categoryMaximums.awards,
+    title: 'Nagrody indywidualne',
+    done: categoryCompletion.awards,
+    color: '#fda4af'
+  }];
+}
+function RankCategoryRow({
+  v,
+  max,
+  title,
+  star,
+  done,
+  color
+}) {
+  const pct = max > 0 ? Math.min(100, Math.round(v / max * 100)) : 0;
+  return React.createElement("div", {
+    className: "rank-cat-row"
+  }, React.createElement("div", {
+    className: "rank-cat-main"
+  }, React.createElement("div", {
+    className: "rank-cat-top"
+  }, React.createElement("span", {
+    className: "rank-cat-title"
+  }, title, star ? '*' : ''), React.createElement("span", {
+    className: "rank-cat-score"
+  }, v, React.createElement("span", {
+    className: "rank-cat-max"
+  }, "/", max))), React.createElement("div", {
+    className: "rank-cat-track"
+  }, React.createElement("div", {
+    className: "rank-cat-fill",
+    style: {
+      width: `${pct}%`,
+      background: color
+    }
+  })), star && React.createElement("div", {
+    className: "rank-cat-note"
+  }, "* bez bonusów za rzuty karne")), done && React.createElement("div", {
+    className: "rank-cat-done",
+    title: "Kategoria zakończona"
+  }, React.createElement(Icon, {
+    name: "check",
+    size: 12
+  })));
+}
+function RankQualityPills({
+  r
+}) {
+  return React.createElement("div", {
+    className: "rank-quality"
+  }, React.createElement("span", {
+    className: "rank-pill rank-pill-exact"
+  }, "Dokładne wyniki: ", r.exact), React.createElement("span", {
+    className: "rank-pill rank-pill-partial"
+  }, "Trafione rozstrzygnięcia: ", r.partial), React.createElement("span", {
+    className: "rank-pill rank-pill-miss"
+  }, "Niepoprawne typy: ", r.incorrect));
+}
+function RankDetails({
+  r,
+  categories
+}) {
+  return React.createElement("div", {
+    className: "rank-details"
+  }, React.createElement(RankQualityPills, {
+    r: r
+  }), React.createElement("div", {
+    className: "rank-categories"
+  }, categories.map(c => React.createElement(RankCategoryRow, _extends({
+    key: c.key
+  }, c)))));
+}
+function RankPodiumCard({
+  r,
+  idx,
+  open,
+  onToggle
+}) {
+  const theme = rankTheme(idx);
+  return React.createElement("button", {
+    type: "button",
+    className: `rank-podium-card rank-podium-card-${idx + 1}${open ? ' is-open' : ''}`,
+    "aria-expanded": open,
+    onClick: onToggle
+  }, React.createElement("span", {
+    className: "rank-chevron rank-podium-chevron"
+  }, React.createElement(Icon, {
+    name: "chevdown",
+    size: 14
+  })), React.createElement("span", {
+    className: "rank-podium-medal",
+    style: {
+      background: theme.bg,
+      color: theme.color,
+      boxShadow: `inset 0 0 0 1px ${theme.ring}`
+    }
+  }, React.createElement(FilledMedalIcon, {
+    size: idx === 0 ? 20 : 17
+  })), React.createElement("span", {
+    className: "rank-podium-name"
+  }, r.player.name), React.createElement("span", {
+    className: "rank-podium-total"
+  }, r.total), React.createElement("span", {
+    className: "rank-podium-label"
+  }, "PKT"));
+}
+function RankPodiumPanel({
+  r,
+  idx,
+  categories,
+  onClose
+}) {
+  const theme = rankTheme(idx);
+  return React.createElement("div", {
+    className: "rank-podium-panel"
+  }, React.createElement("button", {
+    type: "button",
+    className: "rank-podium-panel-head",
+    onClick: onClose,
+    "aria-label": `Zwiń szczegóły — ${r.player.name}`
+  }, React.createElement("span", {
+    className: "rank-podium-panel-medal",
+    style: {
+      background: theme.bg,
+      color: theme.color,
+      boxShadow: `inset 0 0 0 1px ${theme.ring}`
+    }
+  }, React.createElement(FilledMedalIcon, {
+    size: 14
+  })), React.createElement("span", {
+    className: "rank-podium-panel-name"
+  }, r.player.name), React.createElement("span", {
+    className: "rank-podium-panel-total"
+  }, r.total, " PKT"), React.createElement("span", {
+    className: "rank-chevron is-open"
+  }, React.createElement(Icon, {
+    name: "chevdown",
+    size: 16
+  }))), React.createElement(RankDetails, {
+    r: r,
+    categories: categories
+  }));
+}
+function RankListRow({
+  r,
+  idx,
+  categories
+}) {
+  const theme = rankTheme(idx);
+  return React.createElement("details", {
+    className: "rank-row"
+  }, React.createElement("summary", {
+    className: "rank-row-summary"
+  }, React.createElement("div", {
+    className: "rank-row-badge",
+    style: {
+      background: theme.bg,
+      color: theme.color,
+      boxShadow: `inset 0 0 0 1px ${theme.ring}`
+    }
+  }, `#${idx + 1}`), React.createElement("div", {
+    className: "rank-row-name"
+  }, r.player.name), React.createElement("div", {
+    className: "rank-row-total"
+  }, r.total, React.createElement("span", {
+    className: "rank-row-total-label"
+  }, "PKT")), React.createElement("span", {
+    className: "rank-chevron"
+  }, React.createElement(Icon, {
+    name: "chevdown",
+    size: 16
+  }))), React.createElement(RankDetails, {
+    r: r,
+    categories: categories
+  }));
+}
 function LeaderboardView({
   players,
   matches,
@@ -4303,6 +4554,7 @@ function LeaderboardView({
   specialResults,
   scoringSettings
 }) {
+  const [openPodiumId, setOpenPodiumId] = useState(null);
   const ranking = useMemo(() => {
     return players.map(pl => {
       let gm = 0,
@@ -4365,200 +4617,45 @@ function LeaderboardView({
   if (players.length === 0) return React.createElement("div", {
     className: "text-center text-stone-600 bg-stone-100 border border-stone-200 rounded-lg p-6"
   }, "Brak graczy.");
+  const podium = ranking.length >= 3 ? ranking.slice(0, 3) : [];
+  const rest = podium.length ? ranking.slice(3) : ranking;
+  const restOffset = podium.length;
+  const openPodiumIdx = podium.findIndex(p => p.player.id === openPodiumId);
   return React.createElement("div", {
-    className: "leaderboard-view space-y-2"
+    className: "leaderboard-view rank-view"
   }, React.createElement("div", {
     className: "leaderboard-header rounded-xl p-4"
   }, React.createElement("h3", {
     className: "font-display text-2xl tracking-wider"
   }, "Klasyfikacja"), React.createElement("p", {
     className: "text-xs mt-1"
-  }, "Punktacja na \u017Cywo")), ranking.map((r, idx) => {
-    const positionLabel = `#${idx + 1}`;
-    return React.createElement("div", {
-      key: r.player.id,
-      className: "match-card-enter"
-    }, React.createElement("div", {
-      className: `leaderboard-card deferred-card bg-white border rounded-xl overflow-hidden ${idx === 0 && r.total > 0 ? 'border-amber-400 shadow-md' : 'border-stone-200'}`
-    }, React.createElement("div", {
-      className: "leaderboard-card-body p-3 sm:p-4"
-    }, React.createElement("details", {
-      className: "leaderboard-phase-details"
-    }, React.createElement("summary", {
-      className: "leaderboard-phase-summary leaderboard-card-summary leaderboard-merged-summary flex items-center justify-between gap-3"
-    }, React.createElement("div", {
-      className: "leaderboard-player-block flex items-center gap-3 min-w-0 flex-1"
-    }, React.createElement("div", {
-      className: "leaderboard-position-badge",
-      style: {
-        width: 36,
-        height: 36,
-        borderRadius: 16,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: 14,
-        fontWeight: 900,
-        flexShrink: 0,
-        background: idx === 0 ? 'rgba(217,119,6,.5)' : idx === 1 ? 'rgba(156,163,175,.25)' : idx === 2 ? 'rgba(180,83,9,.35)' : 'rgba(191,90,242,.28)',
-        color: idx === 0 ? '#fde68a' : idx === 1 ? '#e5e7eb' : idx === 2 ? '#fdba74' : '#d8b4fe',
-        border: idx === 0 ? '1px solid rgba(253,230,138,.4)' : idx === 1 ? '1px solid rgba(229,231,235,.2)' : idx === 2 ? '1px solid rgba(253,186,116,.3)' : '1px solid rgba(191,90,242,.45)'
-      }
-    }, positionLabel), React.createElement("div", {
-      className: "leaderboard-player-info min-w-0 flex-1"
-    }, React.createElement("div", {
-      className: "leaderboard-player-name font-semibold text-stone-900 truncate"
-    }, r.player.name))), React.createElement("div", {
-      className: "leaderboard-total text-right shrink-0",
-      style: { marginRight: 10 }
-    }, React.createElement("div", {
-      className: "leaderboard-total-value font-display text-3xl tracking-wider text-stone-900 leading-none"
-    }, r.total), React.createElement("div", {
-      className: "leaderboard-total-label text-[11px] uppercase tracking-wider text-stone-500"
-    }, "PKT")), React.createElement("span", {
-      className: "leaderboard-phase-chevron"
-    }, React.createElement(Icon, {
-      name: "chevdown",
-      size: 18
-    }))), React.createElement("div", {
-      className: "leaderboard-phase-content"
-    }, React.createElement("div", {
-      className: "leaderboard-stats leaderboard-stats-expanded text-[11px] leading-snug",
-      style: {
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: '6px'
-      }
-    }, React.createElement("span", {
-      className: "rank-stat rank-stat-exact",
-      style: {
-        color: '#30d158'
-      }
-    }, "Dok\u0142adne wyniki: ", r.exact), React.createElement("span", {
-      className: "rank-stat rank-stat-partial",
-      style: {
-        color: '#ff9f0a'
-      }
-    }, "Trafione rozstrzygni\u0119cia: ", r.partial), React.createElement("span", {
-      className: "rank-stat rank-stat-miss",
-      style: {
-        color: '#ff453a'
-      }
-    }, "Niepoprawne typy: ", r.incorrect)), React.createElement("div", {
-      className: "leaderboard-category-grid grid grid-cols-5 gap-1 text-[11px]"
-    }, [{
-      v: r.gm,
-      max: categoryMaximums.gm,
-      title: 'Faza grupowa',
-      done: categoryCompletion.gm,
-      bg: 'rgba(13,27,150,.45)',
-      accent: '#93c5fd'
-    }, {
-      v: r.km,
-      max: categoryMaximums.km,
-      title: 'Faza pucharowa',
-      star: true,
-      done: categoryCompletion.km,
-      bg: 'rgba(7,89,133,.45)',
-      accent: '#7dd3fc'
-    }, {
-      v: r.go,
-      max: categoryMaximums.go,
-      title: 'Kolejność w grupach',
-      done: categoryCompletion.go,
-      bg: 'rgba(88,28,135,.45)',
-      accent: '#d8b4fe'
-    }, {
-      v: r.podium,
-      max: categoryMaximums.podium,
-      title: 'Podium turnieju',
-      done: categoryCompletion.podium,
-      bg: 'rgba(146,64,14,.45)',
-      accent: '#fcd34d'
-    }, {
-      v: r.awards,
-      max: categoryMaximums.awards,
-      title: 'Nagrody indywidualne',
-      done: categoryCompletion.awards,
-      bg: 'rgba(159,18,57,.45)',
-      accent: '#fda4af'
-    }].map(({
-      v,
-      max,
-      title,
-      star,
-      done,
-      bg,
-      accent
-    }) => React.createElement("div", {
-      className: "leaderboard-category-card",
-      key: title,
-      style: {
-        background: done ? `linear-gradient(rgba(0,0,0,.20),rgba(0,0,0,.20)), ${bg}` : bg,
-        border: `1px solid ${accent}30`,
-        borderRadius: 16,
-        padding: '7px 3px',
-        textAlign: 'center',
-        minHeight: done ? 94 : 76,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        transition: 'background .18s ease'
-      }
-    }, React.createElement("div", {
-      className: "leaderboard-category-score",
-      style: {
-        fontWeight: 800,
-        color: done ? 'rgba(255,255,255,.46)' : 'white',
-        lineHeight: 1.05,
-        whiteSpace: 'nowrap'
-      }
-    }, React.createElement("span", {
-      className: "leaderboard-category-value",
-      style: {
-        fontSize: 15
-      }
-    }, v), React.createElement("span", {
-      className: "leaderboard-category-max",
-      style: {
-        fontSize: 10.5,
-        fontWeight: 700,
-        color: done ? 'rgba(255,255,255,.32)' : 'rgba(255,255,255,.68)'
-      }
-    }, " / ", max, star ? '*' : '')), React.createElement("div", {
-      className: "leaderboard-category-title",
-      style: {
-        fontSize: 9.5,
-        textTransform: 'uppercase',
-        letterSpacing: '0.025em',
-        color: done ? 'rgba(235,241,255,.34)' : accent,
-        marginTop: 5,
-        lineHeight: 1.12,
-        fontWeight: 700,
-        maxWidth: '100%'
-      }
-    }, title), done && React.createElement("div", {
-      className: "leaderboard-category-done",
-      style: {
-        fontSize: 8.5,
-        fontWeight: 900,
-        letterSpacing: '0.075em',
-        color: '#30d158',
-        marginTop: 6,
-        lineHeight: 1
-      }
-    }, "ZAKO\u0143CZONO")))), React.createElement("div", {
-      className: "leaderboard-footnote",
-      style: {
-        fontSize: 9.5,
-        color: 'rgba(235,241,255,.48)',
-        marginTop: 5,
-        textAlign: 'center',
-        lineHeight: 1.2
-      }
-    }, "* bez bonus\xF3w za rzuty karne"))))));
-  }));
+  }, "Punktacja na żywo")), podium.length > 0 && React.createElement("div", {
+    className: "rank-podium"
+  }, [1, 0, 2].map(i => React.createElement("div", {
+    key: podium[i].player.id,
+    className: "match-card-enter rank-podium-slot"
+  }, React.createElement(RankPodiumCard, {
+    r: podium[i],
+    idx: i,
+    open: openPodiumId === podium[i].player.id,
+    onToggle: () => setOpenPodiumId(openPodiumId === podium[i].player.id ? null : podium[i].player.id)
+  })))), openPodiumIdx !== -1 && React.createElement("div", {
+    className: "match-card-enter"
+  }, React.createElement(RankPodiumPanel, {
+    r: podium[openPodiumIdx],
+    idx: openPodiumIdx,
+    categories: buildRankCategories(podium[openPodiumIdx], categoryMaximums, categoryCompletion),
+    onClose: () => setOpenPodiumId(null)
+  })), React.createElement("div", {
+    className: "rank-list"
+  }, rest.map((r, i) => React.createElement("div", {
+    key: r.player.id,
+    className: "match-card-enter"
+  }, React.createElement(RankListRow, {
+    r: r,
+    idx: i + restOffset,
+    categories: buildRankCategories(r, categoryMaximums, categoryCompletion)
+  })))));
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -5261,19 +5358,17 @@ function AdminPlayerRow({
   }, React.createElement("div", {
     className: "flex items-center gap-3"
   }, React.createElement("div", {
-    className: "w-9 h-9 rounded-full bg-[#e8ecf8] flex items-center justify-center text-sm font-bold text-[#162570] shrink-0"
+    className: "admin-player-avatar shrink-0"
   }, player.name.slice(0, 1).toUpperCase()), React.createElement("div", {
     className: "flex-1 min-w-0"
   }, React.createElement("div", {
     className: "font-semibold text-stone-900 text-sm truncate"
   }, player.name)), !confirm && React.createElement("button", {
+    type: "button",
     onClick: openConfirm,
-    className: "p-2 text-red-500 hover:bg-red-50 rounded-lg",
+    className: "shrink-0 px-3 py-1.5 rounded-lg bg-red-600 text-white text-xs font-bold hover:bg-red-700 active:scale-95 transition-all",
     title: "Usu\u0144 gracza"
-  }, React.createElement(Icon, {
-    name: "trash",
-    size: 16
-  }))), confirm && React.createElement("div", {
+  }, "Usu\u0144")), confirm && React.createElement("div", {
     className: "mt-3 pt-3 border-t border-stone-100"
   }, React.createElement("p", {
     className: "text-xs text-red-700 font-semibold mb-2"
@@ -5311,10 +5406,7 @@ function AdminPlayerRow({
     onClick: confirmRemove,
     disabled: !password,
     className: "flex-1"
-  }, React.createElement(Icon, {
-    name: "trash",
-    size: 14
-  }), "Usu\u0144 gracza"))));
+  }, "Usu\u0144"))));
 }
 function AdminScoringField({
   label,

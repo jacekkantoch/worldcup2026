@@ -2849,7 +2849,12 @@
       }
     }
 
-    /* Mobile ranking layout — compact, readable cards instead of five narrow vertical pills. */
+    /* Zakładka Ranking została przeprojektowana na klasy .rank-* (patrz koniec
+       main.css, sekcja "RANKING — przeprojektowany widok"). Wszystkie reguły
+       .leaderboard-card / .leaderboard-phase-* / .leaderboard-category-* /
+       .leaderboard-position-badge poniżej i w dalszej części pliku nie mają już
+       do czego się przyczepić (martwy CSS) — zostawione zamiast usuwane, żeby
+       nie przepisywać na ślepo kilkunastu rozproszonych bloków w tym pliku. */
     .leaderboard-card {
       border-radius: 28px !important;
     }
@@ -7522,9 +7527,9 @@ html body .leaderboard-view .leaderboard-player-info {
 
 html body .leaderboard-view .leaderboard-position-badge {
   grid-area: rank !important;
-  width: 48px !important;
-  height: 48px !important;
-  border-radius: 17px !important;
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 50% !important;
   align-self: center !important;
 }
 
@@ -8102,6 +8107,7 @@ html body .match-card-enter {
     opacity: 1 !important;
   }
 }
+
 
 /* Mobile modal viewport fix: shared by profile, add-user and admin password forms. */
 html body {
@@ -8831,7 +8837,7 @@ html body .toast-bar.toast-error:not(#__toast__) {
    zdefiniowane gdzie indziej w pliku. */
 html body .leaderboard-merged-summary:not(#__lb_merged__) {
   display: grid !important;
-  grid-template-columns: 44px minmax(0, 1fr) auto 24px !important;
+  grid-template-columns: 34px minmax(0, 1fr) auto 24px !important;
   grid-template-areas: "rank name total chevron" !important;
   column-gap: 10px !important;
   align-items: center !important;
@@ -8851,10 +8857,418 @@ html body .leaderboard-merged-summary:not(#__lb_merged__) .leaderboard-total {
   grid-area: total !important;
   justify-self: end !important;
   margin-right: 6px !important;
+  /* Samo pole (tło/obrys/padding/min-height) usunięte — zostają same liczby. */
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+/* "PKT" po prawej stronie liczby (jeden wiersz) — dzięki temu punkty są
+   pojedynczą linią, tak jak nazwa/badge/chevron, i naturalnie centrują się
+   na tej samej osi przez wspólne align-items:center siatki (bez sztuczek
+   z pozycjonowaniem bezwzględnym). */
+html body .leaderboard-merged-summary:not(#__lb_merged__) .leaderboard-total {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: baseline !important;
+  gap: 4px !important;
+}
+html body .leaderboard-merged-summary:not(#__lb_merged__) .leaderboard-total-value {
+  font-size: 26px !important;
+  color: var(--label-1) !important;
+}
+html body .leaderboard-merged-summary:not(#__lb_merged__) .leaderboard-total-label {
+  margin-top: 0 !important;
+  white-space: nowrap !important;
+  color: var(--label-3) !important;
 }
 html body .leaderboard-merged-summary:not(#__lb_merged__) .leaderboard-phase-chevron {
   grid-area: chevron !important;
   justify-self: end !important;
   flex-shrink: 0 !important;
 }
+/* Niższe banery: mniejszy padding karty. */
+html body .leaderboard-view .leaderboard-card-body {
+  padding: 9px 13px !important;
+}
+html body .leaderboard-merged-summary:not(#__lb_merged__) {
+  margin-bottom: 0 !important;
+}
 
+
+/* ═══════════════════════════════════════════════════════════════
+   RANKING — przeprojektowany widok (klasy .rank-*)
+   Świeży, samodzielny blok bez zależności od starszych reguł
+   .leaderboard-card / .leaderboard-phase-* / .leaderboard-category-*
+   powyżej (te stają się martwym CSS po tej zmianie). Powierzchnia karty
+   to ten sam token co Mecze/Specjalne/Drabinka (--tab-match-surface-soft),
+   żeby zakładka wizualnie pasowała do reszty aplikacji.
+   ═══════════════════════════════════════════════════════════════ */
+
+.rank-view {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Podium (miejsca 1–3) */
+.rank-podium {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+.rank-podium-slot {
+  flex: 1 1 0;
+  min-width: 0;
+}
+.rank-podium-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 3px;
+  padding: 16px 8px 14px;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  position: relative;
+  border-radius: 22px;
+  background: var(--tab-match-surface-soft);
+  box-shadow: var(--tab-match-shadow);
+  backdrop-filter: blur(14px) saturate(145%);
+  -webkit-backdrop-filter: blur(14px) saturate(145%);
+  overflow: hidden;
+}
+.rank-podium-card-1 {
+  transform: translateY(-8px);
+  z-index: 1;
+  box-shadow: var(--tab-match-shadow), 0 0 0 1px rgba(245,200,66,.16) inset;
+}
+/* Nadpisuje globalne `button:hover { transform: none !important }`
+   (main.css ok. linii 1591) — bez tego karta #1 "opadała" na hover,
+   bo traciła swoje stałe uniesienie translateY(-8px). */
+.rank-podium-card-1:hover,
+.rank-podium-card-1:active {
+  transform: translateY(-8px) !important;
+}
+.rank-podium-medal {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 3px;
+}
+.rank-podium-card-1 .rank-podium-medal { width: 48px; height: 48px; }
+.rank-podium-name {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: var(--label-1);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rank-podium-total {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  letter-spacing: .02em;
+  color: var(--label-1);
+  line-height: 1;
+  margin-top: 3px;
+  font-variant-numeric: tabular-nums;
+}
+.rank-podium-card-1 .rank-podium-total { font-size: 34px; }
+.rank-podium-label {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--label-3);
+}
+.rank-podium-chevron {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+
+/* Pełnej szerokości panel szczegółów pod podium (rozwija się poniżej,
+   zamiast rozpychać wąską 1/3 kolumnę podium). */
+.rank-podium-panel {
+  border-radius: 20px;
+  background: var(--tab-match-surface-soft);
+  box-shadow: var(--tab-match-shadow);
+  backdrop-filter: blur(14px) saturate(145%);
+  -webkit-backdrop-filter: blur(14px) saturate(145%);
+  overflow: hidden;
+}
+.rank-podium-panel-head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+/* Nadpisuje globalne `button:hover { background-color: ... !important }`
+   (main.css, blok "@media (hover: hover)" ok. linii 529) — te karty są
+   realnymi <button>, więc bez tego łapałyby ogólnoapkowy hover przycisków. */
+.rank-podium-card:hover,
+.rank-podium-card:active,
+.rank-podium-panel-head:hover,
+.rank-podium-panel-head:active {
+  background-color: transparent !important;
+}
+.rank-podium-panel-medal {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.rank-podium-panel-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--label-1);
+}
+.rank-podium-panel-total {
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--label-2);
+}
+
+/* Lista (miejsca 4+) */
+.rank-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.rank-row {
+  border-radius: 20px;
+  background: var(--tab-match-surface-soft);
+  box-shadow: var(--tab-match-shadow);
+  backdrop-filter: blur(14px) saturate(145%);
+  -webkit-backdrop-filter: blur(14px) saturate(145%);
+  overflow: hidden;
+}
+.rank-row-summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  cursor: pointer;
+  list-style: none;
+}
+.rank-row-summary::-webkit-details-marker { display: none; }
+.rank-row-badge {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12.5px;
+  font-weight: 900;
+}
+.rank-row-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--label-1);
+}
+.rank-row-total {
+  flex-shrink: 0;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  color: var(--label-1);
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-variant-numeric: tabular-nums;
+}
+.rank-row-total-label {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--label-3);
+}
+
+.rank-chevron {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--label-3);
+  transition: transform .16s ease;
+}
+.rank-row[open] .rank-chevron,
+.rank-chevron.is-open {
+  transform: rotate(180deg);
+}
+
+/* Rozwinięte szczegóły (wspólne dla podium i listy) */
+.rank-details {
+  padding: 2px 14px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: rankDetailsOpen .18s ease both;
+}
+@keyframes rankDetailsOpen {
+  from { opacity: 0; transform: translateY(-3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rank-details { animation: none; }
+  .rank-chevron { transition: none; }
+}
+
+.rank-quality {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.rank-pill {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.rank-pill-exact { color: #66ff9e; background: rgba(48,209,88,.10); }
+.rank-pill-partial { color: #ffd75c; background: rgba(245,200,66,.10); }
+.rank-pill-miss { color: #ff7680; background: rgba(255,69,88,.10); }
+
+@media (max-width: 640px) {
+  .rank-quality {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+}
+
+.rank-categories {
+  border-radius: 16px;
+  background: rgba(255,255,255,.035);
+  overflow: hidden;
+}
+.rank-cat-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+}
+.rank-cat-row:not(:last-child):not(#__border_restore__) {
+  border-bottom: 1px solid rgba(255,255,255,.06) !important;
+}
+.rank-cat-main { flex: 1 1 auto; min-width: 0; }
+.rank-cat-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+.rank-cat-title {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--label-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rank-cat-score {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--label-1);
+  font-variant-numeric: tabular-nums;
+}
+.rank-cat-max {
+  margin-left: 2px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--label-3);
+}
+.rank-cat-track {
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.08);
+  overflow: hidden;
+}
+.rank-cat-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width .25s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rank-cat-fill { transition: none; }
+}
+.rank-cat-note {
+  margin-top: 5px;
+  font-size: 10px;
+  color: var(--label-3);
+}
+.rank-cat-done {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(48,209,88,.16);
+  color: #30d158;
+}
+
+@media (max-width: 380px) {
+  .rank-podium-name { font-size: 11.5px; }
+  .rank-podium-total { font-size: 24px; }
+  .rank-podium-card-1 .rank-podium-total { font-size: 29px; }
+  .rank-row-summary { padding: 11px 12px; gap: 10px; }
+  .rank-row-name { font-size: 14px; }
+}
+
+/* Awatar gracza w panelu admina ("Gracze") — fioletowy akcent zamiast
+   jasnoniebieskiego bg-[#e8ecf8]/text-[#162570], które w trybie ciemnym
+   i tak są nadpisywane globalnym mapowaniem klas Tailwind na var(--bg-3)
+   (main.css ok. linii 512), więc krążek wychodził neutralnie szary. */
+html body .admin-player-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 800;
+  background: linear-gradient(145deg, rgba(211,139,255,.55), rgba(139,63,240,.42)) !important;
+  color: #f5ecff !important;
+  box-shadow: inset 0 0 0 1px rgba(214,170,255,.4) !important;
+}
