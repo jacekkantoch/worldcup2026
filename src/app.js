@@ -5065,7 +5065,8 @@ function AdminMatchRow({
   onToggleEdit,
   onSave,
   onDelete,
-  onUpdateMatchTeams
+  onUpdateMatchTeams,
+  mode = 'results'
 }) {
   const home = teams[match.homeTeamId],
     away = teams[match.awayTeamId];
@@ -5092,6 +5093,7 @@ function AdminMatchRow({
   const sameTeam = !!(homeId && awayId && homeId === awayId);
   const pairValid = !!(homeId && awayId && !sameTeam);
   const teamsReady = isKO ? pairValid : !!(homeId && awayId);
+  const matchMode = mode === 'matches';
   const isDraw = draft.home !== null && draft.away !== null && draft.home === draft.away;
   const ok = teamsReady && (isKO ? draft.home !== null && draft.away !== null && (isDraw ? draft.advancingTeam && draft.pensHappened : true) : draft.home !== null && draft.away !== null);
   const handleSaveTeams = () => {
@@ -5111,7 +5113,7 @@ function AdminMatchRow({
     onSave(payload);
   };
   return React.createElement("div", {
-    className: `admin-match-card${editing ? ' expanded' : ''} bg-white border rounded-xl overflow-hidden ${result ? 'border-[#7090d8]' : 'border-stone-200'}`
+    className: `admin-match-card${editing ? ' expanded' : ''} ${matchMode ? 'admin-match-card--setup' : 'admin-match-card--results'} bg-white border rounded-xl overflow-hidden ${result ? 'border-[#7090d8]' : 'border-stone-200'}`
   }, React.createElement("button", {
     onClick: onToggleEdit,
     className: "admin-match-summary-button w-full p-3 text-left hover:bg-white/10"
@@ -5130,8 +5132,15 @@ function AdminMatchRow({
     size: 18,
     title: home.name
   }) : React.createElement("span", {
-    className: "text-stone-400 text-xs"
-  }, "TBD"), React.createElement("span", {
+    className: "shrink-0",
+    style: {
+      width: 18,
+      height: 18,
+      borderRadius: '50%',
+      background: 'rgba(255,255,255,.14)',
+      border: '1px solid rgba(255,255,255,.10)'
+    }
+  }), React.createElement("span", {
     className: "min-w-0 truncate"
   }, home?.name || 'TBD')), React.createElement("span", {
     className: "text-stone-400 mx-1 shrink-0"
@@ -5142,12 +5151,21 @@ function AdminMatchRow({
     size: 18,
     title: away.name
   }) : React.createElement("span", {
-    className: "text-stone-400 text-xs"
-  }, "TBD"), React.createElement("span", {
+    className: "shrink-0",
+    style: {
+      width: 18,
+      height: 18,
+      borderRadius: '50%',
+      background: 'rgba(255,255,255,.14)',
+      border: '1px solid rgba(255,255,255,.10)'
+    }
+  }), React.createElement("span", {
     className: "min-w-0 truncate"
   }, away?.name || 'TBD')))), React.createElement("div", {
     className: "flex items-center gap-2 shrink-0"
-  }, result && React.createElement("div", {
+  }, matchMode ? React.createElement("div", {
+    className: `admin-match-state ${teamsReady ? 'is-ready' : 'is-missing'}`
+  }, teamsReady ? 'Gotowy' : 'Brak pary') : result ? React.createElement("div", {
     style: {
       fontFamily: "Bebas Neue,sans-serif",
       fontSize: 16,
@@ -5158,7 +5176,9 @@ function AdminMatchRow({
       border: "1px solid rgba(0,220,80,.45)",
       borderRadius: 16
     }
-  }, result.home, ":", result.away), editing ? React.createElement(Icon, {
+  }, result.home, ":", result.away) : React.createElement("div", {
+    className: "admin-match-state is-missing"
+  }, "Brak wyniku"), editing ? React.createElement(Icon, {
     name: "chevup",
     size: 18
   }) : React.createElement(Icon, {
@@ -5166,45 +5186,53 @@ function AdminMatchRow({
     size: 18
   })))), editing && React.createElement("div", {
     className: "admin-match-details border-t border-stone-100 p-3 bg-stone-50/50"
-  }, isKO && React.createElement("div", {
-    className: "mb-3 bg-amber-50 border border-amber-200 rounded-lg p-3"
-  }, React.createElement("p", {
-    className: "text-xs font-semibold text-amber-900 mb-2"
-  }, "Przypisz dru\u017Cyny:"), React.createElement("div", {
-    className: "grid grid-cols-2 gap-2"
-  }, React.createElement("select", {
+  }, matchMode ? React.createElement("div", {
+    className: "admin-match-setup-panel"
+  }, React.createElement("div", {
+    className: "admin-match-setup-meta"
+  }, React.createElement("span", null, React.createElement(Icon, {
+    name: "calendar",
+    size: 11
+  }), formatDate(match.date)), match.city && React.createElement("span", null, React.createElement(Icon, {
+    name: "mappin",
+    size: 11
+  }), match.city)), isKO ? React.createElement(React.Fragment, null, React.createElement("div", {
+    className: "admin-match-team-picker"
+  }, React.createElement("label", {
+    className: "admin-match-team-select"
+  }, React.createElement("span", null, "Gospodarz"), React.createElement("select", {
     value: homeId,
-    onChange: e => setHomeId(e.target.value),
-    className: "px-2 py-2 border border-stone-200 rounded-lg text-sm bg-white"
+    onChange: e => setHomeId(e.target.value)
   }, React.createElement("option", {
     value: ""
-  }, "\u2014 Dru\u017Cyna 1 \u2014"), teamOptions.map(t => React.createElement("option", {
+  }, "Wybierz drużynę"), teamOptions.map(t => React.createElement("option", {
     key: t.id,
     value: t.id
-  }, t.name))), React.createElement("select", {
+  }, t.name)))), React.createElement("label", {
+    className: "admin-match-team-select"
+  }, React.createElement("span", null, "Gość"), React.createElement("select", {
     value: awayId,
-    onChange: e => setAwayId(e.target.value),
-    className: "px-2 py-2 border border-stone-200 rounded-lg text-sm bg-white"
+    onChange: e => setAwayId(e.target.value)
   }, React.createElement("option", {
     value: ""
-  }, "\u2014 Dru\u017Cyna 2 \u2014"), teamOptions.map(t => React.createElement("option", {
+  }, "Wybierz drużynę"), teamOptions.map(t => React.createElement("option", {
     key: t.id,
     value: t.id
-  }, t.name)))), sameTeam && React.createElement("p", {
-    className: "text-xs text-red-600 mt-2"
-  }, "Wybierz dwie r\xF3\u017Cne dru\u017Cyny."), !sameTeam && (!homeId || !awayId) && React.createElement("p", {
-    className: "text-xs text-amber-700 mt-2"
-  }, "Wybierz obie dru\u017Cyny, aby udost\u0119pni\u0107 mecz do typowania."), React.createElement(Btn, {
-    variant: "outline",
+  }, t.name))))), sameTeam && React.createElement("p", {
+    className: "admin-match-setup-error"
+  }, "Wybierz dwie różne drużyny."), !sameTeam && (!homeId || !awayId) && React.createElement("p", {
+    className: "admin-match-setup-hint"
+  }, "Po zapisaniu pary gracze mogą typować ten mecz."), React.createElement(Btn, {
+    variant: "primary",
     disabled: !pairValid || !pairChanged,
     onClick: handleSaveTeams,
-    className: "w-full mt-2"
+    className: "w-full"
   }, React.createElement(Icon, {
     name: "save",
     size: 14
-  }), pairChanged ? 'Zapisz parę bez wyniku' : 'Para drużyn zapisana'), React.createElement("p", {
-    className: "text-[11px] text-amber-300 mt-2 text-center font-semibold"
-  }, "Zapisanie pary nie ustawia wyniku ko\u0144cowego. Po zapisaniu gracze mog\u0105 od razu obstawia\u0107 ten mecz.")), teamsReady ? React.createElement(React.Fragment, null, React.createElement("div", {
+  }), pairChanged ? 'Zapisz parę meczu' : 'Para drużyn zapisana')) : React.createElement("div", {
+    className: "admin-match-group-note"
+  }, React.createElement("strong", null, "Mecz fazy grupowej"), React.createElement("span", null, "Drużyny tego meczu wynikają z zakładki „Drużyny”."))) : React.createElement(React.Fragment, null, teamsReady ? React.createElement(React.Fragment, null, React.createElement("div", {
     className: "admin-score-editor"
   }, React.createElement("div", {
     className: "admin-score-side"
@@ -5298,7 +5326,7 @@ function AdminMatchRow({
     size: 14
   }), result ? 'Zaktualizuj' : 'Zapisz wynik'))) : React.createElement("div", {
     className: "text-sm text-stone-600 bg-stone-100 rounded-lg p-3 text-center app-note app-note--info app-note--compact app-note--center"
-  }, "Najpierw przypisz dru\u017Cyny do meczu.")));
+  }, "Najpierw przypisz dru\u017Cyny do meczu."))));
 }
 function adminFlagCode(value, teamName = '') {
   const normalized = normalizeFlagValue(value);
@@ -5737,6 +5765,19 @@ function AdminPanel({
   const fileRef = useRef(null);
   const teamOptions = useMemo(() => Object.values(teams).sort((a, b) => a.group.localeCompare(b.group) || a.name.localeCompare(b.name)), [teams]);
   const defaultResultPhase = useMemo(() => getLatestResultPhase(matches, results), [matches, results]);
+  const adminMatchStats = useMemo(() => {
+    const list = Array.isArray(matches) ? matches : [];
+    const assigned = list.filter(m => m.homeTeamId && m.awayTeamId).length;
+    const done = list.filter(m => !!results[m.id]).length;
+    const knockoutMissing = list.filter(m => m.phase !== 'group' && (!m.homeTeamId || !m.awayTeamId)).length;
+    return {
+      total: list.length,
+      assigned,
+      done,
+      pendingResults: Math.max(0, assigned - done),
+      knockoutMissing
+    };
+  }, [matches, results]);
   useEffect(() => {
     if (defaultResultPhase === 'all') return;
     const canAutoSelect = !mPhaseTouchedRef.current || mPhase === autoMPhaseRef.current;
@@ -5823,21 +5864,23 @@ function AdminPanel({
     groupOrders: {}
   }), [specialResults]);
   const tabs = [{
-    k: 'results',
-    l: 'Mecze i wyniki'
-  }, {
-    k: 'specials',
-    l: 'Wyniki specjalne'
-  }, {
     k: 'teams',
     l: 'Drużyny'
+  }, {
+    k: 'matches',
+    l: 'Mecze'
   }, {
     k: 'locks',
     l: 'Blokady faz'
   }, {
+    k: 'results',
+    l: 'Wyniki'
+  }, {
+    k: 'specials',
+    l: 'Wyniki specjalne'
+  }, {
     k: 'scoring',
-    l: 'Punktacja',
-    span: 2
+    l: 'Punktacja'
   }, {
     k: 'players',
     l: 'Gracze'
@@ -5876,9 +5919,11 @@ function AdminPanel({
     matches: matches,
     phaseLocks: phaseLocks || {},
     onSavePhaseLocks: onSavePhaseLocks
-  }), tab === 'results' && React.createElement("div", {
-    className: "space-y-2"
+  }), (tab === 'matches' || tab === 'results') && React.createElement("div", {
+    className: "admin-section-stack"
   }, React.createElement("div", {
+    className: "bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900 app-note app-note--warning"
+  }, tab === 'matches' ? 'Przypisuj pary w fazie pucharowej i kontroluj kompletność terminarza.' : 'Wpisuj końcowe rezultaty i cofaj błędnie zapisane wyniki.'), React.createElement("div", {
     className: "admin-phase-filters bg-white border border-stone-200 rounded-xl p-3 space-y-2"
   }, React.createElement("div", {
     className: "relative"
@@ -5889,7 +5934,7 @@ function AdminPanel({
   }), React.createElement("input", {
     value: matchSearch,
     onChange: e => setMatchSearch(e.target.value),
-    placeholder: "Szukaj dru\u017Cyny / numeru (M5)",
+    placeholder: tab === 'matches' ? "Szukaj meczu / drużyny" : "Szukaj wyniku / drużyny",
     className: "w-full pl-9 pr-3 py-2 border border-stone-200 rounded-lg focus:border-[#0d1b5e] focus:outline-none text-sm"
   })), React.createElement("div", {
     className: "chip-scroll-row"
@@ -5907,6 +5952,7 @@ function AdminPanel({
     teamOptions: teamOptions,
     result: results[m.id],
     editing: editingId === m.id,
+    mode: tab,
     onToggleEdit: () => setEditingId(editingId === m.id ? null : m.id),
     onSave: payload => {
       autoMPhaseRef.current = m.phase;
