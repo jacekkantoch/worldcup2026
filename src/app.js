@@ -3485,18 +3485,17 @@ function NextMatchCountdown({ matches, teams, predictions, players, activePlayer
       : [];
   if (!displayMatches.length) return null;
   const allPlayers = Array.isArray(players) ? players : [];
-  const nameStyle = { fontSize: 13, fontWeight: 700, color: 'var(--label-1)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 90 };
+  const nameStyle = { fontSize: 13, fontWeight: 700, color: 'var(--label-1)', whiteSpace: 'nowrap' };
   const pad = n => String(n).padStart(2, '0');
   const renderPanel = match => {
     const matchStart = new Date(match.date).getTime();
     const isLive = matchStart <= now && now < matchStart + liveWindowMs;
     const diff = Math.max(0, isLive ? matchStart + liveWindowMs - now : matchStart - now);
     const totalSec = Math.floor(diff / 1000);
-    const dd = Math.floor(totalSec / 86400);
-    const hh = Math.floor((totalSec % 86400) / 3600);
+    const hh = Math.floor(totalSec / 3600);
     const mm = Math.floor((totalSec % 3600) / 60);
     const ss = totalSec % 60;
-    const clock = isLive ? "W TRAKCIE" : (dd > 0 ? `${dd} ${dd === 1 ? 'dzień' : 'dni'} ` : '') + `${pad(hh)}:${pad(mm)}:${pad(ss)}`;
+    const clock = isLive ? "W TRAKCIE" : `${pad(hh)}:${pad(mm)}:${pad(ss)}`;
     const home = teams && teams[match.homeTeamId];
     const away = teams && teams[match.awayTeamId];
     const canExpand = true;
@@ -5163,9 +5162,7 @@ function AdminMatchRow({
     className: "min-w-0 truncate"
   }, away?.name || 'TBD')))), React.createElement("div", {
     className: "flex items-center gap-2 shrink-0"
-  }, matchMode ? React.createElement("div", {
-    className: `admin-match-state ${teamsReady ? 'is-ready' : 'is-missing'}`
-  }, teamsReady ? 'Gotowy' : 'Brak pary') : result ? React.createElement("div", {
+  }, matchMode ? null : result ? React.createElement("div", {
     style: {
       fontFamily: "Bebas Neue,sans-serif",
       fontSize: 16,
@@ -5176,9 +5173,7 @@ function AdminMatchRow({
       border: "1px solid rgba(0,220,80,.45)",
       borderRadius: 16
     }
-  }, result.home, ":", result.away) : React.createElement("div", {
-    className: "admin-match-state is-missing"
-  }, "Brak wyniku"), editing ? React.createElement(Icon, {
+  }, result.home, ":", result.away) : null, editing ? React.createElement(Icon, {
     name: "chevup",
     size: 18
   }) : React.createElement(Icon, {
@@ -5310,7 +5305,7 @@ function AdminMatchRow({
   }))), React.createElement("div", {
     className: "flex gap-2"
   }, result && React.createElement(Btn, {
-    variant: "outline",
+    variant: "danger",
     onClick: onDelete,
     className: "flex-1"
   }, React.createElement(Icon, {
@@ -5705,7 +5700,7 @@ function PhaseLockPanel({
   }, "Blokady faz mecz\u00f3w"), phasesWithMatches.map(phase => React.createElement(PhaseLockRow, {
     key: phase,
     label: phase === 'group' ? 'Faza grupowa' : PHASE_LABELS[phase] || phase,
-    hint: `${(matches || []).filter(m => m.phase === phase).length} mecz\u00f3w`,
+    hint: (() => { const n = (matches || []).filter(m => m.phase === phase).length; return `${n} ${plMecze(n)}`; })(),
     locked: !!locks[phase],
     onToggle: () => togglePhase(phase)
   }))), React.createElement("section", {
