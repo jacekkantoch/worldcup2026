@@ -483,17 +483,24 @@ function phaseBadgeLabel(match) {
 const PHASE_ORDER = ['group', 'r32', 'r16', 'qf', 'sf', 'third', 'final'];
 const PHASE_RANK = Object.fromEntries(PHASE_ORDER.map((phase, index) => [phase, index]));
 function getLatestResultPhase(matches, results) {
-  let latest = 'all';
-  let latestRank = -1;
-  for (const match of matches || []) {
-    if (!results?.[match.id]) continue;
-    const rank = PHASE_RANK[match.phase] ?? -1;
-    if (rank > latestRank) {
-      latest = match.phase;
-      latestRank = rank;
+  const matchesByPhase = PHASE_ORDER.map(phase => ({
+    phase,
+    matches: (matches || []).filter(match => match && match.phase === phase)
+  })).filter(entry => entry.matches.length > 0);
+  if (!matchesByPhase.length) return 'all';
+
+  let hasAnyResult = false;
+  for (let i = 0; i < matchesByPhase.length; i++) {
+    const entry = matchesByPhase[i];
+    const completed = entry.matches.every(match => !!results?.[match.id]);
+    const phaseHasAnyResult = entry.matches.some(match => !!results?.[match.id]);
+    if (!completed) {
+      return hasAnyResult || phaseHasAnyResult ? entry.phase : 'all';
     }
+    hasAnyResult = true;
   }
-  return latest;
+
+  return hasAnyResult ? matchesByPhase[matchesByPhase.length - 1].phase : 'all';
 }
 // HOST_CITIES replaced by real match data
 const STAR_PLAYERS = ['Kylian Mbappé', 'Erling Haaland', 'Harry Kane', 'Vinícius Júnior', 'Jude Bellingham', 'Lamine Yamal', 'Lionel Messi', 'Cristiano Ronaldo', 'Robert Lewandowski', 'Phil Foden', 'Bukayo Saka', 'Florian Wirtz', 'Pedri', 'Rodri', 'Mohammed Kudus', 'Julián Álvarez', 'Lautaro Martínez', 'Rafael Leão', 'Bruno Fernandes', 'Federico Valverde', 'Antoine Griezmann', 'Ousmane Dembélé', 'Bernardo Silva', 'Victor Osimhen', 'Mohamed Salah', 'Son Heung-min', 'Takefusa Kubo'];
