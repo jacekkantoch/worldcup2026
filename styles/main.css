@@ -8819,3 +8819,42 @@ html body .toast-bar.toast-error:not(#__toast__) {
     0 0 34px rgba(255,69,58,.28) !important;
 }
 
+/* Ranking: wiersz gracza (badge+nazwa+punkty) i chevron rozwijania w jednej
+   linii, bez osobnego paska "Rozkład punktów". Zamiast flexa rozszerzamy
+   ISTNIEJĄCĄ siatkę ".leaderboard-card-summary" (rank/name/total) o 4-tą
+   kolumnę na chevron — dzięki temu nazwa zostaje przy lewej, a punkty przy
+   prawej krawędzi swojej kolumny (tak jak w oryginalnym, niescalonym wierszu),
+   zamiast rozjeżdżać się przez display:contents w flexboksie. Neutralizujemy
+   tu też tło/padding/min-height paska `.leaderboard-phase-summary`, żeby nie
+   pokazywała się dodatkowa "pigułka" wokół scalonego wiersza. Sztuczka
+   :not(#id) daje poziom ID, więc bije reguły stanów (hover/active/focus/open)
+   zdefiniowane gdzie indziej w pliku. */
+html body .leaderboard-merged-summary:not(#__lb_merged__) {
+  display: grid !important;
+  grid-template-columns: 44px minmax(0, 1fr) auto 24px !important;
+  grid-template-areas: "rank name total chevron" !important;
+  column-gap: 10px !important;
+  align-items: center !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  margin-bottom: 8px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  clip-path: none !important;
+  overflow: visible !important;
+  text-align: left !important;
+}
+html body .leaderboard-merged-summary:not(#__lb_merged__) .leaderboard-total {
+  grid-area: total !important;
+  justify-self: end !important;
+  margin-right: 6px !important;
+}
+html body .leaderboard-merged-summary:not(#__lb_merged__) .leaderboard-phase-chevron {
+  grid-area: chevron !important;
+  justify-self: end !important;
+  flex-shrink: 0 !important;
+}
+

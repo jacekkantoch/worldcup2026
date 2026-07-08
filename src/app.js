@@ -1793,7 +1793,10 @@ function scoreKnockoutMatch(pred, result, points = POINTS) {
   const resultPens = !!result.pensHappened;
   const sameResolutionMode = predictedPens === resultPens;
   const predictedAdv = pred.home > pred.away ? 'home' : pred.home < pred.away ? 'away' : pred.penWinner || null;
-  const winnerOnly = !exact && sameResolutionMode && predictedAdv && predictedAdv === result.advancingTeam;
+  // W meczu rozstrzygniętym karnymi wystarczy poprawnie przewidzieć remis w czasie
+  // regulaminowym (czyli że dojdzie do karnych), żeby dostać punkty za "dobry wynik" —
+  // nie trzeba dodatkowo trafić zwycięzcy karnych. To premiuje osobno `penBonus` niżej.
+  const winnerOnly = !exact && sameResolutionMode && (resultPens || (predictedAdv && predictedAdv === result.advancingTeam));
   const base = exact ? points.knockout.exact : winnerOnly ? points.knockout.winner : 0;
   const bonus = resultPens && predictedPens && pred.penWinner && pred.penWinner === result.advancingTeam ? points.knockout.penBonus : 0;
   return base + bonus;
@@ -4379,8 +4382,10 @@ function LeaderboardView({
       className: `leaderboard-card deferred-card bg-white border rounded-xl overflow-hidden ${idx === 0 && r.total > 0 ? 'border-amber-400 shadow-md' : 'border-stone-200'}`
     }, React.createElement("div", {
       className: "leaderboard-card-body p-3 sm:p-4"
-    }, React.createElement("div", {
-      className: "leaderboard-card-summary flex items-center justify-between gap-3 mb-2"
+    }, React.createElement("details", {
+      className: "leaderboard-phase-details"
+    }, React.createElement("summary", {
+      className: "leaderboard-phase-summary leaderboard-card-summary leaderboard-merged-summary flex items-center justify-between gap-3"
     }, React.createElement("div", {
       className: "leaderboard-player-block flex items-center gap-3 min-w-0 flex-1"
     }, React.createElement("div", {
@@ -4395,31 +4400,26 @@ function LeaderboardView({
         fontSize: 14,
         fontWeight: 900,
         flexShrink: 0,
-        background: idx === 0 ? 'rgba(217,119,6,.5)' : idx === 1 ? 'rgba(156,163,175,.25)' : idx === 2 ? 'rgba(180,83,9,.35)' : 'rgba(255,255,255,.1)',
-        color: idx === 0 ? '#fde68a' : idx === 1 ? '#e5e7eb' : idx === 2 ? '#fdba74' : 'rgba(255,255,255,.6)',
-        border: idx === 0 ? '1px solid rgba(253,230,138,.4)' : idx === 1 ? '1px solid rgba(229,231,235,.2)' : idx === 2 ? '1px solid rgba(253,186,116,.3)' : '1px solid rgba(255,255,255,.12)'
+        background: idx === 0 ? 'rgba(217,119,6,.5)' : idx === 1 ? 'rgba(156,163,175,.25)' : idx === 2 ? 'rgba(180,83,9,.35)' : 'rgba(191,90,242,.28)',
+        color: idx === 0 ? '#fde68a' : idx === 1 ? '#e5e7eb' : idx === 2 ? '#fdba74' : '#d8b4fe',
+        border: idx === 0 ? '1px solid rgba(253,230,138,.4)' : idx === 1 ? '1px solid rgba(229,231,235,.2)' : idx === 2 ? '1px solid rgba(253,186,116,.3)' : '1px solid rgba(191,90,242,.45)'
       }
     }, positionLabel), React.createElement("div", {
       className: "leaderboard-player-info min-w-0 flex-1"
     }, React.createElement("div", {
       className: "leaderboard-player-name font-semibold text-stone-900 truncate"
     }, r.player.name))), React.createElement("div", {
-      className: "leaderboard-total text-right shrink-0"
+      className: "leaderboard-total text-right shrink-0",
+      style: { marginRight: 10 }
     }, React.createElement("div", {
       className: "leaderboard-total-value font-display text-3xl tracking-wider text-stone-900 leading-none"
     }, r.total), React.createElement("div", {
       className: "leaderboard-total-label text-[11px] uppercase tracking-wider text-stone-500"
-    }, "PKT"))), React.createElement("details", {
-      className: "leaderboard-phase-details"
-    }, React.createElement("summary", {
-      className: "leaderboard-phase-summary"
-    }, React.createElement("span", {
-      className: "leaderboard-phase-summary-label"
-    }, "Rozk\u0142ad punkt\xF3w"), React.createElement("span", {
+    }, "PKT")), React.createElement("span", {
       className: "leaderboard-phase-chevron"
     }, React.createElement(Icon, {
       name: "chevdown",
-      size: 16
+      size: 18
     }))), React.createElement("div", {
       className: "leaderboard-phase-content"
     }, React.createElement("div", {
