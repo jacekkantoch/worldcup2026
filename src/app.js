@@ -3452,7 +3452,7 @@ const MatchCard = React.memo(function MatchCard({
 // ═══════════════════════════════════════════════════════════════
 //  WIDOK: MECZE
 // ═══════════════════════════════════════════════════════════════
-function NextMatchCountdown({ matches, teams, predictions, players, activePlayerId }) {
+function NextMatchCountdown({ matches, teams, predictions, players, activePlayerId, comparisonVisible }) {
   const [now, setNow] = useState(() => Date.now());
   const [expandedId, setExpandedId] = useState(null);
   useEffect(() => {
@@ -3492,19 +3492,25 @@ function NextMatchCountdown({ matches, teams, predictions, players, activePlayer
     const clock = isLive ? "W TRAKCIE" : (dd > 0 ? `${dd} ${dd === 1 ? 'dzień' : 'dni'} ` : '') + `${pad(hh)}:${pad(mm)}:${pad(ss)}`;
     const home = teams && teams[match.homeTeamId];
     const away = teams && teams[match.awayTeamId];
+    const canExpand = true;
     const expanded = expandedId === match.id;
+    const toggleExpanded = () => {
+      setExpandedId(prev => prev === match.id ? null : match.id);
+    };
+    const visiblePlayers = comparisonVisible ? allPlayers : allPlayers.filter(player => player.id === activePlayerId);
+    const predictionTitle = comparisonVisible ? "Typy wszystkich graczy" : "Mój typ";
     return React.createElement("div", {
       key: match.id,
-      className: `next-match-countdown${expanded ? ' is-expanded' : ''}`,
-      role: "button",
-      tabIndex: 0,
-      "aria-expanded": expanded,
-      "aria-label": expanded ? "Zwiń typy graczy" : "Rozwiń typy graczy",
-      onClick: () => setExpandedId(prev => prev === match.id ? null : match.id),
+      className: `next-match-countdown${canExpand ? ' is-clickable' : ''}${expanded ? ' is-expanded' : ''}`,
+      role: canExpand ? "button" : undefined,
+      tabIndex: canExpand ? 0 : undefined,
+      "aria-expanded": canExpand ? expanded : undefined,
+      "aria-label": canExpand ? expanded ? "Zwiń typy graczy" : "Rozwiń typy graczy" : undefined,
+      onClick: toggleExpanded,
       onKeyDown: e => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          setExpandedId(prev => prev === match.id ? null : match.id);
+          toggleExpanded();
         }
       },
       style: {
@@ -3532,10 +3538,12 @@ function NextMatchCountdown({ matches, teams, predictions, players, activePlayer
     }, isLive ? "Mecz w trakcie" : "Następny mecz"), React.createElement("div", {
       style: { display: 'flex', alignItems: 'center', gap: 7, minWidth: 0 }
     }, React.createElement("span", {
+      className: "next-match-team-name",
       style: nameStyle
     }, home?.name || 'TBD'), React.createElement(FlagImg, { code: home?.flag, size: 20, title: home?.name }), React.createElement("span", {
       style: { fontSize: 11, color: 'var(--label-3)', flexShrink: 0 }
     }, "vs"), React.createElement(FlagImg, { code: away?.flag, size: 20, title: away?.name }), React.createElement("span", {
+      className: "next-match-team-name",
       style: nameStyle
     }, away?.name || 'TBD')), React.createElement("div", {
       style: { fontSize: 11, color: 'var(--label-3)', marginTop: 4 }
@@ -3557,9 +3565,9 @@ function NextMatchCountdown({ matches, teams, predictions, players, activePlayer
       className: "next-match-predictions-card"
     }, React.createElement("div", {
       className: "compare-player-list-title next-match-prediction-head"
-    }, React.createElement("span", null, "Typy wszystkich graczy"), React.createElement("span", null, match.num ? `#${match.num}` : match.id)), allPlayers.length ? React.createElement("div", {
+    }, React.createElement("span", null, predictionTitle), React.createElement("span", null, match.num ? `#${match.num}` : match.id)), visiblePlayers.length ? React.createElement("div", {
       className: "compare-player-list next-match-player-picks"
-    }, allPlayers.map(player => {
+    }, visiblePlayers.map(player => {
       const pick = predictions && predictions[`${player.id}:${match.id}`];
       const penaltyTeam = pick?.penWinner ? pick.penWinner === 'home' ? home : away : null;
       if (!pick) return React.createElement("div", {
@@ -3594,12 +3602,7 @@ function NextMatchCountdown({ matches, teams, predictions, players, activePlayer
         style: {
           opacity: pick.penWinner?.length ? 0.8 : 0
         }
-      }, pick.penWinner ? getTeamAbbr(penaltyTeam) : ''), React.createElement("span", {
-        className: "compare-player-points",
-        style: {
-          color: 'transparent'
-        }
-      }, "0")));
+      }, pick.penWinner ? getTeamAbbr(penaltyTeam) : '')));
     })) : React.createElement("div", {
       className: "next-match-no-players"
     }, "Brak graczy")), React.createElement("div", {
@@ -3736,7 +3739,8 @@ function MatchesView({
     teams: teams,
     predictions: predictions,
     players: players,
-    activePlayerId: activePlayerId
+    activePlayerId: activePlayerId,
+    comparisonVisible: comparisonVisible
   }), filterPanel, visibleMatches.map(m => React.createElement(MatchCard, {
     key: m.id,
     match: m,

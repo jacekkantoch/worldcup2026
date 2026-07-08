@@ -147,12 +147,15 @@
     }
 
     .next-match-countdown {
-      cursor: pointer;
+      cursor: default;
       user-select: none;
       touch-action: manipulation;
       background: var(--tab-match-surface-soft) !important;
       box-shadow: none !important;
       transition: none !important;
+    }
+    .next-match-countdown.is-clickable {
+      cursor: pointer;
     }
     .next-match-countdown:hover,
     .next-match-countdown:focus,
@@ -164,6 +167,13 @@
       filter: none !important;
       transform: none !important;
       outline: none !important;
+    }
+    @media (max-width: 640px) {
+      .next-match-team-name {
+        text-overflow: clip !important;
+        -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 16px), transparent 100%);
+        mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 16px), transparent 100%);
+      }
     }
     .next-match-details {
       display: flex;
@@ -344,14 +354,14 @@
     }
     .next-match-details.compare-view .next-match-player-score {
       display: grid !important;
-      grid-template-columns: 44px 70px 28px !important;
+      grid-template-columns: 44px 70px !important;
       column-gap: 8px !important;
       align-items: center !important;
       justify-items: end !important;
       justify-content: end !important;
-      width: 150px !important;
-      min-width: 150px !important;
-      flex: 0 0 150px !important;
+      width: 122px !important;
+      min-width: 122px !important;
+      flex: 0 0 122px !important;
       padding: 0 !important;
       border-radius: 0 !important;
       background: transparent !important;
@@ -364,8 +374,7 @@
       font-variant-numeric: tabular-nums !important;
     }
     .next-match-details.compare-view .next-match-player-score-value,
-    .next-match-details.compare-view .next-match-player-penalty,
-    .next-match-details.compare-view .compare-player-points {
+    .next-match-details.compare-view .next-match-player-penalty {
       display: block !important;
       width: 100% !important;
       text-align: right !important;
@@ -386,11 +395,11 @@
     }
     @media (max-width: 380px) {
       .next-match-details.compare-view .next-match-player-score {
-        grid-template-columns: 40px 58px 26px !important;
+        grid-template-columns: 40px 58px !important;
         column-gap: 5px !important;
-        width: 132px !important;
-        min-width: 132px !important;
-        flex-basis: 132px !important;
+        width: 103px !important;
+        min-width: 103px !important;
+        flex-basis: 103px !important;
       }
     }
     .next-match-meta-row {
@@ -9271,4 +9280,21 @@ html body .admin-player-avatar {
   background: linear-gradient(145deg, rgba(211,139,255,.55), rgba(139,63,240,.42)) !important;
   color: #f5ecff !important;
   box-shadow: inset 0 0 0 1px rgba(214,170,255,.4) !important;
+}
+
+html body .next-match-details.compare-view .next-match-player-score {
+  grid-template-columns: max-content max-content !important;
+  width: max-content !important;
+  min-width: 0 !important;
+  flex: 0 0 auto !important;
+  margin-left: auto !important;
+}
+
+@media (max-width: 380px) {
+  html body .next-match-details.compare-view .next-match-player-score {
+    grid-template-columns: max-content max-content !important;
+    width: max-content !important;
+    min-width: 0 !important;
+    flex-basis: auto !important;
+  }
 }
