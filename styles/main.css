@@ -9327,3 +9327,35 @@ html body .matches-view .match-card.expanded > button:first-child:is(:hover, :fo
   outline: none !important;
   transform: none !important;
 }
+
+html body .preview-mode-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  padding: 6px;
+  border-radius: 999px;
+  background: var(--tab-match-surface-soft);
+  border: 1px solid var(--border-1);
+}
+
+html body .preview-mode-switch .selection-tile {
+  border-radius: 999px !important;
+  min-height: 36px;
+}
+
+html body .leaderboard-header,
+html body .bracket-page .bracket-intro {
+  min-height: 82px !important;
+  padding: 16px 18px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+}
+
+@media (max-width: 480px) {
+  html body .leaderboard-header,
+  html body .bracket-page .bracket-intro {
+    min-height: 74px !important;
+    padding: 14px 18px !important;
+  }
+}

@@ -4927,6 +4927,47 @@ function CompareView({
   })));
 }
 
+function PreviewView({
+  matches,
+  teams,
+  predictions,
+  results,
+  players,
+  scoringSettings,
+  specialPredictions,
+  specialResults
+}) {
+  const [mode, setMode] = useState('matches');
+  return React.createElement("div", {
+    className: "preview-view space-y-3"
+  }, React.createElement("div", {
+    className: "preview-mode-switch"
+  }, [{
+    k: 'matches',
+    l: 'Typy meczów'
+  }, {
+    k: 'specials',
+    l: 'Typy specjalne'
+  }].map(option => React.createElement("button", {
+    key: option.k,
+    type: "button",
+    onClick: () => setMode(option.k),
+    className: `selection-tile${mode === option.k ? ' is-selected' : ''} rounded-lg text-xs font-semibold`
+  }, option.l))), mode === 'matches' ? React.createElement(CompareView, {
+    matches: matches,
+    teams: teams,
+    predictions: predictions,
+    results: results,
+    players: players,
+    scoringSettings: scoringSettings
+  }) : React.createElement(SpecialsAllView, {
+    players: players,
+    specialPredictions: specialPredictions,
+    specialResults: specialResults,
+    teams: teams
+  }));
+}
+
 // ═══════════════════════════════════════════════════════════════
 //  ADMIN
 // ═══════════════════════════════════════════════════════════════
@@ -5650,7 +5691,7 @@ function PhaseLockPanel({
     onToggle: () => togglePhase('specials')
   }), React.createElement(PhaseLockRow, {
     label: "Por\u00f3wnanie graczy",
-    hint: "Udost\u0119pnia graczom zak\u0142adki \u201ePor\u00f3wnanie\u201d i \u201eWszystkie typy specjalne\u201d.",
+    hint: "Udost\u0119pnia graczom zak\u0142adk\u0119 \u201ePodgl\u0105d\u201d z typami mecz\u00f3w i typami specjalnymi.",
     locked: !locks.compareVisible,
     onToggle: () => onSavePhaseLocks(prev => ({
       ...(prev || {}),
@@ -7398,8 +7439,9 @@ function Mundial2026() {
   }, [setPlayers, setTeams, setMatches, setPredictions, setResults, setSpecialPredictions, setSpecialResults, setScoringSettings, setPhaseLocks, setActivePlayer]);
   const compareOn = !!(phaseLocks && phaseLocks['compareVisible']);
   useEffect(() => {
-    if (!compareOn && !adminUnlocked && (activeTab === 'compare' || activeTab === 'allspecials')) setActiveTab('matches');
-  }, [compareOn, adminUnlocked]);
+    if (!compareOn && !adminUnlocked && activeTab === 'compare') setActiveTab('matches');
+    if (activeTab === 'allspecials') setActiveTab(compareOn || adminUnlocked ? 'compare' : 'matches');
+  }, [activeTab, compareOn, adminUnlocked]);
   const tabs = useMemo(() => [{
     k: 'matches',
     l: 'Mecze',
@@ -7418,12 +7460,8 @@ function Mundial2026() {
     i: 'podium'
   }, ...(compareOn || adminUnlocked ? [{
     k: 'compare',
-    l: 'Porównaj',
+    l: 'Podgląd',
     i: 'eye'
-  }, {
-    k: 'allspecials',
-    l: 'Wszyscy',
-    i: 'users'
   }] : []), ...(adminUnlocked ? [{
     k: 'admin',
     l: 'Wyniki',
@@ -7626,13 +7664,15 @@ function Mundial2026() {
     specialPredictions: safeSpecialPredictions,
     specialResults: safeSpecialResults,
     scoringSettings: safeScoringSettings
-  }), activeTab === 'compare' && React.createElement(CompareView, {
+  }), activeTab === 'compare' && React.createElement(PreviewView, {
     matches: safeMatches,
     teams: safeTeams,
     predictions: safePredictions,
     results: safeResults,
     players: safePlayers,
-    scoringSettings: safeScoringSettings
+    scoringSettings: safeScoringSettings,
+    specialPredictions: safeSpecialPredictions,
+    specialResults: safeSpecialResults
   }), activeTab === 'allspecials' && React.createElement(SpecialsAllView, {
     players: safePlayers,
     specialPredictions: safeSpecialPredictions,
