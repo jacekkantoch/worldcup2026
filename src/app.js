@@ -443,6 +443,45 @@ const PHASE_LABELS = {
   third: 'Mecz o 3. miejsce',
   final: 'Finał'
 };
+// Kolory odznak fazy — wspólne dla karty meczu (zakładka Mecze) i nagłówka
+// meczu w zakładce Podgląd, żeby oba widoki oznaczały fazy tak samo.
+const PHASE_BADGE_COLORS = {
+  group: {
+    background: 'rgba(10,132,255,0.16)',
+    color: 'rgba(255,255,255,.95)',
+    borderColor: 'rgba(10,132,255,0.42)'
+  },
+  r32: {
+    background: 'rgba(10,132,255,0.20)',
+    color: 'rgba(255,255,255,.95)',
+    borderColor: 'rgba(10,132,255,0.48)'
+  },
+  r16: {
+    background: 'rgba(191,90,242,0.18)',
+    color: 'rgba(255,255,255,.95)',
+    borderColor: 'rgba(191,90,242,0.46)'
+  },
+  qf: {
+    background: 'rgba(191,90,242,0.24)',
+    color: 'rgba(255,255,255,.95)',
+    borderColor: 'rgba(191,90,242,0.54)'
+  },
+  sf: {
+    background: 'rgba(255,69,58,0.18)',
+    color: 'rgba(255,255,255,.95)',
+    borderColor: 'rgba(255,69,58,0.46)'
+  },
+  third: {
+    background: 'rgba(255,159,10,0.18)',
+    color: 'rgba(255,255,255,.95)',
+    borderColor: 'rgba(255,159,10,0.46)'
+  },
+  final: {
+    background: 'rgba(245,200,66,0.20)',
+    color: '#F5C842',
+    borderColor: 'rgba(245,200,66,0.52)'
+  }
+};
 const PHASE_FILTER_TABS = [{
   k: 'all',
   l: 'Wszystkie'
@@ -2930,43 +2969,7 @@ const MatchCard = React.memo(function MatchCard({
     third: 'border',
     final: 'border'
   }[match.phase];
-  const phaseStyle = {
-    group: {
-      background: 'rgba(10,132,255,0.16)',
-      color: 'rgba(255,255,255,.95)',
-      borderColor: 'rgba(10,132,255,0.42)'
-    },
-    r32: {
-      background: 'rgba(10,132,255,0.20)',
-      color: 'rgba(255,255,255,.95)',
-      borderColor: 'rgba(10,132,255,0.48)'
-    },
-    r16: {
-      background: 'rgba(191,90,242,0.18)',
-      color: 'rgba(255,255,255,.95)',
-      borderColor: 'rgba(191,90,242,0.46)'
-    },
-    qf: {
-      background: 'rgba(191,90,242,0.24)',
-      color: 'rgba(255,255,255,.95)',
-      borderColor: 'rgba(191,90,242,0.54)'
-    },
-    sf: {
-      background: 'rgba(255,69,58,0.18)',
-      color: 'rgba(255,255,255,.95)',
-      borderColor: 'rgba(255,69,58,0.46)'
-    },
-    third: {
-      background: 'rgba(255,159,10,0.18)',
-      color: 'rgba(255,255,255,.95)',
-      borderColor: 'rgba(255,159,10,0.46)'
-    },
-    final: {
-      background: 'rgba(245,200,66,0.20)',
-      color: '#F5C842',
-      borderColor: 'rgba(245,200,66,0.52)'
-    }
-  }[match.phase];
+  const phaseStyle = PHASE_BADGE_COLORS[match.phase];
   return React.createElement("div", {
     className: "match-card-enter"
   }, React.createElement("div", {
@@ -3477,32 +3480,23 @@ function NextMatchCountdown({ matches, teams, predictions, players, activePlayer
     () => (Array.isArray(matches) ? matches : []).filter(m => m && m.date).sort((a, b) => new Date(a.date) - new Date(b.date)),
     [matches]
   );
-  const liveWindowMs = 2.5 * 60 * 60 * 1000;
-  const liveMatches = sorted.filter(m => {
-    const start = new Date(m.date).getTime();
-    return start <= now && now < start + liveWindowMs;
-  });
-  const firstLiveStart = liveMatches.length ? new Date(liveMatches[0].date).getTime() : null;
   const firstFuture = sorted.find(m => new Date(m.date).getTime() > now);
   const firstFutureStart = firstFuture ? new Date(firstFuture.date).getTime() : null;
-  const displayMatches = firstLiveStart !== null
-    ? liveMatches.filter(m => new Date(m.date).getTime() === firstLiveStart)
-    : firstFutureStart !== null
-      ? sorted.filter(m => new Date(m.date).getTime() === firstFutureStart)
-      : [];
+  const displayMatches = firstFutureStart !== null
+    ? sorted.filter(m => new Date(m.date).getTime() === firstFutureStart)
+    : [];
   if (!displayMatches.length) return null;
   const allPlayers = Array.isArray(players) ? players : [];
   const nameStyle = { fontSize: 13, fontWeight: 700, color: 'var(--label-1)', whiteSpace: 'nowrap' };
   const pad = n => String(n).padStart(2, '0');
   const renderPanel = match => {
     const matchStart = new Date(match.date).getTime();
-    const isLive = matchStart <= now && now < matchStart + liveWindowMs;
-    const diff = Math.max(0, isLive ? matchStart + liveWindowMs - now : matchStart - now);
+    const diff = Math.max(0, matchStart - now);
     const totalSec = Math.floor(diff / 1000);
     const hh = Math.floor(totalSec / 3600);
     const mm = Math.floor((totalSec % 3600) / 60);
     const ss = totalSec % 60;
-    const clock = isLive ? "W TRAKCIE" : `${pad(hh)}:${pad(mm)}:${pad(ss)}`;
+    const clock = `${pad(hh)}:${pad(mm)}:${pad(ss)}`;
     const home = teams && teams[match.homeTeamId];
     const away = teams && teams[match.awayTeamId];
     const canExpand = true;
@@ -3548,7 +3542,7 @@ function NextMatchCountdown({ matches, teams, predictions, players, activePlayer
       style: { minWidth: 0 }
     }, React.createElement("div", {
       style: { fontSize: 10, fontWeight: 800, letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--label-3)', marginBottom: 5 }
-    }, isLive ? "Mecz w trakcie" : "Następny mecz"), React.createElement("div", {
+    }, "Następny mecz"), React.createElement("div", {
       style: { display: 'flex', alignItems: 'center', gap: 7, minWidth: 0 }
     }, React.createElement("span", {
       className: "next-match-team-name",
@@ -3563,15 +3557,15 @@ function NextMatchCountdown({ matches, teams, predictions, players, activePlayer
     }, formatDate(match.date))), React.createElement("div", {
       style: {
         fontFamily: "'Bebas Neue', sans-serif",
-        fontSize: isLive ? 25 : 32,
+        fontSize: 32,
         lineHeight: 1,
         letterSpacing: '.03em',
-        color: isLive ? 'var(--accent-purple)' : 'var(--label-1)',
+        color: 'var(--label-1)',
         whiteSpace: 'nowrap',
         fontVariantNumeric: 'tabular-nums',
         flexShrink: 0
       },
-      "aria-label": isLive ? "Mecz w trakcie" : `Do rozpoczęcia: ${clock}`
+      "aria-label": `Do rozpoczęcia: ${clock}`
     }, clock)), expanded && React.createElement("div", {
       className: "next-match-details compare-view"
     }, React.createElement("div", {
@@ -4725,6 +4719,44 @@ function LeaderboardView({
 // ═══════════════════════════════════════════════════════════════
 //  WIDOK: PORÓWNANIE
 // ═══════════════════════════════════════════════════════════════
+function CompareMatchToggle({
+  home,
+  away,
+  isExpanded,
+  onToggle
+}) {
+  const flagGradient = useFlagGradient(home?.flag, away?.flag);
+  return React.createElement("button", {
+    type: "button",
+    onClick: onToggle,
+    "aria-expanded": isExpanded,
+    className: "compare-match-toggle",
+    style: {
+      '--compare-flag-gradient': flagGradient ? `${flagGradient}, rgba(255,255,255,.04)` : undefined
+    }
+  }, React.createElement("span", {
+    className: "compare-match-teams"
+  }, React.createElement("span", {
+    className: "compare-match-team"
+  }, React.createElement(FlagImg, {
+    code: home?.flag,
+    size: 18,
+    title: home?.name
+  }), React.createElement("span", null, home?.name || '?')), React.createElement("span", {
+    className: "compare-match-vs"
+  }, "vs"), React.createElement("span", {
+    className: "compare-match-team is-away"
+  }, React.createElement(FlagImg, {
+    code: away?.flag,
+    size: 18,
+    title: away?.name
+  }), React.createElement("span", null, away?.name || '?'))), React.createElement("span", {
+    className: "compare-match-chevron"
+  }, React.createElement(Icon, {
+    name: isExpanded ? 'chevup' : 'chevdown',
+    size: 16
+  })));
+}
 function CompareView({
   matches,
   teams,
@@ -4842,39 +4874,33 @@ function CompareView({
       className: "compare-match-head"
     }, React.createElement("div", {
       className: "compare-match-meta"
-    }, React.createElement(Badge, null, phaseBadgeLabel(m)), React.createElement("span", {
+    }, React.createElement("span", {
+      className: "compare-phase-badge",
+      style: {
+        ...(PHASE_BADGE_COLORS[m.phase] || {}),
+        display: 'inline-flex',
+        alignItems: 'center',
+        padding: '3px 10px',
+        borderRadius: 999,
+        fontSize: 11,
+        textTransform: 'uppercase',
+        letterSpacing: '0.06em',
+        fontWeight: 800,
+        border: '1px solid',
+        lineHeight: 1.25
+      }
+    }, m.phase === 'group' ? `Grupa ${m.group}` : PHASE_LABELS[m.phase]), React.createElement("span", {
       className: "compare-match-number"
     }, "#", m.num)), result ? React.createElement("div", {
       className: "compare-match-result-pill"
     }, result.home, React.createElement("span", null, ":"), result.away) : React.createElement("span", {
       className: "compare-match-no-result"
-    }, "brak wyniku")), React.createElement("button", {
-      type: "button",
-      onClick: () => toggleMatchDetails(m.id),
-      "aria-expanded": isExpanded,
-      className: "compare-match-toggle"
-    }, React.createElement("span", {
-      className: "compare-match-teams"
-    }, React.createElement("span", {
-      className: "compare-match-team"
-    }, React.createElement(FlagImg, {
-      code: home?.flag,
-      size: 18,
-      title: home?.name
-    }), React.createElement("span", null, home?.name || '?')), React.createElement("span", {
-      className: "compare-match-vs"
-    }, "vs"), React.createElement("span", {
-      className: "compare-match-team is-away"
-    }, React.createElement(FlagImg, {
-      code: away?.flag,
-      size: 18,
-      title: away?.name
-    }), React.createElement("span", null, away?.name || '?'))), React.createElement("span", {
-      className: "compare-match-chevron"
-    }, React.createElement(Icon, {
-      name: isExpanded ? 'chevup' : 'chevdown',
-      size: 16
-    }))), isExpanded && React.createElement("div", {
+    }, "brak wyniku")), React.createElement(CompareMatchToggle, {
+      home: home,
+      away: away,
+      isExpanded: isExpanded,
+      onToggle: () => toggleMatchDetails(m.id)
+    }), isExpanded && React.createElement("div", {
       className: "compare-player-list",
       style: {
         animation: 'slideIn .24s var(--ease-out) both'
