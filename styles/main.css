@@ -6841,9 +6841,9 @@ html body .compare-match-result-pill {
   gap: 6px !important;
   padding: 6px 12px !important;
   border-radius: 999px !important;
-  background: rgba(7, 108, 63, .72) !important;
-  border: 1px solid rgba(102,255,158,.18) !important;
-  color: rgba(235,255,242,.98) !important;
+  background: rgba(48, 209, 88, .14) !important;
+  border: 1px solid rgba(48, 209, 88, .30) !important;
+  color: var(--accent-green) !important;
   font-family: 'Bebas Neue', ui-sans-serif, system-ui, sans-serif !important;
   font-size: 24px !important;
   line-height: .9 !important;
@@ -6853,7 +6853,7 @@ html body .compare-match-result-pill {
 }
 
 html body .compare-match-result-pill span {
-  color: rgba(235,255,242,.58) !important;
+  color: rgba(48, 209, 88, .65) !important;
 }
 
 html body .compare-match-no-result {
@@ -8983,13 +8983,51 @@ html body .leaderboard-merged-summary:not(#__lb_merged__) {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.rank-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 10.5px;
+  font-weight: 900;
+  padding: 2px 6px;
+  border-radius: 999px;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.rank-delta-up {
+  color: var(--accent-green);
+  background: rgba(48, 209, 88, 0.16);
+}
+.rank-delta-down {
+  color: var(--accent-red);
+  background: rgba(255, 69, 58, 0.16);
+}
+.rank-podium-total-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: baseline;
+  gap: 6px;
+  margin-top: 3px;
+  width: 100%;
+}
+.rank-podium-delta {
+  grid-column: 1;
+  justify-self: end;
+  position: relative;
+  top: -1px;
+}
+.rank-row-delta {
+  flex-shrink: 0;
+}
 .rank-podium-total {
+  grid-column: 2;
+  justify-self: center;
   font-family: 'Bebas Neue', sans-serif;
   font-size: 28px;
   letter-spacing: .02em;
   color: var(--label-1);
   line-height: 1;
-  margin-top: 3px;
   font-variant-numeric: tabular-nums;
 }
 .rank-podium-card-1 .rank-podium-total { font-size: 34px; }

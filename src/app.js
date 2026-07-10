@@ -1869,6 +1869,13 @@ function plMecze(n) {
   if (b >= 2 && b <= 4 && (a < 12 || a > 14)) return 'mecze';
   return 'meczów';
 }
+function plMiejsca(n) {
+  const a = Math.abs(n) % 100,
+    b = a % 10;
+  if (a === 1) return 'miejsce';
+  if (b >= 2 && b <= 4 && (a < 12 || a > 14)) return 'miejsca';
+  return 'miejsc';
+}
 // Formatter tworzony RAZ (kosztowne) i reużywany przy każdym renderze karty.
 const PL_DATE_FMT = (function () {
   try {
@@ -3321,7 +3328,7 @@ const MatchCard = React.memo(function MatchCard({
   }, getTeamAbbr(prediction.penWinner === 'home' ? home : away)), React.createElement("b", {
     className: `match-final-user-points ${quality === 'exact' ? 'is-exact' : quality === 'partial' ? 'is-partial' : 'is-miss'}`
   }, myPoints > 0 ? `+${myPoints} PKT` : '0 PKT'))), phaseLocked && !result && React.createElement("div", {
-    className: "text-center text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg p-3 flex items-center justify-center gap-2 app-note app-note--danger app-note--compact app-note--center"
+    className: "text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg p-3 flex items-center gap-2 app-note app-note--danger app-note--compact"
   }, React.createElement(LockIcon, {
     name: "lock",
     size: 16
@@ -3470,7 +3477,7 @@ function NextMatchCountdown({ matches, teams, predictions, players, activePlayer
     () => (Array.isArray(matches) ? matches : []).filter(m => m && m.date).sort((a, b) => new Date(a.date) - new Date(b.date)),
     [matches]
   );
-  const liveWindowMs = 3 * 60 * 60 * 1000;
+  const liveWindowMs = 2.5 * 60 * 60 * 1000;
   const liveMatches = sorted.filter(m => {
     const start = new Date(m.date).getTime();
     return start <= now && now < start + liveWindowMs;
@@ -4451,9 +4458,22 @@ function RankDetails({
     key: c.key
   }, c)))));
 }
+function RankDeltaBadge({
+  delta,
+  className = ''
+}) {
+  if (!delta) return null;
+  const up = delta > 0;
+  const n = Math.abs(delta);
+  return React.createElement("span", {
+    className: `rank-delta ${up ? 'rank-delta-up' : 'rank-delta-down'} ${className}`.trim(),
+    "aria-label": `${up ? 'Awans' : 'Spadek'} o ${n} ${plMiejsca(n)}`
+  }, up ? '▲' : '▼', n);
+}
 function RankPodiumCard({
   r,
   idx,
+  delta,
   open,
   onToggle
 }) {
@@ -4479,9 +4499,14 @@ function RankPodiumCard({
     size: idx === 0 ? 20 : 17
   })), React.createElement("span", {
     className: "rank-podium-name"
-  }, r.player.name), React.createElement("span", {
+  }, r.player.name), React.createElement("div", {
+    className: "rank-podium-total-row"
+  }, React.createElement(RankDeltaBadge, {
+    delta: delta,
+    className: "rank-podium-delta"
+  }), React.createElement("span", {
     className: "rank-podium-total"
-  }, r.total), React.createElement("span", {
+  }, r.total)), React.createElement("span", {
     className: "rank-podium-label"
   }, "PKT"));
 }
@@ -4525,6 +4550,7 @@ function RankPodiumPanel({
 function RankListRow({
   r,
   idx,
+  delta,
   categories
 }) {
   const theme = rankTheme(idx);
@@ -4541,7 +4567,10 @@ function RankListRow({
     }
   }, `#${idx + 1}`), React.createElement("div", {
     className: "rank-row-name"
-  }, r.player.name), React.createElement("div", {
+  }, r.player.name), React.createElement(RankDeltaBadge, {
+    delta: delta,
+    className: "rank-row-delta"
+  }), React.createElement("div", {
     className: "rank-row-total"
   }, r.total, React.createElement("span", {
     className: "rank-row-total-label"
@@ -4565,14 +4594,18 @@ function LeaderboardView({
   scoringSettings
 }) {
   const [openPodiumId, setOpenPodiumId] = useState(null);
-  const ranking = useMemo(() => {
-    return players.map(pl => {
+  const {
+    ranking,
+    rankDeltas
+  } = useMemo(() => {
+    const build = excludeMatchTime => players.map(pl => {
       let gm = 0,
         km = 0,
         exact = 0,
         partial = 0,
         incorrect = 0;
       matches.forEach(m => {
+        if (excludeMatchTime != null && new Date(m.date).getTime() === excludeMatchTime) return;
         const pred = predictions[`${pl.id}:${m.id}`],
           res = results[m.id];
         if (!pred || !res) return;
@@ -4596,6 +4629,25 @@ function LeaderboardView({
         incorrect
       };
     }).sort(compareRankingEntries);
+    const current = build(null);
+    const completedTimes = matches.filter(m => results[m.id]).map(m => new Date(m.date).getTime());
+    const deltas = {};
+    if (completedTimes.length) {
+      const lastMatchTime = Math.max(...completedTimes);
+      const previous = build(lastMatchTime);
+      const prevPos = {};
+      previous.forEach((r, i) => {
+        prevPos[r.player.id] = i + 1;
+      });
+      current.forEach((r, i) => {
+        const prevRank = prevPos[r.player.id];
+        deltas[r.player.id] = prevRank != null ? prevRank - (i + 1) : 0;
+      });
+    }
+    return {
+      ranking: current,
+      rankDeltas: deltas
+    };
   }, [players, matches, predictions, results, specialPredictions, specialResults, scoringSettings]);
   const categoryMaximums = useMemo(() => {
     const cfg = normalizePointsSettings(scoringSettings);
@@ -4647,6 +4699,7 @@ function LeaderboardView({
   }, React.createElement(RankPodiumCard, {
     r: podium[i],
     idx: i,
+    delta: rankDeltas[podium[i].player.id] || 0,
     open: openPodiumId === podium[i].player.id,
     onToggle: () => setOpenPodiumId(openPodiumId === podium[i].player.id ? null : podium[i].player.id)
   })))), openPodiumIdx !== -1 && React.createElement("div", {
@@ -4664,6 +4717,7 @@ function LeaderboardView({
   }, React.createElement(RankListRow, {
     r: r,
     idx: i + restOffset,
+    delta: rankDeltas[r.player.id] || 0,
     categories: buildRankCategories(r, categoryMaximums, categoryCompletion)
   })))));
 }
