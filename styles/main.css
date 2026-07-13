@@ -10015,7 +10015,7 @@ html body .specials-group-order-panel .specials-order-item {
   min-width: 0 !important;
   min-height: 56px !important;
   display: grid !important;
-  grid-template-columns: 28px minmax(0, 1fr) auto !important;
+  grid-template-columns: 28px minmax(0, 1fr) !important;
   align-items: center !important;
   gap: 10px !important;
   padding: 7px 8px 7px 10px !important;
@@ -10025,6 +10025,8 @@ html body .specials-group-order-panel .specials-order-item {
   box-shadow: 0 1px 0 rgba(255,255,255,.025) inset !important;
   cursor: grab !important;
   user-select: none !important;
+  touch-action: pan-y !important;
+  -webkit-touch-callout: none !important;
   transition: transform 160ms ease, opacity 160ms ease, border-color 160ms ease, background 160ms ease !important;
 }
 
@@ -10036,6 +10038,7 @@ html body .specials-group-order-panel .specials-order-item.is-dragging {
   z-index: 2 !important;
   opacity: .18 !important;
   transform: scale(.985) !important;
+  touch-action: none !important;
 }
 
 html body .specials-group-order-panel .specials-order-list.is-drop-settling .specials-order-item {
@@ -10077,14 +10080,9 @@ html body .specials-group-order-panel .specials-order-team {
   gap: 9px !important;
 }
 
-html body .specials-group-order-panel .specials-order-item.is-correct .specials-order-team,
-html body .specials-group-order-panel .specials-order-item.is-wrong .specials-order-team {
-  padding-right: 22px !important;
-}
-
 html body .specials-group-order-panel .specials-order-team .specials-team-name {
   display: block !important;
-  flex: 1 1 auto !important;
+  flex: 0 1 auto !important;
   min-width: 0 !important;
   overflow: hidden !important;
   white-space: nowrap !important;
@@ -10111,8 +10109,9 @@ html body .specials-group-order-panel .specials-order-item.is-wrong .specials-te
 }
 
 html body .specials-group-order-panel .specials-order-result-icon {
-  position: absolute !important;
-  right: 54px !important;
+  position: static !important;
+  flex: 0 0 auto !important;
+  margin-left: -4px !important;
 }
 
 html body .specials-group-order-panel .specials-order-item.is-correct .specials-order-result-icon {
@@ -10121,47 +10120,6 @@ html body .specials-group-order-panel .specials-order-item.is-correct .specials-
 
 html body .specials-group-order-panel .specials-order-item.is-wrong .specials-order-result-icon {
   color: #ff453a !important;
-}
-
-html body .specials-group-order-panel .specials-order-actions {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 2px !important;
-}
-
-html body .specials-group-order-panel .specials-order-drag-handle {
-  width: 32px !important;
-  height: 40px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  flex: 0 0 32px !important;
-  border: 0 !important;
-  border-radius: 999px !important;
-  background: transparent !important;
-  color: var(--label-2) !important;
-}
-
-html body .specials-group-order-panel .specials-order-drag-handle {
-  width: 40px !important;
-  flex-basis: 40px !important;
-  touch-action: none !important;
-  cursor: grab !important;
-}
-
-html body .specials-group-order-panel .specials-order-drag-handle:not(:disabled):hover {
-  background: rgba(255,255,255,.08) !important;
-  color: var(--label-1) !important;
-}
-
-html body .specials-group-order-panel .specials-order-drag-handle:focus-visible {
-  outline: 2px solid var(--system-purple, #bf5af2) !important;
-  outline-offset: 1px !important;
-}
-
-html body .specials-group-order-panel .specials-order-drag-handle:disabled {
-  opacity: .35 !important;
-  cursor: default !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

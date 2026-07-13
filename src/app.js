@@ -3929,8 +3929,10 @@ function SpecialsView({
   const touchDragRef = useRef({
     teamId: null,
     pointerId: null,
+    startX: 0,
     startY: 0,
-    moved: false
+    activated: false,
+    holdTimer: 0
   });
   useEffect(() => {
     setDraft(specialPredictions[activePlayerId] || {
@@ -3993,13 +3995,16 @@ function SpecialsView({
     });
   };
   const clearDragState = () => {
+    if (touchDragRef.current.holdTimer) clearTimeout(touchDragRef.current.holdTimer);
     setDraggingTeamId(null);
     setDragOverTeamId(null);
     touchDragRef.current = {
       teamId: null,
       pointerId: null,
+      startX: 0,
       startY: 0,
-      moved: false
+      activated: false,
+      holdTimer: 0
     };
   };
   const settleDroppedOrder = () => {
@@ -4008,13 +4013,28 @@ function SpecialsView({
   };
   const onTouchDragStart = (e, teamId) => {
     if (tournamentLocked || specialsLocked || e.pointerType === 'mouse') return;
-    touchDragRef.current = {
+    const item = e.currentTarget;
+    const pointerId = e.pointerId;
+    const drag = {
       teamId,
-      pointerId: e.pointerId,
+      pointerId,
+      startX: e.clientX,
       startY: e.clientY,
-      moved: false
+      activated: false,
+      holdTimer: 0
     };
-    if (e.currentTarget.setPointerCapture) e.currentTarget.setPointerCapture(e.pointerId);
+    drag.holdTimer = setTimeout(() => {
+      if (touchDragRef.current !== drag) return;
+      drag.activated = true;
+      setDraggingTeamId(teamId);
+      setDragOverTeamId(teamId);
+      if (item.setPointerCapture) {
+        try {
+          item.setPointerCapture(pointerId);
+        } catch (_) {}
+      }
+    }, 320);
+    touchDragRef.current = drag;
   };
   const groupDropTargetAt = (list, clientY) => {
     const items = list ? Array.from(list.querySelectorAll('[data-order-team-id]')) : [];
@@ -4027,11 +4047,11 @@ function SpecialsView({
   const onTouchDragMove = e => {
     const drag = touchDragRef.current;
     if (!drag.teamId || drag.pointerId !== e.pointerId) return;
-    if (!drag.moved && Math.abs(e.clientY - drag.startY) > 6) {
-      drag.moved = true;
-      setDraggingTeamId(drag.teamId);
+    if (!drag.activated && Math.hypot(e.clientX - drag.startX, e.clientY - drag.startY) > 8) {
+      clearDragState();
+      return;
     }
-    if (!drag.moved) return;
+    if (!drag.activated) return;
     if (e.cancelable) e.preventDefault();
     const list = e.currentTarget.closest('.specials-order-list');
     setDragOverTeamId(groupDropTargetAt(list, e.clientY) || drag.teamId);
@@ -4039,9 +4059,11 @@ function SpecialsView({
   const onTouchDragEnd = e => {
     const drag = touchDragRef.current;
     if (!drag.teamId || drag.pointerId !== e.pointerId) return;
-    if (drag.moved && dragOverTeamId) {
+    const list = e.currentTarget.closest('.specials-order-list');
+    const targetId = groupDropTargetAt(list, e.clientY) || dragOverTeamId;
+    if (drag.activated && targetId) {
       settleDroppedOrder();
-      reorderGroup(activeGroup, drag.teamId, dragOverTeamId);
+      reorderGroup(activeGroup, drag.teamId, targetId);
     }
     clearDragState();
   };
@@ -4138,7 +4160,11 @@ function SpecialsView({
         setDraggingTeamId(teamId);
         setDragOverTeamId(teamId);
       },
-      onDragEnd: clearDragState
+      onDragEnd: clearDragState,
+      onPointerDown: e => onTouchDragStart(e, teamId),
+      onPointerMove: onTouchDragMove,
+      onPointerUp: onTouchDragEnd,
+      onPointerCancel: clearDragState
     }, React.createElement("span", {
       className: "specials-position-index",
       "aria-hidden": "true"
@@ -4150,7 +4176,7 @@ function SpecialsView({
       title: team.name
     }), React.createElement("span", {
       className: "specials-team-name"
-    }, team.name)), isCorrect && React.createElement(Icon, {
+    }, team.name), isCorrect && React.createElement(Icon, {
       name: "check",
       size: 15,
       className: "specials-order-result-icon"
@@ -4158,21 +4184,7 @@ function SpecialsView({
       name: "x",
       size: 15,
       className: "specials-order-result-icon"
-    }), React.createElement("div", {
-      className: "specials-order-actions"
-    }, React.createElement("button", {
-        type: "button",
-        className: "specials-order-drag-handle",
-        disabled: tournamentLocked || specialsLocked,
-        "aria-label": `Przeciągnij ${team.name}, aby zmienić pozycję`,
-        onPointerDown: e => onTouchDragStart(e, teamId),
-        onPointerMove: onTouchDragMove,
-        onPointerUp: onTouchDragEnd,
-        onPointerCancel: clearDragState
-      }, React.createElement(Icon, {
-        name: "grip",
-        size: 18
-      }))));
+    })));
   }))), React.createElement("section", {
     className: "bg-white border border-stone-200 rounded-xl p-4"
   }, React.createElement("h3", {
@@ -6174,8 +6186,10 @@ function AdminPanel({
   const spTouchDragRef = useRef({
     teamId: null,
     pointerId: null,
+    startX: 0,
     startY: 0,
-    moved: false
+    activated: false,
+    holdTimer: 0
   });
   useEffect(() => setSpDraft(specialResults || {
     groupOrders: {}
@@ -6209,13 +6223,16 @@ function AdminPanel({
     });
   };
   const clearSpDragState = () => {
+    if (spTouchDragRef.current.holdTimer) clearTimeout(spTouchDragRef.current.holdTimer);
     setSpDraggingTeamId(null);
     setSpDragOverTeamId(null);
     spTouchDragRef.current = {
       teamId: null,
       pointerId: null,
+      startX: 0,
       startY: 0,
-      moved: false
+      activated: false,
+      holdTimer: 0
     };
   };
   const settleSpDroppedOrder = () => {
@@ -6224,13 +6241,28 @@ function AdminPanel({
   };
   const onSpTouchDragStart = (e, teamId) => {
     if (e.pointerType === 'mouse') return;
-    spTouchDragRef.current = {
+    const item = e.currentTarget;
+    const pointerId = e.pointerId;
+    const drag = {
       teamId,
-      pointerId: e.pointerId,
+      pointerId,
+      startX: e.clientX,
       startY: e.clientY,
-      moved: false
+      activated: false,
+      holdTimer: 0
     };
-    if (e.currentTarget.setPointerCapture) e.currentTarget.setPointerCapture(e.pointerId);
+    drag.holdTimer = setTimeout(() => {
+      if (spTouchDragRef.current !== drag) return;
+      drag.activated = true;
+      setSpDraggingTeamId(teamId);
+      setSpDragOverTeamId(teamId);
+      if (item.setPointerCapture) {
+        try {
+          item.setPointerCapture(pointerId);
+        } catch (_) {}
+      }
+    }, 320);
+    spTouchDragRef.current = drag;
   };
   const spGroupDropTargetAt = (list, clientY) => {
     const items = list ? Array.from(list.querySelectorAll('[data-admin-order-team-id]')) : [];
@@ -6243,11 +6275,11 @@ function AdminPanel({
   const onSpTouchDragMove = e => {
     const drag = spTouchDragRef.current;
     if (!drag.teamId || drag.pointerId !== e.pointerId) return;
-    if (!drag.moved && Math.abs(e.clientY - drag.startY) > 6) {
-      drag.moved = true;
-      setSpDraggingTeamId(drag.teamId);
+    if (!drag.activated && Math.hypot(e.clientX - drag.startX, e.clientY - drag.startY) > 8) {
+      clearSpDragState();
+      return;
     }
-    if (!drag.moved) return;
+    if (!drag.activated) return;
     if (e.cancelable) e.preventDefault();
     const list = e.currentTarget.closest('.specials-order-list');
     setSpDragOverTeamId(spGroupDropTargetAt(list, e.clientY) || drag.teamId);
@@ -6255,9 +6287,11 @@ function AdminPanel({
   const onSpTouchDragEnd = e => {
     const drag = spTouchDragRef.current;
     if (!drag.teamId || drag.pointerId !== e.pointerId) return;
-    if (drag.moved && spDragOverTeamId) {
+    const list = e.currentTarget.closest('.specials-order-list');
+    const targetId = spGroupDropTargetAt(list, e.clientY) || spDragOverTeamId;
+    if (drag.activated && targetId) {
       settleSpDroppedOrder();
-      reorderSpGroup(spGroup, drag.teamId, spDragOverTeamId);
+      reorderSpGroup(spGroup, drag.teamId, targetId);
     }
     clearSpDragState();
   };
@@ -6445,7 +6479,11 @@ function AdminPanel({
         setSpDraggingTeamId(teamId);
         setSpDragOverTeamId(teamId);
       },
-      onDragEnd: clearSpDragState
+      onDragEnd: clearSpDragState,
+      onPointerDown: e => onSpTouchDragStart(e, teamId),
+      onPointerMove: onSpTouchDragMove,
+      onPointerUp: onSpTouchDragEnd,
+      onPointerCancel: clearSpDragState
     }, React.createElement("span", {
       className: "specials-position-index",
       "aria-hidden": "true"
@@ -6457,20 +6495,7 @@ function AdminPanel({
       title: team.name
     }), React.createElement("span", {
       className: "specials-team-name"
-    }, team.name)), React.createElement("div", {
-      className: "specials-order-actions"
-    }, React.createElement("button", {
-      type: "button",
-      className: "specials-order-drag-handle",
-      "aria-label": `Przeciągnij ${team.name}, aby zmienić pozycję`,
-      onPointerDown: e => onSpTouchDragStart(e, teamId),
-      onPointerMove: onSpTouchDragMove,
-      onPointerUp: onSpTouchDragEnd,
-      onPointerCancel: clearSpDragState
-    }, React.createElement(Icon, {
-      name: "grip",
-      size: 18
-    }))));
+    }, team.name)));
   }))), React.createElement("div", {
     className: "bg-white border border-stone-200 rounded-xl p-4 space-y-2"
   }, React.createElement("h4", {
