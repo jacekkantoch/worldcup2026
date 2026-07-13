@@ -29,7 +29,7 @@
     }
 
     body {
-      font-family: 'DM Sans', system-ui, sans-serif;
+      font-family: var(--font-family-base);
       padding-bottom: calc(84px + var(--safe-bottom));
       min-height: 100dvh;
       background:
@@ -625,6 +625,7 @@
     ═══════════════════════════════════════════════════════════════ */
     :root {
       color-scheme: dark;
+      --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       --bg-0: #05070d;
       --bg-1: rgba(18, 22, 34, 0.56);
       --bg-2: rgba(31, 38, 56, 0.58);
@@ -652,8 +653,8 @@
          oraz przez flat-mode !important (4704+) — usunięto martwe definicje. */
       --label-1: rgba(255,255,255,.98);
       --label-2: rgba(235,241,255,.70);
-      --label-3: rgba(228,236,255,.46);
-      --label-4: rgba(228,236,255,.24);
+      --label-3: rgba(238,244,255,.64);
+      --label-4: rgba(238,244,255,.44);
 
       --accent: #0a84ff;
       --accent-strong: #0a84ff;
@@ -1021,10 +1022,10 @@
     input,
     select,
     textarea {
-      font-family: "DM Sans", system-ui, sans-serif;
+      font-family: var(--font-family-base);
     }
     .font-display {
-      font-family: "DM Sans", system-ui, sans-serif;
+      font-family: var(--font-family-base);
       font-weight: 780;
       letter-spacing: -.025em;
     }
@@ -5247,6 +5248,28 @@ html body .app-content {
   }
 }
 
+/* FP-001: Apple HIG minimum touch area for the primary mobile controls. */
+html body .app-header .login-btn,
+html body .app-header .players-btn {
+  min-width: 44px !important;
+  min-height: 44px !important;
+}
+
+@media (max-width: 520px) {
+  html body .app-header .profile-menu-btn {
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    max-width: 44px !important;
+  }
+}
+
+html body .phase-filter-panel .chip-scroll-row .selection-tile,
+html body .phase-filter-panel .edge-safe-row .selection-tile {
+  min-width: 44px !important;
+  min-height: 44px !important;
+}
+
 @media (max-width: 380px) {
   html body .app-header {
     padding-top: calc(var(--safe-top) + 7px) !important;
@@ -6013,10 +6036,10 @@ html body .infinite-group-scroll {
   -webkit-overflow-scrolling: touch !important;
 }
 
-html body .infinite-group-scroll > div {
+html body .infinite-group-scroll > button {
   scroll-snap-align: center !important;
   scroll-snap-stop: normal !important;
-  cursor: default !important;
+  cursor: pointer !important;
 }
 
 /* Kółka grup reagują tylko na przewijanie karuzeli — środkowe (wybrane)
@@ -6024,15 +6047,15 @@ html body .infinite-group-scroll > div {
    najechaniu, ani po kliknięciu (i tak nieklikalne, ale są to zwykłe divy
    z klasą .selection-tile, więc bez tego nadpisania dziedziczyłyby
    ogólny hover). */
-html body .infinite-group-scroll > div.selection-tile:not(.is-selected):hover {
+html body .infinite-group-scroll > button.selection-tile:not(.is-selected):hover {
   background: linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.03)) !important;
   border-color: transparent !important;
   box-shadow: none !important;
   transform: none !important;
 }
 
-html body .infinite-group-scroll > div.selection-tile.is-selected,
-html body .infinite-group-scroll > div.selection-tile.is-selected:hover {
+html body .infinite-group-scroll > button.selection-tile.is-selected,
+html body .infinite-group-scroll > button.selection-tile.is-selected:hover {
   background:
     linear-gradient(145deg, rgba(211,139,255,.30), rgba(191,90,242,.20) 58%, rgba(139,63,240,.16)) !important;
   border-color: transparent !important;
@@ -6482,9 +6505,21 @@ html body .bracket-page .bracket-intro {
   -webkit-backdrop-filter: blur(14px) saturate(145%) !important;
 }
 
+html body .match-score-rule-note {
+  margin: 10px 0 0 !important;
+  color: var(--label-3) !important;
+  font-size: 11px !important;
+  line-height: 1.35 !important;
+  text-align: center !important;
+}
+
+html body .match-score-rule-note + .space-y-2 {
+  margin-top: 8px !important;
+}
+
 /* Redesigned penalty winner selector. */
 html body .penalty-choice-panel {
-  margin: 14px 0 12px !important;
+  margin: 14px 0 8px !important;
   padding: 14px !important;
   border-radius: 24px !important;
   background: var(--tab-match-surface-soft) !important;
@@ -7489,7 +7524,7 @@ html body .admin-gate-overlay .admin-gate-card {
 html body .prediction-penalty,
 html body .match-penalty-badge,
 html body .compare-view .compare-player-penalty {
-  font-family: 'DM Sans', system-ui, sans-serif !important;
+  font-family: var(--font-family-base) !important;
   font-size: 11px !important;
   font-weight: 800 !important;
   letter-spacing: 0 !important;
@@ -7500,7 +7535,7 @@ html body .prediction-penalty::before,
 html body .match-penalty-badge::before,
 html body .compare-view .compare-player-penalty::before {
   content: "Karne:" !important;
-  font-family: 'DM Sans', system-ui, sans-serif !important;
+  font-family: var(--font-family-base) !important;
   font-size: 11px !important;
   font-weight: 700 !important;
   letter-spacing: 0 !important;
@@ -9623,5 +9658,591 @@ html body .admin-match-group-note span {
 
   html body .admin-match-team-picker {
     grid-template-columns: 1fr;
+  }
+}
+
+/* FP-004: opaque modal fallback for reduced-transparency environments. */
+@media (prefers-reduced-transparency: reduce) {
+  html body .profile-modal-overlay {
+    background: rgba(2, 7, 16, .92) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  html body .fixed.inset-0.z-50 > .relative.login-modal-sheet,
+  html body .fixed.inset-0.z-50 > .relative.login-modal-compact-sheet {
+    background: #1c1c1e !important;
+    background-color: #1c1c1e !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow:
+      0 18px 48px rgba(0, 0, 0, .72),
+      inset 0 0 0 1px rgba(255, 255, 255, .12) !important;
+  }
+}
+
+/* FP-006: header and admin state colors live in the dark-theme token system. */
+html body .app-header .admin-panel-btn.is-active:not(#__admin_border_restore__),
+html body .app-header .admin-panel-btn.is-active:not(#__admin_border_restore__):hover,
+html body .app-header .admin-panel-btn.is-active:not(#__admin_border_restore__):focus-visible {
+  background: color-mix(in srgb, var(--accent-purple) 30%, transparent) !important;
+  border: 1px solid var(--accent-purple) !important;
+}
+
+/* 2026 HIG audit: stable, labelled tab bar with legible compact labels. */
+html body .bottom-nav button {
+  min-height: 64px !important;
+  gap: 2px !important;
+  font-size: 11px !important;
+  font-weight: 650 !important;
+  letter-spacing: 0 !important;
+  line-height: 1.15 !important;
+  text-transform: none !important;
+}
+
+html body .bottom-nav .nav-label {
+  display: block !important;
+  width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+/* Carousel tabs are real controls and meet the iOS comfortable touch target. */
+html body .infinite-group-scroll > button.selection-tile:not(#__group_target__) {
+  appearance: none !important;
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+  padding: 0 !important;
+}
+
+/* Profile flows use the same 44pt-equivalent control height as the app shell. */
+html body .profile-add-btn,
+html body .profile-close-btn,
+html body .profile-action-btn,
+html body .profile-text-input {
+  min-height: 44px !important;
+}
+
+html body .profile-action-btn {
+  font-size: 13px !important;
+}
+
+/* Disabled content remains recognisable without looking actionable. */
+html body .selection-tile:disabled,
+html body .penalty-choice-card:disabled,
+html body .profile-action-btn:disabled,
+html body .admin-login-submit:disabled {
+  opacity: .72 !important;
+}
+
+html body input:disabled,
+html body select:disabled,
+html body textarea:disabled {
+  opacity: 1 !important;
+  color: var(--label-2) !important;
+  -webkit-text-fill-color: var(--label-2) !important;
+}
+
+/* 2026 spacing audit: compact 4pt rhythm and responsive collision fixes. */
+:root {
+  --space-compact: 4px;
+  --space-small: 8px;
+  --space-medium: 12px;
+  --space-large: 16px;
+  --space-section: 24px;
+
+  --control-height: 44px;
+  --panel-content-padding: var(--space-large);
+  --content-padding: var(--panel-content-padding);
+  --screen-horizontal-padding: var(--space-large);
+  --section-spacing: var(--space-large);
+
+  /* Concentric curves: inner radius = containing radius - edge inset. */
+  --curve-panel: var(--ui-corner-radius);
+  --curve-inset-7: 23px;
+  --curve-inset-8: 22px;
+  --curve-inset-12: 18px;
+  --curve-inset-14: 16px;
+  --curve-inset-16: 14px;
+  --curve-nested-deep: 999px;
+  --curve-rank-detail: 6px;
+
+  /* Compatibility for components that consume the earlier spacing tokens. */
+  --app-panel-gap: var(--section-spacing);
+  --panel-content-gap: var(--space-medium);
+  --app-shell-gutter: var(--screen-horizontal-padding);
+}
+
+/* Screen edges and section rhythm. */
+html body .app-content {
+  padding-right: var(--screen-horizontal-padding) !important;
+  padding-left: var(--screen-horizontal-padding) !important;
+}
+
+html body .tab-view,
+html body .matches-view,
+html body .specials-view,
+html body .allspecials-view,
+html body .leaderboard-view,
+html body .rank-view,
+html body .compare-view,
+html body .bracket-page,
+html body .admin-panel,
+html body .admin-section-stack {
+  gap: var(--section-spacing) !important;
+}
+
+html body .phase-filter-panel:not(#__geometry_audit__),
+html body .admin-phase-filters:not(#__geometry_audit__),
+html body .admin-tabs-shell:not(#__geometry_audit__) {
+  padding: var(--space-small) !important;
+}
+
+html body .phase-filter-panel:not(#__geometry_audit__) > div,
+html body .admin-phase-filters:not(#__geometry_audit__) > div {
+  gap: var(--space-small) !important;
+}
+
+html body input:not([type="checkbox"]):not([type="radio"]),
+html body select,
+html body textarea,
+html body .profile-action-btn,
+html body .profile-add-btn,
+html body .profile-close-btn,
+html body .admin-login-submit,
+html body .install-banner button,
+html body .app-note,
+html body .admin-match-team-select select,
+html body .admin-match-setup-hint,
+html body .admin-match-setup-error {
+  min-height: var(--control-height);
+}
+
+/* Standard controls share one external height and may grow with larger text. */
+html body .app-control:not(.app-control--lg),
+html body .profile-action-btn,
+html body .profile-add-btn,
+html body .profile-close-btn,
+html body .profile-text-input,
+html body .profile-inline-rename .profile-pin-input,
+html body .admin-login-input,
+html body .admin-login-submit,
+html body input[type="text"]:not(.profile-pin-input),
+html body input[type="password"]:not(.profile-pin-input),
+html body input[type="email"],
+html body input[type="search"],
+html body input[type="number"],
+html body input[type="tel"],
+html body input:not([type]):not(.profile-pin-input),
+html body select {
+  min-height: var(--control-height) !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+html body .app-control--lg {
+  min-height: 52px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+html body input.prediction-pin-input[type="password"]:not(.profile-pin-input) {
+  height: 52px !important;
+  min-height: 52px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  border-radius: 30px !important;
+}
+
+html body .profile-choice-trigger {
+  min-height: var(--control-height) !important;
+}
+
+html body .login-modal-content,
+html body .panel-content,
+html body .leaderboard-card-body,
+html body .rank-details {
+  padding-right: var(--panel-content-padding) !important;
+  padding-left: var(--panel-content-padding) !important;
+}
+
+html body .login-modal-sheet .login-modal-content:not(#__panel_padding__),
+html body .login-modal-compact-sheet .login-modal-content:not(#__panel_padding__) {
+  padding-top: var(--panel-content-padding) !important;
+  padding-right: var(--panel-content-padding) !important;
+  padding-bottom: var(--panel-content-padding) !important;
+  padding-left: var(--panel-content-padding) !important;
+}
+
+/* Admin controls follow the modal curve and keep one equal edge inset. */
+html body .login-modal-sheet .admin-login-input,
+html body .login-modal-sheet .admin-login-submit {
+  border-radius: calc(var(--ui-corner-radius) - var(--panel-content-padding)) !important;
+}
+
+/* Short content panels size naturally and use one edge inset. */
+html body .leaderboard-header:not(#__panel_padding__),
+html body .bracket-page .bracket-intro:not(#__panel_padding__),
+html body .specials-view > section:not(#__panel_padding__),
+html body .specials-score-banner:not(#__panel_padding__),
+html body .admin-mode-intro:not(#__panel_padding__),
+html body .admin-match-setup-panel:not(#__panel_padding__) {
+  min-height: 0 !important;
+  padding: var(--panel-content-padding) !important;
+}
+
+html body .admin-login-panel:not(#__panel_padding__),
+html body .admin-login-hero:not(#__panel_padding__) {
+  padding: 0 !important;
+}
+
+/* Keep a single bottom inset in the two nested content panels. */
+html body .bracket-page .bracket-section-unified:not(#__single_bottom_inset__),
+html body .bracket-page .bracket-section-unified .bracket-scroll:not(#__single_bottom_inset__) {
+  padding-bottom: 0 !important;
+}
+
+html body .match-card.expanded .match-final-result-card:not(#__single_bottom_inset__) {
+  margin-bottom: 0 !important;
+}
+
+:root {
+  --match-expanded-content-inset: 12px;
+}
+
+html body .match-card.expanded > div:last-child:not(#__single_bottom_inset__) {
+  padding-right: var(--match-expanded-content-inset) !important;
+  padding-bottom: var(--match-expanded-content-inset) !important;
+  padding-left: var(--match-expanded-content-inset) !important;
+}
+
+/* Concentric geometry for nested surfaces. Pills, circles and avatars are exempt. */
+html body .bottom-nav .nav-track > button:not(#__concentric_nav__),
+html body .bottom-nav .nav-droplet {
+  border-radius: var(--curve-inset-7) !important;
+}
+
+html body .match-card.expanded .penalty-choice-panel,
+html body .match-card.expanded input.prediction-pin-input[type="password"],
+html body .match-card.expanded .app-control--lg {
+  border-radius: var(--curve-inset-12) !important;
+}
+
+html body .match-card.expanded .penalty-choice-card {
+  border-radius: var(--curve-nested-deep) !important;
+}
+
+html body .rank-row .rank-categories {
+  border-radius: var(--curve-rank-detail) !important;
+}
+
+html body .specials-view .specials-position-card,
+html body .specials-view input.prediction-pin-input[type="password"],
+html body .specials-view .app-control--lg,
+html body .login-modal-sheet .profile-add-btn,
+html body .login-modal-sheet .profile-choice-shell,
+html body .login-modal-sheet .profile-action-btn,
+html body .login-modal-sheet .profile-text-input,
+html body .login-modal-sheet .profile-pin-input {
+  border-radius: var(--curve-inset-16) !important;
+}
+
+html body .admin-tabs-shell .selection-tile,
+html body .admin-phase-filters input,
+html body .admin-phase-filters select,
+html body .admin-phase-filters textarea {
+  border-radius: var(--curve-inset-8) !important;
+}
+
+html body .login-modal-sheet .profile-choice-shell > .profile-choice-trigger:not(#__concentric_profile__) {
+  border-radius: inherit !important;
+}
+
+html body .login-modal-sheet .profile-choice-shell .profile-action-btn,
+html body .login-modal-sheet .profile-choice-shell .profile-text-input,
+html body .login-modal-sheet .profile-choice-shell .profile-pin-input {
+  border-radius: var(--curve-nested-deep) !important;
+}
+
+/* Internal layout only; the surrounding group-order panel keeps its shared surface. */
+html body .specials-group-order-panel .specials-order-header {
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+  margin-bottom: 12px !important;
+}
+
+html body .specials-group-order-panel .specials-order-title,
+html body .specials-group-order-panel .specials-order-scoring {
+  margin: 0 !important;
+}
+
+html body .specials-group-order-panel .specials-order-title {
+  flex: 0 0 auto !important;
+  color: var(--label-1) !important;
+  letter-spacing: 0 !important;
+}
+
+html body .specials-group-order-panel .specials-order-scoring {
+  max-width: 390px !important;
+  color: var(--label-3) !important;
+  font-size: 10px !important;
+  font-weight: 650 !important;
+  line-height: 1.35 !important;
+  text-align: right !important;
+}
+
+html body .specials-group-order-panel .group-order-filter-row.pill-scroll-safe {
+  margin: 0 0 4px !important;
+  padding: 2px 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+
+html body .specials-group-order-panel .specials-order-list {
+  display: grid !important;
+  gap: 8px !important;
+  margin-top: 10px !important;
+}
+
+html body .specials-group-order-panel .specials-order-item {
+  position: relative !important;
+  min-width: 0 !important;
+  min-height: 56px !important;
+  display: grid !important;
+  grid-template-columns: 28px minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 7px 8px 7px 10px !important;
+  border: 1px solid rgba(255,255,255,.075) !important;
+  border-radius: var(--curve-inset-16) !important;
+  background: rgba(255,255,255,.045) !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,.025) inset !important;
+  cursor: grab !important;
+  user-select: none !important;
+  transition: transform 160ms ease, opacity 160ms ease, border-color 160ms ease, background 160ms ease !important;
+}
+
+html body .specials-group-order-panel .specials-order-item:active {
+  cursor: grabbing !important;
+}
+
+html body .specials-group-order-panel .specials-order-item.is-dragging {
+  z-index: 2 !important;
+  opacity: .18 !important;
+  transform: scale(.985) !important;
+}
+
+html body .specials-group-order-panel .specials-order-list.is-drop-settling .specials-order-item {
+  transition: none !important;
+}
+
+html body .specials-group-order-panel .specials-order-item.is-shifting-up {
+  transform: translateY(calc(-100% - 8px)) !important;
+}
+
+html body .specials-group-order-panel .specials-order-item.is-shifting-down {
+  transform: translateY(calc(100% + 8px)) !important;
+}
+
+html body .specials-group-order-panel .specials-order-item.is-drag-target {
+  border-color: rgba(191,120,255,.72) !important;
+  background: rgba(151,71,255,.13) !important;
+}
+
+html body .specials-group-order-panel .specials-position-index {
+  width: 28px !important;
+  height: 28px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 28px !important;
+  border-radius: 50% !important;
+  background: rgba(255,255,255,.08) !important;
+  color: var(--label-1) !important;
+  font-family: 'Bebas Neue', sans-serif !important;
+  font-size: 16px !important;
+  line-height: 1 !important;
+}
+
+html body .specials-group-order-panel .specials-order-team {
+  min-width: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 9px !important;
+}
+
+html body .specials-group-order-panel .specials-order-item.is-correct .specials-order-team,
+html body .specials-group-order-panel .specials-order-item.is-wrong .specials-order-team {
+  padding-right: 22px !important;
+}
+
+html body .specials-group-order-panel .specials-order-team .specials-team-name {
+  display: block !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  text-overflow: clip !important;
+  line-height: 1.15 !important;
+  font-size: 12px !important;
+  font-weight: 750 !important;
+  text-align: left !important;
+  mask-image: none !important;
+  -webkit-mask-image: none !important;
+}
+
+html body .specials-group-order-panel .specials-order-team .specials-team-name.is-overflowing {
+  mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 18px), transparent 100%) !important;
+  -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 18px), transparent 100%) !important;
+}
+
+html body .specials-group-order-panel .specials-order-item.is-correct .specials-team-name {
+  color: #30d158 !important;
+}
+
+html body .specials-group-order-panel .specials-order-item.is-wrong .specials-team-name {
+  color: #ff453a !important;
+}
+
+html body .specials-group-order-panel .specials-order-result-icon {
+  position: absolute !important;
+  right: 54px !important;
+}
+
+html body .specials-group-order-panel .specials-order-item.is-correct .specials-order-result-icon {
+  color: #30d158 !important;
+}
+
+html body .specials-group-order-panel .specials-order-item.is-wrong .specials-order-result-icon {
+  color: #ff453a !important;
+}
+
+html body .specials-group-order-panel .specials-order-actions {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 2px !important;
+}
+
+html body .specials-group-order-panel .specials-order-drag-handle {
+  width: 32px !important;
+  height: 40px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 32px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  color: var(--label-2) !important;
+}
+
+html body .specials-group-order-panel .specials-order-drag-handle {
+  width: 40px !important;
+  flex-basis: 40px !important;
+  touch-action: none !important;
+  cursor: grab !important;
+}
+
+html body .specials-group-order-panel .specials-order-drag-handle:not(:disabled):hover {
+  background: rgba(255,255,255,.08) !important;
+  color: var(--label-1) !important;
+}
+
+html body .specials-group-order-panel .specials-order-drag-handle:focus-visible {
+  outline: 2px solid var(--system-purple, #bf5af2) !important;
+  outline-offset: 1px !important;
+}
+
+html body .specials-group-order-panel .specials-order-drag-handle:disabled {
+  opacity: .35 !important;
+  cursor: default !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body .specials-group-order-panel .specials-order-item {
+    transition: none !important;
+  }
+}
+
+@media (max-width: 560px) {
+  html body .specials-group-order-panel .specials-order-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 4px !important;
+  }
+
+  html body .specials-group-order-panel .specials-order-scoring {
+    max-width: none !important;
+    text-align: left !important;
+  }
+
+  html body .specials-group-order-panel .specials-order-item {
+    gap: 8px !important;
+  }
+}
+
+@media (min-width: 640px) {
+  :root {
+    --match-expanded-content-inset: 16px;
+  }
+}
+
+html body .login-modal-content > * + * {
+  margin-top: var(--panel-content-gap) !important;
+}
+
+@media (max-width: 480px) {
+  :root {
+    --screen-horizontal-padding: var(--space-medium);
+    --section-spacing: var(--space-medium);
+  }
+
+  html body .bottom-nav {
+    left: var(--space-small) !important;
+    right: var(--space-small) !important;
+    width: calc(100% - (var(--space-small) * 2)) !important;
+  }
+}
+
+@media (max-width: 360px) {
+  [role="group"][aria-label="Filtr statusu meczu"] > .selection-tile {
+    padding-inline: 4px !important;
+    font-size: 11px !important;
+  }
+
+  :root {
+    --screen-horizontal-padding: 10px;
+  }
+
+  html body .next-match-summary {
+    flex-wrap: wrap !important;
+    gap: var(--space-small) var(--space-medium) !important;
+  }
+
+  html body .next-match-summary > div:last-child {
+    width: 100% !important;
+    margin-left: 0 !important;
+    font-size: 28px !important;
+    text-align: right !important;
+  }
+
+  html body .phase-filter-panel:not(#__geometry_audit__) > div > div:last-child {
+    flex-wrap: wrap !important;
+    gap: var(--space-compact) !important;
+  }
+
+  html body .phase-filter-panel:not(#__geometry_audit__) .edge-safe-row {
+    flex: 1 0 100% !important;
+    width: 100% !important;
+  }
+
+  html body .phase-filter-panel:not(#__geometry_audit__) .match-count-badge {
+    margin-left: auto !important;
   }
 }
