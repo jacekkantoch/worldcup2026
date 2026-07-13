@@ -4033,7 +4033,7 @@ function SpecialsView({
           item.setPointerCapture(pointerId);
         } catch (_) {}
       }
-    }, 320);
+    }, 450);
     touchDragRef.current = drag;
   };
   const groupDropTargetAt = (list, clientY) => {
@@ -4147,25 +4147,8 @@ function SpecialsView({
       key: teamId,
       role: "listitem",
       "aria-label": hasResults ? `${team.name}, pozycja ${pos + 1}, ${isCorrect ? 'poprawna' : 'błędna'}` : `${team.name}, pozycja ${pos + 1}`,
-      draggable: !(tournamentLocked || specialsLocked),
       "data-order-team-id": teamId,
-      className: `specials-order-item${isCorrect ? ' is-correct' : isWrong ? ' is-wrong' : ''}${isDragging ? ' is-dragging' : ''}${isDragTarget ? ' is-drag-target' : ''}${shiftClass}`,
-      onDragStart: e => {
-        if (tournamentLocked || specialsLocked) {
-          e.preventDefault();
-          return;
-        }
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/plain', teamId);
-        setDraggingTeamId(teamId);
-        setDragOverTeamId(teamId);
-      },
-      onDragEnd: clearDragState,
-      onPointerDown: e => onTouchDragStart(e, teamId),
-      onPointerMove: onTouchDragMove,
-      onPointerUp: onTouchDragEnd,
-      onPointerCancel: clearDragState,
-      onContextMenu: e => e.preventDefault()
+      className: `specials-order-item${isCorrect ? ' is-correct' : isWrong ? ' is-wrong' : ''}${isDragging ? ' is-dragging' : ''}${isDragTarget ? ' is-drag-target' : ''}${shiftClass}`
     }, React.createElement("span", {
       className: "specials-position-index",
       "aria-hidden": "true"
@@ -4185,6 +4168,27 @@ function SpecialsView({
       name: "x",
       size: 15,
       className: "specials-order-result-icon"
+    })), React.createElement("button", {
+      type: "button",
+      className: "specials-order-drag-handle",
+      draggable: !(tournamentLocked || specialsLocked),
+      disabled: tournamentLocked || specialsLocked,
+      "aria-label": `Przytrzymaj uchwyt, aby przenieść ${team.name}`,
+      onDragStart: e => {
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', teamId);
+        setDraggingTeamId(teamId);
+        setDragOverTeamId(teamId);
+      },
+      onDragEnd: clearDragState,
+      onPointerDown: e => onTouchDragStart(e, teamId),
+      onPointerMove: onTouchDragMove,
+      onPointerUp: onTouchDragEnd,
+      onPointerCancel: clearDragState,
+      onContextMenu: e => e.preventDefault()
+    }, React.createElement(Icon, {
+      name: "grip",
+      size: 18
     })));
   }))), React.createElement("section", {
     className: "bg-white border border-stone-200 rounded-xl p-4"
@@ -6262,7 +6266,7 @@ function AdminPanel({
           item.setPointerCapture(pointerId);
         } catch (_) {}
       }
-    }, 320);
+    }, 450);
     spTouchDragRef.current = drag;
   };
   const spGroupDropTargetAt = (list, clientY) => {
@@ -6471,9 +6475,24 @@ function AdminPanel({
     return React.createElement("div", {
       key: teamId,
       role: "listitem",
-      draggable: true,
       "data-admin-order-team-id": teamId,
-      className: `specials-order-item${isDragging ? ' is-dragging' : ''}${isDragTarget ? ' is-drag-target' : ''}${shiftClass}`,
+      className: `specials-order-item${isDragging ? ' is-dragging' : ''}${isDragTarget ? ' is-drag-target' : ''}${shiftClass}`
+    }, React.createElement("span", {
+      className: "specials-position-index",
+      "aria-hidden": "true"
+    }, pos + 1), React.createElement("span", {
+      className: "specials-order-team"
+    }, React.createElement(FlagImg, {
+      code: team.flag,
+      size: 20,
+      title: team.name
+    }), React.createElement("span", {
+      className: "specials-team-name"
+    }, team.name)), React.createElement("button", {
+      type: "button",
+      className: "specials-order-drag-handle",
+      draggable: true,
+      "aria-label": `Przytrzymaj uchwyt, aby przenieść ${team.name}`,
       onDragStart: e => {
         e.dataTransfer.effectAllowed = 'move';
         e.dataTransfer.setData('text/plain', teamId);
@@ -6486,18 +6505,10 @@ function AdminPanel({
       onPointerUp: onSpTouchDragEnd,
       onPointerCancel: clearSpDragState,
       onContextMenu: e => e.preventDefault()
-    }, React.createElement("span", {
-      className: "specials-position-index",
-      "aria-hidden": "true"
-    }, pos + 1), React.createElement("span", {
-      className: "specials-order-team"
-    }, React.createElement(FlagImg, {
-      code: team.flag,
-      size: 20,
-      title: team.name
-    }), React.createElement("span", {
-      className: "specials-team-name"
-    }, team.name)));
+    }, React.createElement(Icon, {
+      name: "grip",
+      size: 18
+    })));
   }))), React.createElement("div", {
     className: "bg-white border border-stone-200 rounded-xl p-4 space-y-2"
   }, React.createElement("h4", {

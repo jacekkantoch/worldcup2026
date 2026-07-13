@@ -10015,7 +10015,7 @@ html body .specials-group-order-panel .specials-order-item {
   min-width: 0 !important;
   min-height: 56px !important;
   display: grid !important;
-  grid-template-columns: 28px minmax(0, 1fr) !important;
+  grid-template-columns: 28px minmax(0, 1fr) 40px !important;
   align-items: center !important;
   gap: 10px !important;
   padding: 7px 8px 7px 10px !important;
@@ -10023,7 +10023,7 @@ html body .specials-group-order-panel .specials-order-item {
   border-radius: var(--curve-inset-16) !important;
   background: rgba(255,255,255,.045) !important;
   box-shadow: 0 1px 0 rgba(255,255,255,.025) inset !important;
-  cursor: grab !important;
+  cursor: default !important;
   user-select: none !important;
   -webkit-user-select: none !important;
   touch-action: pan-y !important;
@@ -10037,10 +10037,6 @@ html body .specials-group-order-panel .specials-order-item *::after {
   user-select: none !important;
   -webkit-user-select: none !important;
   -webkit-touch-callout: none !important;
-}
-
-html body .specials-group-order-panel .specials-order-item:active {
-  cursor: grabbing !important;
 }
 
 html body .specials-group-order-panel .specials-order-item.is-dragging {
@@ -10129,6 +10125,42 @@ html body .specials-group-order-panel .specials-order-item.is-correct .specials-
 
 html body .specials-group-order-panel .specials-order-item.is-wrong .specials-order-result-icon {
   color: #ff453a !important;
+}
+
+html body .specials-group-order-panel .specials-order-drag-handle {
+  width: 40px !important;
+  height: 40px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  color: var(--label-2) !important;
+  cursor: grab !important;
+  touch-action: pan-y !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -webkit-touch-callout: none !important;
+}
+
+html body .specials-group-order-panel .specials-order-drag-handle:active {
+  cursor: grabbing !important;
+}
+
+html body .specials-group-order-panel .specials-order-drag-handle:not(:disabled):hover {
+  background: rgba(255,255,255,.08) !important;
+  color: var(--label-1) !important;
+}
+
+html body .specials-group-order-panel .specials-order-drag-handle:focus-visible {
+  outline: 2px solid var(--system-purple, #bf5af2) !important;
+  outline-offset: 1px !important;
+}
+
+html body .specials-group-order-panel .specials-order-drag-handle:disabled {
+  opacity: .3 !important;
+  cursor: default !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
