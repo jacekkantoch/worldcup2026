@@ -4164,7 +4164,8 @@ function SpecialsView({
       onPointerDown: e => onTouchDragStart(e, teamId),
       onPointerMove: onTouchDragMove,
       onPointerUp: onTouchDragEnd,
-      onPointerCancel: clearDragState
+      onPointerCancel: clearDragState,
+      onContextMenu: e => e.preventDefault()
     }, React.createElement("span", {
       className: "specials-position-index",
       "aria-hidden": "true"
@@ -6483,7 +6484,8 @@ function AdminPanel({
       onPointerDown: e => onSpTouchDragStart(e, teamId),
       onPointerMove: onSpTouchDragMove,
       onPointerUp: onSpTouchDragEnd,
-      onPointerCancel: clearSpDragState
+      onPointerCancel: clearSpDragState,
+      onContextMenu: e => e.preventDefault()
     }, React.createElement("span", {
       className: "specials-position-index",
       "aria-hidden": "true"

@@ -72,6 +72,7 @@ assert.match(app, /onPointerMove: onTouchDragMove/);
 assert.match(app, /drag\.holdTimer = setTimeout\([\s\S]*?\}, 320\);/);
 assert.match(app, /onPointerDown: e => onTouchDragStart\(e, teamId\)/);
 assert.match(app, /onPointerDown: e => onSpTouchDragStart\(e, teamId\)/);
+assert.match(app, /onContextMenu: e => e\.preventDefault\(\)/);
 assert.match(app, /admin-specials-group-order-panel/);
 assert.match(app, /onPointerMove: onSpTouchDragMove/);
 assert.match(app, /const draftToSave = normalizedSpDraft\(spDraft\)/);
@@ -96,6 +97,7 @@ assert.match(css, /\.specials-group-order-panel \.specials-order-item\.is-shifti
 assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{[\s\S]*?\.specials-group-order-panel \.specials-order-item/);
 assert.doesNotMatch(app, /specials-order-drag-handle/);
 assert.match(css, /\.specials-group-order-panel \.specials-order-item \{[\s\S]*?touch-action: pan-y !important;/);
+assert.match(css, /\.specials-group-order-panel \.specials-order-item \*,[\s\S]*?-webkit-user-select: none !important;/);
 assert.match(css, /\.specials-group-order-panel \.specials-order-item\.is-correct \.specials-team-name \{[\s\S]*?#30d158/);
 assert.match(css, /\.specials-group-order-panel \.specials-order-item\.is-wrong \.specials-team-name \{[\s\S]*?#ff453a/);
 assert.match(app, /className: "specials-order-result-icon"/);

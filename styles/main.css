@@ -10025,9 +10025,18 @@ html body .specials-group-order-panel .specials-order-item {
   box-shadow: 0 1px 0 rgba(255,255,255,.025) inset !important;
   cursor: grab !important;
   user-select: none !important;
+  -webkit-user-select: none !important;
   touch-action: pan-y !important;
   -webkit-touch-callout: none !important;
   transition: transform 160ms ease, opacity 160ms ease, border-color 160ms ease, background 160ms ease !important;
+}
+
+html body .specials-group-order-panel .specials-order-item *,
+html body .specials-group-order-panel .specials-order-item *::before,
+html body .specials-group-order-panel .specials-order-item *::after {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -webkit-touch-callout: none !important;
 }
 
 html body .specials-group-order-panel .specials-order-item:active {
