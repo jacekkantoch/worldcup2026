@@ -11314,6 +11314,23 @@ html body .flag-avatar:not(#__no_element_borders__):not(#__flag_avatar_ring__) {
   box-shadow: none !important;
 }
 
+/* Preview tab: fade long names instead of showing "...". */
+html body .compare-view .compare-match-team > span:last-child,
+html body .compare-view .compare-player-name {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: clip !important;
+  white-space: nowrap !important;
+  padding-right: 14px !important;
+  -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 20px), transparent 100%) !important;
+  mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 20px), transparent 100%) !important;
+  -webkit-mask-repeat: no-repeat !important;
+  mask-repeat: no-repeat !important;
+  -webkit-mask-size: 100% 100% !important;
+  mask-size: 100% 100% !important;
+}
+
 /* Bracket group tables: fade clipped team names instead of "...". */
 html body .bracket-page .bracket-group-compact-team,
 html body .bracket-page .bracket-group-team span:last-child {

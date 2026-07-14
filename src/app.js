@@ -2711,6 +2711,56 @@ function hueDistance(h1, h2) {
 }
 const FLAG_HUE_MIN_DISTANCE = 35;
 const FLAG_COLORS_EMPTY = { colors: [], hasWhite: false };
+const COMPUTER_FLAG_COLORS = {
+  mx: ['73, 110, 45'],
+  za: ['73, 110, 45', '216, 0, 39', '0, 82, 180'],
+  kr: ['216, 0, 39', '0, 82, 180'],
+  cz: ['216, 0, 39', '0, 82, 180'],
+  ca: ['216, 0, 39', '255, 255, 255'],
+  ba: ['255, 218, 68'],
+  qa: ['117, 26, 70', '157, 96, 126'],
+  ch: ['216, 0, 39', '255, 255, 255'],
+  br: ['109, 165, 68'],
+  ma: ['216, 0, 39'],
+  ht: ['0, 82, 180'],
+  'gb-sct': ['0, 82, 180', '159, 186, 219'],
+  us: ['216, 0, 39', '3, 84, 181'],
+  py: ['216, 0, 39', '0, 82, 180'],
+  au: ['1, 82, 180'],
+  tr: ['216, 0, 39'],
+  de: ['216, 0, 39'],
+  cw: ['0, 82, 180'],
+  ci: ['110, 166, 69'],
+  ec: ['254, 217, 68'],
+  nl: ['0, 82, 180'],
+  jp: ['216, 1, 40', '233, 191, 199'],
+  se: ['0, 82, 180', '255, 218, 68'],
+  tn: ['216, 0, 39'],
+  be: ['255, 218, 68'],
+  eg: ['216, 0, 39'],
+  ir: ['216, 0, 39', '109, 165, 68'],
+  nz: ['0, 82, 180'],
+  es: ['255, 218, 68'],
+  cv: ['1, 82, 180', '217, 4, 41'],
+  sa: ['73, 110, 45'],
+  uy: ['51, 138, 243'],
+  fr: ['216, 2, 40', '0, 82, 180'],
+  sn: ['255, 218, 68'],
+  iq: ['162, 0, 29', '155, 174, 141'],
+  no: ['216, 0, 39', '0, 82, 180'],
+  ar: ['51, 138, 243'],
+  dz: ['73, 110, 45', '212, 3, 39'],
+  at: ['216, 0, 39'],
+  jo: ['110, 165, 69'],
+  pt: ['216, 0, 39'],
+  cd: ['51, 138, 243'],
+  uz: ['109, 165, 68'],
+  co: ['255, 218, 68'],
+  'gb-eng': ['216, 0, 39', '232, 178, 188'],
+  hr: ['0, 82, 180'],
+  gh: ['255, 218, 68'],
+  pa: ['216, 0, 39']
+};
 function useFlagGradient(homeFlag, awayFlag) {
   const [colors, setColors] = React.useState({ home: FLAG_COLORS_EMPTY, away: FLAG_COLORS_EMPTY });
   const homeCode = normalizeFlagValue(homeFlag).code;
@@ -2723,12 +2773,14 @@ function useFlagGradient(homeFlag, awayFlag) {
     });
     return () => { alive = false; };
   }, [homeCode, awayCode]);
-  const homeRgb = colors.home.colors[0] || colors.away.colors[0];
+  const homePalette = COMPUTER_FLAG_COLORS[homeCode] || colors.home.colors;
+  const awayPalette = COMPUTER_FLAG_COLORS[awayCode] || colors.away.colors;
+  const homeRgb = homePalette[0] || colors.home.colors[0] || colors.away.colors[0];
   if (!homeRgb) return null;
   const homeHue = rgbToHsl(homeRgb)[0];
-  let awayRgb = colors.away.colors[0] || colors.home.colors[0];
-  if (awayRgb && colors.away.colors[1] && hueDistance(homeHue, rgbToHsl(awayRgb)[0]) < FLAG_HUE_MIN_DISTANCE) {
-    awayRgb = colors.away.colors[1];
+  let awayRgb = awayPalette[0] || colors.away.colors[0] || colors.home.colors[0];
+  if (awayRgb && hueDistance(homeHue, rgbToHsl(awayRgb)[0]) < FLAG_HUE_MIN_DISTANCE) {
+    awayRgb = awayPalette[1] || colors.away.colors[1] || awayRgb;
   }
   return `linear-gradient(115deg, rgba(${homeRgb}, 0.24) 0%, rgba(${homeRgb}, 0.24) 25%, rgba(${awayRgb}, 0.24) 75%, rgba(${awayRgb}, 0.24) 100%)`;
 }
