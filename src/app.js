@@ -2705,26 +2705,6 @@ function rgbToHsl(rgbStr) {
   }
   return [h * 360, s, l];
 }
-function hslToRgbStr(h, s, l) {
-  const hue2rgb = (p, q, t) => {
-    if (t < 0) t += 1;
-    if (t > 1) t -= 1;
-    if (t < 1 / 6) return p + (q - p) * 6 * t;
-    if (t < 1 / 2) return q;
-    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-    return p;
-  };
-  const hn = ((h % 360) + 360) % 360 / 360;
-  let r, g, b;
-  if (s === 0) { r = g = b = l; } else {
-    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-    const p = 2 * l - q;
-    r = hue2rgb(p, q, hn + 1 / 3);
-    g = hue2rgb(p, q, hn);
-    b = hue2rgb(p, q, hn - 1 / 3);
-  }
-  return `${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(b * 255)}`;
-}
 function hueDistance(h1, h2) {
   const d = Math.abs(h1 - h2) % 360;
   return d > 180 ? 360 - d : d;
@@ -2747,18 +2727,10 @@ function useFlagGradient(homeFlag, awayFlag) {
   if (!homeRgb) return null;
   const homeHue = rgbToHsl(homeRgb)[0];
   let awayRgb = colors.away.colors[0] || colors.home.colors[0];
-  if (awayRgb && hueDistance(homeHue, rgbToHsl(awayRgb)[0]) < FLAG_HUE_MIN_DISTANCE) {
-    const distinct = colors.away.colors.find(c => hueDistance(homeHue, rgbToHsl(c)[0]) >= FLAG_HUE_MIN_DISTANCE);
-    if (distinct) {
-      awayRgb = distinct;
-    } else if (colors.away.hasWhite) {
-      awayRgb = '255, 255, 255';
-    } else {
-      const [, s, l] = rgbToHsl(awayRgb);
-      awayRgb = hslToRgbStr(homeHue + 130, Math.max(s, 0.45), Math.min(Math.max(l, 0.35), 0.6));
-    }
+  if (awayRgb && colors.away.colors[1] && hueDistance(homeHue, rgbToHsl(awayRgb)[0]) < FLAG_HUE_MIN_DISTANCE) {
+    awayRgb = colors.away.colors[1];
   }
-  return `linear-gradient(115deg, rgba(${homeRgb}, 0.24) 0%, rgba(${awayRgb}, 0.24) 100%)`;
+  return `linear-gradient(115deg, rgba(${homeRgb}, 0.24) 0%, rgba(${homeRgb}, 0.24) 25%, rgba(${awayRgb}, 0.24) 75%, rgba(${awayRgb}, 0.24) 100%)`;
 }
 function FlagImg({
   code,
