@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <!-- Tylko Bebas Neue (wyświetlacz wyniku/logo) — cały pozostały tekst
        używa systemowego stosu fontów (patrz --font-family-base w main.css),
-       więc nie pobieramy już DM Sans ani żadnego zamiennika SF Pro. -->
+       więc nie pobieramy dodatkowego fontu tekstowego ani zamiennika SF Pro. -->
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
   <noscript><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet" /></noscript>
@@ -29,29 +29,19 @@
   <meta name="apple-mobile-web-app-title" content="Mundial 2026"/>
   <meta name="mobile-web-app-capable" content="yes"/>
   <meta name="format-detection" content="telephone=no"/>
-  <link rel="apple-touch-icon" href="./mundial2026-app-icon-v2-192.png"/>
-  <link rel="icon" type="image/png" sizes="32x32" href="./mundial2026-app-icon-v2-32.png"/>
-  <link rel="icon" type="image/png" sizes="192x192" href="./mundial2026-app-icon-v2-192.png"/>
+  <link rel="apple-touch-icon" href="./mundial2026-app-icon-v2-192.png?v=7"/>
+  <link rel="icon" type="image/png" sizes="32x32" href="./mundial2026-app-icon-v2-32.png?v=7"/>
+  <link rel="icon" type="image/png" sizes="192x192" href="./mundial2026-app-icon-v2-192.png?v=7"/>
   <link rel="manifest" href="./manifest.json"/>
   <script>
     (function(){
-      // Ta sama reguła co w src/app.js: 'auto' śledzi prefers-color-scheme,
-      // domyślnie zostajemy przy ciemnym wyglądzie. Ustawione tu synchronicznie
-      // (przed pierwszym malowaniem), żeby uniknąć błysku złego motywu.
-      var pref = 'dark';
-      try {
-        var stored = localStorage.getItem('wc2026:theme');
-        if (stored === 'light' || stored === 'dark' || stored === 'auto') pref = stored;
-      } catch (e) {}
-      var theme = pref === 'auto'
-        ? (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
-        : pref;
-      document.documentElement.setAttribute('data-theme', theme);
-      document.documentElement.style.colorScheme = theme;
-      document.documentElement.style.backgroundColor = theme === 'light' ? '#f2f2f7' : '#05070d';
+      // Dark-only: ustaw przed pierwszym malowaniem, aby uniknąć jasnego błysku.
+      document.documentElement.setAttribute('data-theme', 'dark');
+      document.documentElement.style.colorScheme = 'dark';
+      document.documentElement.style.backgroundColor = '#05070d';
     })();
   </script>
-  <link rel="stylesheet" href="./styles/main.css?v=2" />
+  <link rel="stylesheet" href="./styles/main.css?v=6" />
 
 
 
@@ -73,7 +63,7 @@
 <!-- fixed-filter-banner-like-nav removed: filter now in normal flow with sticky -->
 </head>
 <body>
-  <div id="loading">
+  <div id="loading" role="status" aria-live="polite" aria-label="Ładowanie aplikacji">
     <div class="loading-title">FIFA WORLD CUP 2026</div>
     <div class="loading-sub">USA · KANADA · MEKSYK</div>
     <div class="loading-dots" aria-hidden="true"><span></span><span></span><span></span></div>
@@ -88,7 +78,7 @@
   <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
 
 
-<script src="./src/app.js"></script>
+<script src="./src/app.js?v=17"></script>
 
 
 

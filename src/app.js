@@ -88,6 +88,7 @@ const ICONS = {
   x: 'M18 6L6 18M6 6l12 12',
   chevdown: 'M6 9l6 6 6-6',
   chevup: 'M18 15l-6-6-6 6',
+  grip: 'M9 5h.01M15 5h.01M9 12h.01M15 12h.01M9 19h.01M15 19h.01',
   alert: ['M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z', 'M12 9v4', 'M12 17h.01'],
   sparkles: ['M12 3l1.09 3.26L16.5 7.5l-3.41 1.24L12 12l-1.09-3.26L7.5 7.5l3.41-1.24L12 3z', 'M5 17l.55 1.64L7.2 19.5l-1.65.86L5 22l-.55-1.64L2.8 19.5l1.65-.86L5 17z', 'M19 1l.55 1.64L21.2 3.5l-1.65.86L19 6l-.55-1.64L16.8 3.5l1.65-.86L19 1z'],
   calendar: ['M8 2v4', 'M16 2v4', 'M3 10h18', 'M21 8V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8z'],
@@ -423,11 +424,14 @@ function InfiniteGroupFilter({ selected, onSelect, btnClass }) {
       WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)'
     }
   }, items.map((g, i) =>
-    React.createElement('div', {
+    React.createElement('button', {
       key: i,
+      type: 'button',
       role: 'tab',
-      'aria-selected': visualCenter === g,
+      'aria-selected': visualCenterIndex === i,
       'aria-label': `Grupa ${g}`,
+      tabIndex: visualCenterIndex === i ? 0 : -1,
+      onClick: () => selectGroup(g),
       className: `${btnClass}${visualCenterIndex === i ? ' is-selected' : ''}`,
       style: { scrollSnapAlign: 'center', scrollSnapStop: 'always' }
     }, g)
@@ -1838,9 +1842,9 @@ function scoreKnockoutMatch(pred, result, points = POINTS) {
   const resultPens = !!result.pensHappened;
   const sameResolutionMode = predictedPens === resultPens;
   const predictedAdv = pred.home > pred.away ? 'home' : pred.home < pred.away ? 'away' : pred.penWinner || null;
-  // W meczu rozstrzygniętym karnymi wystarczy poprawnie przewidzieć remis w czasie
-  // regulaminowym (czyli że dojdzie do karnych), żeby dostać punkty za "dobry wynik" —
-  // nie trzeba dodatkowo trafić zwycięzcy karnych. To premiuje osobno `penBonus` niżej.
+  // W meczu rozstrzygniętym karnymi wystarczy poprawnie przewidzieć remis po
+  // 120 minutach, żeby dostać punkty za "dobry wynik". Zwycięzcę serii karnych
+  // premiuje osobno `penBonus` niżej.
   const winnerOnly = !exact && sameResolutionMode && (resultPens || (predictedAdv && predictedAdv === result.advancingTeam));
   const base = exact ? points.knockout.exact : winnerOnly ? points.knockout.winner : 0;
   const bonus = resultPens && predictedPens && pred.penWinner && pred.penWinner === result.advancingTeam ? points.knockout.penBonus : 0;
@@ -1974,11 +1978,11 @@ function Btn({
   className = '',
   ...props
 }) {
-  const base = 'inline-flex items-center justify-center gap-2 font-semibold disabled:opacity-40 disabled:cursor-not-allowed select-none';
+  const base = 'app-control inline-flex items-center justify-center gap-2 font-semibold disabled:opacity-40 disabled:cursor-not-allowed select-none';
   const sizes = {
-    sm: 'px-3 py-1.5 text-sm',
-    md: 'px-4 py-2.5 text-sm',
-    lg: 'px-5 py-3 text-base'
+    sm: 'app-control--sm px-3 text-sm',
+    md: 'app-control--md px-4 text-sm',
+    lg: 'app-control--lg px-5 text-base'
   };
   const variants = {
     primary: 'bg-[#0d1b5e] hover:bg-[#162570] active:bg-[#060e30] text-white',
@@ -2107,10 +2111,11 @@ function Badge({
 // Jedno źródło prawdy dla struktury nagłówka — używane przez Modal,
 // więc każdy panel oparty na Modal (lista profili, dodawanie użytkownika,
 // zmiana nazwy, panel admina) ma identyczny nagłówek bez powielania kodu.
-function PanelHeader({ title, onClose }) {
+function PanelHeader({ title, titleId, onClose }) {
   return React.createElement("div", {
     className: "flex items-center justify-between p-4 panel-header"
   }, React.createElement("h3", {
+    id: titleId,
     className: "login-modal-title panel-title"
   }, title), React.createElement("button", {
     type: "button",
@@ -2122,6 +2127,7 @@ function PanelHeader({ title, onClose }) {
     size: 18
   })));
 }
+let modalReturnFocusElement = null;
 function Modal({
   open,
   onClose,
@@ -2131,14 +2137,99 @@ function Modal({
   overlayClassName = '',
   panelClassName = ''
 }) {
+  const panelRef = useRef(null);
+  const previousFocusRef = useRef(null);
+  const wasOpenRef = useRef(false);
+  const onCloseRef = useRef(onClose);
+  const titleId = useMemo(() => `modal-title-${uid()}`, []);
+
+  if (open && !wasOpenRef.current) {
+    const activeBeforeOpen = document.activeElement;
+    const opensFromAnotherModal = activeBeforeOpen instanceof HTMLElement && !!activeBeforeOpen.closest('[role="dialog"]');
+    const inheritedReturnFocus = opensFromAnotherModal && modalReturnFocusElement && modalReturnFocusElement.isConnected ? modalReturnFocusElement : null;
+    previousFocusRef.current = inheritedReturnFocus || (activeBeforeOpen instanceof HTMLElement ? activeBeforeOpen : null);
+    modalReturnFocusElement = previousFocusRef.current;
+  }
+  wasOpenRef.current = open;
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
   useEffect(() => {
     if (!open) return;
-    const h = e => {
-      if (e.key === 'Escape') onClose();
+
+    const getFocusableElements = () => {
+      if (!panelRef.current) return [];
+      const selector = [
+        'a[href]',
+        'button:not([disabled])',
+        'input:not([disabled])',
+        'select:not([disabled])',
+        'textarea:not([disabled])',
+        '[contenteditable="true"]',
+        '[tabindex]:not([tabindex="-1"])'
+      ].join(',');
+      return Array.from(panelRef.current.querySelectorAll(selector)).filter(element => {
+        if (!(element instanceof HTMLElement)) return false;
+        if (element.getAttribute('aria-hidden') === 'true') return false;
+        return element.getClientRects().length > 0;
+      });
     };
-    document.addEventListener('keydown', h);
-    return () => document.removeEventListener('keydown', h);
-  }, [open, onClose]);
+
+    const focusInitialElement = () => {
+      const currentPanel = panelRef.current;
+      if (!currentPanel) return;
+      const primaryField = currentPanel.querySelector('input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [contenteditable="true"]');
+      const focusableElements = getFocusableElements();
+      const target = primaryField instanceof HTMLElement ? primaryField : focusableElements[0] || currentPanel;
+      target.focus({ preventScroll: true });
+    };
+
+    const focusFrame = requestAnimationFrame(focusInitialElement);
+    const handleKeyDown = event => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        onCloseRef.current();
+        return;
+      }
+      if (event.key !== 'Tab') return;
+
+      const currentPanel = panelRef.current;
+      if (!currentPanel) return;
+      const focusableElements = getFocusableElements();
+      if (focusableElements.length === 0) {
+        event.preventDefault();
+        currentPanel.focus({ preventScroll: true });
+        return;
+      }
+
+      const first = focusableElements[0];
+      const last = focusableElements[focusableElements.length - 1];
+      const active = document.activeElement;
+      if (!currentPanel.contains(active)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first).focus({ preventScroll: true });
+      } else if (event.shiftKey && active === first) {
+        event.preventDefault();
+        last.focus({ preventScroll: true });
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus({ preventScroll: true });
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      cancelAnimationFrame(focusFrame);
+      document.removeEventListener('keydown', handleKeyDown);
+      const previousFocus = previousFocusRef.current;
+      previousFocusRef.current = null;
+      if (previousFocus && previousFocus.isConnected) {
+        previousFocus.focus({ preventScroll: true });
+      }
+    };
+  }, [open]);
   useEffect(() => {
     if (!open) return;
     const root = document.documentElement;
@@ -2341,8 +2432,14 @@ function Modal({
     className: `fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 ${overlayClassName ? `${overlayClassName}-root` : ''}`
   }, React.createElement("div", {
     className: `absolute inset-0 bg-stone-900/60 backdrop-blur-sm ${overlayClassName}`,
+    "aria-hidden": "true",
     onClick: onClose
   }), React.createElement("div", {
+    ref: panelRef,
+    role: "dialog",
+    "aria-modal": "true",
+    "aria-labelledby": titleId,
+    tabIndex: -1,
     className: `relative w-full ${maxWidth} rounded-t-2xl sm:rounded-2xl max-h-[90vh] overflow-hidden flex flex-col ${panelClassName}`,
     style: {
       background: 'var(--bg-1)',
@@ -2351,9 +2448,10 @@ function Modal({
     }
   }, React.createElement(PanelHeader, {
     title: title,
+    titleId: titleId,
     onClose: onClose
   }), React.createElement("div", {
-    className: "login-modal-content overflow-y-auto p-4"
+    className: "login-modal-content overflow-y-auto"
   }, children)));
 }
 const NAME_TO_ABBR = {
@@ -2607,26 +2705,6 @@ function rgbToHsl(rgbStr) {
   }
   return [h * 360, s, l];
 }
-function hslToRgbStr(h, s, l) {
-  const hue2rgb = (p, q, t) => {
-    if (t < 0) t += 1;
-    if (t > 1) t -= 1;
-    if (t < 1 / 6) return p + (q - p) * 6 * t;
-    if (t < 1 / 2) return q;
-    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-    return p;
-  };
-  const hn = ((h % 360) + 360) % 360 / 360;
-  let r, g, b;
-  if (s === 0) { r = g = b = l; } else {
-    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-    const p = 2 * l - q;
-    r = hue2rgb(p, q, hn + 1 / 3);
-    g = hue2rgb(p, q, hn);
-    b = hue2rgb(p, q, hn - 1 / 3);
-  }
-  return `${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(b * 255)}`;
-}
 function hueDistance(h1, h2) {
   const d = Math.abs(h1 - h2) % 360;
   return d > 180 ? 360 - d : d;
@@ -2639,6 +2717,7 @@ function useFlagGradient(homeFlag, awayFlag) {
   const awayCode = normalizeFlagValue(awayFlag).code;
   React.useEffect(() => {
     let alive = true;
+    setColors({ home: FLAG_COLORS_EMPTY, away: FLAG_COLORS_EMPTY });
     Promise.all([getFlagColors(homeCode), getFlagColors(awayCode)]).then(([home, away]) => {
       if (alive) setColors({ home, away });
     });
@@ -2648,18 +2727,10 @@ function useFlagGradient(homeFlag, awayFlag) {
   if (!homeRgb) return null;
   const homeHue = rgbToHsl(homeRgb)[0];
   let awayRgb = colors.away.colors[0] || colors.home.colors[0];
-  if (awayRgb && hueDistance(homeHue, rgbToHsl(awayRgb)[0]) < FLAG_HUE_MIN_DISTANCE) {
-    const distinct = colors.away.colors.find(c => hueDistance(homeHue, rgbToHsl(c)[0]) >= FLAG_HUE_MIN_DISTANCE);
-    if (distinct) {
-      awayRgb = distinct;
-    } else if (colors.away.hasWhite) {
-      awayRgb = '255, 255, 255';
-    } else {
-      const [, s, l] = rgbToHsl(awayRgb);
-      awayRgb = hslToRgbStr(homeHue + 130, Math.max(s, 0.45), Math.min(Math.max(l, 0.35), 0.6));
-    }
+  if (awayRgb && colors.away.colors[1] && hueDistance(homeHue, rgbToHsl(awayRgb)[0]) < FLAG_HUE_MIN_DISTANCE) {
+    awayRgb = colors.away.colors[1];
   }
-  return `linear-gradient(115deg, rgba(${homeRgb}, 0.24) 0%, rgba(${awayRgb}, 0.24) 100%)`;
+  return `linear-gradient(115deg, rgba(${homeRgb}, 0.24) 0%, rgba(${homeRgb}, 0.24) 25%, rgba(${awayRgb}, 0.24) 75%, rgba(${awayRgb}, 0.24) 100%)`;
 }
 function FlagImg({
   code,
@@ -2676,9 +2747,11 @@ function FlagImg({
   const src = c ? `https://cdn.jsdelivr.net/gh/HatScripts/circle-flags@gh-pages/flags/${c}.svg` : '';
   const showImage = Boolean(src) && !err;
   const fallbackIsEmoji = !c;
+  const pixelRatio = typeof window !== 'undefined' && window.devicePixelRatio ? Math.min(3, Math.max(2, Math.ceil(window.devicePixelRatio))) : 2;
+  const intrinsicSize = Math.round(size * pixelRatio);
   return React.createElement("span", {
     title: title || fallback,
-    className: className,
+    className: `flag-avatar${className ? ` ${className}` : ''}`,
     style: {
       width: size,
       height: size,
@@ -2695,15 +2768,18 @@ function FlagImg({
     }
   }, showImage ? React.createElement("img", {
     src: src,
-    width: size,
-    height: size,
+    width: intrinsicSize,
+    height: intrinsicSize,
     style: {
       width: '100%',
       height: '100%',
       display: 'block',
       borderRadius: '50%',
       boxShadow: 'none',
-      filter: 'none'
+      filter: 'none',
+      imageRendering: 'auto',
+      objectFit: 'cover',
+      transform: 'translateZ(0)'
     },
     onError: () => setErr(true),
     alt: fallback,
@@ -2716,7 +2792,7 @@ function FlagImg({
       fontSize: Math.round(size * (fallbackIsEmoji ? 0.56 : 0.27)),
       fontWeight: 800,
       color: 'var(--label-1)',
-      fontFamily: fallbackIsEmoji ? 'system-ui,sans-serif' : "'DM Sans',system-ui,sans-serif",
+      fontFamily: 'var(--font-family-base)',
       letterSpacing: fallbackIsEmoji ? '0' : '0.02em'
     }
   }, fallback));
@@ -2942,6 +3018,9 @@ const MatchCard = React.memo(function MatchCard({
         document.querySelectorAll('.match-final-result-card .match-final-result-name').forEach(el => {
           el.classList.toggle('is-overflowing', el.scrollWidth > el.clientWidth + 1);
         });
+        document.querySelectorAll('.match-prediction-team-name').forEach(el => {
+          el.classList.toggle('is-overflowing', el.scrollWidth > el.clientWidth + 1);
+        });
       }
       document.querySelectorAll('.match-list-team-name').forEach(el => {
         el.classList.toggle('is-overflowing', el.scrollWidth > el.clientWidth + 1);
@@ -3158,7 +3237,7 @@ const MatchCard = React.memo(function MatchCard({
     className: "inline mr-1"
   }), "Wybierz uczestnika na g\xF3rze ekranu"), activePlayerId && !teamsAssigned && React.createElement("div", {
     className: "text-center text-sm text-stone-600 bg-stone-100 border border-stone-200 rounded-lg p-3 app-note app-note--info app-note--compact app-note--center"
-  }, "Dru\u017Cyny tego meczu nie zosta\u0142y jeszcze przypisane przez admina."), activePlayerId && teamsAssigned && React.createElement(React.Fragment, null, React.createElement("div", {
+  }, "Administrator nie przypisa\u0142 jeszcze dru\u017Cyn do tego meczu."), activePlayerId && teamsAssigned && React.createElement(React.Fragment, null, React.createElement("div", {
     className: "my-3"
   }, React.createElement("div", {
     style: {
@@ -3192,6 +3271,7 @@ const MatchCard = React.memo(function MatchCard({
     size: 30,
     title: home.name
   }), React.createElement("span", {
+    className: "match-prediction-team-name",
     style: {
       display: 'block',
       width: '100%',
@@ -3246,6 +3326,7 @@ const MatchCard = React.memo(function MatchCard({
     size: 30,
     title: away.name
   }), React.createElement("span", {
+    className: "match-prediction-team-name",
     style: {
       display: 'block',
       width: '100%',
@@ -3265,7 +3346,9 @@ const MatchCard = React.memo(function MatchCard({
     })),
     disabled: locked,
     label: "Gole"
-  })))), needsPen && React.createElement("div", {
+  })))), isKnockout && React.createElement("p", {
+    className: "match-score-rule-note"
+  }, "Wpisz wynik po 120 minutach, przed rzutami karnymi."), needsPen && React.createElement("div", {
     className: "penalty-choice-panel"
   }, React.createElement("div", {
     className: "penalty-choice-head"
@@ -3335,7 +3418,7 @@ const MatchCard = React.memo(function MatchCard({
   }, React.createElement(LockIcon, {
     name: "lock",
     size: 16
-  }), React.createElement("span", null, "Typowanie tej fazy zosta\u0142o zamkni\u0119te przez admina.")), !locked && React.createElement("div", {
+  }), React.createElement("span", null, "Administrator zamkn\u0105\u0142 typowanie w tej fazie.")), !locked && React.createElement("div", {
     className: "space-y-2"
   }, needsPin && React.createElement("div", null, React.createElement("input", {
     type: "password",
@@ -3347,7 +3430,7 @@ const MatchCard = React.memo(function MatchCard({
     },
     placeholder: "Wpisz sw\xF3j PIN",
     maxLength: 8,
-    className: `w-full px-3 py-2.5 border-2 rounded-lg focus:outline-none text-sm text-center tracking-widest ${pinErr ? 'border-red-400 bg-red-50' : 'border-stone-200 focus:border-[#0d1b5e]'}`
+    className: `prediction-pin-input w-full px-3 py-2.5 border-2 rounded-lg focus:outline-none text-sm text-center tracking-widest ${pinErr ? 'border-red-400 bg-red-50' : 'border-stone-200 focus:border-[#0d1b5e]'}`
   }), pinErr && React.createElement("p", {
     className: "text-xs text-red-600 font-semibold mt-1 text-center"
   }, pinErr)), React.createElement(Btn, {
@@ -3367,7 +3450,7 @@ const MatchCard = React.memo(function MatchCard({
     className: "prediction-list-wrap mt-4 pt-3 border-t border-stone-200"
   }, React.createElement("p", {
     className: "prediction-list-title text-[11px] uppercase tracking-wider font-bold text-stone-500 mb-2"
-  }, "Typy wszystkich graczy"), React.createElement("div", {
+  }, "Typy wszystkich uczestnik\u00F3w"), React.createElement("div", {
     className: "prediction-list space-y-1"
   }, players.map(pl => {
     const pp = matchPredictions[pl.id];
@@ -3487,7 +3570,6 @@ function NextMatchCountdown({ matches, teams, predictions, players, activePlayer
     : [];
   if (!displayMatches.length) return null;
   const allPlayers = Array.isArray(players) ? players : [];
-  const nameStyle = { fontSize: 13, fontWeight: 700, color: 'var(--label-1)', whiteSpace: 'nowrap' };
   const pad = n => String(n).padStart(2, '0');
   const renderPanel = match => {
     const matchStart = new Date(match.date).getTime();
@@ -3505,74 +3587,67 @@ function NextMatchCountdown({ matches, teams, predictions, players, activePlayer
       setExpandedId(prev => prev === match.id ? null : match.id);
     };
     const visiblePlayers = comparisonVisible ? allPlayers : allPlayers.filter(player => player.id === activePlayerId);
-    const predictionTitle = comparisonVisible ? "Typy wszystkich graczy" : "Mój typ";
+    const predictionTitle = comparisonVisible ? "Typy wszystkich uczestników" : "Mój typ";
     return React.createElement("div", {
       key: match.id,
       className: `next-match-countdown${canExpand ? ' is-clickable' : ''}${expanded ? ' is-expanded' : ''}`,
       role: canExpand ? "button" : undefined,
       tabIndex: canExpand ? 0 : undefined,
       "aria-expanded": canExpand ? expanded : undefined,
-      "aria-label": canExpand ? expanded ? "Zwiń typy graczy" : "Rozwiń typy graczy" : undefined,
+      "aria-label": canExpand ? expanded ? "Zwiń typy uczestników" : "Rozwiń typy uczestników" : undefined,
       onClick: toggleExpanded,
       onKeyDown: e => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
           toggleExpanded();
         }
-      },
-      style: {
-        background: 'var(--glass-1)',
-        borderRadius: 22,
-        padding: '11px 15px',
-        marginBottom: 12,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'stretch',
-        gap: 12
       }
     }, React.createElement("div", {
-      className: "next-match-summary",
-      style: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: 12
-      }
+      className: "next-match-summary"
     }, React.createElement("div", {
-      style: { minWidth: 0 }
+      className: "next-match-card-head"
     }, React.createElement("div", {
-      style: { fontSize: 10, fontWeight: 800, letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--label-3)', marginBottom: 5 }
-    }, "Następny mecz"), React.createElement("div", {
-      style: { display: 'flex', alignItems: 'center', gap: 7, minWidth: 0 }
+      className: "next-match-kicker-row"
     }, React.createElement("span", {
-      className: "next-match-team-name",
-      style: nameStyle
-    }, home?.name || 'TBD'), React.createElement(FlagImg, { code: home?.flag, size: 20, title: home?.name }), React.createElement("span", {
-      style: { fontSize: 11, color: 'var(--label-3)', flexShrink: 0 }
-    }, "vs"), React.createElement(FlagImg, { code: away?.flag, size: 20, title: away?.name }), React.createElement("span", {
-      className: "next-match-team-name",
-      style: nameStyle
-    }, away?.name || 'TBD')), React.createElement("div", {
-      style: { fontSize: 11, color: 'var(--label-3)', marginTop: 4 }
-    }, formatDate(match.date))), React.createElement("div", {
-      style: {
-        fontFamily: "'Bebas Neue', sans-serif",
-        fontSize: 32,
-        lineHeight: 1,
-        letterSpacing: '.03em',
-        color: 'var(--label-1)',
-        whiteSpace: 'nowrap',
-        fontVariantNumeric: 'tabular-nums',
-        flexShrink: 0
-      },
+      className: "next-match-kicker"
+    }, "Następny mecz")), React.createElement("span", {
+      className: "next-match-chevron",
+      "aria-hidden": true
+    }, React.createElement(Icon, {
+      name: expanded ? 'chevup' : 'chevdown',
+      size: 18
+    }))), React.createElement("div", {
+      className: "next-match-board"
+    }, React.createElement("span", {
+      className: "next-match-team is-home"
+    }, React.createElement(FlagImg, { code: home?.flag, size: 26, title: home?.name }), React.createElement("span", {
+      className: "next-match-team-name"
+    }, home?.name || 'TBD')), React.createElement("div", {
+      className: "next-match-center"
+    }, React.createElement("div", {
+      className: "next-match-clock",
       "aria-label": `Do rozpoczęcia: ${clock}`
-    }, clock)), expanded && React.createElement("div", {
+    }, React.createElement("strong", null, clock))), React.createElement("span", {
+      className: "next-match-team is-away"
+    }, React.createElement(FlagImg, { code: away?.flag, size: 26, title: away?.name }), React.createElement("span", {
+      className: "next-match-team-name"
+    }, away?.name || 'TBD')))), expanded && React.createElement("div", {
       className: "next-match-details compare-view"
     }, React.createElement("div", {
       className: "next-match-predictions-card"
     }, React.createElement("div", {
       className: "compare-player-list-title next-match-prediction-head"
-    }, React.createElement("span", null, predictionTitle), React.createElement("span", null, match.num ? `#${match.num}` : match.id)), visiblePlayers.length ? React.createElement("div", {
+    }, React.createElement("span", null, predictionTitle), React.createElement("span", {
+      className: "next-match-head-meta"
+    }, React.createElement("span", null, React.createElement(Icon, {
+      name: "calendar",
+      size: 11
+    }), formatDate(match.date)), match.city && React.createElement("span", null, React.createElement(Icon, {
+      name: "mappin",
+      size: 11
+    }), match.city), React.createElement("span", {
+      className: "next-match-head-number"
+    }, match.num ? `#${match.num}` : match.id))), visiblePlayers.length ? React.createElement("div", {
       className: "compare-player-list next-match-player-picks"
     }, visiblePlayers.map(player => {
       const pick = predictions && predictions[`${player.id}:${match.id}`];
@@ -3612,15 +3687,7 @@ function NextMatchCountdown({ matches, teams, predictions, players, activePlayer
       }, pick.penWinner ? getTeamAbbr(penaltyTeam) : '')));
     })) : React.createElement("div", {
       className: "next-match-no-players"
-    }, "Brak graczy")), React.createElement("div", {
-      className: "next-match-meta-row"
-    }, React.createElement("span", null, React.createElement(Icon, {
-      name: "calendar",
-      size: 11
-    }), formatDate(match.date)), match.city && React.createElement("span", null, React.createElement(Icon, {
-      name: "mappin",
-      size: 11
-    }), match.city))));
+    }, "Brak uczestnik\u00F3w"))));
   };
   return React.createElement(React.Fragment, null, displayMatches.map(renderPanel));
 }
@@ -3699,28 +3766,40 @@ function MatchesView({
   }, React.createElement("div", {
     className: "flex flex-col gap-1"
   }, React.createElement("div", {
-    className: "chip-scroll-row tight"
+    className: "chip-scroll-row tight",
+    role: "group",
+    "aria-label": "Filtr fazy"
   }, filterBtns.map(t => React.createElement("button", {
     key: t.k,
+    type: "button",
     onClick: () => handlePhaseFilter(t.k),
+    "aria-pressed": phaseFilter === t.k,
     className: `selection-tile${phaseFilter === t.k ? ' is-selected' : ''} shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold`
   }, t.l))), phaseFilter === 'group' && React.createElement("div", {
-    className: "chip-scroll-row tight"
+    className: "chip-scroll-row tight",
+    role: "group",
+    "aria-label": "Filtr grupy"
   }, React.createElement("button", {
+    type: "button",
     onClick: () => {
       setGroupFilter('all');
     },
+    "aria-pressed": groupFilter === 'all',
     className: `selection-tile${groupFilter === 'all' ? ' is-selected' : ''} shrink-0 px-2.5 py-0.5 rounded-lg text-xs font-bold`
   }, "Wszystkie"), GROUPS.map(g => React.createElement("button", {
     key: g,
+    type: "button",
     onClick: () => {
       setGroupFilter(g);
     },
+    "aria-pressed": groupFilter === g,
     className: `selection-tile${groupFilter === g ? ' is-selected' : ''} shrink-0 w-7 h-6 rounded-lg text-xs font-bold`
   }, g))), React.createElement("div", {
     className: "flex items-center gap-1.5"
   }, React.createElement("div", {
-    className: "edge-safe-row flex gap-1 items-center py-0.5 flex-1 min-w-0"
+    className: "edge-safe-row flex gap-1 items-center py-0.5 flex-1 min-w-0",
+    role: "group",
+    "aria-label": "Filtr statusu meczu"
   }, [{
     k: 'all',
     l: 'Wszystkie'
@@ -3732,9 +3811,11 @@ function MatchesView({
     l: 'Zakończone'
   }].map(t => React.createElement("button", {
     key: t.k,
+    type: "button",
     onClick: () => {
       setStatusFilter(t.k);
     },
+    "aria-pressed": statusFilter === t.k,
     className: `selection-tile${statusFilter === t.k ? ' is-selected' : ''} flex-1 px-2 py-1 rounded-lg text-xs font-medium`
   }, t.l))), React.createElement("div", {
     className: "match-count-badge shrink-0"
@@ -3749,7 +3830,7 @@ function MatchesView({
     activePlayerId: activePlayerId,
     comparisonVisible: comparisonVisible
   }), filterPanel, visibleMatches.map(m => React.createElement(MatchCard, {
-    key: m.id,
+    key: `${m.id}:${m.homeTeamId || ''}:${m.awayTeamId || ''}`,
     match: m,
     teams: teams,
     prediction: predictions[`${activePlayerId}:${m.id}`],
@@ -3774,7 +3855,7 @@ function MatchesView({
       alignItems: "center",
       justifyContent: "center"
     }
-  }, "Brak mecz\xF3w dla wybranych filtr\xF3w"), React.createElement("div", {
+  }, "Nie znaleziono mecz\xF3w pasuj\u0105cych do wybranych filtr\xF3w."), React.createElement("div", {
     "aria-hidden": "true",
     style: {
       minHeight: "calc(100dvh - var(--header-height, 80px) - 310px)"
@@ -3822,31 +3903,42 @@ function SpecialsView({
     setPinErr('');
     setValidErr('');
   }, [activePlayerId, specialPredictions]);
-  const validate = () => {
+  const teamsOfGroup = g => Object.values(teams).filter(t => t && t.group === g);
+  const normalizedGroupOrder = (g, sourceOrder = []) => {
+    const available = teamsOfGroup(g).map(t => t.id);
+    const saved = sourceOrder.filter((id, index) => available.includes(id) && sourceOrder.indexOf(id) === index);
+    return [...saved, ...available.filter(id => !saved.includes(id))];
+  };
+  const normalizedDraft = source => ({
+    ...source,
+    groupOrders: Object.fromEntries(GROUPS.map(g => [g, normalizedGroupOrder(g, source.groupOrders?.[g] || [])]))
+  });
+  const validate = candidate => {
     // Sprawdź kolejność we wszystkich grupach
     for (const g of GROUPS) {
-      const order = draft.groupOrders[g] || [];
+      const order = candidate.groupOrders[g] || [];
       const filled = order.filter(Boolean);
       if (filled.length < 4) return `Uzupełnij kolejność wszystkich 4 drużyn w grupie ${g}`;
       if (new Set(filled).size < 4) return `W grupie ${g} ta sama drużyna jest wybrana więcej niż raz`;
     }
-    if (!draft.champion) return 'Wybierz zwycięzcę turnieju';
-    if (!draft.runnerUp) return 'Wybierz 2. miejsce turnieju';
-    if (!draft.third) return 'Wybierz 3. miejsce turnieju';
-    if (draft.champion === draft.runnerUp || draft.champion === draft.third || draft.runnerUp === draft.third) return 'Podium — każde miejsce musi być inną drużyną';
-    if (!(draft.topScorer || '').trim()) return 'Wpisz króla strzelców';
-    if (!(draft.mvp || '').trim()) return 'Wpisz MVP turnieju';
+    if (!candidate.champion) return 'Wybierz zwycięzcę turnieju';
+    if (!candidate.runnerUp) return 'Wybierz 2. miejsce turnieju';
+    if (!candidate.third) return 'Wybierz 3. miejsce turnieju';
+    if (candidate.champion === candidate.runnerUp || candidate.champion === candidate.third || candidate.runnerUp === candidate.third) return 'Podium — każde miejsce musi być inną drużyną';
+    if (!(candidate.topScorer || '').trim()) return 'Wpisz króla strzelców';
+    if (!(candidate.mvp || '').trim()) return 'Wpisz MVP turnieju';
     return null;
   };
   const activePl = players && players.find && players.find(p => p.id === activePlayerId);
   const needsPin = !!(activePl && activePl.pinHash);
   const teamOptions = useMemo(() => Object.values(teams).filter(Boolean).sort((a, b) => a.name.localeCompare(b.name)), [teams]);
-  const teamsOfGroup = g => Object.values(teams).filter(t => t && t.group === g);
-  const setGroupOrder = (g, pos, teamId) => {
+  const moveGroupTeam = (g, teamId, direction) => {
     setDraft(d => {
-      const order = [...(d.groupOrders[g] || [null, null, null, null])];
-      for (let i = 0; i < 4; i++) if (order[i] === teamId) order[i] = null;
-      order[pos] = teamId;
+      const order = normalizedGroupOrder(g, d.groupOrders[g] || []);
+      const from = order.indexOf(teamId);
+      const to = from + direction;
+      if (from < 0 || to < 0 || to >= order.length) return d;
+      [order[from], order[to]] = [order[to], order[from]];
       return {
         ...d,
         groupOrders: {
@@ -3887,76 +3979,77 @@ function SpecialsView({
     name: "lock",
     size: 16,
     className: "text-amber-400"
-  }), React.createElement("span", null, specialsLocked && !tournamentLocked ? 'Typowanie specjalne zostało zamknięte przez admina.' : 'Typy specjalne są zablokowane — turniej już się rozpoczął.')), React.createElement("section", {
-    className: "bg-white border border-stone-200 rounded-xl p-4"
+  }), React.createElement("span", null, specialsLocked && !tournamentLocked ? 'Administrator zamknął typowanie specjalne.' : 'Typowanie specjalne jest zamknięte, ponieważ turniej już się rozpoczął.')), React.createElement("section", {
+    className: "specials-group-order-panel bg-white border border-stone-200 rounded-xl p-4"
+  }, React.createElement("div", {
+    className: "specials-order-header"
   }, React.createElement("h3", {
-    className: "font-display text-lg tracking-wide text-stone-900 mb-1"
+    className: "specials-order-title font-display text-lg tracking-wide text-stone-900 mb-1"
   }, "Kolejno\u015B\u0107 w grupach"), React.createElement("p", {
-    className: "text-xs text-stone-500 mb-3"
-  }, "1 trafione: ", POINTS.groupOrderOne, " PKT \u2022 2 trafione: ", POINTS.groupOrderTwo, " PKT \u2022 wszystkie 4: ", POINTS.groupOrderAll, " PKT"), React.createElement("div", {
+    className: "specials-order-scoring text-xs text-stone-500 mb-3"
+  }, "1 trafione: ", POINTS.groupOrderOne, " PKT \u2022 2 trafione: ", POINTS.groupOrderTwo, " PKT \u2022 wszystkie 4: ", POINTS.groupOrderAll, " PKT")), React.createElement("div", {
     className: "group-order-filter-row pill-scroll-safe flex gap-1 p-2",
     style: { overflow: 'hidden' }
   }, React.createElement(InfiniteGroupFilter, {
     selected: activeGroup,
     onSelect: setActiveGroup,
     btnClass: 'selection-tile shrink-0 w-10 h-10 rounded-lg font-bold'
-  })), [0, 1, 2, 3].map(pos => {
-    const placeName = ['1. miejsce', '2. miejsce', '3. miejsce', '4. miejsce'][pos];
-    const order = draft.groupOrders[activeGroup] || [];
-    const selected = order[pos];
+  })), React.createElement("div", {
+    className: "specials-order-list",
+    role: "list",
+    "aria-label": `Kolejność drużyn w grupie ${activeGroup}`
+  }, normalizedGroupOrder(activeGroup, draft.groupOrders[activeGroup] || []).map((teamId, pos) => {
+    const team = teams[teamId];
+    if (!team) return null;
     const realOrder = specialResults?.groupOrders?.[activeGroup] || [];
-    const isCorrect = hasResults && realOrder[pos] && realOrder[pos] === selected;
+    const isCorrect = hasResults && realOrder[pos] && realOrder[pos] === teamId;
+    const isWrong = hasResults && realOrder[pos] && realOrder[pos] !== teamId;
     return React.createElement("div", {
       key: pos,
-      className: "specials-position-card",
-      style: isCorrect ? {
-        background: 'rgba(0,160,60,.30)',
-        borderColor: 'rgba(0,220,80,.45)'
-      } : hasResults && realOrder[pos] && selected && !isCorrect ? {
-        background: 'rgba(180,0,0,.28)',
-        borderColor: 'rgba(220,0,0,.40)'
-      } : {}
-    }, React.createElement("div", {
-      className: "flex items-center justify-between mb-1.5"
+      role: "listitem",
+      "aria-label": hasResults ? `${team.name}, pozycja ${pos + 1}, ${isCorrect ? 'poprawna' : 'błędna'}` : `${team.name}, pozycja ${pos + 1}`,
+      className: `specials-order-item specials-order-row${isCorrect ? ' is-correct' : isWrong ? ' is-wrong' : ''}`
     }, React.createElement("span", {
-      className: "text-xs font-bold text-stone-700"
-    }, placeName)), React.createElement("div", {
-      className: "grid grid-cols-2 sm:grid-cols-4 gap-1.5"
-    }, teamsOfGroup(activeGroup).map(t => {
-      const sel = selected === t.id;
-      const correct = sel && isCorrect;
-      const wrong = sel && hasResults && realOrder[pos] && !isCorrect;
-      return React.createElement("button", {
-        key: t.id,
-        onClick: () => setGroupOrder(activeGroup, pos, t.id),
-        disabled: tournamentLocked || specialsLocked,
-        style: correct ? {
-          background: 'rgba(0,160,60,.30)',
-          borderColor: 'rgba(0,220,80,.45)',
-          color: '#30d158'
-        } : wrong ? {
-          background: 'rgba(180,0,0,.28)',
-          borderColor: 'rgba(220,0,0,.40)',
-          color: '#ff453a'
-        } : {},
-        className: `selection-tile${correct ? ' is-correct' : wrong ? ' is-wrong' : sel ? ' is-selected' : ''} px-2 py-2 rounded-lg text-xs font-semibold border transition-all disabled:opacity-60 inline-flex items-center gap-2 justify-start min-w-0`
-      }, React.createElement(FlagImg, {
-        code: t.flag,
-        size: 16,
-        title: t.name
-      }), React.createElement("span", {
-        className: "specials-team-name min-w-0 truncate"
-      }, t.name), correct && React.createElement(Icon, {
-        name: "check",
-        size: 13,
-        className: "shrink-0"
-      }), wrong && React.createElement(Icon, {
-        name: "x",
-        size: 13,
-        className: "shrink-0"
-      }));
-    })));
-  })), React.createElement("section", {
+      className: "specials-position-index",
+      "aria-hidden": "true"
+    }, pos + 1), React.createElement("span", {
+      className: "specials-order-team"
+    }, React.createElement(FlagImg, {
+      code: team.flag,
+      size: 20,
+      title: team.name
+    }), React.createElement("span", {
+      className: "specials-team-name"
+    }, team.name), isCorrect && React.createElement(Icon, {
+      name: "check",
+      size: 15,
+      className: "specials-order-result-icon"
+    }), isWrong && React.createElement(Icon, {
+      name: "x",
+      size: 15,
+      className: "specials-order-result-icon"
+    })), React.createElement("div", {
+      className: "specials-order-actions"
+    }, React.createElement("button", {
+      type: "button",
+      className: "specials-order-move-button",
+      onClick: () => moveGroupTeam(activeGroup, teamId, -1),
+      disabled: tournamentLocked || specialsLocked || pos === 0,
+      "aria-label": `Przenieś ${team.name} wyżej`
+    }, React.createElement(Icon, {
+      name: "chevup",
+      size: 15
+    })), React.createElement("button", {
+      type: "button",
+      className: "specials-order-move-button",
+      onClick: () => moveGroupTeam(activeGroup, teamId, 1),
+      disabled: tournamentLocked || specialsLocked || pos === 3,
+      "aria-label": `Przenieś ${team.name} niżej`
+    }, React.createElement(Icon, {
+      name: "chevdown",
+      size: 15
+    }))));
+  }))), React.createElement("section", {
     className: "bg-white border border-stone-200 rounded-xl p-4"
   }, React.createElement("h3", {
     className: "font-display text-lg tracking-wide text-stone-900 mb-3"
@@ -4003,11 +4096,7 @@ function SpecialsView({
     className: "mb-3"
   }, React.createElement("label", {
     className: "text-xs font-semibold text-stone-700 flex items-center gap-1.5 mb-1.5"
-  }, React.createElement(Icon, {
-    name: "target",
-    size: 16,
-    className: "text-[#0d1b5e]"
-  }), "Kr\xF3l strzelc\xF3w ", React.createElement("span", {
+  }, "Kr\xF3l strzelc\xF3w ", React.createElement("span", {
     className: "text-stone-400"
   }, "(", POINTS.topScorer, " PKT)")), React.createElement(AutocompleteInput, {
     value: draft.topScorer,
@@ -4020,11 +4109,7 @@ function SpecialsView({
     disabled: tournamentLocked || specialsLocked
   })), React.createElement("div", null, React.createElement("label", {
     className: "text-xs font-semibold text-stone-700 flex items-center gap-1.5 mb-1.5"
-  }, React.createElement(Icon, {
-    name: "sparkles",
-    size: 16,
-    className: "text-amber-500"
-  }), "MVP turnieju ", React.createElement("span", {
+  }, "MVP turnieju ", React.createElement("span", {
     className: "text-stone-400"
   }, "(", POINTS.mvp, " PKT)")), React.createElement(AutocompleteInput, {
     value: draft.mvp,
@@ -4057,14 +4142,15 @@ function SpecialsView({
     },
     placeholder: "Wpisz sw\xF3j PIN, \u017Ceby zapisa\u0107",
     maxLength: 8,
-    className: `w-full px-3 py-2.5 border-2 rounded-lg focus:outline-none text-sm text-center tracking-widest ${pinErr ? 'border-red-400 bg-red-50' : 'border-stone-200 focus:border-[#0d1b5e]'}`
+    className: `prediction-pin-input w-full px-3 py-2.5 border-2 rounded-lg focus:outline-none text-sm text-center tracking-widest ${pinErr ? 'border-red-400 bg-red-50' : 'border-stone-200 focus:border-[#0d1b5e]'}`
   }), pinErr && React.createElement("p", {
     className: "text-xs text-red-600 font-semibold mt-1 text-center"
   }, pinErr)), React.createElement(Btn, {
     variant: "primary",
     size: "lg",
     onClick: () => {
-      const err = validate();
+      const draftToSave = normalizedDraft(draft);
+      const err = validate(draftToSave);
       if (err) {
         setValidErr(err);
         window.scrollTo({
@@ -4074,7 +4160,8 @@ function SpecialsView({
         return;
       }
       setValidErr('');
-      onSaveSpecial(activePlayerId, draft, pin, err => setPinErr(err));
+      setDraft(draftToSave);
+      onSaveSpecial(activePlayerId, draftToSave, pin, err => setPinErr(err));
     },
     disabled: needsPin && pin.length < 4,
     className: "w-full"
@@ -4153,7 +4240,7 @@ function SpecialsAllView({
     className: "bg-stone-50 border-b border-stone-200"
   }, React.createElement("th", {
     className: "px-3 py-2 text-left font-semibold text-stone-600"
-  }, "Gracz"), [1, 2, 3, 4].map(pos => React.createElement("th", {
+  }, "Uczestnik"), [1, 2, 3, 4].map(pos => React.createElement("th", {
     key: pos,
     className: "px-2 py-2 text-center font-semibold text-stone-600"
   }, pos, ".")))), React.createElement("tbody", null, players.map(pl => {
@@ -4204,7 +4291,7 @@ function SpecialsAllView({
     className: "bg-stone-50 border-b border-stone-200"
   }, React.createElement("th", {
     className: "px-3 py-2 text-left font-semibold text-stone-600"
-  }, "Gracz"), React.createElement("th", {
+  }, "Uczestnik"), React.createElement("th", {
     className: "px-2 py-2 text-center"
   }, "1."), React.createElement("th", {
     className: "px-2 py-2 text-center"
@@ -4256,7 +4343,7 @@ function SpecialsAllView({
     className: "bg-stone-50 border-b border-stone-200"
   }, React.createElement("th", {
     className: "px-3 py-2 text-left font-semibold text-stone-600"
-  }, "Gracz"), React.createElement("th", {
+  }, "Uczestnik"), React.createElement("th", {
     className: "px-3 py-2 text-left font-semibold text-stone-600"
   }, "Kr\xF3l strzelc\xF3w"), React.createElement("th", {
     className: "px-3 py-2 text-left font-semibold text-stone-600"
@@ -4436,7 +4523,7 @@ function RankQualityPills({
     className: "rank-pill rank-pill-partial"
   }, "Trafione rozstrzygnięcia: ", r.partial), React.createElement("span", {
     className: "rank-pill rank-pill-miss"
-  }, "Niepoprawne typy: ", r.incorrect));
+  }, "Nietrafione typy: ", r.incorrect));
 }
 function RankDetails({
   r,
@@ -4672,7 +4759,7 @@ function LeaderboardView({
   }, [matches, results, specialResults]);
   if (players.length === 0) return React.createElement("div", {
     className: "text-center text-stone-600 bg-stone-100 border border-stone-200 rounded-lg p-6"
-  }, "Brak graczy.");
+  }, "Nie dodano jeszcze uczestnik\u00F3w.");
   const podium = ranking.length >= 3 ? ranking.slice(0, 3) : [];
   const rest = podium.length ? ranking.slice(3) : ranking;
   const restOffset = podium.length;
@@ -4812,7 +4899,7 @@ function CompareView({
   const hasMoreMatches = compactDevice && visibleCount < filtered.length;
   if (players.length === 0) return React.createElement("div", {
     className: "text-center text-stone-500 py-12 app-note app-note--info app-note--center"
-  }, "Dodaj graczy, \u017Ceby por\xF3wnywa\u0107 typy.");
+  }, "Dodaj uczestnik\u00F3w, aby por\xF3wnywa\u0107 typy.");
   return React.createElement("div", {
     className: "compare-view space-y-3"
   }, React.createElement("div", {
@@ -4820,31 +4907,43 @@ function CompareView({
   }, React.createElement("div", {
     className: "flex flex-col gap-1"
   }, React.createElement("div", {
-    className: "chip-scroll-row tight"
+    className: "chip-scroll-row tight",
+    role: "group",
+    "aria-label": "Filtr fazy"
   }, PHASE_FILTER_TABS.map(t => React.createElement("button", {
     key: t.k,
+    type: "button",
     onClick: () => {
       phaseFilterTouchedRef.current = true;
       setPhaseFilter(t.k);
     },
+    "aria-pressed": phaseFilter === t.k,
     className: `selection-tile${phaseFilter === t.k ? ' is-selected' : ''} shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold`
   }, t.l))), phaseFilter === 'group' && React.createElement("div", {
-    className: "chip-scroll-row tight"
+    className: "chip-scroll-row tight",
+    role: "group",
+    "aria-label": "Filtr grupy"
   }, React.createElement("button", {
+    type: "button",
     onClick: () => {
       setGroupFilter('all');
     },
+    "aria-pressed": groupFilter === 'all',
     className: `selection-tile${groupFilter === 'all' ? ' is-selected' : ''} shrink-0 px-2.5 py-0.5 rounded-lg text-xs font-bold`
   }, "Wszystkie"), GROUPS.map(g => React.createElement("button", {
     key: g,
+    type: "button",
     onClick: () => {
       setGroupFilter(g);
     },
+    "aria-pressed": groupFilter === g,
     className: `selection-tile${groupFilter === g ? ' is-selected' : ''} shrink-0 w-7 h-6 rounded-lg text-xs font-bold`
   }, g))), React.createElement("div", {
     className: "flex items-center gap-1.5"
   }, React.createElement("div", {
-    className: "edge-safe-row flex gap-1 items-center py-0.5 flex-1 min-w-0"
+    className: "edge-safe-row flex gap-1 items-center py-0.5 flex-1 min-w-0",
+    role: "group",
+    "aria-label": "Filtr statusu meczu"
   }, [{
     k: 'all',
     l: 'Wszystkie'
@@ -4856,9 +4955,11 @@ function CompareView({
     l: 'Zakończone'
   }].map(t => React.createElement("button", {
     key: t.k,
+    type: "button",
     onClick: () => {
       setStatusFilter(t.k);
     },
+    "aria-pressed": statusFilter === t.k,
     className: `selection-tile${statusFilter === t.k ? ' is-selected' : ''} flex-1 px-2 py-1 rounded-lg text-xs font-medium`
   }, t.l))), React.createElement("div", {
     className: "match-count-badge shrink-0"
@@ -4907,7 +5008,7 @@ function CompareView({
       }
     }, React.createElement("p", {
       className: "compare-player-list-title"
-    }, "Typy wszystkich graczy"), players.map(pl => {
+    }, "Typy wszystkich uczestnik\u00F3w"), players.map(pl => {
       const pp = predictions[`${pl.id}:${m.id}`];
       if (!pp) return React.createElement("div", {
         key: pl.id,
@@ -5066,11 +5167,11 @@ function AdminGate({
     const password = input.trim();
     if (isSetup) {
       if (password.length < 3) {
-        setError('Hasło musi mieć min. 3 znaki');
+        setError('Hasło musi mieć co najmniej 3 znaki.');
         return;
       }
       if (password !== confirm.trim()) {
-        setError('Hasła nie pasują');
+        setError('Hasła nie są takie same.');
         return;
       }
       onSetPassword(password);
@@ -5098,9 +5199,9 @@ function AdminGate({
     size: 22
   })), React.createElement('h4', {
     className: 'admin-login-title'
-  }, isSetup ? 'Ustaw hasło admina' : 'Panel administratora'), React.createElement('p', {
+  }, isSetup ? 'Ustaw hasło administratora' : 'Panel administratora'), React.createElement('p', {
     className: 'admin-login-subtitle'
-  }, isSetup ? 'Utwórz hasło dostępu do zarządzania wynikami.' : 'Wpisz hasło, żeby zarządzać wynikami.')), React.createElement('label', {
+  }, isSetup ? 'Utwórz hasło dostępu do zarządzania wynikami.' : 'Wpisz hasło, aby zarządzać wynikami.')), React.createElement('label', {
     className: 'admin-login-field'
   }, React.createElement('span', null, isSetup ? 'Nowe hasło' : 'Hasło'), React.createElement('input', {
     type: 'password',
@@ -5297,7 +5398,7 @@ function AdminMatchRow({
     className: "admin-match-setup-error"
   }, "Wybierz dwie różne drużyny."), !sameTeam && (!homeId || !awayId) && React.createElement("p", {
     className: "admin-match-setup-hint"
-  }, "Po zapisaniu pary gracze mogą typować ten mecz."), React.createElement(Btn, {
+  }, "Po zapisaniu pary uczestnicy mogą typować ten mecz."), React.createElement(Btn, {
     variant: "primary",
     disabled: !pairValid || !pairChanged,
     onClick: handleSaveTeams,
@@ -5351,11 +5452,11 @@ function AdminMatchRow({
     label: "Gole"
   })))), isKO && React.createElement("div", {
     className: "text-[11px] text-stone-500 text-center mb-2"
-  }, "Wpisz wynik ", React.createElement("strong", null, "po 120 minutach"), " (regulaminowy + dogrywka)"), isKO && isDraw && React.createElement("div", {
+  }, "Wpisz wynik ", React.createElement("strong", null, "po 120 minutach"), ", przed rzutami karnymi."), isKO && isDraw && React.createElement("div", {
     className: "penalty-choice-panel admin-penalty-choice-panel"
   }, React.createElement("div", {
     className: "penalty-choice-head"
-  }, React.createElement("span", null, "Remis po 120 min"), React.createElement("strong", null, "Awans")), React.createElement("p", {
+  }, React.createElement("span", null, "Remis po 120 minutach"), React.createElement("strong", null, "Awans")), React.createElement("p", {
     className: "penalty-choice-title"
   }, "Kto awansował po karnych?"), React.createElement("div", {
     className: "penalty-choice-grid"
@@ -5391,7 +5492,7 @@ function AdminMatchRow({
   }, React.createElement(Icon, {
     name: "trash",
     size: 14
-  }), "Cofnij"), React.createElement(Btn, {
+  }), "Usuń wynik"), React.createElement(Btn, {
     variant: "primary",
     disabled: !ok,
     onClick: handleSave,
@@ -5399,7 +5500,7 @@ function AdminMatchRow({
   }, React.createElement(Icon, {
     name: "save",
     size: 14
-  }), result ? 'Zaktualizuj' : 'Zapisz wynik'))) : React.createElement("div", {
+  }), result ? 'Zaktualizuj wynik' : 'Zapisz wynik'))) : React.createElement("div", {
     className: "text-sm text-stone-600 bg-stone-100 rounded-lg p-3 text-center app-note app-note--info app-note--compact app-note--center"
   }, "Najpierw przypisz dru\u017Cyny do meczu."))));
 }
@@ -5522,12 +5623,12 @@ function AdminPlayerRow({
     type: "button",
     onClick: openConfirm,
     className: "shrink-0 px-3 py-1.5 rounded-lg bg-red-600 text-white text-xs font-bold hover:bg-red-700 active:scale-95 transition-all",
-    title: "Usu\u0144 gracza"
+    title: "Usu\u0144 uczestnika"
   }, "Usu\u0144")), confirm && React.createElement("div", {
     className: "mt-3 pt-3 border-t border-stone-100"
   }, React.createElement("p", {
     className: "text-xs text-red-700 font-semibold mb-2"
-  }, "Usun\u0105\u0107 gracza \u201E", player.name, "\" i wszystkie jego typy?"), React.createElement("label", {
+  }, "Usun\u0105\u0107 uczestnika \u201E", player.name, "\" i wszystkie jego typy?"), React.createElement("label", {
     className: "block text-[11px] uppercase tracking-wider font-bold text-stone-500 mb-1",
     htmlFor: `admin-delete-password-${player.id}`
   }, "Has\u0142o administratora"), React.createElement("input", {
@@ -5541,7 +5642,7 @@ function AdminPlayerRow({
     onKeyDown: e => {
       if (e.key === 'Enter') confirmRemove();
     },
-    placeholder: "Wpisz has\u0142o admina",
+    placeholder: "Wpisz has\u0142o administratora",
     autoComplete: "current-password",
     className: `w-full px-3 py-2.5 border-2 rounded-lg focus:outline-none text-sm mb-2 ${error ? 'border-red-400 bg-red-50' : 'border-stone-200 focus:border-[#0d1b5e]'}`,
     autoFocus: true
@@ -5649,19 +5750,19 @@ function AdminScoringPanel({
     label: "Dok\u0142adny wynik",
     value: draft.knockout.exact,
     onChange: v => setNested('knockout', 'exact', v),
-    note: "Wynik po regulaminowym czasie i dogrywce."
+    note: "Wynik po 120 minutach, przed rzutami karnymi."
   }), React.createElement(AdminScoringField, {
     label: "Dobry rezultat",
     value: draft.knockout.winner,
     onChange: v => setNested('knockout', 'winner', v),
-    note: "Zwyci\u0119zca albo poprawnie przewidziany remis."
+    note: "Zwyci\u0119zca po 120 minutach albo poprawnie przewidziany remis."
   }), React.createElement("div", {
     className: "col-span-2"
   }, React.createElement(AdminScoringField, {
     label: "Bonus za karne",
     value: draft.knockout.penBonus,
     onChange: v => setNested('knockout', 'penBonus', v),
-    note: "Dodawany, gdy gracz poprawnie wska\u017Ce zwyci\u0119zc\u0119 serii rzut\xF3w karnych."
+    note: "Dodawany, gdy uczestnik poprawnie wska\u017Ce zwyci\u0119zc\u0119 serii rzut\xF3w karnych."
   })))), React.createElement("section", {
     className: "bg-white border border-stone-200 rounded-xl p-4"
   }, React.createElement("h4", {
@@ -5773,11 +5874,11 @@ function PhaseLockPanel({
     className: "space-y-3"
   }, React.createElement("div", {
     className: "bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900 app-note app-note--warning"
-  }, "Zablokowanie fazy uniemo\u017cliwia graczom zmian\u0119 typ\u00f3w dla mecz\u00f3w z tej fazy. U\u017cyj tego np. tu\u017c przed rozpocz\u0119ciem pierwszego meczu danej rundy."), React.createElement("section", {
+  }, "Zablokowanie fazy uniemo\u017cliwia uczestnikom zmian\u0119 typ\u00f3w dla mecz\u00f3w z tej fazy. U\u017cyj tej opcji na przyk\u0142ad tu\u017c przed rozpocz\u0119ciem pierwszego meczu danej rundy."), React.createElement("section", {
     className: "bg-white border border-stone-200 rounded-xl p-4"
   }, React.createElement("h4", {
     className: "font-display text-base mb-1"
-  }, "Blokady faz mecz\u00f3w"), phasesWithMatches.map(phase => React.createElement(PhaseLockRow, {
+  }, "Blokady faz turnieju"), phasesWithMatches.map(phase => React.createElement(PhaseLockRow, {
     key: phase,
     label: phase === 'group' ? 'Faza grupowa' : PHASE_LABELS[phase] || phase,
     hint: (() => { const n = (matches || []).filter(m => m.phase === phase).length; return `${n} ${plMecze(n)}`; })(),
@@ -5793,8 +5894,8 @@ function PhaseLockPanel({
     locked: !!locks.specials,
     onToggle: () => togglePhase('specials')
   }), React.createElement(PhaseLockRow, {
-    label: "Por\u00f3wnanie graczy",
-    hint: "Udost\u0119pnia graczom zak\u0142adk\u0119 \u201ePodgl\u0105d\u201d z typami mecz\u00f3w i typami specjalnymi.",
+    label: "Por\u00f3wnanie uczestnik\u00f3w",
+    hint: "Udost\u0119pnia uczestnikom zak\u0142adk\u0119 \u201ePodgl\u0105d\u201d z typami mecz\u00f3w i typami specjalnymi.",
     locked: !locks.compareVisible,
     onToggle: () => onSavePhaseLocks(prev => ({
       ...(prev || {}),
@@ -5938,6 +6039,32 @@ function AdminPanel({
   useEffect(() => setSpDraft(specialResults || {
     groupOrders: {}
   }), [specialResults]);
+  const spTeamsOfGroup = g => Object.values(teams).filter(t => t && t.group === g);
+  const normalizedSpGroupOrder = (g, sourceOrder = []) => {
+    const available = spTeamsOfGroup(g).map(t => t.id);
+    const saved = sourceOrder.filter((id, index) => available.includes(id) && sourceOrder.indexOf(id) === index);
+    return [...saved, ...available.filter(id => !saved.includes(id))];
+  };
+  const normalizedSpDraft = source => ({
+    ...source,
+    groupOrders: Object.fromEntries(GROUPS.map(g => [g, normalizedSpGroupOrder(g, source.groupOrders?.[g] || [])]))
+  });
+  const moveSpGroupTeam = (g, teamId, direction) => {
+    setSpDraft(d => {
+      const order = normalizedSpGroupOrder(g, d.groupOrders?.[g] || []);
+      const from = order.indexOf(teamId);
+      const to = from + direction;
+      if (from < 0 || to < 0 || to >= order.length) return d;
+      [order[from], order[to]] = [order[to], order[from]];
+      return {
+        ...d,
+        groupOrders: {
+          ...d.groupOrders,
+          [g]: order
+        }
+      };
+    });
+  };
   const tabs = [{
     k: 'teams',
     l: 'Drużyny'
@@ -5958,7 +6085,7 @@ function AdminPanel({
     l: 'Punktacja'
   }, {
     k: 'players',
-    l: 'Gracze'
+    l: 'Uczestnicy'
   }, {
     k: 'data',
     l: 'Dane'
@@ -5975,7 +6102,7 @@ function AdminPanel({
     className: "text-[#6080d0]"
   }), React.createElement("span", {
     className: "font-display text-base tracking-wide"
-  }, "Panel admina")), React.createElement(Btn, {
+  }, "Panel administratora")), React.createElement(Btn, {
     variant: "ghost",
     size: "sm",
     onClick: onLogout,
@@ -5998,7 +6125,7 @@ function AdminPanel({
     className: "admin-section-stack"
   }, React.createElement("div", {
     className: "bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900 app-note app-note--warning"
-  }, tab === 'matches' ? 'Przypisuj pary w fazie pucharowej i kontroluj kompletność terminarza.' : 'Wpisuj końcowe rezultaty i cofaj błędnie zapisane wyniki.'), React.createElement("div", {
+  }, tab === 'matches' ? 'Przypisuj pary w fazie pucharowej i kontroluj kompletność terminarza.' : 'Wpisuj wyniki końcowe i usuwaj błędnie zapisane wyniki.'), React.createElement("div", {
     className: "admin-phase-filters bg-white border border-stone-200 rounded-xl p-3 space-y-2"
   }, React.createElement("div", {
     className: "relative"
@@ -6009,7 +6136,7 @@ function AdminPanel({
   }), React.createElement("input", {
     value: matchSearch,
     onChange: e => setMatchSearch(e.target.value),
-    placeholder: tab === 'matches' ? "Szukaj meczu / drużyny" : "Szukaj wyniku / drużyny",
+    placeholder: tab === 'matches' ? "Szukaj meczu lub drużyny" : "Szukaj wyniku lub drużyny",
     className: "w-full pl-9 pr-3 py-2 border border-stone-200 rounded-lg focus:border-[#0d1b5e] focus:outline-none text-sm"
   })), React.createElement("div", {
     className: "chip-scroll-row"
@@ -6061,59 +6188,74 @@ function AdminPanel({
       onSave: (name, flag) => onUpdateTeam(t.id, name, flag)
     }) : null;
   }))))), tab === 'specials' && React.createElement("div", {
-    className: "space-y-3"
+  className: "space-y-3"
   }, React.createElement("div", {
-    className: "bg-white border border-stone-200 rounded-xl p-4"
+    className: "specials-group-order-panel admin-specials-group-order-panel bg-white border border-stone-200 rounded-xl p-4"
+  }, React.createElement("div", {
+    className: "specials-order-header"
   }, React.createElement("h4", {
-    className: "font-display text-base mb-2"
-  }, "Kolejno\u015B\u0107 w grupach"), React.createElement("div", {
+    className: "specials-order-title font-display text-lg tracking-wide text-stone-900"
+  }, "Kolejno\u015B\u0107 w grupach"), React.createElement("p", {
+    className: "specials-order-scoring text-xs text-stone-500"
+  }, "Oficjalna kolejno\u015B\u0107 dru\u017Cyn po fazie grupowej")), React.createElement("div", {
     className: "group-order-filter-row pill-scroll-safe flex gap-1 p-2 mb-3",
     style: { overflow: 'hidden' }
   }, React.createElement(InfiniteGroupFilter, {
     selected: spGroup,
     onSelect: setSpGroup,
     btnClass: 'selection-tile shrink-0 w-10 h-10 rounded-lg font-bold'
-  })), [0, 1, 2, 3].map(pos => {
-    const gTeams = Object.values(teams).filter(t => t && t.group === spGroup);
+  })), React.createElement("div", {
+    className: "specials-order-list",
+    role: "list",
+    "aria-label": `Oficjalna kolejność drużyn w grupie ${spGroup}`
+  }, normalizedSpGroupOrder(spGroup, spDraft.groupOrders?.[spGroup] || []).map((teamId, pos) => {
+    const team = teams[teamId];
+    if (!team) return null;
     return React.createElement("div", {
       key: pos,
-      className: "specials-position-card"
-    }, React.createElement("div", {
-      className: "flex items-center justify-between mb-1.5"
+      role: "listitem",
+      className: "specials-order-item specials-order-row"
     }, React.createElement("span", {
-      className: "text-xs font-bold text-stone-700"
-    }, ['1.', '2.', '3.', '4.'][pos], " miejsce")), React.createElement("div", {
-      className: "grid grid-cols-2 sm:grid-cols-4 gap-1.5"
-    }, gTeams.map(t => {
-      const sel = spDraft.groupOrders?.[spGroup]?.[pos] === t.id;
-      return React.createElement("button", {
-        key: t.id,
-        onClick: () => setSpDraft(d => {
-          const o = [...(d.groupOrders?.[spGroup] || [null, null, null, null])];
-          for (let i = 0; i < 4; i++) if (o[i] === t.id) o[i] = null;
-          o[pos] = t.id;
-          return {
-            ...d,
-            groupOrders: {
-              ...d.groupOrders,
-              [spGroup]: o
-            }
-          };
-        }),
-        className: `selection-tile${sel ? ' is-selected' : ''} px-2 py-2 rounded-lg text-xs font-semibold border transition-all inline-flex items-center gap-2 justify-start min-w-0`
-      }, React.createElement(FlagImg, {
-        code: t.flag,
-        size: 16,
-        title: t.name
-      }), React.createElement("span", {
-        className: "specials-team-name min-w-0 truncate"
-      }, t.name));
-    })));
-  })), React.createElement("div", {
-    className: "bg-white border border-stone-200 rounded-xl p-4 space-y-2"
+      className: "specials-position-index",
+      "aria-hidden": "true"
+    }, pos + 1), React.createElement("span", {
+      className: "specials-order-team"
+    }, React.createElement(FlagImg, {
+      code: team.flag,
+      size: 20,
+      title: team.name
+    }), React.createElement("span", {
+      className: "specials-team-name"
+    }, team.name)), React.createElement("div", {
+      className: "specials-order-actions"
+    }, React.createElement("button", {
+      type: "button",
+      className: "specials-order-move-button",
+      onClick: () => moveSpGroupTeam(spGroup, teamId, -1),
+      disabled: pos === 0,
+      "aria-label": `Przenieś ${team.name} wyżej`
+    }, React.createElement(Icon, {
+      name: "chevup",
+      size: 15
+    })), React.createElement("button", {
+      type: "button",
+      className: "specials-order-move-button",
+      onClick: () => moveSpGroupTeam(spGroup, teamId, 1),
+      disabled: pos === 3,
+      "aria-label": `Przenieś ${team.name} niżej`
+    }, React.createElement(Icon, {
+      name: "chevdown",
+      size: 15
+    }))));
+  }))), React.createElement("div", {
+    className: "specials-group-order-panel admin-specials-panel bg-white border border-stone-200 rounded-xl p-4 space-y-2"
+  }, React.createElement("div", {
+    className: "specials-order-header"
   }, React.createElement("h4", {
-    className: "font-display text-base mb-2"
-  }, "Podium"), [{
+    className: "specials-order-title font-display text-lg tracking-wide text-stone-900"
+  }, "Podium turnieju"), React.createElement("p", {
+    className: "specials-order-scoring text-xs text-stone-500"
+  }, "Oficjalne miejsca medalowe turnieju")), [{
     k: 'champion',
     l: 'Zwycięzca'
   }, {
@@ -6139,10 +6281,14 @@ function AdminPanel({
     key: t.id,
     value: t.id
   }, t.name)))))), React.createElement("div", {
-    className: "bg-white border border-stone-200 rounded-xl p-4 space-y-2"
+    className: "specials-group-order-panel admin-specials-panel bg-white border border-stone-200 rounded-xl p-4 space-y-2"
+  }, React.createElement("div", {
+    className: "specials-order-header"
   }, React.createElement("h4", {
-    className: "font-display text-base mb-2"
-  }, "Nagrody indywidualne"), React.createElement("div", null, React.createElement("label", {
+    className: "specials-order-title font-display text-lg tracking-wide text-stone-900"
+  }, "Nagrody indywidualne"), React.createElement("p", {
+    className: "specials-order-scoring text-xs text-stone-500"
+  }, "Oficjalni laureaci nagr\xF3d turniejowych")), React.createElement("div", null, React.createElement("label", {
     className: "text-xs font-semibold text-stone-700"
   }, "Kr\xF3l strzelc\xF3w"), React.createElement("input", {
     value: spDraft.topScorer || '',
@@ -6165,7 +6311,11 @@ function AdminPanel({
   }))), React.createElement(Btn, {
     variant: "primary",
     size: "lg",
-    onClick: () => onSaveSpecialResults(spDraft),
+    onClick: () => {
+      const draftToSave = normalizedSpDraft(spDraft);
+      setSpDraft(draftToSave);
+      onSaveSpecialResults(draftToSave);
+    },
     className: "w-full"
   }, React.createElement(Icon, {
     name: "save",
@@ -6177,9 +6327,9 @@ function AdminPanel({
     className: "space-y-3"
   }, React.createElement("div", {
     className: "bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900 app-note app-note--warning"
-  }, "Usuni\u0119cie gracza wymaga ponownego wpisania has\u0142a administratora. Gracz i wszystkie jego typy zostan\u0105 skasowane bez mo\u017Cliwo\u015Bci cofni\u0119cia."), players.length === 0 && React.createElement("p", {
+  }, "Usuni\u0119cie uczestnika wymaga ponownego wpisania has\u0142a administratora. Uczestnik i wszystkie jego typy zostan\u0105 usuni\u0119te bez mo\u017Cliwo\u015Bci przywr\u00F3cenia."), players.length === 0 && React.createElement("p", {
     className: "text-center text-stone-500 text-sm py-8"
-  }, "Brak graczy."), players.map(p => React.createElement(AdminPlayerRow, {
+  }, "Nie dodano jeszcze uczestnik\u00F3w."), players.map(p => React.createElement(AdminPlayerRow, {
     key: p.id,
     player: p,
     adminPasswordHash: adminPasswordHash,
@@ -6242,9 +6392,9 @@ function AdminPanel({
         await onImport(data);
         setImportText('');
         setImportErr('');
-        alert('Import zakończony!');
+        alert('Dane zostały zaimportowane.');
       } catch (e) {
-        setImportErr('Błąd: ' + e.message);
+        setImportErr('Nie udało się zaimportować danych. Sprawdź plik i spróbuj ponownie.');
       }
     },
     className: "w-full"
@@ -6279,7 +6429,7 @@ function AdminPanel({
     onKeyDown: e => {
       if (e.key === 'Enter') confirmResetAll();
     },
-    placeholder: "Wpisz has\u0142o admina",
+    placeholder: "Wpisz has\u0142o administratora",
     autoComplete: "current-password",
     disabled: resetBusy,
     className: `w-full px-3 py-2.5 border-2 rounded-lg focus:outline-none text-sm ${resetError ? 'border-red-400 bg-red-50' : 'border-stone-200 focus:border-[#0d1b5e]'}`,
@@ -6348,7 +6498,7 @@ function LoginModal({
   const isCompactStep = step === 'pin';
   const handlePick = () => {
     if (!selected) {
-      setErr('Wybierz gracza');
+      setErr('Wybierz profil.');
       return;
     }
     if (hasPinHash) {
@@ -6361,11 +6511,11 @@ function LoginModal({
   };
   const handlePin = () => {
     if (pin.length < 4) {
-      setErr('PIN musi mieć co najmniej 4 znaki');
+      setErr('PIN musi mieć co najmniej 4 znaki.');
       return;
     }
     if (hashPin(pin) !== pl.pinHash) {
-      setErr('Błędny PIN — spróbuj jeszcze raz');
+      setErr('Wprowadzony PIN jest nieprawidłowy. Spróbuj ponownie.');
       return;
     }
     onLogin(selected);
@@ -6373,20 +6523,20 @@ function LoginModal({
   const handleRenameSubmit = () => {
     const name = newName.trim();
     if (!name) {
-      setRenameErr('Wpisz imię i nazwisko');
+      setRenameErr('Wpisz imię i nazwisko.');
       return;
     }
     if (name === pl.name) {
-      setRenameErr('Nowa nazwa jest taka sama jak obecna');
+      setRenameErr('Nowa nazwa jest taka sama jak obecna.');
       return;
     }
     if (hasPinHash) {
       if (renamePin.length < 4) {
-        setRenameErr('Wpisz PIN użytkownika');
+        setRenameErr('Wpisz PIN użytkownika.');
         return;
       }
       if (hashPin(renamePin) !== pl.pinHash) {
-        setRenameErr('Błędny PIN — spróbuj jeszcze raz');
+        setRenameErr('Wprowadzony PIN jest nieprawidłowy. Spróbuj ponownie.');
         return;
       }
     }
@@ -6406,7 +6556,7 @@ function LoginModal({
   }, step === 'pick' && React.createElement(React.Fragment, null,
     !activePlayer && React.createElement("p", {
       className: "profile-modal-hint"
-    }, "Wybierz swój profil, żeby typować."),
+    }, "Wybierz swój profil, aby typować mecze."),
     React.createElement("button", {
       className: "profile-add-btn",
       onClick: onManagePlayers
@@ -6418,7 +6568,7 @@ function LoginModal({
       className: "profile-player-list"
     }, players.length === 0 && React.createElement("p", {
       className: "profile-empty-hint"
-    }, "Brak użytkowników. Użyj przycisku powyżej."), players.map(p => {
+    }, "Nie dodano jeszcze żadnych profili."), players.map(p => {
       const isOpen = selected === p.id;
       const isCurrent = activePlayer && activePlayer === p.id;
       return React.createElement("div", {
@@ -6581,19 +6731,19 @@ function PlayersManager({
   const handleAdd = () => {
     const name = newName.trim();
     if (!name) {
-      setError('Wpisz imię');
+      setError('Wpisz imię i nazwisko.');
       return;
     }
     if (players.find(p => p.name.toLowerCase() === name.toLowerCase())) {
-      setError('Gracz o tym imieniu już istnieje');
+      setError('Użytkownik o tym imieniu i nazwisku już istnieje.');
       return;
     }
     if (newPin.length < 4) {
-      setError('PIN musi mieć co najmniej 4 znaki');
+      setError('PIN musi mieć co najmniej 4 znaki.');
       return;
     }
     if (newPin !== newPin2) {
-      setError('PINy się nie zgadzają');
+      setError('Wpisane numery PIN nie są takie same.');
       return;
     }
     onAddPlayer(name, newPin);
@@ -6608,7 +6758,7 @@ function PlayersManager({
     overlayClassName: "profile-modal-overlay"
   }, React.createElement("div", {
     className: "app-note app-note--warning app-note--compact"
-  }, "Zapami\u0119taj PIN \u2014 nie da si\u0119 go odzyska\u0107."), React.createElement("div", {
+  }, "Zapami\u0119taj PIN. Nie mo\u017Cna go p\u00F3\u017Aniej odzyska\u0107."), React.createElement("div", {
     className: "profile-field"
   }, React.createElement("label", { className: "profile-label" }, "Imi\u0119 i nazwisko"), React.createElement("input", {
     value: newName,
@@ -6621,7 +6771,7 @@ function PlayersManager({
     className: "profile-text-input"
   })), React.createElement("div", {
     className: "profile-field"
-  }, React.createElement("label", { className: "profile-label" }, "PIN (min. 4 znaki)"), React.createElement("input", {
+  }, React.createElement("label", { className: "profile-label" }, "PIN (co najmniej 4 znaki)"), React.createElement("input", {
     type: "password",
     inputMode: "numeric",
     value: newPin,
@@ -6858,15 +7008,7 @@ function BracketTree({
     });
   }
   const groupTables = buildGroupTables(Object.values(matchesById), teams, results);
-  const advancedThirdTeamIds = new Set();
-  Object.values(matchesById).forEach(match => {
-    if (match?.phase !== 'r32') return;
-    ['homeTeamId', 'awayTeamId'].forEach(key => {
-      const team = teams[match[key]];
-      const groupRows = team?.group ? groupTables[team.group] || [] : [];
-      if (groupRows[2]?.team?.id === team?.id) advancedThirdTeamIds.add(team.id);
-    });
-  });
+  const advancedThirdTeamIds = getAdvancedThirdTeamIds(Object.values(matchesById), teams, groupTables);
   const groupCardH = 88;
   const groupGap = 6;
   return React.createElement("section", {
@@ -6899,10 +7041,12 @@ function BracketTree({
     className: "bracket-group-compact-stat-head"
   }, "PKT")), React.createElement("div", {
     className: "bracket-group-compact-rows"
-  }, (groupTables[group] || []).map((row, pos) => React.createElement("div", {
-    key: row.team.id,
-    className: "bracket-group-compact-row" + (pos < 2 || advancedThirdTeamIds.has(row.team.id) ? " is-advance" : "")
-  }, React.createElement("span", {
+  }, (groupTables[group] || []).map((row, pos) => {
+    const advances = pos < 2 || advancedThirdTeamIds.has(row.team.id);
+    return React.createElement("div", {
+      key: row.team.id,
+      className: "bracket-group-compact-row" + (advances ? " is-advance" : " is-eliminated")
+    }, React.createElement("span", {
     className: "bracket-group-compact-pos"
   }, pos + 1), React.createElement(FlagImg, {
     code: row.team.flag,
@@ -6910,9 +7054,10 @@ function BracketTree({
     title: row.team.name
   }), React.createElement("span", {
     className: "bracket-group-compact-team"
-  }, row.team.name), React.createElement("span", {
+    }, row.team.name), React.createElement("span", {
     className: "bracket-group-compact-diff"
-  }, row.gd > 0 ? "+" + row.gd : row.gd), React.createElement("strong", null, row.pts))))))), config.rounds.map((round, idx) => React.createElement("div", {
+    }, row.gd > 0 ? "+" + row.gd : row.gd), React.createElement("strong", null, row.pts));
+  }))))), config.rounds.map((round, idx) => React.createElement("div", {
     key: round.label,
     className: "bracket-round-label",
     style: {
@@ -7015,8 +7160,22 @@ function buildGroupTables(matches, teams, results) {
   return table;
 }
 
+function getAdvancedThirdTeamIds(matches, teams, groupTables) {
+  const advancedThirdTeamIds = new Set();
+  (matches || []).forEach(match => {
+    if (match?.phase !== 'r32') return;
+    ['homeTeamId', 'awayTeamId'].forEach(key => {
+      const team = teams?.[match[key]];
+      const groupRows = team?.group ? groupTables[team.group] || [] : [];
+      if (groupRows[2]?.team?.id === team?.id) advancedThirdTeamIds.add(team.id);
+    });
+  });
+  return advancedThirdTeamIds;
+}
+
 function GroupTablesPanel({ matches, teams, results }) {
   const tables = useMemo(() => buildGroupTables(matches, teams, results), [matches, teams, results]);
+  const advancedThirdTeamIds = useMemo(() => getAdvancedThirdTeamIds(matches, teams, tables), [matches, teams, tables]);
   return React.createElement("aside", { className: "bracket-group-tables", "aria-label": "Tabele grup" },
     React.createElement("div", { className: "bracket-group-tables-head" },
       React.createElement("h3", null, "Tabele grup"),
@@ -7034,9 +7193,11 @@ function GroupTablesPanel({ matches, teams, results }) {
             React.createElement("span", null, "+/-"),
             React.createElement("span", null, "PKT")
           ),
-          rows.map((row, idx) => React.createElement("div", {
+          rows.map((row, idx) => {
+            const advances = idx < 2 || advancedThirdTeamIds.has(row.team.id);
+            return React.createElement("div", {
             key: row.team.id,
-            className: "bracket-group-table-row" + (idx < 2 ? " is-advance" : idx === 2 ? " is-third" : "")
+            className: "bracket-group-table-row" + (advances ? " is-advance" : " is-eliminated") + (idx === 2 ? " is-third" : "")
           },
             React.createElement("span", { className: "bracket-group-pos" }, idx + 1),
             React.createElement("span", { className: "bracket-group-team" },
@@ -7046,7 +7207,8 @@ function GroupTablesPanel({ matches, teams, results }) {
             React.createElement("span", null, row.p),
             React.createElement("span", null, row.gd > 0 ? "+" + row.gd : row.gd),
             React.createElement("strong", null, row.pts)
-          ))
+          );
+          })
         )
       );
     })
@@ -7098,8 +7260,9 @@ function BottomNav({
   const moveFrame = useRef(0);
   const selectTimer = useRef(0);
   const lastSelectAt = useRef(0);
-  const activeIdx = Math.max(0, tabs.findIndex(t => t.k === activeTab));
-  const visualIdx = dragging && previewIdx !== null ? previewIdx : activeIdx;
+  const matchedActiveIdx = tabs.findIndex(t => t.k === activeTab);
+  const activeIdx = matchedActiveIdx >= 0 ? matchedActiveIdx : 0;
+  const visualIdx = dragging && previewIdx !== null ? previewIdx : matchedActiveIdx;
   const scrollPageTop = useCallback(() => {
     const behavior = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
     window.scrollTo({ top: 0, left: 0, behavior });
@@ -7125,8 +7288,12 @@ function BottomNav({
   // Dopasowanie po zmianie zakładki i rozmiaru ekranu.
   useEffect(() => {
     if (dragging) return;
+    if (matchedActiveIdx < 0) {
+      setDrop(d => d.width === 0 ? d : { ...d, width: 0 });
+      return;
+    }
     const update = () => {
-      const p = positionFor(activeIdx);
+      const p = positionFor(matchedActiveIdx);
       if (p) setDrop(p);
     };
     const frame = requestAnimationFrame(update);
@@ -7135,7 +7302,7 @@ function BottomNav({
       cancelAnimationFrame(frame);
       window.removeEventListener('resize', update);
     };
-  }, [activeIdx, tabs.length, positionFor, dragging]);
+  }, [matchedActiveIdx, tabs.length, positionFor, dragging]);
   const idxFromX = useCallback(clientX => {
     const track = trackRef.current;
     if (!track) return activeIdx;
@@ -7285,10 +7452,9 @@ function BottomNav({
     if (moveFrame.current) cancelAnimationFrame(moveFrame.current);
     if (selectTimer.current) clearTimeout(selectTimer.current);
   }, []);
-  const visualTab = tabs[visualIdx];
-  const isAdminVisual = visualTab && visualTab.k === 'admin';
   return React.createElement("nav", {
-    className: "bottom-nav"
+    className: "bottom-nav",
+    "aria-label": "Główna nawigacja"
   }, React.createElement("div", {
     className: "nav-track",
     ref: trackRef,
@@ -7301,10 +7467,7 @@ function BottomNav({
     style: {
       left: drop.left + 'px',
       width: drop.width + 'px',
-      ...(isAdminVisual ? {
-        background: 'linear-gradient(145deg,rgba(160,120,255,.40),rgba(124,58,237,.20))',
-        borderColor: 'rgba(170,130,255,.5)'
-      } : {})
+      opacity: visualIdx < 0 ? 0 : undefined
     }
   }), tabs.map((t, i) => {
     const visuallyActive = visualIdx === i;
@@ -7314,16 +7477,11 @@ function BottomNav({
       "data-nav-index": i,
       className: visuallyActive ? 'active' : '',
       "aria-current": visuallyActive ? 'page' : undefined,
+      "aria-label": t.l,
       onClick: e => onNavClick(e, t.k),
-      style: t.k === 'admin' && visuallyActive ? {
-        color: '#ddd1ff'
-      } : {}
     }, React.createElement(NavIcon, {
       name: t.i,
-      size: 20,
-      style: t.k === 'admin' && visuallyActive ? {
-        color: '#ddd1ff'
-      } : {}
+      size: 20
     }), React.createElement("span", {
       className: "nav-label"
     }, t.l));
@@ -7362,22 +7520,6 @@ function Mundial2026() {
     } catch (e) {}
     setActivePlayerState(id);
   }, []);
-  const [theme, setTheme] = useState(() => {
-    try {
-      const stored = localStorage.getItem('wc2026:theme');
-      if (stored === 'light' || stored === 'dark' || stored === 'auto') return stored;
-    } catch (e) {}
-    return 'dark';
-  });
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    document.documentElement.style.colorScheme = theme;
-    try {
-      localStorage.setItem('wc2026:theme', theme);
-    } catch (e) {}
-    const themeMeta = document.querySelector('meta[name="theme-color"]');
-    if (themeMeta) themeMeta.setAttribute('content', theme === 'light' ? '#f2f2f7' : '#0d2b4a');
-  }, [theme]);
   const [activeTab, setActiveTab] = useState('matches');
   useEffect(() => {
     const root = document.documentElement;
@@ -7486,27 +7628,27 @@ function Mundial2026() {
     if (!activePlayer) return;
     const pl = (Array.isArray(players) ? players : []).find(p => p.id === activePlayer);
     if (pl && pl.pinHash && hashPin(pin) !== pl.pinHash) {
-      onErr && onErr('Błędny PIN');
+      onErr && onErr('Wprowadzony PIN jest nieprawidłowy.');
       return;
     }
     try {
       await setPredictionChild(`${activePlayer}:${matchId}`, payload);
       onSuccess && onSuccess();
     } catch (e) {
-      onErr && onErr('Nie udało się zapisać. Sprawdź połączenie.');
+      onErr && onErr('Nie udało się zapisać typu. Sprawdź połączenie i spróbuj ponownie.');
     }
   }, [activePlayer, players, setPredictionChild]);
   const handleSaveSpecial = useCallback(async (playerId, payload, pin, onErr, onSuccess) => {
     const pl = (Array.isArray(players) ? players : []).find(p => p.id === playerId);
     if (pl && pl.pinHash && hashPin(pin) !== pl.pinHash) {
-      onErr && onErr('Błędny PIN');
+      onErr && onErr('Wprowadzony PIN jest nieprawidłowy.');
       return;
     }
     try {
       await setSpecialChild(playerId, payload);
       onSuccess && onSuccess();
     } catch (e) {
-      onErr && onErr('Nie udało się zapisać. Sprawdź połączenie.');
+      onErr && onErr('Nie udało się zapisać typów specjalnych. Sprawdź połączenie i spróbuj ponownie.');
     }
   }, [players, setSpecialChild]);
   const handleSaveResult = useCallback(async (matchId, payload) => {
@@ -7583,10 +7725,6 @@ function Mundial2026() {
     k: 'compare',
     l: 'Podgląd',
     i: 'eye'
-  }] : []), ...(adminUnlocked ? [{
-    k: 'admin',
-    l: 'Wyniki',
-    i: 'settings'
   }] : [])], [compareOn, adminUnlocked]);
   const safeTeams = useMemo(() => {
     const init = INITIAL_TEAMS_CACHE;
@@ -7625,25 +7763,25 @@ function Mundial2026() {
     if (toastTimer.current) clearTimeout(toastTimer.current);
   }, []);
   const onSavePredictionCb = useCallback((id, p, pin, onErr) => {
-    handleSavePrediction(id, p, pin, onErr, () => showToast('Typ zapisany'));
+    handleSavePrediction(id, p, pin, onErr, () => showToast('Typ został zapisany.'));
   }, [handleSavePrediction, showToast]);
   const onSaveSpecialCb = useCallback((id, p, pin, onErr) => {
-    handleSaveSpecial(id, p, pin, onErr, () => showToast('Typy specjalne zapisane'));
+    handleSaveSpecial(id, p, pin, onErr, () => showToast('Typy specjalne zostały zapisane.'));
   }, [handleSaveSpecial, showToast]);
   const onSaveResultCb = useCallback(async (id, p) => {
     try {
       await handleSaveResult(id, p);
-      showToast('Wynik zapisany');
+      showToast('Wynik został zapisany.');
     } catch (e) {
-      showToast('Nie udało się zapisać wyniku');
+      showToast('Nie udało się zapisać wyniku. Spróbuj ponownie.');
     }
   }, [handleSaveResult, showToast]);
   const onUpdateTeamCb = useCallback(async (id, a, b) => {
     try {
       await handleUpdateTeam(id, a, b);
-      showToast(id.startsWith('M') ? 'Para meczu zapisana' : 'Drużyna zapisana');
+      showToast(id.startsWith('M') ? 'Para meczu została zapisana.' : 'Drużyna została zapisana.');
     } catch (e) {
-      showToast('Nie udało się zapisać zmian');
+      showToast('Nie udało się zapisać zmian. Spróbuj ponownie.');
     }
   }, [handleUpdateTeam, showToast]);
   useEffect(() => {
@@ -7666,8 +7804,7 @@ function Mundial2026() {
   return React.createElement("div", {
     className: "min-h-screen pitch-bg"
   }, React.createElement("header", {
-    className: "app-header",
-    style: {background: "linear-gradient(160deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%), rgba(14,20,35,0.55)", backdropFilter: "blur(12px) saturate(150%)", WebkitBackdropFilter: "blur(12px) saturate(150%)", borderBottom: "1px solid rgba(255,255,255,0.12)", boxShadow: "0 1px 0 rgba(255,255,255,0.10), 0 4px 24px rgba(0,0,0,0.40)"}
+    className: "app-header"
   }, React.createElement("div", {
     className: "logo"
   }, React.createElement("div", {
@@ -7700,19 +7837,18 @@ function Mundial2026() {
   }, activePlayerData.name) : React.createElement("span", {
     className: "profile-button-label"
   }, "Zaloguj si\u0119")), React.createElement("button", {
-    className: "players-btn",
+    className: `players-btn admin-panel-btn${activeTab === 'admin' || adminLoginOpen ? ' is-active' : ''}`,
     onClick: () => {
       setLoginModal(false);
       setPlayersModal(false);
-      if (adminUnlocked) setActiveTab('admin');
+      if (adminUnlocked) {
+        setActiveTab('admin');
+        scrollAppToTop();
+      }
       else setAdminLoginOpen(true);
     },
-    title: "Panel admina (wyniki)",
-    "aria-label": "Panel admina (wyniki)",
-    style: {
-      background: activeTab === 'admin' || adminLoginOpen ? 'rgba(124,58,237,.3)' : 'rgba(0,0,0,.2)',
-      borderColor: activeTab === 'admin' || adminLoginOpen ? '#a78bfa' : 'rgba(255,255,255,.25)'
-    }
+    title: "Panel administratora (wyniki)",
+    "aria-label": "Panel administratora (wyniki)"
   }, React.createElement(NavIcon, {
     name: "settings",
     size: 17
@@ -7731,7 +7867,7 @@ function Mundial2026() {
   }, React.createElement(Icon, {
     name: "download",
     size: 15
-  }), "Zainstaluj aplikacj\u0119"), React.createElement("p", null, "Dodaj do ekranu g\u0142\xF3wnego i typuj jak w natywnej apce!")), React.createElement("button", {
+  }), "Zainstaluj aplikacj\u0119"), React.createElement("p", null, "Dodaj aplikacj\u0119 do ekranu pocz\u0105tkowego, aby szybciej do niej wraca\u0107.")), React.createElement("button", {
     onClick: doInstall
   }, "Zainstaluj")), safePlayers.length === 0 && activeTab !== 'admin' && React.createElement("div", {
     className: "bg-amber-50 border border-amber-300 rounded-xl p-5 mb-4 text-center app-note app-note--warning app-note--with-actions app-note--center"
@@ -7750,7 +7886,7 @@ function Mundial2026() {
   }, React.createElement(Icon, {
     name: "plus",
     size: 18
-  }), "Dodaj pierwszego gracza")), React.createElement("div", {
+  }), "Dodaj pierwszego uczestnika")), React.createElement("div", {
     className: "tab-view",
     key: activeTab
   }, activeTab === 'matches' && React.createElement(MatchesView, {
@@ -7843,7 +7979,7 @@ function Mundial2026() {
   }), React.createElement(Modal, {
     open: adminLoginOpen && !adminUnlocked,
     onClose: () => setAdminLoginOpen(false),
-    title: adminPasswordHash ? "Panel administratora" : "Ustaw hasło admina",
+    title: adminPasswordHash ? "Panel administratora" : "Ustaw hasło administratora",
     maxWidth: "max-w-sm",
     panelClassName: "login-modal-sheet",
     overlayClassName: "profile-modal-overlay"
@@ -7854,13 +7990,15 @@ function Mundial2026() {
         setAdminUnlocked(true);
         setAdminLoginOpen(false);
         setActiveTab('admin');
-      } else onErr('Złe hasło');
+        scrollAppToTop();
+      } else onErr('Hasło administratora jest nieprawidłowe.');
     },
     onSetPassword: pwd => {
       setAdminPasswordHash(hashPwd(pwd));
       setAdminUnlocked(true);
       setAdminLoginOpen(false);
       setActiveTab('admin');
+      scrollAppToTop();
     }
   })), React.createElement(PlayersManager, {
     open: playersModal,
