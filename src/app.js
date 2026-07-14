@@ -2731,6 +2731,11 @@ function hueDistance(h1, h2) {
 }
 const FLAG_HUE_MIN_DISTANCE = 35;
 const FLAG_COLORS_EMPTY = { colors: [], hasWhite: false };
+function flagGradientRgba(rgb, alpha) {
+  const [, saturation, lightness] = rgbToHsl(rgb);
+  const safeAlpha = lightness > 0.84 && saturation < 0.18 ? alpha * 0.58 : alpha;
+  return `rgba(${rgb}, ${Number(safeAlpha.toFixed(3))})`;
+}
 function useFlagGradient(homeFlag, awayFlag) {
   const [colors, setColors] = React.useState({ home: FLAG_COLORS_EMPTY, away: FLAG_COLORS_EMPTY });
   const homeCode = normalizeFlagValue(homeFlag).code;
@@ -2757,7 +2762,7 @@ function useFlagGradient(homeFlag, awayFlag) {
       awayRgb = hslToRgbStr(homeHue + 130, Math.max(s, 0.45), Math.min(Math.max(l, 0.35), 0.6));
     }
   }
-  return `linear-gradient(115deg, rgba(${homeRgb}, 0.24) 0%, rgba(${awayRgb}, 0.24) 100%)`;
+  return `linear-gradient(115deg, ${flagGradientRgba(homeRgb, 0.26)} 0%, ${flagGradientRgba(homeRgb, 0.22)} 25%, ${flagGradientRgba(awayRgb, 0.22)} 75%, ${flagGradientRgba(awayRgb, 0.26)} 100%)`;
 }
 function FlagImg({
   code,
@@ -2774,9 +2779,11 @@ function FlagImg({
   const src = c ? `https://cdn.jsdelivr.net/gh/HatScripts/circle-flags@gh-pages/flags/${c}.svg` : '';
   const showImage = Boolean(src) && !err;
   const fallbackIsEmoji = !c;
+  const pixelRatio = typeof window !== 'undefined' && window.devicePixelRatio ? Math.min(3, Math.max(2, Math.ceil(window.devicePixelRatio))) : 2;
+  const intrinsicSize = Math.round(size * pixelRatio);
   return React.createElement("span", {
     title: title || fallback,
-    className: className,
+    className: `flag-avatar${className ? ` ${className}` : ''}`,
     style: {
       width: size,
       height: size,
@@ -2793,15 +2800,18 @@ function FlagImg({
     }
   }, showImage ? React.createElement("img", {
     src: src,
-    width: size,
-    height: size,
+    width: intrinsicSize,
+    height: intrinsicSize,
     style: {
       width: '100%',
       height: '100%',
       display: 'block',
       borderRadius: '50%',
       boxShadow: 'none',
-      filter: 'none'
+      filter: 'none',
+      imageRendering: 'auto',
+      objectFit: 'cover',
+      transform: 'translateZ(0)'
     },
     onError: () => setErr(true),
     alt: fallback,
@@ -3038,6 +3048,9 @@ const MatchCard = React.memo(function MatchCard({
     const updateOverflow = () => {
       if (expanded) {
         document.querySelectorAll('.match-final-result-card .match-final-result-name').forEach(el => {
+          el.classList.toggle('is-overflowing', el.scrollWidth > el.clientWidth + 1);
+        });
+        document.querySelectorAll('.match-prediction-team-name').forEach(el => {
           el.classList.toggle('is-overflowing', el.scrollWidth > el.clientWidth + 1);
         });
       }
@@ -3290,6 +3303,7 @@ const MatchCard = React.memo(function MatchCard({
     size: 30,
     title: home.name
   }), React.createElement("span", {
+    className: "match-prediction-team-name",
     style: {
       display: 'block',
       width: '100%',
@@ -3344,6 +3358,7 @@ const MatchCard = React.memo(function MatchCard({
     size: 30,
     title: away.name
   }), React.createElement("span", {
+    className: "match-prediction-team-name",
     style: {
       display: 'block',
       width: '100%',
@@ -3587,7 +3602,6 @@ function NextMatchCountdown({ matches, teams, predictions, players, activePlayer
     : [];
   if (!displayMatches.length) return null;
   const allPlayers = Array.isArray(players) ? players : [];
-  const nameStyle = { fontSize: 13, fontWeight: 700, color: 'var(--label-1)', whiteSpace: 'nowrap' };
   const pad = n => String(n).padStart(2, '0');
   const renderPanel = match => {
     const matchStart = new Date(match.date).getTime();
@@ -3619,60 +3633,53 @@ function NextMatchCountdown({ matches, teams, predictions, players, activePlayer
           e.preventDefault();
           toggleExpanded();
         }
-      },
-      style: {
-        background: 'var(--glass-1)',
-        borderRadius: 22,
-        padding: '11px 15px',
-        marginBottom: 12,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'stretch',
-        gap: 12
       }
     }, React.createElement("div", {
-      className: "next-match-summary",
-      style: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: 12
-      }
+      className: "next-match-summary"
     }, React.createElement("div", {
-      style: { minWidth: 0 }
+      className: "next-match-card-head"
     }, React.createElement("div", {
-      style: { fontSize: 10, fontWeight: 800, letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--label-3)', marginBottom: 5 }
-    }, "Następny mecz"), React.createElement("div", {
-      style: { display: 'flex', alignItems: 'center', gap: 7, minWidth: 0 }
+      className: "next-match-kicker-row"
     }, React.createElement("span", {
-      className: "next-match-team-name",
-      style: nameStyle
-    }, home?.name || 'TBD'), React.createElement(FlagImg, { code: home?.flag, size: 20, title: home?.name }), React.createElement("span", {
-      style: { fontSize: 11, color: 'var(--label-3)', flexShrink: 0 }
-    }, "vs"), React.createElement(FlagImg, { code: away?.flag, size: 20, title: away?.name }), React.createElement("span", {
-      className: "next-match-team-name",
-      style: nameStyle
-    }, away?.name || 'TBD')), React.createElement("div", {
-      style: { fontSize: 11, color: 'var(--label-3)', marginTop: 4 }
-    }, formatDate(match.date))), React.createElement("div", {
-      style: {
-        fontFamily: "'Bebas Neue', sans-serif",
-        fontSize: 32,
-        lineHeight: 1,
-        letterSpacing: '.03em',
-        color: 'var(--label-1)',
-        whiteSpace: 'nowrap',
-        fontVariantNumeric: 'tabular-nums',
-        flexShrink: 0
-      },
+      className: "next-match-kicker"
+    }, "Następny mecz")), React.createElement("span", {
+      className: "next-match-chevron",
+      "aria-hidden": true
+    }, React.createElement(Icon, {
+      name: expanded ? 'chevup' : 'chevdown',
+      size: 18
+    }))), React.createElement("div", {
+      className: "next-match-board"
+    }, React.createElement("span", {
+      className: "next-match-team is-home"
+    }, React.createElement(FlagImg, { code: home?.flag, size: 26, title: home?.name }), React.createElement("span", {
+      className: "next-match-team-name"
+    }, home?.name || 'TBD')), React.createElement("div", {
+      className: "next-match-center"
+    }, React.createElement("div", {
+      className: "next-match-clock",
       "aria-label": `Do rozpoczęcia: ${clock}`
-    }, clock)), expanded && React.createElement("div", {
+    }, React.createElement("strong", null, clock))), React.createElement("span", {
+      className: "next-match-team is-away"
+    }, React.createElement(FlagImg, { code: away?.flag, size: 26, title: away?.name }), React.createElement("span", {
+      className: "next-match-team-name"
+    }, away?.name || 'TBD')))), expanded && React.createElement("div", {
       className: "next-match-details compare-view"
     }, React.createElement("div", {
       className: "next-match-predictions-card"
     }, React.createElement("div", {
       className: "compare-player-list-title next-match-prediction-head"
-    }, React.createElement("span", null, predictionTitle), React.createElement("span", null, match.num ? `#${match.num}` : match.id)), visiblePlayers.length ? React.createElement("div", {
+    }, React.createElement("span", null, predictionTitle), React.createElement("span", {
+      className: "next-match-head-meta"
+    }, React.createElement("span", null, React.createElement(Icon, {
+      name: "calendar",
+      size: 11
+    }), formatDate(match.date)), match.city && React.createElement("span", null, React.createElement(Icon, {
+      name: "mappin",
+      size: 11
+    }), match.city), React.createElement("span", {
+      className: "next-match-head-number"
+    }, match.num ? `#${match.num}` : match.id))), visiblePlayers.length ? React.createElement("div", {
       className: "compare-player-list next-match-player-picks"
     }, visiblePlayers.map(player => {
       const pick = predictions && predictions[`${player.id}:${match.id}`];
@@ -3712,15 +3719,7 @@ function NextMatchCountdown({ matches, teams, predictions, players, activePlayer
       }, pick.penWinner ? getTeamAbbr(penaltyTeam) : '')));
     })) : React.createElement("div", {
       className: "next-match-no-players"
-    }, "Brak uczestnik\u00F3w")), React.createElement("div", {
-      className: "next-match-meta-row"
-    }, React.createElement("span", null, React.createElement(Icon, {
-      name: "calendar",
-      size: 11
-    }), formatDate(match.date)), match.city && React.createElement("span", null, React.createElement(Icon, {
-      name: "mappin",
-      size: 11
-    }), match.city))));
+    }, "Brak uczestnik\u00F3w"))));
   };
   return React.createElement(React.Fragment, null, displayMatches.map(renderPanel));
 }
@@ -3923,17 +3922,6 @@ function SpecialsView({
   const [pin, setPin] = useState('');
   const [pinErr, setPinErr] = useState('');
   const [validErr, setValidErr] = useState('');
-  const [draggingTeamId, setDraggingTeamId] = useState(null);
-  const [dragOverTeamId, setDragOverTeamId] = useState(null);
-  const [isOrderSettling, setIsOrderSettling] = useState(false);
-  const touchDragRef = useRef({
-    teamId: null,
-    pointerId: null,
-    startX: 0,
-    startY: 0,
-    activated: false,
-    holdTimer: 0
-  });
   useEffect(() => {
     setDraft(specialPredictions[activePlayerId] || {
       groupOrders: {},
@@ -3976,15 +3964,13 @@ function SpecialsView({
   const activePl = players && players.find && players.find(p => p.id === activePlayerId);
   const needsPin = !!(activePl && activePl.pinHash);
   const teamOptions = useMemo(() => Object.values(teams).filter(Boolean).sort((a, b) => a.name.localeCompare(b.name)), [teams]);
-  const reorderGroup = (g, movedId, targetId) => {
-    if (!movedId || !targetId || movedId === targetId) return;
+  const moveGroupTeam = (g, teamId, direction) => {
     setDraft(d => {
       const order = normalizedGroupOrder(g, d.groupOrders[g] || []);
-      const from = order.indexOf(movedId);
-      const to = order.indexOf(targetId);
-      if (from < 0 || to < 0) return d;
-      order.splice(from, 1);
-      order.splice(to, 0, movedId);
+      const from = order.indexOf(teamId);
+      const to = from + direction;
+      if (from < 0 || to < 0 || to >= order.length) return d;
+      [order[from], order[to]] = [order[to], order[from]];
       return {
         ...d,
         groupOrders: {
@@ -3993,79 +3979,6 @@ function SpecialsView({
         }
       };
     });
-  };
-  const clearDragState = () => {
-    if (touchDragRef.current.holdTimer) clearTimeout(touchDragRef.current.holdTimer);
-    setDraggingTeamId(null);
-    setDragOverTeamId(null);
-    touchDragRef.current = {
-      teamId: null,
-      pointerId: null,
-      startX: 0,
-      startY: 0,
-      activated: false,
-      holdTimer: 0
-    };
-  };
-  const settleDroppedOrder = () => {
-    setIsOrderSettling(true);
-    requestAnimationFrame(() => requestAnimationFrame(() => setIsOrderSettling(false)));
-  };
-  const onTouchDragStart = (e, teamId) => {
-    if (tournamentLocked || specialsLocked || e.pointerType === 'mouse') return;
-    const item = e.currentTarget;
-    const pointerId = e.pointerId;
-    const drag = {
-      teamId,
-      pointerId,
-      startX: e.clientX,
-      startY: e.clientY,
-      activated: false,
-      holdTimer: 0
-    };
-    drag.holdTimer = setTimeout(() => {
-      if (touchDragRef.current !== drag) return;
-      drag.activated = true;
-      setDraggingTeamId(teamId);
-      setDragOverTeamId(teamId);
-      if (item.setPointerCapture) {
-        try {
-          item.setPointerCapture(pointerId);
-        } catch (_) {}
-      }
-    }, 450);
-    touchDragRef.current = drag;
-  };
-  const groupDropTargetAt = (list, clientY) => {
-    const items = list ? Array.from(list.querySelectorAll('[data-order-team-id]')) : [];
-    if (!list || !items.length) return null;
-    const rect = list.getBoundingClientRect();
-    const slotHeight = rect.height / items.length;
-    const targetIndex = Math.max(0, Math.min(items.length - 1, Math.floor((clientY - rect.top) / slotHeight)));
-    return items[targetIndex]?.dataset.orderTeamId || null;
-  };
-  const onTouchDragMove = e => {
-    const drag = touchDragRef.current;
-    if (!drag.teamId || drag.pointerId !== e.pointerId) return;
-    if (!drag.activated && Math.hypot(e.clientX - drag.startX, e.clientY - drag.startY) > 8) {
-      clearDragState();
-      return;
-    }
-    if (!drag.activated) return;
-    if (e.cancelable) e.preventDefault();
-    const list = e.currentTarget.closest('.specials-order-list');
-    setDragOverTeamId(groupDropTargetAt(list, e.clientY) || drag.teamId);
-  };
-  const onTouchDragEnd = e => {
-    const drag = touchDragRef.current;
-    if (!drag.teamId || drag.pointerId !== e.pointerId) return;
-    const list = e.currentTarget.closest('.specials-order-list');
-    const targetId = groupDropTargetAt(list, e.clientY) || dragOverTeamId;
-    if (drag.activated && targetId) {
-      settleDroppedOrder();
-      reorderGroup(activeGroup, drag.teamId, targetId);
-    }
-    clearDragState();
   };
   const myScores = useMemo(() => scoreSpecials(mine, specialResults, scoringSettings), [mine, specialResults, scoringSettings]);
   const hasResults = !!(specialResults?.champion || specialResults?.topScorer || Object.keys(specialResults?.groupOrders || {}).length > 0);
@@ -4114,41 +4027,20 @@ function SpecialsView({
     onSelect: setActiveGroup,
     btnClass: 'selection-tile shrink-0 w-10 h-10 rounded-lg font-bold'
   })), React.createElement("div", {
-    className: `specials-order-list${isOrderSettling ? ' is-drop-settling' : ''}`,
+    className: "specials-order-list",
     role: "list",
-    "aria-label": `Kolejność drużyn w grupie ${activeGroup}`,
-    onDragOver: e => {
-      if (!draggingTeamId) return;
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'move';
-      setDragOverTeamId(groupDropTargetAt(e.currentTarget, e.clientY) || draggingTeamId);
-    },
-    onDrop: e => {
-      e.preventDefault();
-      const movedId = draggingTeamId || e.dataTransfer.getData('text/plain');
-      const targetId = groupDropTargetAt(e.currentTarget, e.clientY) || dragOverTeamId;
-      settleDroppedOrder();
-      reorderGroup(activeGroup, movedId, targetId);
-      clearDragState();
-    }
+    "aria-label": `Kolejność drużyn w grupie ${activeGroup}`
   }, normalizedGroupOrder(activeGroup, draft.groupOrders[activeGroup] || []).map((teamId, pos) => {
     const team = teams[teamId];
     if (!team) return null;
     const realOrder = specialResults?.groupOrders?.[activeGroup] || [];
     const isCorrect = hasResults && realOrder[pos] && realOrder[pos] === teamId;
     const isWrong = hasResults && realOrder[pos] && realOrder[pos] !== teamId;
-    const isDragging = draggingTeamId === teamId;
-    const isDragTarget = dragOverTeamId === teamId && draggingTeamId !== teamId;
-    const previewOrder = normalizedGroupOrder(activeGroup, draft.groupOrders[activeGroup] || []);
-    const dragFrom = previewOrder.indexOf(draggingTeamId);
-    const dragTo = previewOrder.indexOf(dragOverTeamId);
-    const shiftClass = dragFrom >= 0 && dragTo >= 0 && dragFrom < dragTo && pos > dragFrom && pos <= dragTo ? ' is-shifting-up' : dragFrom >= 0 && dragTo >= 0 && dragFrom > dragTo && pos >= dragTo && pos < dragFrom ? ' is-shifting-down' : '';
     return React.createElement("div", {
-      key: teamId,
+      key: pos,
       role: "listitem",
       "aria-label": hasResults ? `${team.name}, pozycja ${pos + 1}, ${isCorrect ? 'poprawna' : 'błędna'}` : `${team.name}, pozycja ${pos + 1}`,
-      "data-order-team-id": teamId,
-      className: `specials-order-item${isCorrect ? ' is-correct' : isWrong ? ' is-wrong' : ''}${isDragging ? ' is-dragging' : ''}${isDragTarget ? ' is-drag-target' : ''}${shiftClass}`
+      className: `specials-order-item specials-order-row${isCorrect ? ' is-correct' : isWrong ? ' is-wrong' : ''}`
     }, React.createElement("span", {
       className: "specials-position-index",
       "aria-hidden": "true"
@@ -4168,28 +4060,27 @@ function SpecialsView({
       name: "x",
       size: 15,
       className: "specials-order-result-icon"
+    })), React.createElement("div", {
+      className: "specials-order-actions"
+    }, React.createElement("button", {
+      type: "button",
+      className: "specials-order-move-button",
+      onClick: () => moveGroupTeam(activeGroup, teamId, -1),
+      disabled: tournamentLocked || specialsLocked || pos === 0,
+      "aria-label": `Przenieś ${team.name} wyżej`
+    }, React.createElement(Icon, {
+      name: "chevup",
+      size: 15
     })), React.createElement("button", {
       type: "button",
-      className: "specials-order-drag-handle",
-      draggable: !(tournamentLocked || specialsLocked),
-      disabled: tournamentLocked || specialsLocked,
-      "aria-label": `Przytrzymaj uchwyt, aby przenieść ${team.name}`,
-      onDragStart: e => {
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/plain', teamId);
-        setDraggingTeamId(teamId);
-        setDragOverTeamId(teamId);
-      },
-      onDragEnd: clearDragState,
-      onPointerDown: e => onTouchDragStart(e, teamId),
-      onPointerMove: onTouchDragMove,
-      onPointerUp: onTouchDragEnd,
-      onPointerCancel: clearDragState,
-      onContextMenu: e => e.preventDefault()
+      className: "specials-order-move-button",
+      onClick: () => moveGroupTeam(activeGroup, teamId, 1),
+      disabled: tournamentLocked || specialsLocked || pos === 3,
+      "aria-label": `Przenieś ${team.name} niżej`
     }, React.createElement(Icon, {
-      name: "grip",
-      size: 18
-    })));
+      name: "chevdown",
+      size: 15
+    }))));
   }))), React.createElement("section", {
     className: "bg-white border border-stone-200 rounded-xl p-4"
   }, React.createElement("h3", {
@@ -4237,11 +4128,7 @@ function SpecialsView({
     className: "mb-3"
   }, React.createElement("label", {
     className: "text-xs font-semibold text-stone-700 flex items-center gap-1.5 mb-1.5"
-  }, React.createElement(Icon, {
-    name: "target",
-    size: 16,
-    className: "text-[#0d1b5e]"
-  }), "Kr\xF3l strzelc\xF3w ", React.createElement("span", {
+  }, "Kr\xF3l strzelc\xF3w ", React.createElement("span", {
     className: "text-stone-400"
   }, "(", POINTS.topScorer, " PKT)")), React.createElement(AutocompleteInput, {
     value: draft.topScorer,
@@ -4254,11 +4141,7 @@ function SpecialsView({
     disabled: tournamentLocked || specialsLocked
   })), React.createElement("div", null, React.createElement("label", {
     className: "text-xs font-semibold text-stone-700 flex items-center gap-1.5 mb-1.5"
-  }, React.createElement(Icon, {
-    name: "sparkles",
-    size: 16,
-    className: "text-amber-500"
-  }), "MVP turnieju ", React.createElement("span", {
+  }, "MVP turnieju ", React.createElement("span", {
     className: "text-stone-400"
   }, "(", POINTS.mvp, " PKT)")), React.createElement(AutocompleteInput, {
     value: draft.mvp,
@@ -6185,17 +6068,6 @@ function AdminPanel({
     groupOrders: {}
   });
   const [spGroup, setSpGroup] = useState('A');
-  const [spDraggingTeamId, setSpDraggingTeamId] = useState(null);
-  const [spDragOverTeamId, setSpDragOverTeamId] = useState(null);
-  const [isSpOrderSettling, setIsSpOrderSettling] = useState(false);
-  const spTouchDragRef = useRef({
-    teamId: null,
-    pointerId: null,
-    startX: 0,
-    startY: 0,
-    activated: false,
-    holdTimer: 0
-  });
   useEffect(() => setSpDraft(specialResults || {
     groupOrders: {}
   }), [specialResults]);
@@ -6209,15 +6081,13 @@ function AdminPanel({
     ...source,
     groupOrders: Object.fromEntries(GROUPS.map(g => [g, normalizedSpGroupOrder(g, source.groupOrders?.[g] || [])]))
   });
-  const reorderSpGroup = (g, movedId, targetId) => {
-    if (!movedId || !targetId || movedId === targetId) return;
+  const moveSpGroupTeam = (g, teamId, direction) => {
     setSpDraft(d => {
       const order = normalizedSpGroupOrder(g, d.groupOrders?.[g] || []);
-      const from = order.indexOf(movedId);
-      const to = order.indexOf(targetId);
-      if (from < 0 || to < 0) return d;
-      order.splice(from, 1);
-      order.splice(to, 0, movedId);
+      const from = order.indexOf(teamId);
+      const to = from + direction;
+      if (from < 0 || to < 0 || to >= order.length) return d;
+      [order[from], order[to]] = [order[to], order[from]];
       return {
         ...d,
         groupOrders: {
@@ -6227,87 +6097,6 @@ function AdminPanel({
       };
     });
   };
-  const clearSpDragState = () => {
-    if (spTouchDragRef.current.holdTimer) clearTimeout(spTouchDragRef.current.holdTimer);
-    setSpDraggingTeamId(null);
-    setSpDragOverTeamId(null);
-    spTouchDragRef.current = {
-      teamId: null,
-      pointerId: null,
-      startX: 0,
-      startY: 0,
-      activated: false,
-      holdTimer: 0
-    };
-  };
-  const settleSpDroppedOrder = () => {
-    setIsSpOrderSettling(true);
-    requestAnimationFrame(() => requestAnimationFrame(() => setIsSpOrderSettling(false)));
-  };
-  const onSpTouchDragStart = (e, teamId) => {
-    if (e.pointerType === 'mouse') return;
-    const item = e.currentTarget;
-    const pointerId = e.pointerId;
-    const drag = {
-      teamId,
-      pointerId,
-      startX: e.clientX,
-      startY: e.clientY,
-      activated: false,
-      holdTimer: 0
-    };
-    drag.holdTimer = setTimeout(() => {
-      if (spTouchDragRef.current !== drag) return;
-      drag.activated = true;
-      setSpDraggingTeamId(teamId);
-      setSpDragOverTeamId(teamId);
-      if (item.setPointerCapture) {
-        try {
-          item.setPointerCapture(pointerId);
-        } catch (_) {}
-      }
-    }, 450);
-    spTouchDragRef.current = drag;
-  };
-  const spGroupDropTargetAt = (list, clientY) => {
-    const items = list ? Array.from(list.querySelectorAll('[data-admin-order-team-id]')) : [];
-    if (!list || !items.length) return null;
-    const rect = list.getBoundingClientRect();
-    const slotHeight = rect.height / items.length;
-    const targetIndex = Math.max(0, Math.min(items.length - 1, Math.floor((clientY - rect.top) / slotHeight)));
-    return items[targetIndex]?.dataset.adminOrderTeamId || null;
-  };
-  const onSpTouchDragMove = e => {
-    const drag = spTouchDragRef.current;
-    if (!drag.teamId || drag.pointerId !== e.pointerId) return;
-    if (!drag.activated && Math.hypot(e.clientX - drag.startX, e.clientY - drag.startY) > 8) {
-      clearSpDragState();
-      return;
-    }
-    if (!drag.activated) return;
-    if (e.cancelable) e.preventDefault();
-    const list = e.currentTarget.closest('.specials-order-list');
-    setSpDragOverTeamId(spGroupDropTargetAt(list, e.clientY) || drag.teamId);
-  };
-  const onSpTouchDragEnd = e => {
-    const drag = spTouchDragRef.current;
-    if (!drag.teamId || drag.pointerId !== e.pointerId) return;
-    const list = e.currentTarget.closest('.specials-order-list');
-    const targetId = spGroupDropTargetAt(list, e.clientY) || spDragOverTeamId;
-    if (drag.activated && targetId) {
-      settleSpDroppedOrder();
-      reorderSpGroup(spGroup, drag.teamId, targetId);
-    }
-    clearSpDragState();
-  };
-  useEffect(() => {
-    const frame = requestAnimationFrame(() => {
-      document.querySelectorAll('.admin-specials-group-order-panel .specials-team-name').forEach(el => {
-        el.classList.toggle('is-overflowing', el.scrollWidth > el.clientWidth + 1);
-      });
-    });
-    return () => cancelAnimationFrame(frame);
-  }, [spGroup, spDraft.groupOrders]);
   const tabs = [{
     k: 'teams',
     l: 'Drużyny'
@@ -6437,8 +6226,10 @@ function AdminPanel({
   }, React.createElement("div", {
     className: "specials-order-header"
   }, React.createElement("h4", {
-    className: "specials-order-title font-display text-base"
-  }, "Kolejno\u015B\u0107 w grupach")), React.createElement("div", {
+    className: "specials-order-title font-display text-lg tracking-wide text-stone-900"
+  }, "Kolejno\u015B\u0107 w grupach"), React.createElement("p", {
+    className: "specials-order-scoring text-xs text-stone-500"
+  }, "Oficjalna kolejno\u015B\u0107 dru\u017Cyn po fazie grupowej")), React.createElement("div", {
     className: "group-order-filter-row pill-scroll-safe flex gap-1 p-2 mb-3",
     style: { overflow: 'hidden' }
   }, React.createElement(InfiniteGroupFilter, {
@@ -6446,37 +6237,16 @@ function AdminPanel({
     onSelect: setSpGroup,
     btnClass: 'selection-tile shrink-0 w-10 h-10 rounded-lg font-bold'
   })), React.createElement("div", {
-    className: `specials-order-list${isSpOrderSettling ? ' is-drop-settling' : ''}`,
+    className: "specials-order-list",
     role: "list",
-    "aria-label": `Oficjalna kolejność drużyn w grupie ${spGroup}`,
-    onDragOver: e => {
-      if (!spDraggingTeamId) return;
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'move';
-      setSpDragOverTeamId(spGroupDropTargetAt(e.currentTarget, e.clientY) || spDraggingTeamId);
-    },
-    onDrop: e => {
-      e.preventDefault();
-      const movedId = spDraggingTeamId || e.dataTransfer.getData('text/plain');
-      const targetId = spGroupDropTargetAt(e.currentTarget, e.clientY) || spDragOverTeamId;
-      settleSpDroppedOrder();
-      reorderSpGroup(spGroup, movedId, targetId);
-      clearSpDragState();
-    }
+    "aria-label": `Oficjalna kolejność drużyn w grupie ${spGroup}`
   }, normalizedSpGroupOrder(spGroup, spDraft.groupOrders?.[spGroup] || []).map((teamId, pos) => {
     const team = teams[teamId];
     if (!team) return null;
-    const isDragging = spDraggingTeamId === teamId;
-    const isDragTarget = spDragOverTeamId === teamId && spDraggingTeamId !== teamId;
-    const previewOrder = normalizedSpGroupOrder(spGroup, spDraft.groupOrders?.[spGroup] || []);
-    const dragFrom = previewOrder.indexOf(spDraggingTeamId);
-    const dragTo = previewOrder.indexOf(spDragOverTeamId);
-    const shiftClass = dragFrom >= 0 && dragTo >= 0 && dragFrom < dragTo && pos > dragFrom && pos <= dragTo ? ' is-shifting-up' : dragFrom >= 0 && dragTo >= 0 && dragFrom > dragTo && pos >= dragTo && pos < dragFrom ? ' is-shifting-down' : '';
     return React.createElement("div", {
-      key: teamId,
+      key: pos,
       role: "listitem",
-      "data-admin-order-team-id": teamId,
-      className: `specials-order-item${isDragging ? ' is-dragging' : ''}${isDragTarget ? ' is-drag-target' : ''}${shiftClass}`
+      className: "specials-order-item specials-order-row"
     }, React.createElement("span", {
       className: "specials-position-index",
       "aria-hidden": "true"
@@ -6488,32 +6258,36 @@ function AdminPanel({
       title: team.name
     }), React.createElement("span", {
       className: "specials-team-name"
-    }, team.name)), React.createElement("button", {
+    }, team.name)), React.createElement("div", {
+      className: "specials-order-actions"
+    }, React.createElement("button", {
       type: "button",
-      className: "specials-order-drag-handle",
-      draggable: true,
-      "aria-label": `Przytrzymaj uchwyt, aby przenieść ${team.name}`,
-      onDragStart: e => {
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/plain', teamId);
-        setSpDraggingTeamId(teamId);
-        setSpDragOverTeamId(teamId);
-      },
-      onDragEnd: clearSpDragState,
-      onPointerDown: e => onSpTouchDragStart(e, teamId),
-      onPointerMove: onSpTouchDragMove,
-      onPointerUp: onSpTouchDragEnd,
-      onPointerCancel: clearSpDragState,
-      onContextMenu: e => e.preventDefault()
+      className: "specials-order-move-button",
+      onClick: () => moveSpGroupTeam(spGroup, teamId, -1),
+      disabled: pos === 0,
+      "aria-label": `Przenieś ${team.name} wyżej`
     }, React.createElement(Icon, {
-      name: "grip",
-      size: 18
-    })));
+      name: "chevup",
+      size: 15
+    })), React.createElement("button", {
+      type: "button",
+      className: "specials-order-move-button",
+      onClick: () => moveSpGroupTeam(spGroup, teamId, 1),
+      disabled: pos === 3,
+      "aria-label": `Przenieś ${team.name} niżej`
+    }, React.createElement(Icon, {
+      name: "chevdown",
+      size: 15
+    }))));
   }))), React.createElement("div", {
-    className: "bg-white border border-stone-200 rounded-xl p-4 space-y-2"
+    className: "specials-group-order-panel admin-specials-panel bg-white border border-stone-200 rounded-xl p-4 space-y-2"
+  }, React.createElement("div", {
+    className: "specials-order-header"
   }, React.createElement("h4", {
-    className: "font-display text-base mb-2"
-  }, "Podium"), [{
+    className: "specials-order-title font-display text-lg tracking-wide text-stone-900"
+  }, "Podium turnieju"), React.createElement("p", {
+    className: "specials-order-scoring text-xs text-stone-500"
+  }, "Oficjalne miejsca medalowe turnieju")), [{
     k: 'champion',
     l: 'Zwycięzca'
   }, {
@@ -6539,10 +6313,14 @@ function AdminPanel({
     key: t.id,
     value: t.id
   }, t.name)))))), React.createElement("div", {
-    className: "bg-white border border-stone-200 rounded-xl p-4 space-y-2"
+    className: "specials-group-order-panel admin-specials-panel bg-white border border-stone-200 rounded-xl p-4 space-y-2"
+  }, React.createElement("div", {
+    className: "specials-order-header"
   }, React.createElement("h4", {
-    className: "font-display text-base mb-2"
-  }, "Nagrody indywidualne"), React.createElement("div", null, React.createElement("label", {
+    className: "specials-order-title font-display text-lg tracking-wide text-stone-900"
+  }, "Nagrody indywidualne"), React.createElement("p", {
+    className: "specials-order-scoring text-xs text-stone-500"
+  }, "Oficjalni laureaci nagr\xF3d turniejowych")), React.createElement("div", null, React.createElement("label", {
     className: "text-xs font-semibold text-stone-700"
   }, "Kr\xF3l strzelc\xF3w"), React.createElement("input", {
     value: spDraft.topScorer || '',
@@ -7262,15 +7040,7 @@ function BracketTree({
     });
   }
   const groupTables = buildGroupTables(Object.values(matchesById), teams, results);
-  const advancedThirdTeamIds = new Set();
-  Object.values(matchesById).forEach(match => {
-    if (match?.phase !== 'r32') return;
-    ['homeTeamId', 'awayTeamId'].forEach(key => {
-      const team = teams[match[key]];
-      const groupRows = team?.group ? groupTables[team.group] || [] : [];
-      if (groupRows[2]?.team?.id === team?.id) advancedThirdTeamIds.add(team.id);
-    });
-  });
+  const advancedThirdTeamIds = getAdvancedThirdTeamIds(Object.values(matchesById), teams, groupTables);
   const groupCardH = 88;
   const groupGap = 6;
   return React.createElement("section", {
@@ -7303,10 +7073,12 @@ function BracketTree({
     className: "bracket-group-compact-stat-head"
   }, "PKT")), React.createElement("div", {
     className: "bracket-group-compact-rows"
-  }, (groupTables[group] || []).map((row, pos) => React.createElement("div", {
-    key: row.team.id,
-    className: "bracket-group-compact-row" + (pos < 2 || advancedThirdTeamIds.has(row.team.id) ? " is-advance" : "")
-  }, React.createElement("span", {
+  }, (groupTables[group] || []).map((row, pos) => {
+    const advances = pos < 2 || advancedThirdTeamIds.has(row.team.id);
+    return React.createElement("div", {
+      key: row.team.id,
+      className: "bracket-group-compact-row" + (advances ? " is-advance" : " is-eliminated")
+    }, React.createElement("span", {
     className: "bracket-group-compact-pos"
   }, pos + 1), React.createElement(FlagImg, {
     code: row.team.flag,
@@ -7314,9 +7086,10 @@ function BracketTree({
     title: row.team.name
   }), React.createElement("span", {
     className: "bracket-group-compact-team"
-  }, row.team.name), React.createElement("span", {
+    }, row.team.name), React.createElement("span", {
     className: "bracket-group-compact-diff"
-  }, row.gd > 0 ? "+" + row.gd : row.gd), React.createElement("strong", null, row.pts))))))), config.rounds.map((round, idx) => React.createElement("div", {
+    }, row.gd > 0 ? "+" + row.gd : row.gd), React.createElement("strong", null, row.pts));
+  }))))), config.rounds.map((round, idx) => React.createElement("div", {
     key: round.label,
     className: "bracket-round-label",
     style: {
@@ -7419,8 +7192,22 @@ function buildGroupTables(matches, teams, results) {
   return table;
 }
 
+function getAdvancedThirdTeamIds(matches, teams, groupTables) {
+  const advancedThirdTeamIds = new Set();
+  (matches || []).forEach(match => {
+    if (match?.phase !== 'r32') return;
+    ['homeTeamId', 'awayTeamId'].forEach(key => {
+      const team = teams?.[match[key]];
+      const groupRows = team?.group ? groupTables[team.group] || [] : [];
+      if (groupRows[2]?.team?.id === team?.id) advancedThirdTeamIds.add(team.id);
+    });
+  });
+  return advancedThirdTeamIds;
+}
+
 function GroupTablesPanel({ matches, teams, results }) {
   const tables = useMemo(() => buildGroupTables(matches, teams, results), [matches, teams, results]);
+  const advancedThirdTeamIds = useMemo(() => getAdvancedThirdTeamIds(matches, teams, tables), [matches, teams, tables]);
   return React.createElement("aside", { className: "bracket-group-tables", "aria-label": "Tabele grup" },
     React.createElement("div", { className: "bracket-group-tables-head" },
       React.createElement("h3", null, "Tabele grup"),
@@ -7438,9 +7225,11 @@ function GroupTablesPanel({ matches, teams, results }) {
             React.createElement("span", null, "+/-"),
             React.createElement("span", null, "PKT")
           ),
-          rows.map((row, idx) => React.createElement("div", {
+          rows.map((row, idx) => {
+            const advances = idx < 2 || advancedThirdTeamIds.has(row.team.id);
+            return React.createElement("div", {
             key: row.team.id,
-            className: "bracket-group-table-row" + (idx < 2 ? " is-advance" : idx === 2 ? " is-third" : "")
+            className: "bracket-group-table-row" + (advances ? " is-advance" : " is-eliminated") + (idx === 2 ? " is-third" : "")
           },
             React.createElement("span", { className: "bracket-group-pos" }, idx + 1),
             React.createElement("span", { className: "bracket-group-team" },
@@ -7450,7 +7239,8 @@ function GroupTablesPanel({ matches, teams, results }) {
             React.createElement("span", null, row.p),
             React.createElement("span", null, row.gd > 0 ? "+" + row.gd : row.gd),
             React.createElement("strong", null, row.pts)
-          ))
+          );
+          })
         )
       );
     })
@@ -8083,7 +7873,10 @@ function Mundial2026() {
     onClick: () => {
       setLoginModal(false);
       setPlayersModal(false);
-      if (adminUnlocked) setActiveTab('admin');
+      if (adminUnlocked) {
+        setActiveTab('admin');
+        scrollAppToTop();
+      }
       else setAdminLoginOpen(true);
     },
     title: "Panel administratora (wyniki)",
@@ -8229,6 +8022,7 @@ function Mundial2026() {
         setAdminUnlocked(true);
         setAdminLoginOpen(false);
         setActiveTab('admin');
+        scrollAppToTop();
       } else onErr('Hasło administratora jest nieprawidłowe.');
     },
     onSetPassword: pwd => {
@@ -8236,6 +8030,7 @@ function Mundial2026() {
       setAdminUnlocked(true);
       setAdminLoginOpen(false);
       setActiveTab('admin');
+      scrollAppToTop();
     }
   })), React.createElement(PlayersManager, {
     open: playersModal,
