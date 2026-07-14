@@ -2742,6 +2742,7 @@ function useFlagGradient(homeFlag, awayFlag) {
   const awayCode = normalizeFlagValue(awayFlag).code;
   React.useEffect(() => {
     let alive = true;
+    setColors({ home: FLAG_COLORS_EMPTY, away: FLAG_COLORS_EMPTY });
     Promise.all([getFlagColors(homeCode), getFlagColors(awayCode)]).then(([home, away]) => {
       if (alive) setColors({ home, away });
     });
@@ -3862,7 +3863,7 @@ function MatchesView({
     activePlayerId: activePlayerId,
     comparisonVisible: comparisonVisible
   }), filterPanel, visibleMatches.map(m => React.createElement(MatchCard, {
-    key: m.id,
+    key: `${m.id}:${m.homeTeamId || ''}:${m.awayTeamId || ''}`,
     match: m,
     teams: teams,
     prediction: predictions[`${activePlayerId}:${m.id}`],
