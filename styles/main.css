@@ -11284,8 +11284,20 @@ html body .matches-view .match-final-result-card .match-final-result-team .match
 /* Sharper circular flags across match cards, bracket and tables. */
 html body .flag-avatar {
   background: transparent !important;
+  border: 1px solid rgba(255,255,255,.96) !important;
+  border-radius: 50% !important;
+  box-sizing: border-box !important;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.96) !important;
   contain: paint !important;
+  clip-path: circle(50% at 50% 50%) !important;
+  overflow: hidden !important;
   transform: translateZ(0) !important;
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 99%, transparent 100%) !important;
+  mask-image: radial-gradient(circle at 50% 50%, #000 99%, transparent 100%) !important;
+  -webkit-mask-repeat: no-repeat !important;
+  mask-repeat: no-repeat !important;
+  -webkit-mask-size: 100% 100% !important;
+  mask-size: 100% 100% !important;
   -webkit-font-smoothing: antialiased !important;
 }
 
@@ -11293,10 +11305,17 @@ html body .flag-avatar > img {
   width: 100% !important;
   height: 100% !important;
   display: block !important;
+  border-radius: 50% !important;
+  clip-path: circle(50% at 50% 50%) !important;
   object-fit: cover !important;
   image-rendering: auto !important;
-  transform: translateZ(0) scale(1.015) !important;
+  transform: translateZ(0) !important;
   backface-visibility: hidden !important;
+}
+
+html body .flag-avatar:not(#__no_element_borders__):not(#__flag_avatar_ring__) {
+  border: 1px solid rgba(255,255,255,.96) !important;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.96) !important;
 }
 
 /* Bracket group tables: fade clipped team names instead of "...". */
