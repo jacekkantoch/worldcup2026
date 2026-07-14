@@ -2731,11 +2731,6 @@ function hueDistance(h1, h2) {
 }
 const FLAG_HUE_MIN_DISTANCE = 35;
 const FLAG_COLORS_EMPTY = { colors: [], hasWhite: false };
-function flagGradientRgba(rgb, alpha) {
-  const [, saturation, lightness] = rgbToHsl(rgb);
-  const safeAlpha = lightness > 0.84 && saturation < 0.18 ? alpha * 0.58 : alpha;
-  return `rgba(${rgb}, ${Number(safeAlpha.toFixed(3))})`;
-}
 function useFlagGradient(homeFlag, awayFlag) {
   const [colors, setColors] = React.useState({ home: FLAG_COLORS_EMPTY, away: FLAG_COLORS_EMPTY });
   const homeCode = normalizeFlagValue(homeFlag).code;
@@ -2763,7 +2758,7 @@ function useFlagGradient(homeFlag, awayFlag) {
       awayRgb = hslToRgbStr(homeHue + 130, Math.max(s, 0.45), Math.min(Math.max(l, 0.35), 0.6));
     }
   }
-  return `linear-gradient(115deg, ${flagGradientRgba(homeRgb, 0.26)} 0%, ${flagGradientRgba(homeRgb, 0.22)} 25%, ${flagGradientRgba(awayRgb, 0.22)} 75%, ${flagGradientRgba(awayRgb, 0.26)} 100%)`;
+  return `linear-gradient(115deg, rgba(${homeRgb}, 0.24) 0%, rgba(${awayRgb}, 0.24) 100%)`;
 }
 function FlagImg({
   code,
