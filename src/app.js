@@ -2854,29 +2854,6 @@ function FlagImg({
     }
   }, fallback));
 }
-function TeamLabel({
-  team,
-  size = 'md',
-  placeholderHint = null,
-  flagSize = null
-}) {
-  if (!team) return React.createElement("span", {
-    className: `inline-flex items-center gap-1.5 text-stone-400 italic text-${size}`
-  }, React.createElement(Icon, {
-    name: "alert",
-    size: 14
-  }), React.createElement("span", null, placeholderHint || 'TBD'));
-  const resolvedFlagSize = flagSize || (size === 'lg' ? 22 : size === 'sm' ? 16 : 18);
-  return React.createElement("span", {
-    className: `inline-flex items-center gap-2 min-w-0 text-stone-800 text-${size}`
-  }, React.createElement(FlagImg, {
-    code: team.flag,
-    size: resolvedFlagSize,
-    title: team.name
-  }), React.createElement("span", {
-    className: `${size === 'lg' ? 'font-semibold' : ''} min-w-0 truncate`
-  }, team.name));
-}
 function TeamPicker({
   value,
   onChange,
@@ -3448,7 +3425,7 @@ const MatchCard = React.memo(function MatchCard({
     className: "match-final-result-team"
   }, React.createElement("span", {
     className: "match-final-result-name"
-  }, home.name), React.createElement(FlagImg, {
+  }, getTeamAbbr(home)), React.createElement(FlagImg, {
     code: home.flag,
     size: 24,
     title: home.name
@@ -3462,7 +3439,7 @@ const MatchCard = React.memo(function MatchCard({
     title: away.name
   }), React.createElement("span", {
     className: "match-final-result-name"
-  }, away.name))), result.pensHappened && result.advancingTeam && React.createElement("div", {
+  }, getTeamAbbr(away)))), result.pensHappened && result.advancingTeam && React.createElement("div", {
     className: "match-final-result-note"
   }, React.createElement("span", null, "Awans po karnych"), React.createElement("strong", null, (result.advancingTeam === 'home' ? home : away).name)), prediction && React.createElement("div", {
     className: "match-final-user-pick"
@@ -7262,48 +7239,6 @@ function getAdvancedThirdTeamIds(matches, teams, groupTables) {
     });
   });
   return advancedThirdTeamIds;
-}
-
-function GroupTablesPanel({ matches, teams, results }) {
-  const tables = useMemo(() => buildGroupTables(matches, teams, results), [matches, teams, results]);
-  const advancedThirdTeamIds = useMemo(() => getAdvancedThirdTeamIds(matches, teams, tables), [matches, teams, tables]);
-  return React.createElement("aside", { className: "bracket-group-tables", "aria-label": "Tabele grup" },
-    React.createElement("div", { className: "bracket-group-tables-head" },
-      React.createElement("h3", null, "Tabele grup"),
-      React.createElement("span", null, "Faza grupowa")
-    ),
-    GROUPS.map(group => {
-      const rows = tables[group] || [];
-      return React.createElement("section", { key: group, className: "bracket-group-table-card" },
-        React.createElement("div", { className: "bracket-group-table-title" }, "Grupa ", group),
-        React.createElement("div", { className: "bracket-group-table" },
-          React.createElement("div", { className: "bracket-group-table-row bracket-group-table-row-head" },
-            React.createElement("span", null, "#"),
-            React.createElement("span", null, "Drużyna"),
-            React.createElement("span", null, "M"),
-            React.createElement("span", null, "+/-"),
-            React.createElement("span", null, "PKT")
-          ),
-          rows.map((row, idx) => {
-            const advances = idx < 2 || advancedThirdTeamIds.has(row.team.id);
-            return React.createElement("div", {
-            key: row.team.id,
-            className: "bracket-group-table-row" + (advances ? " is-advance" : " is-eliminated") + (idx === 2 ? " is-third" : "")
-          },
-            React.createElement("span", { className: "bracket-group-pos" }, idx + 1),
-            React.createElement("span", { className: "bracket-group-team" },
-              React.createElement(FlagImg, { code: row.team.flag, size: 14, title: row.team.name }),
-              React.createElement("span", null, row.team.name)
-            ),
-            React.createElement("span", null, row.p),
-            React.createElement("span", null, row.gd > 0 ? "+" + row.gd : row.gd),
-            React.createElement("strong", null, row.pts)
-          );
-          })
-        )
-      );
-    })
-  );
 }
 
 function TournamentBracket({
