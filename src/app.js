@@ -4870,7 +4870,35 @@ function CompareMatchToggle({
   onToggle
 }) {
   const flagGradient = useFlagGradient(home?.flag, away?.flag);
+  const toggleRef = React.useRef(null);
+  React.useEffect(() => {
+    let raf = null;
+    let ro = null;
+    const updateOverflow = () => {
+      const root = toggleRef.current;
+      if (!root) return;
+      root.querySelectorAll('.compare-match-team-name').forEach(el => {
+        el.classList.toggle('is-overflowing', el.scrollWidth > el.clientWidth + 1);
+      });
+    };
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(updateOverflow);
+    };
+    schedule();
+    window.addEventListener('resize', schedule);
+    if (typeof ResizeObserver !== 'undefined' && toggleRef.current) {
+      ro = new ResizeObserver(schedule);
+      ro.observe(toggleRef.current);
+    }
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      if (ro) ro.disconnect();
+      window.removeEventListener('resize', schedule);
+    };
+  }, [home?.name, away?.name]);
   return React.createElement("button", {
+    ref: toggleRef,
     type: "button",
     onClick: onToggle,
     "aria-expanded": isExpanded,
@@ -4882,19 +4910,25 @@ function CompareMatchToggle({
     className: "compare-match-teams"
   }, React.createElement("span", {
     className: "compare-match-team"
-  }, React.createElement(FlagImg, {
+  }, React.createElement("span", {
+    className: "compare-match-team-name"
+  }, getTeamAbbr(home)), React.createElement(FlagImg, {
     code: home?.flag,
     size: 18,
+    className: "compare-match-flag",
     title: home?.name
-  }), React.createElement("span", null, home?.name || '?')), React.createElement("span", {
+  })), React.createElement("span", {
     className: "compare-match-vs"
   }, "vs"), React.createElement("span", {
     className: "compare-match-team is-away"
   }, React.createElement(FlagImg, {
     code: away?.flag,
     size: 18,
+    className: "compare-match-flag",
     title: away?.name
-  }), React.createElement("span", null, away?.name || '?'))), React.createElement("span", {
+  }), React.createElement("span", {
+    className: "compare-match-team-name"
+  }, getTeamAbbr(away)))), React.createElement("span", {
     className: "compare-match-chevron"
   }, React.createElement(Icon, {
     name: isExpanded ? 'chevup' : 'chevdown',

@@ -6486,7 +6486,7 @@ html body .bracket-page .bracket-group-compact-head {
   border-bottom: 1px solid var(--bracket-row-sep) !important;
   color: rgba(236,244,255,.76) !important;
   font-size: 11px !important;
-  font-weight: 900 !important;
+  font-weight: 650 !important;
   line-height: 1 !important;
   letter-spacing: .04em !important;
   text-transform: uppercase !important;
@@ -7119,12 +7119,11 @@ html body .compare-match-no-result {
 html body .compare-match-toggle {
   width: 100% !important;
   min-height: 46px !important;
-  display: grid !important;
-  grid-template-columns: minmax(0, 1fr) 28px !important;
+  position: relative !important;
+  display: block !important;
   align-items: center !important;
-  gap: 10px !important;
   margin: 0 !important;
-  padding: 9px 12px !important;
+  padding: 9px 44px !important;
   border-radius: 18px !important;
   border: 1px solid rgba(255,255,255,.075) !important;
   background: var(--compare-flag-gradient, rgba(255,255,255,.04)) !important;
@@ -7155,35 +7154,63 @@ html body .compare-match-toggle:focus-visible {
 
 html body .compare-match-teams {
   min-width: 0 !important;
-  display: flex !important;
+  width: 100% !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto auto auto minmax(0, 1fr) !important;
   align-items: center !important;
-  justify-content: center !important;
-  gap: 8px !important;
+  justify-content: stretch !important;
+  column-gap: 6px !important;
   overflow: hidden !important;
 }
 
 html body .compare-match-team {
   min-width: 0 !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 6px !important;
+  display: contents !important;
   color: rgba(235,243,255,.84) !important;
   font-size: 13px !important;
   font-weight: 900 !important;
 }
 
-html body .compare-match-team > span:last-child {
+html body .compare-match-team:not(.is-away) > span:first-child,
+html body .compare-match-team.is-away > span:last-child {
   min-width: 0 !important;
+  color: rgba(235,243,255,.84) !important;
+  font-size: 13px !important;
+  font-weight: 900 !important;
   overflow: hidden !important;
-  text-overflow: ellipsis !important;
+  text-overflow: clip !important;
   white-space: nowrap !important;
 }
 
+html body .compare-match-team:not(.is-away) > span:first-child {
+  grid-column: 1 !important;
+  justify-self: end !important;
+  text-align: right !important;
+}
+
+html body .compare-match-team:not(.is-away) > .compare-match-flag {
+  grid-column: 2 !important;
+  justify-self: center !important;
+}
+
 html body .compare-match-vs {
+  grid-column: 3 !important;
+  justify-self: center !important;
   flex: 0 0 auto !important;
   color: rgba(213,226,245,.38) !important;
   font-size: 11px !important;
   font-weight: 900 !important;
+}
+
+html body .compare-match-team.is-away > .compare-match-flag {
+  grid-column: 4 !important;
+  justify-self: center !important;
+}
+
+html body .compare-match-team.is-away > span:last-child {
+  grid-column: 5 !important;
+  justify-self: start !important;
+  text-align: left !important;
 }
 
 html body .compare-match-chevron {
@@ -7192,6 +7219,10 @@ html body .compare-match-chevron {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
+  position: absolute !important;
+  right: 12px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
   border-radius: 999px !important;
   color: rgba(213,226,245,.62) !important;
   background: rgba(255,255,255,.035) !important;
@@ -7222,7 +7253,7 @@ html body .compare-match-card .compare-player-list {
 
   html body .compare-match-toggle {
     min-height: 42px !important;
-    padding: 8px 10px !important;
+    padding: 8px 40px !important;
   }
 
   html body .compare-match-team {
@@ -11290,7 +11321,6 @@ html body .matches-view .match-final-result-card .match-final-result-team .match
 }
 
 /* Preview tab: fade long names instead of showing "...". */
-html body .compare-view .compare-match-team > span:last-child,
 html body .compare-view .compare-player-name {
   min-width: 0 !important;
   max-width: 100% !important;
@@ -11304,6 +11334,34 @@ html body .compare-view .compare-player-name {
   mask-repeat: no-repeat !important;
   -webkit-mask-size: 100% 100% !important;
   mask-size: 100% 100% !important;
+}
+
+html body .compare-view .compare-match-team-name {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  font-family: var(--font-family-base) !important;
+  font-size: 13px !important;
+  font-weight: 900 !important;
+  line-height: 1.15 !important;
+  letter-spacing: 0 !important;
+  overflow: hidden !important;
+  text-overflow: clip !important;
+  white-space: nowrap !important;
+  padding-right: 0 !important;
+  padding-left: 0 !important;
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+}
+
+html body .compare-view .compare-match-team-name.is-overflowing {
+  -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 18px), transparent 100%) !important;
+  mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 18px), transparent 100%) !important;
+}
+
+/* Next match banner: give descenders enough room. */
+html body .matches-view .next-match-team-name {
+  line-height: 1.28 !important;
+  padding-bottom: 1px !important;
 }
 
 /* Bracket group tables: fade clipped team names instead of "...". */
