@@ -4648,6 +4648,11 @@ html body .bottom-nav {
   bottom: calc(14px + var(--safe-bottom)) !important;
 }
 
+/* Ukryj dolne menu, gdy otwarty jest dowolny modal (logowanie, admin, profile uzytkownikow). */
+html.modal-scroll-locked body .bottom-nav {
+  display: none !important;
+}
+
 html body {
   padding-bottom: calc(118px + var(--safe-bottom)) !important;
 }
@@ -6774,16 +6779,37 @@ html body .login-modal-content {
 
 @media (max-width: 640px), (pointer: coarse) {
 
+  /* Rezerwacja miejsca na chrome (z-index 900), które przykrywa modale
+     (z-index 50): nagłówek u góry i pasek nawigacji u dołu. Modal centruje
+     się w obszarze MIĘDZY nimi, więc nie wchodzi pod header ani pod pasek. */
+  html body {
+    --modal-chrome-top: calc(var(--safe-top, 0px) + var(--header-height, 61px) + 12px);
+    --modal-chrome-bottom: calc(var(--safe-bottom, 0px) + 94px);
+  }
+
+  /* Overlay pełnoekranowy: padding zawęża pole flex do obszaru między
+     nagłówkiem a dolnym paskiem; margin: auto na panelu centruje w tym polu. */
+  html body .profile-modal-overlay-root {
+    box-sizing: border-box !important;
+    padding-top: var(--modal-chrome-top) !important;
+    padding-bottom: var(--modal-chrome-bottom) !important;
+  }
+
   html body .profile-modal-overlay-root .login-modal-sheet,
   html body .profile-modal-overlay-root .login-modal-compact-sheet,
   html body .login-modal-sheet:not(.login-modal-compact-sheet),
   html body .admin-gate-card,
   html body .admin-gate-overlay .admin-gate-card {
-    align-self: flex-start !important;
+    /* Panele profilu, użytkowników i logowania admina wyśrodkowane w obu
+       osiach — pionowo przez align-self: center (dawniej flex-start, co
+       przypinało je do góry ekranu), poziomo przez margin: auto. Wysokość
+       ograniczona do obszaru między nagłówkiem a dolnym paskiem, więc panel
+       nie wchodzi pod chrome; nadmiar treści przewija się wewnątrz. */
+    align-self: center !important;
     width: min(calc(100% - 26px), 360px) !important;
     max-width: 360px !important;
-    max-height: calc(var(--modal-vh, 100dvh) - var(--safe-top, 0px) - var(--safe-bottom, 0px) - 24px) !important;
-    margin: 0 auto !important;
+    max-height: calc(var(--modal-vh, 100dvh) - var(--modal-chrome-top) - var(--modal-chrome-bottom)) !important;
+    margin: auto !important;
     overflow: hidden !important;
   }
 
@@ -8302,11 +8328,15 @@ html body .specials-view .specials-position-card,
 html body .specials-view input.prediction-pin-input[type="password"],
 html body .specials-view .app-control--lg,
 html body .login-modal-sheet .profile-add-btn,
-html body .login-modal-sheet .profile-choice-shell,
-html body .login-modal-sheet .profile-action-btn,
-html body .login-modal-sheet .profile-text-input,
-html body .login-modal-sheet .profile-pin-input {
+html body .login-modal-sheet .profile-choice-shell {
   border-radius: var(--curve-inset-16) !important;
+}
+
+/* Pola formularza i przyciski akcji (imię, PIN, Anuluj/Utwórz konto) w modalu logowania/dodawania — pełne zaokrąglenie (pigułka). */
+html body .login-modal-sheet .profile-text-input,
+html body .login-modal-sheet .profile-pin-input,
+html body .login-modal-sheet .profile-action-btn {
+  border-radius: var(--curve-nested-deep) !important;
 }
 
 html body .admin-tabs-shell .selection-tile,
