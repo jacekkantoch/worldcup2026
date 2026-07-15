@@ -6727,6 +6727,10 @@ html body .match-score-rule-note + .space-y-2 {
   margin-top: 8px !important;
 }
 
+html body .match-score-rule-note + .app-note.app-note--danger {
+  margin-top: 12px !important;
+}
+
 /* Redesigned penalty winner selector. */
 html body .penalty-choice-panel {
   margin: 14px 0 8px !important;
@@ -6737,6 +6741,10 @@ html body .penalty-choice-panel {
   box-shadow: inset 0 1px 0 rgba(255,255,255,.06) !important;
   backdrop-filter: blur(14px) saturate(145%) !important;
   -webkit-backdrop-filter: blur(14px) saturate(145%) !important;
+}
+
+html body .penalty-choice-panel + .app-note.app-note--danger {
+  margin-top: 12px !important;
 }
 
 html body .penalty-choice-head {
@@ -11279,39 +11287,6 @@ html body .matches-view .match-final-result-card .match-final-result-team .match
   mask-repeat: no-repeat !important;
   -webkit-mask-size: 100% 100% !important;
   mask-size: 100% 100% !important;
-}
-
-/* Sharper circular flags across match cards, bracket and tables. */
-html body .flag-avatar {
-  background: transparent !important;
-  border: 0 !important;
-  border-radius: 50% !important;
-  box-sizing: border-box !important;
-  box-shadow: none !important;
-  contain: paint !important;
-  clip-path: circle(50% at 50% 50%) !important;
-  overflow: hidden !important;
-  transform: translateZ(0) !important;
-  -webkit-mask-image: none !important;
-  mask-image: none !important;
-  -webkit-font-smoothing: antialiased !important;
-}
-
-html body .flag-avatar > img {
-  width: 100% !important;
-  height: 100% !important;
-  display: block !important;
-  border-radius: 50% !important;
-  clip-path: circle(50% at 50% 50%) !important;
-  object-fit: cover !important;
-  image-rendering: auto !important;
-  transform: translateZ(0) !important;
-  backface-visibility: hidden !important;
-}
-
-html body .flag-avatar:not(#__no_element_borders__):not(#__flag_avatar_ring__) {
-  border: 0 !important;
-  box-shadow: none !important;
 }
 
 /* Preview tab: fade long names instead of showing "...". */

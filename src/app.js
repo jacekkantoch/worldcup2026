@@ -2709,16 +2709,23 @@ function hueDistance(h1, h2) {
   const d = Math.abs(h1 - h2) % 360;
   return d > 180 ? 360 - d : d;
 }
+function areFlagColorsSimilar(a, b) {
+  const [h1, s1, l1] = rgbToHsl(a);
+  const [h2, s2, l2] = rgbToHsl(b);
+  const neutralA = s1 < 0.12 || l1 > 0.92 || l1 < 0.08;
+  const neutralB = s2 < 0.12 || l2 > 0.92 || l2 < 0.08;
+  return !neutralA && !neutralB && hueDistance(h1, h2) < FLAG_HUE_MIN_DISTANCE;
+}
 const FLAG_HUE_MIN_DISTANCE = 35;
 const FLAG_COLORS_EMPTY = { colors: [], hasWhite: false };
 const COMPUTER_FLAG_COLORS = {
   mx: ['73, 110, 45'],
   za: ['73, 110, 45', '216, 0, 39', '0, 82, 180'],
-  kr: ['216, 0, 39', '0, 82, 180'],
+  kr: ['255, 255, 255', '216, 0, 39', '0, 82, 180'],
   cz: ['216, 0, 39', '0, 82, 180'],
   ca: ['216, 0, 39', '255, 255, 255'],
   ba: ['255, 218, 68'],
-  qa: ['117, 26, 70', '157, 96, 126'],
+  qa: ['117, 26, 70', '255, 255, 255'],
   ch: ['216, 0, 39', '255, 255, 255'],
   br: ['109, 165, 68'],
   ma: ['216, 0, 39'],
@@ -2731,7 +2738,7 @@ const COMPUTER_FLAG_COLORS = {
   de: ['216, 0, 39'],
   cw: ['0, 82, 180'],
   ci: ['110, 166, 69'],
-  ec: ['254, 217, 68'],
+  ec: ['254, 217, 68', '0, 82, 180'],
   nl: ['0, 82, 180'],
   jp: ['216, 1, 40', '233, 191, 199'],
   se: ['0, 82, 180', '255, 218, 68'],
@@ -2761,6 +2768,9 @@ const COMPUTER_FLAG_COLORS = {
   gh: ['255, 218, 68'],
   pa: ['216, 0, 39']
 };
+const MATCHUP_AWAY_COLOR_INDEX = {
+  'ci|ec': 1
+};
 function useFlagGradient(homeFlag, awayFlag) {
   const [colors, setColors] = React.useState({ home: FLAG_COLORS_EMPTY, away: FLAG_COLORS_EMPTY });
   const homeCode = normalizeFlagValue(homeFlag).code;
@@ -2777,12 +2787,12 @@ function useFlagGradient(homeFlag, awayFlag) {
   const awayPalette = COMPUTER_FLAG_COLORS[awayCode] || colors.away.colors;
   const homeRgb = homePalette[0] || colors.home.colors[0] || colors.away.colors[0];
   if (!homeRgb) return null;
-  const homeHue = rgbToHsl(homeRgb)[0];
-  let awayRgb = awayPalette[0] || colors.away.colors[0] || colors.home.colors[0];
-  if (awayRgb && hueDistance(homeHue, rgbToHsl(awayRgb)[0]) < FLAG_HUE_MIN_DISTANCE) {
+  const forcedAwayIndex = MATCHUP_AWAY_COLOR_INDEX[`${homeCode}|${awayCode}`];
+  let awayRgb = awayPalette[forcedAwayIndex] || awayPalette[0] || colors.away.colors[0] || colors.home.colors[0];
+  if (forcedAwayIndex == null && awayRgb && areFlagColorsSimilar(homeRgb, awayRgb)) {
     awayRgb = awayPalette[1] || colors.away.colors[1] || awayRgb;
   }
-  return `linear-gradient(115deg, rgba(${homeRgb}, 0.24) 0%, rgba(${homeRgb}, 0.24) 25%, rgba(${awayRgb}, 0.24) 75%, rgba(${awayRgb}, 0.24) 100%)`;
+  return `linear-gradient(115deg, rgba(${homeRgb}, 0.24) 0%, rgba(${awayRgb}, 0.24) 100%)`;
 }
 function FlagImg({
   code,
@@ -2799,11 +2809,9 @@ function FlagImg({
   const src = c ? `https://cdn.jsdelivr.net/gh/HatScripts/circle-flags@gh-pages/flags/${c}.svg` : '';
   const showImage = Boolean(src) && !err;
   const fallbackIsEmoji = !c;
-  const pixelRatio = typeof window !== 'undefined' && window.devicePixelRatio ? Math.min(3, Math.max(2, Math.ceil(window.devicePixelRatio))) : 2;
-  const intrinsicSize = Math.round(size * pixelRatio);
   return React.createElement("span", {
     title: title || fallback,
-    className: `flag-avatar${className ? ` ${className}` : ''}`,
+    className: className,
     style: {
       width: size,
       height: size,
@@ -2820,18 +2828,15 @@ function FlagImg({
     }
   }, showImage ? React.createElement("img", {
     src: src,
-    width: intrinsicSize,
-    height: intrinsicSize,
+    width: size,
+    height: size,
     style: {
       width: '100%',
       height: '100%',
       display: 'block',
       borderRadius: '50%',
       boxShadow: 'none',
-      filter: 'none',
-      imageRendering: 'auto',
-      objectFit: 'cover',
-      transform: 'translateZ(0)'
+      filter: 'none'
     },
     onError: () => setErr(true),
     alt: fallback,
