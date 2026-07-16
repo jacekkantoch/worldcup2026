@@ -24,6 +24,7 @@ setTimeout(() => {
 const {
   useState,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useCallback,
   useRef
@@ -2124,7 +2125,7 @@ function PanelHeader({ title, titleId, onClose }) {
     "aria-label": "Zamknij"
   }, React.createElement(Icon, {
     name: "x",
-    size: 18
+    size: 14
   })));
 }
 let modalReturnFocusElement = null;
@@ -2135,13 +2136,32 @@ function Modal({
   children,
   maxWidth = 'max-w-md',
   overlayClassName = '',
-  panelClassName = ''
+  panelClassName = '',
+  origin = null
 }) {
   const panelRef = useRef(null);
   const previousFocusRef = useRef(null);
   const wasOpenRef = useRef(false);
   const onCloseRef = useRef(onClose);
   const titleId = useMemo(() => `modal-title-${uid()}`, []);
+
+  // Panel "wypływa" z punktu, który go otworzył (środek klikniętego
+  // przycisku w headerze), zamiast po prostu wyskakiwać na środku ekranu.
+  // Ustawiamy zmienne CSS synchronicznie przed pierwszym malowaniem
+  // (useLayoutEffect), żeby animacja od razu startowała z właściwego miejsca.
+  useLayoutEffect(() => {
+    if (!open) return;
+    const panel = panelRef.current;
+    if (!panel) return;
+    if (origin && typeof origin.x === 'number' && typeof origin.y === 'number') {
+      const rect = panel.getBoundingClientRect();
+      panel.style.setProperty('--modal-origin-x', `${origin.x - rect.left}px`);
+      panel.style.setProperty('--modal-origin-y', `${origin.y - rect.top}px`);
+    } else {
+      panel.style.removeProperty('--modal-origin-x');
+      panel.style.removeProperty('--modal-origin-y');
+    }
+  }, [open, origin]);
 
   if (open && !wasOpenRef.current) {
     const activeBeforeOpen = document.activeElement;
@@ -2431,7 +2451,7 @@ function Modal({
   return React.createElement("div", {
     className: `fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 ${overlayClassName ? `${overlayClassName}-root` : ''}`
   }, React.createElement("div", {
-    className: `absolute inset-0 bg-stone-900/60 backdrop-blur-sm ${overlayClassName}`,
+    className: `absolute inset-0 bg-stone-900/60 backdrop-blur-sm modal-backdrop-fade-in ${overlayClassName}`,
     "aria-hidden": "true",
     onClick: onClose
   }), React.createElement("div", {
@@ -2440,7 +2460,7 @@ function Modal({
     "aria-modal": "true",
     "aria-labelledby": titleId,
     tabIndex: -1,
-    className: `relative w-full ${maxWidth} rounded-t-2xl sm:rounded-2xl max-h-[90vh] overflow-hidden flex flex-col ${panelClassName}`,
+    className: `relative w-full ${maxWidth} rounded-t-2xl sm:rounded-2xl max-h-[90vh] overflow-hidden flex flex-col modal-pop-in ${panelClassName}`,
     style: {
       background: 'var(--bg-1)',
       border: '1px solid var(--sep)',
@@ -2747,7 +2767,7 @@ const COMPUTER_FLAG_COLORS = {
   eg: ['216, 0, 39'],
   ir: ['216, 0, 39', '109, 165, 68'],
   nz: ['0, 82, 180'],
-  es: ['255, 218, 68'],
+  es: ['216, 0, 39'],
   cv: ['1, 82, 180', '217, 4, 41'],
   sa: ['73, 110, 45'],
   uy: ['51, 138, 243'],
@@ -3166,7 +3186,7 @@ const MatchCard = React.memo(function MatchCard({
   }) : React.createElement(Icon, {
     name: "chevdown",
     size: 18
-  }))), React.createElement("div", {
+  }))), !expanded && React.createElement(React.Fragment, null, React.createElement("div", {
     className: "mt-1"
   }, React.createElement("div", {
     className: "grid",
@@ -3256,7 +3276,7 @@ const MatchCard = React.memo(function MatchCard({
   }, React.createElement(Icon, {
     name: "mappin",
     size: 11
-  }), match.city))), expanded && React.createElement("div", {
+  }), match.city)))), expanded && React.createElement("div", {
     className: "px-3 sm:px-4 pb-4 pt-2",
     style: {
       border: "0",
@@ -4072,7 +4092,7 @@ function SpecialsView({
       "aria-label": `Przenieś ${team.name} wyżej`
     }, React.createElement(Icon, {
       name: "chevup",
-      size: 15
+      size: 13
     })), React.createElement("button", {
       type: "button",
       className: "specials-order-move-button",
@@ -4081,7 +4101,7 @@ function SpecialsView({
       "aria-label": `Przenieś ${team.name} niżej`
     }, React.createElement(Icon, {
       name: "chevdown",
-      size: 15
+      size: 13
     }))));
   }))), React.createElement("section", {
     className: "bg-white border border-stone-200 rounded-xl p-4"
@@ -6304,7 +6324,7 @@ function AdminPanel({
       "aria-label": `Przenieś ${team.name} wyżej`
     }, React.createElement(Icon, {
       name: "chevup",
-      size: 15
+      size: 13
     })), React.createElement("button", {
       type: "button",
       className: "specials-order-move-button",
@@ -6313,7 +6333,7 @@ function AdminPanel({
       "aria-label": `Przenieś ${team.name} niżej`
     }, React.createElement(Icon, {
       name: "chevdown",
-      size: 15
+      size: 13
     }))));
   }))), React.createElement("div", {
     className: "specials-group-order-panel admin-specials-panel bg-white border border-stone-200 rounded-xl p-4 space-y-2"
@@ -6537,7 +6557,8 @@ function LoginModal({
   activePlayer,
   onLogin,
   onRename,
-  onManagePlayers
+  onManagePlayers,
+  origin
 }) {
   const [selected, setSelected] = useState('');
   const [step, setStep] = useState('pick'); // 'pick' | 'pin'
@@ -6618,7 +6639,8 @@ function LoginModal({
     title: activePlayer ? "Profil i użytkownicy" : "Zaloguj się",
     maxWidth: isCompactStep ? "max-w-xs" : "max-w-sm",
     panelClassName: `login-modal-sheet${isCompactStep ? " login-modal-compact-sheet" : ""}`,
-    overlayClassName: "profile-modal-overlay"
+    overlayClassName: "profile-modal-overlay",
+    origin: origin
   }, React.createElement("div", {
     className: "profile-modal-body"
   }, step === 'pick' && React.createElement(React.Fragment, null,
@@ -6771,7 +6793,8 @@ function PlayersManager({
   onClose,
   onCancel,
   players,
-  onAddPlayer
+  onAddPlayer,
+  origin
 }) {
   const [newName, setNewName] = useState('');
   const [newPin, setNewPin] = useState('');
@@ -6823,7 +6846,8 @@ function PlayersManager({
     title: "Dodaj u\u017Cytkownika",
     maxWidth: "max-w-sm",
     panelClassName: "login-modal-sheet",
-    overlayClassName: "profile-modal-overlay"
+    overlayClassName: "profile-modal-overlay",
+    origin: origin
   }, React.createElement("div", {
     className: "app-note app-note--warning app-note--compact"
   }, "Zapami\u0119taj PIN. Nie mo\u017Cna go p\u00F3\u017Aniej odzyska\u0107."), React.createElement("div", {
@@ -7606,6 +7630,15 @@ function Mundial2026() {
   // nieaktualnej pozycji po przełączeniu zakładki.
   const [playersModal, setPlayersModal] = useState(false);
   const [loginModal, setLoginModal] = useState(false);
+  // Punkt (środek klikniętego przycisku w headerze), z którego ma "wypływać"
+  // panel modala — patrz `origin` w <Modal>. Zostaje w stanie między
+  // przełączeniami wewnątrz tych samych paneli profilu, więc np. przejście
+  // "Profil" -> "Dodaj użytkownika" nadal wychodzi z tego samego miejsca.
+  const [modalOrigin, setModalOrigin] = useState(null);
+  const captureModalOrigin = e => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setModalOrigin({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 });
+  };
   const allLoaded = plLoaded && tLoaded && mLoaded && prLoaded && rLoaded && spLoaded && srLoaded && apLoaded && plkLoaded && scLoaded;
 
   // inicjalizacja domyślnych danych w Firebase jeśli pusta baza
@@ -7838,7 +7871,8 @@ function Mundial2026() {
   }, React.createElement("h1", null, "FIFA WORLD CUP 2026"))), React.createElement("div", {
     className: "player-row"
   }, React.createElement("button", {
-    onClick: () => {
+    onClick: e => {
+      captureModalOrigin(e);
       setAdminLoginOpen(false);
       if (activeTab === 'admin') setActiveTab('matches');
       setPlayersModal(false);
@@ -7864,14 +7898,17 @@ function Mundial2026() {
     className: "profile-button-label"
   }, "Zaloguj si\u0119")), React.createElement("button", {
     className: `players-btn admin-panel-btn${activeTab === 'admin' || adminLoginOpen ? ' is-active' : ''}`,
-    onClick: () => {
+    onClick: e => {
       setLoginModal(false);
       setPlayersModal(false);
       if (adminUnlocked) {
         setActiveTab('admin');
         scrollAppToTop();
       }
-      else setAdminLoginOpen(true);
+      else {
+        captureModalOrigin(e);
+        setAdminLoginOpen(true);
+      }
     },
     title: "Panel administratora (wyniki)",
     "aria-label": "Panel administratora (wyniki)"
@@ -7908,7 +7945,7 @@ function Mundial2026() {
   }, "Zacznij od dodania siebie i znajomych."), React.createElement(Btn, {
     variant: "gold",
     size: "lg",
-    onClick: () => setPlayersModal(true)
+    onClick: e => { captureModalOrigin(e); setPlayersModal(true); }
   }, React.createElement(Icon, {
     name: "plus",
     size: 18
@@ -8008,7 +8045,8 @@ function Mundial2026() {
     title: adminPasswordHash ? "Panel administratora" : "Ustaw hasło administratora",
     maxWidth: "max-w-sm",
     panelClassName: "login-modal-sheet",
-    overlayClassName: "profile-modal-overlay"
+    overlayClassName: "profile-modal-overlay",
+    origin: modalOrigin
   }, React.createElement(AdminGate, {
     adminPassword: adminPasswordHash,
     onUnlock: (pwd, onErr) => {
@@ -8031,7 +8069,8 @@ function Mundial2026() {
     onClose: () => setPlayersModal(false),
     onCancel: () => { setPlayersModal(false); setLoginModal(true); },
     players: safePlayers,
-    onAddPlayer: handleAddPlayer
+    onAddPlayer: handleAddPlayer,
+    origin: modalOrigin
   }), React.createElement(LoginModal, {
     open: loginModal,
     onClose: () => setLoginModal(false),
@@ -8045,7 +8084,8 @@ function Mundial2026() {
     onManagePlayers: () => {
       setLoginModal(false);
       setPlayersModal(true);
-    }
+    },
+    origin: modalOrigin
   }));
 }
 ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(Mundial2026, null));

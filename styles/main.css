@@ -4798,8 +4798,8 @@ html body .login-modal-sheet:not(.login-modal-compact-sheet) .login-modal-conten
 
 /* Przycisk zamknięcia (X) modali — okrągłe szklane tło */
 .modal-close-btn {
-  width: 44px;
-  height: 44px;
+  width: 32px;
+  height: 32px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -4884,7 +4884,7 @@ html body .login-modal-sheet:not(.login-modal-compact-sheet) .login-modal-conten
 
 /* Rząd gracza */
 .profile-choice-shell {
-  border-radius: 18px;
+  border-radius: 999px;
   overflow: hidden;
   border: 1px solid rgba(255,255,255,.13);
   background: linear-gradient(145deg, rgba(255,255,255,.07), rgba(255,255,255,.025));
@@ -6467,6 +6467,13 @@ html body .bottom-nav {
   z-index: 900 !important;
 }
 
+/* Modale (Profil, Dodaj użytkownika, Panel administratora) mają przykrywać
+   header i dolny pasek nawigacji, a nie chować się pod nimi (oba mają
+   z-index: 900 powyżej). */
+html body .fixed.inset-0.z-50 {
+  z-index: 950 !important;
+}
+
 /* Panel "Profil i użytkownicy" (lista) i krok "Zmień nazwę" mają być
    w tej samej odległości od nagłówka niezależnie od ilości treści.
    `align-self: center` (i `margin: auto` na mobile) wyśrodkowuje okno
@@ -6777,11 +6784,25 @@ html body .login-modal-content {
   scroll-padding-bottom: calc(var(--safe-bottom, 0px) + 28px) !important;
 }
 
+/* Modal "Profil i użytkownicy": lista/kroki zanikają u dołu przewijanego
+   obszaru (reveal tła panelu), sygnalizując że jest więcej treści poniżej.
+   Rozpoznajemy ten modal po zagnieżdżonym .profile-modal-body, żeby nie
+   dotknąć pozostałych paneli (Dodaj użytkownika, Panel administratora),
+   które współdzielą tę samą klasę .login-modal-content. */
+html body .login-modal-content:has(.profile-modal-body) {
+  -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 calc(100% - 40px), transparent 100%) !important;
+  mask-image: linear-gradient(to bottom, #000 0, #000 calc(100% - 40px), transparent 100%) !important;
+  -webkit-mask-repeat: no-repeat !important;
+  mask-repeat: no-repeat !important;
+  -webkit-mask-size: 100% 100% !important;
+  mask-size: 100% 100% !important;
+}
+
 @media (max-width: 640px), (pointer: coarse) {
 
-  /* Rezerwacja miejsca na chrome (z-index 900), które przykrywa modale
-     (z-index 50): nagłówek u góry i pasek nawigacji u dołu. Modal centruje
-     się w obszarze MIĘDZY nimi, więc nie wchodzi pod header ani pod pasek. */
+  /* Modal renderuje się teraz NAD headerem i paskiem nawigacji (z-index 950
+     kontra 900), ale nadal centrujemy go w obszarze MIĘDZY nimi, żeby
+     panel nie zaczynał się dosłownie pod belką nagłówka/paska. */
   html body {
     --modal-chrome-top: calc(var(--safe-top, 0px) + var(--header-height, 61px) + 12px);
     --modal-chrome-bottom: calc(var(--safe-bottom, 0px) + 94px);
@@ -6800,16 +6821,21 @@ html body .login-modal-content {
   html body .login-modal-sheet:not(.login-modal-compact-sheet),
   html body .admin-gate-card,
   html body .admin-gate-overlay .admin-gate-card {
-    /* Panele profilu, użytkowników i logowania admina wyśrodkowane w obu
-       osiach — pionowo przez align-self: center (dawniej flex-start, co
-       przypinało je do góry ekranu), poziomo przez margin: auto. Wysokość
-       ograniczona do obszaru między nagłówkiem a dolnym paskiem, więc panel
-       nie wchodzi pod chrome; nadmiar treści przewija się wewnątrz. */
-    align-self: center !important;
+    /* Panele profilu, użytkowników i logowania admina zaczynają się w tym
+       samym miejscu pod headerem niezależnie od wysokości treści — pionowo
+       przez align-self: flex-start (+ margin-bottom: auto, żeby margin-top:0
+       nie zostało nadpisane przez auto-marginesy w osi poprzecznej), poziomo
+       przez margin-left/right: auto. Wysokość ograniczona do obszaru między
+       nagłówkiem a dolnym paskiem, więc panel nie wchodzi pod chrome;
+       nadmiar treści przewija się wewnątrz. */
+    align-self: flex-start !important;
     width: min(calc(100% - 26px), 360px) !important;
     max-width: 360px !important;
     max-height: calc(var(--modal-vh, 100dvh) - var(--modal-chrome-top) - var(--modal-chrome-bottom)) !important;
-    margin: auto !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    margin-top: 0 !important;
+    margin-bottom: auto !important;
     overflow: hidden !important;
   }
 
@@ -7287,11 +7313,13 @@ html body .app-note.matches-empty-note {
 
 /* Kompaktowy panel filtrów — mniej wysokości: ciaśniejszy padding i odstęp
    między wierszem faz a wierszem statusu. Promień rogów koncentryczny z
-   pigułkami wewnątrz (padding 6px + promień pigułki ~16px ≈ 22px), zamiast
-   globalnych 30px, które przy ciasnym paddingu wyglądały nie-koncentrycznie. */
+   pigułkami wewnątrz: padding panelu to faktycznie 8px (nadpisywane niżej
+   przez --space-small), a chipy/tor statusu mają promień ~22-25px (pigułka,
+   promień = połowa ich wysokości) — więc róg panelu to 8 + 22 ≈ 30px,
+   zamiast płaskich 22px, które przy pigułkach w środku wyglądały kanciasto. */
 html body .phase-filter-panel:not(#__concentric__) {
   padding: 6px !important;
-  border-radius: 22px !important;
+  border-radius: 30px !important;
 }
 html body .phase-filter-panel > div {
   gap: 5px !important;
@@ -8262,12 +8290,6 @@ html body .login-modal-compact-sheet .login-modal-content:not(#__panel_padding__
   padding-left: var(--panel-content-padding) !important;
 }
 
-/* Admin controls follow the modal curve and keep one equal edge inset. */
-html body .login-modal-sheet .admin-login-input,
-html body .login-modal-sheet .admin-login-submit {
-  border-radius: calc(var(--ui-corner-radius) - var(--panel-content-padding)) !important;
-}
-
 /* Short content panels size naturally and use one edge inset. */
 html body .leaderboard-header:not(#__panel_padding__),
 html body .bracket-page .bracket-intro:not(#__panel_padding__),
@@ -8326,17 +8348,28 @@ html body .rank-row .rank-categories {
 
 html body .specials-view .specials-position-card,
 html body .specials-view input.prediction-pin-input[type="password"],
-html body .specials-view .app-control--lg,
-html body .login-modal-sheet .profile-add-btn,
-html body .login-modal-sheet .profile-choice-shell {
+html body .specials-view .app-control--lg {
   border-radius: var(--curve-inset-16) !important;
 }
 
-/* Pola formularza i przyciski akcji (imię, PIN, Anuluj/Utwórz konto) w modalu logowania/dodawania — pełne zaokrąglenie (pigułka). */
+/* Pola formularza i przyciski akcji (imię, PIN, Anuluj/Utwórz konto, hasło
+   administratora) w modalu logowania/dodawania — pełne zaokrąglenie (pigułka). */
 html body .login-modal-sheet .profile-text-input,
 html body .login-modal-sheet .profile-pin-input,
-html body .login-modal-sheet .profile-action-btn {
+html body .login-modal-sheet .profile-action-btn,
+html body .login-modal-sheet .profile-add-btn,
+html body .login-modal-sheet .profile-choice-shell,
+html body .login-modal-sheet .admin-login-input,
+html body .login-modal-sheet .admin-login-submit {
   border-radius: var(--curve-nested-deep) !important;
+}
+
+/* Rozwinięty wiersz mieści dodatkową treść (akcje, awatar) — pełna pigułka (999px)
+   przycinałaby ją w rogach na tak wysokiej karcie, więc po rozwinięciu promień
+   jest ograniczony do tego, co i tak widać na zamkniętym wierszu (24px = połowa
+   jego wysokości 48px), żeby zaokrąglenie wyglądało spójnie w obu stanach. */
+html body .login-modal-sheet .profile-choice-shell.is-open {
+  border-radius: 24px !important;
 }
 
 html body .admin-tabs-shell .selection-tile,
@@ -8402,14 +8435,18 @@ html body .specials-group-order-panel .specials-order-list {
 html body .specials-group-order-panel .specials-order-item {
   position: relative !important;
   min-width: 0 !important;
-  min-height: 56px !important;
+  /* Ta sama wysokość co pigułki wyboru podium (.selection-tile, 40px). */
+  min-height: 40px !important;
   display: grid !important;
-  grid-template-columns: 28px minmax(0, 1fr) 40px !important;
+  grid-template-columns: 24px minmax(0, 1fr) 32px !important;
   align-items: center !important;
   gap: 10px !important;
-  padding: 7px 8px 7px 10px !important;
+  padding: 4px 8px 4px 10px !important;
   border: 1px solid rgba(255,255,255,.075) !important;
-  border-radius: var(--curve-inset-16) !important;
+  /* Ten sam promień co karta-rodzic (.specials-group-order-panel) i baner
+     "Twoje punkty specjalne" (.specials-score-banner, oba 30px) — wiersze
+     są zaokrąglone tak samo jak reszta widoku, nie osobną, większą pigułką. */
+  border-radius: 30px !important;
   background: rgba(255,255,255,.045) !important;
   box-shadow: 0 1px 0 rgba(255,255,255,.025) inset !important;
   cursor: default !important;
@@ -8429,17 +8466,17 @@ html body .specials-group-order-panel .specials-order-item *::after {
 }
 
 html body .specials-group-order-panel .specials-position-index {
-  width: 28px !important;
-  height: 28px !important;
+  width: 24px !important;
+  height: 24px !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  flex: 0 0 28px !important;
+  flex: 0 0 24px !important;
   border-radius: 50% !important;
   background: rgba(255,255,255,.08) !important;
   color: var(--label-1) !important;
   font-family: 'Bebas Neue', sans-serif !important;
-  font-size: 16px !important;
+  font-size: 13px !important;
   line-height: 1 !important;
 }
 
@@ -8530,7 +8567,7 @@ html body .specials-group-order-panel .specials-order-drag-handle:disabled {
 }
 
 html body .specials-group-order-panel .specials-order-item.specials-order-row {
-  grid-template-columns: 28px minmax(0, 1fr) auto !important;
+  grid-template-columns: 24px minmax(0, 1fr) auto !important;
   cursor: default !important;
   touch-action: auto !important;
   transition: border-color 160ms ease, background 160ms ease !important;
@@ -8543,12 +8580,12 @@ html body .specials-group-order-panel .specials-order-actions {
 }
 
 html body .specials-group-order-panel .specials-order-move-button {
-  width: 40px !important;
-  height: 40px !important;
+  width: 32px !important;
+  height: 32px !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  flex: 0 0 40px !important;
+  flex: 0 0 32px !important;
   border: 0 !important;
   border-radius: 999px !important;
   background: transparent !important;
@@ -9317,4 +9354,35 @@ html body .bracket-page .bracket-group-team span:last-child {
   mask-repeat: no-repeat !important;
   -webkit-mask-size: 100% 100% !important;
   mask-size: 100% 100% !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Otwieranie modali (Profil, Dodaj użytkownika, Panel administratora):
+   panel "wypływa" z punktu, który go otworzył — środka klikniętego
+   przycisku w headerze (patrz `origin`/`captureModalOrigin` w app.js) —
+   zamiast po prostu wyskakiwać na środku ekranu. Bez przechwyconego
+   punktu (--modal-origin-x/y niezdefiniowane) rozwija się od środka
+   panelu, więc zachowanie zawsze jest bezpieczne.
+   ═══════════════════════════════════════════════════════════════ */
+.modal-pop-in {
+  transform-origin: var(--modal-origin-x, 50%) var(--modal-origin-y, 50%);
+  animation: modalPopIn .38s var(--ease-spring, cubic-bezier(.2,1.28,.35,1)) both;
+}
+@keyframes modalPopIn {
+  from { opacity: 0; transform: scale(.05); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.modal-backdrop-fade-in {
+  animation: modalBackdropFadeIn .22s ease both;
+}
+@keyframes modalBackdropFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-pop-in, .modal-backdrop-fade-in {
+    animation: none !important;
+  }
 }
