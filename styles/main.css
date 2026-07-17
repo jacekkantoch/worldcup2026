@@ -69,7 +69,7 @@
       cursor: pointer; transition: background .16s var(--ease-out); overflow: hidden;
     }
     .login-btn:hover { background: var(--glass-3); }
-    .login-btn:active { opacity: .75; transform: scale(.96); }
+    .login-btn:active { opacity: .75; transform: scale(var(--press-scale)); }
 
     .players-btn {
       width: 38px; height: 38px; border-radius: var(--radius-sm);
@@ -77,11 +77,18 @@
       box-shadow: var(--hl), 0 1px 4px rgba(0,0,0,0.40);
       color: var(--label-1);
       display: flex; align-items: center; justify-content: center;
-      cursor: pointer; flex-shrink: 0;
+      cursor: pointer; flex-shrink: 0; position: relative;
       transition: background .16s var(--ease-out), transform .12s;
     }
+    /* Niewidoczne powiększenie obszaru dotyku do min. 44×44px. */
+    .players-btn::after {
+      content: "";
+      position: absolute;
+      inset: -3px;
+      border-radius: inherit;
+    }
     .players-btn:hover { background: var(--glass-3); }
-    .players-btn:active { transform: scale(.92); }
+    .players-btn:active { transform: scale(var(--press-scale)); }
 
     /* Bottom Nav */
     .bottom-nav {
@@ -493,7 +500,7 @@
     .install-banner .ib-text h4 { margin: 0 0 3px; font-size: 14px; font-weight: 800; color: var(--label-1); }
     .install-banner .ib-text p  { margin: 0; font-size: 11.5px; color: var(--label-2); }
     .install-banner button { background: var(--accent); color: white; border: none; border-radius: 10px; padding: 9px 16px; font-weight: 700; font-size: 13px; cursor: pointer; white-space: nowrap; transition: opacity .15s, transform .12s; }
-    .install-banner button:active { transform: scale(.96); opacity: .85; }
+    .install-banner button:active { transform: scale(var(--press-scale)); opacity: .85; }
 
     #loading { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; min-height: 100dvh; width: 100%; flex-direction: column; gap: 14px; background: #000; overflow: hidden; }
     @keyframes iconFloat { 0%,100%{ transform: translateY(0) scale(1); } 50%{ transform: translateY(-6px) scale(1.04); } }
@@ -540,8 +547,8 @@
     }
     input::placeholder, textarea::placeholder { color: var(--label-3) !important; }
     input:focus, select:focus, textarea:focus {
-      border-color: var(--accent-purple) !important; background: var(--bg-3) !important;
-      box-shadow: 0 0 0 3px rgba(150,60,240,0.22) !important; outline: none;
+      border-color: var(--color-focus-ring) !important; background: var(--bg-3) !important;
+      box-shadow: var(--focus-ring-shadow) !important; outline: none;
     }
     select option { background: var(--bg-2); color: var(--label-1); }
 
@@ -634,7 +641,7 @@
     }
 
     @media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
-    :focus-visible { outline: 2px solid var(--accent-purple); outline-offset: 3px; border-radius: 8px; }
+    :focus-visible { outline: 2px solid var(--color-focus-ring); outline-offset: 2px; border-radius: 8px; }
 
     /* ═══════════════════════════════════════════════════════════════
        LIQUID GLASS 2026 · translucent adaptive surface override
@@ -686,6 +693,62 @@
          --radius-sm..xl: nadpisane przez unified geometry (1852+). Usunięto. */
       --ease-spring: cubic-bezier(.2,1.28,.35,1);
       --ease-out: cubic-bezier(.2,.8,.2,1);
+
+      /* ═══ SEMANTYCZNA WARSTWA TOKENÓW (audyt spójności 2026-07-16) ═══
+         Nazwy opisują funkcję, mapują na istniejące zmienne — jedno źródło
+         prawdy dla koloru akcentu, focusu, powierzchni kart i stanów. */
+      --color-accent: var(--accent-purple);        /* fiolet: primary, selected, aktywna zakładka */
+      --color-link: var(--accent);                 /* niebieski: linki i pola formularzy */
+      --color-focus-ring: var(--accent);           /* focus zawsze niebieski, odróżnialny od selected */
+      --focus-ring-shadow: 0 0 0 3px rgba(10,132,255,.32);
+      --color-success: var(--accent-green);
+      --color-warning: var(--accent-orange);
+      --color-danger: var(--accent-red);
+      --color-text-primary: var(--label-1);
+      --color-text-secondary: var(--label-2);
+      --color-text-tertiary: var(--label-3);
+      --color-text-quaternary: var(--label-4);
+
+      /* Jedna powierzchnia karty dla wszystkich zakładek (wzorzec: karta Meczów). */
+      --surface-card: linear-gradient(145deg, rgba(255,255,255,.095), rgba(255,255,255,.035));
+      /* Jedna powierzchnia warstwy glass-strong (sticky filtry, dolna
+         nawigacja, toast, scrim). Panel modalny używa --surface-card przez
+         regułę unifikacji powierzchni (~7280). */
+      --surface-modal: linear-gradient(145deg, rgba(34,45,70,.72), rgba(12,18,31,.58));
+
+      /* Jeden gradient primary dla wszystkich przycisków głównych. */
+      --gradient-primary:
+        radial-gradient(circle at 24% 0%, rgba(255,255,255,.34), transparent 42%),
+        linear-gradient(145deg, #d38bff, #bf5af2 55%, #8b3ff0);
+      --gradient-primary-hover:
+        radial-gradient(circle at 24% 0%, rgba(255,255,255,.42), transparent 42%),
+        linear-gradient(145deg, #e6b0ff, #cf7bf5 55%, #9d55e8);
+
+      /* Stany interakcji. */
+      --press-scale: .96;
+      --disabled-opacity: .4;
+
+      /* Skala typograficzna (migracja stopniowa — nowy kod tylko z tokenów). */
+      --text-caption: 11px;
+      --text-footnote: 12px;
+      --text-subhead: 13px;
+      --text-body: 14px;
+      --text-headline: 15px;
+      --text-title-3: 17px;
+      --text-title-2: 20px;
+      --text-title-1: 24px;
+      --text-large-title: 31px;
+
+      /* Rozmiary ikon (odpowiadają prop size w Ico/NavIcon). */
+      --icon-sm: 16px;
+      --icon-md: 18px;
+      --icon-lg: 20px;
+
+      /* Delikatne białe wypełnienie kontrolek (pola, przyciski ghost, kafle). */
+      --fill-soft: linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.03));
+      /* Pole formularza: jedno wypełnienie i jedna ramka spoczynkowa. */
+      --field-fill: var(--fill-soft);
+      --field-border-color: rgba(255,255,255,.16);
     }
 
     html {
@@ -770,7 +833,9 @@
 
     .match-card {
       position: relative;
-      background: var(--glass-1) !important;
+      /* background: usunięto martwe `var(--glass-1)` — przegrywało z późniejszą
+         regułą powierzchni kart (sekcja flat, `.glass, …, .match-card`), która
+         od audytu 2026-07-16 używa jednego tokenu --surface-card. */
       border-color: var(--border-1) !important;
       border-radius: 24px !important;
       backdrop-filter: blur(26px) saturate(175%);
@@ -922,9 +987,9 @@
     input:focus,
     select:focus,
     textarea:focus {
-      background: linear-gradient(145deg, rgba(211,139,255,.16), rgba(255,255,255,.065)) !important;
-      border-color: rgba(191,90,242,.78) !important;
-      box-shadow: 0 0 0 4px rgba(150,60,240,.18), inset 0 1px 0 rgba(255,255,255,.18) !important;
+      background: linear-gradient(145deg, rgba(10,132,255,.14), rgba(255,255,255,.065)) !important;
+      border-color: var(--color-focus-ring) !important;
+      box-shadow: var(--focus-ring-shadow), inset 0 1px 0 rgba(255,255,255,.18) !important;
     }
 
     button {
@@ -932,22 +997,18 @@
     button:not(:disabled) {
       transition: transform .18s var(--ease-out), background .18s ease, border-color .18s ease, box-shadow .18s ease, opacity .18s ease !important;
     }
-    button:not(:disabled):active { transform: scale(.965); }
+    button:not(:disabled):active { transform: scale(var(--press-scale)); }
 
     /* Primary and semantic buttons */
     .bg-\[\#0d1b5e\] {
-      background:
-        radial-gradient(circle at 24% 0%, rgba(255,255,255,.34), transparent 42%),
-        linear-gradient(145deg, #d38bff, #bf5af2 55%, #8b3ff0) !important;
+      background: var(--gradient-primary) !important;
       color: white !important;
       border: 1px solid rgba(214,170,255,.38) !important;
       box-shadow: inset 0 1px 0 rgba(255,255,255,.34), 0 10px 28px rgba(150,60,240,.27) !important;
     }
     .bg-\[\#0d1b5e\]:hover,
     .bg-\[\#162570\]:hover {
-      background:
-        radial-gradient(circle at 24% 0%, rgba(255,255,255,.42), transparent 42%),
-        linear-gradient(145deg, #e6b0ff, #cf7bf5 55%, #9d55e8) !important;
+      background: var(--gradient-primary-hover) !important;
       transform: translateY(-1px);
       box-shadow: inset 0 1px 0 rgba(255,255,255,.42), 0 14px 36px rgba(150,60,240,.34) !important;
     }
@@ -998,6 +1059,19 @@
       background: linear-gradient(145deg, rgba(255,69,58,.17), rgba(255,45,85,.065)) !important;
       border-color: rgba(255,105,97,.30) !important;
     }
+
+    /* Luki remapu wykryte audytem 2026-07-16 — jedyne klasy jasnego motywu,
+       które dotąd renderowały się dosłownie (m.in. warianty komponentu Badge). */
+    .bg-sky-100 { background: rgba(10,132,255,.16) !important; }
+    .text-sky-800 { color: rgb(112,184,255) !important; }
+    .text-red-900 { color: var(--accent-red) !important; }
+    .border-stone-300 { border-color: var(--border-2) !important; }
+    .bg-emerald-500 {
+      background: linear-gradient(145deg, rgba(88,224,120,.95), rgba(36,168,74,.95)) !important;
+      color: #05300f !important;
+    }
+    .border-sky-200 { border-color: rgba(10,132,255,.35) !important; }
+    .border-emerald-600 { border-color: rgba(48,209,88,.45) !important; }
 
     /* Chips / badges */
     .rounded,
@@ -1077,8 +1151,8 @@
 
     ::selection { background: rgba(54,145,255,.42); }
     :focus-visible {
-      outline: 2px solid rgba(200,150,255,.92);
-      outline-offset: 3px;
+      outline: 2px solid var(--color-focus-ring);
+      outline-offset: 2px;
     }
 
     /* Performance: skip painting off-screen cards and reduce GPU work on touch devices. */
@@ -1239,7 +1313,7 @@
     }
     }
     .selection-tile:active {
-      transform: scale(.97);
+      transform: scale(var(--press-scale));
     }
     .selection-tile.is-selected,
     .selection-tile.is-selected:hover {
@@ -1277,7 +1351,7 @@
       text-shadow: none;
     }
     .selection-tile:focus-visible {
-      outline: 2px solid rgba(200,150,255,.90);
+      outline: 2px solid var(--color-focus-ring);
       outline-offset: 2px;
     }
     .selection-tile:disabled {
@@ -1448,8 +1522,7 @@
     div.bg-white,
     .match-card,
     .install-banner {
-      background:
-        linear-gradient(145deg, rgba(255,255,255,.095), rgba(255,255,255,.035)) !important;
+      background: var(--surface-card) !important;
     }
 
     .glass-strong,
@@ -1457,8 +1530,7 @@
     .bottom-nav,
     .fixed.inset-0.z-50 > .relative,
     .toast-bar {
-      background:
-        linear-gradient(145deg, rgba(34,45,70,.72), rgba(12,18,31,.58)) !important;
+      background: var(--surface-modal) !important;
     }
 
     .app-header,
@@ -1475,8 +1547,7 @@
     textarea,
     .selection-tile {
       box-shadow: 0 6px 16px rgba(0,0,0,.10) !important;
-      background:
-        linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.03)) !important;
+      background: var(--fill-soft) !important;
     }
 
     .login-btn:hover,
@@ -1869,8 +1940,10 @@
       border-top: 1px solid rgba(255,255,255,.055);
     }
     .bracket-team-row.is-winner {
-      color: var(--label-1);
-      background: rgba(74,145,235,.12);
+      /* kolor/tło: jedno źródło — tokeny --bracket-winner-* (sekcja drabinki);
+         usunięto martwy niebieski literał sprzeczny z zielonym tokenem. */
+      color: var(--bracket-winner-text, var(--label-1));
+      background: var(--bracket-winner-bg, transparent);
       font-weight: 750;
     }
     .bracket-team-row.is-loser {
@@ -1900,7 +1973,7 @@
       height: auto;
       min-height: 96px;
       border-radius: 22px;
-      background: linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.03));
+      background: var(--fill-soft);
       border: 1px solid rgba(255,255,255,.15);
       overflow: hidden;
     }
@@ -2379,6 +2452,18 @@
       border-width: 0 !important;
       border-style: none !important;
       border-color: transparent !important;
+    }
+
+    /* Pola formularzy: przywrócenie ramki spoczynkowej (audyt 2026-07-16).
+       Globalny reset „zero borderów" wyżej zbijał ramkę każdego pola —
+       w spoczynku pole było czytelne wyłącznie przez tło. Ta reguła używa
+       tej samej sztuczki swoistości (:not(#…)), żeby wygrać z resetem.
+       ScoreInput (.score-value-input) celowo pomijamy — jest bezramkowy
+       wewnątrz własnej pigułki .score-input-shell. */
+    html body input:not(#__border_restore__):not(.score-value-input),
+    html body select:not(#__border_restore__),
+    html body textarea:not(#__border_restore__) {
+      border: 1px solid var(--field-border-color) !important;
     }
 
     /* btn-spinner needs a visible ring to show motion — restore its border
@@ -3333,16 +3418,9 @@
         radial-gradient(circle at 106% 50%, var(--note-right-glow), transparent 30%),
         rgba(190,145,20,.88) !important;
     }
-    .app-note--info {
-      --note-color: #5a3e00;
-      --note-border: rgba(200,160,40,.50);
-      --note-left-glow: rgba(255,255,180,.18);
-      --note-right-glow: rgba(255,200,0,.14);
-      background:
-        radial-gradient(circle at -6% 50%, var(--note-left-glow), transparent 34%),
-        radial-gradient(circle at 106% 50%, var(--note-right-glow), transparent 30%),
-        rgba(190,145,20,.88) !important;
-    }
+    /* .app-note--info: usunięto blok będący bit-w-bit kopią --warning
+       (nieukończony copy-paste) — „info" dziedziczy teraz niebieski wygląd
+       bazowego .app-note, więc ostrzeżenie i informacja są rozróżnialne. */
     .app-note--danger {
       --note-color: #ffd9d6;
       --note-border: rgba(180,50,40,.50);
@@ -3627,9 +3705,10 @@
       --tab-match-surface:
         radial-gradient(circle at 18% -18%, rgba(255,255,255,.145), transparent 43%),
         linear-gradient(145deg, rgba(27,35,52,.76), rgba(12,17,28,.62));
-      --tab-match-surface-soft:
-        radial-gradient(circle at 18% -22%, rgba(255,255,255,.105), transparent 44%),
-        linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.025));
+      /* Jedna powierzchnia kart dla wszystkich zakładek = powierzchnia karty
+         Meczów (audyt 2026-07-16; wcześniej radial .105 + linear .075/.025 —
+         karty Rankingu/Porównania/Admina były minimalnie inne niż Mecze). */
+      --tab-match-surface-soft: var(--surface-card);
       --tab-match-surface-inner: rgba(255,255,255,.045);
       /* --tab-match-shadow: nadpisane niżej przez „none !important" (ten sam
          selektor html:not([data-theme="light"])) — usunięto martwą definicję. */
@@ -3689,9 +3768,8 @@
     html:not([data-theme="light"]) .bracket-match-head {
       background: rgba(255,255,255,.025) !important;
     }
-    html:not([data-theme="light"]) .bracket-team-row.is-winner {
-      background: rgba(112,184,255,.095) !important;
-    }
+    /* (usunięto martwy override niebieskiego tła zwycięzcy — wygrywała i tak
+       późniejsza reguła tokenowa `html body .bracket-page …is-winner`). */
 
     /* Panel admina: wnętrza sekcji pozostają neutralne; semantyczne komunikaty
        zachowują własny żółty/czerwony/zielony akcent. */
@@ -4138,9 +4216,11 @@ html body .bracket-page {
   --bracket-border: rgba(255,255,255,.13);
   --bracket-head: rgba(255,255,255,.06);
   --bracket-row-sep: rgba(255,255,255,.09);
-  --bracket-winner-bg: linear-gradient(90deg, rgba(48, 209, 88, .22), transparent);
-  --bracket-winner-text: rgba(231, 255, 241, .98);
-  --bracket-loser-bg: linear-gradient(90deg, rgba(255, 69, 58, .20), rgba(255, 69, 58, .07) 58%, transparent);
+  /* 2026-07-17: awans oznaczany kolorem tekstu, nie tłem — usunięte
+     zielone/czerwone gradienty wierszy, zwycięzca = zielony tekst. */
+  --bracket-winner-bg: transparent;
+  --bracket-winner-text: var(--color-success);
+  --bracket-loser-bg: transparent;
   --bracket-loser-text: rgba(215,224,240,.48);
   --bracket-muted: rgba(225,233,248,.68);
   --bracket-placeholder: rgba(225,233,248,.40);
@@ -4690,10 +4770,10 @@ html body .profile-modal-overlay {
 html body .login-modal-sheet:not(.login-modal-compact-sheet) {
   width: min(calc(100% - 42px), 400px) !important;
   max-height: min(74dvh, 600px) !important;
-  border-radius: 30px !important;
-  background:
-    linear-gradient(180deg, rgba(31, 44, 67, .98), rgba(11, 18, 31, .98)) !important;
-  border: 1px solid rgba(255,255,255,.10) !important;
+  border-radius: var(--ui-corner-radius) !important;
+  /* background/border: definiuje wyłącznie reguła unifikacji powierzchni
+     (`…z-50 > .relative.login-modal-sheet`, ~7280) — usunięto martwe,
+     sprzeczne deklaracje tła. */
 }
 
 html body .login-modal-sheet:not(.login-modal-compact-sheet) > div:first-child {
@@ -4804,6 +4884,7 @@ html body .login-modal-sheet:not(.login-modal-compact-sheet) .login-modal-conten
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
   border-radius: 50%;
   background: rgba(255,255,255,.10);
   border: 1px solid rgba(255,255,255,.14);
@@ -4811,12 +4892,21 @@ html body .login-modal-sheet:not(.login-modal-compact-sheet) .login-modal-conten
   cursor: pointer;
   transition: background .16s var(--ease-out), border-color .16s, transform .12s;
 }
+/* Niewidoczne powiększenie obszaru dotyku do 44×44px (wizualnie nadal 32px). */
+.modal-close-btn::after,
+.team-save-btn::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+}
+.team-save-btn { position: relative; }
 .modal-close-btn:hover {
   background: rgba(255,255,255,.16);
   border-color: rgba(255,255,255,.22);
 }
 .modal-close-btn:active {
-  transform: scale(.92);
+  transform: scale(var(--press-scale));
 }
 .modal-close-btn svg {
   display: block;
@@ -4854,7 +4944,7 @@ html body .login-modal-sheet:not(.login-modal-compact-sheet) .login-modal-conten
   font-size: 13px;
   font-weight: 700;
   color: var(--label-1);
-  background: linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.03));
+  background: var(--fill-soft);
   border: 1px solid rgba(255,255,255,.16);
   cursor: pointer;
   transition: background .18s var(--ease-out), border-color .18s;
@@ -4864,7 +4954,7 @@ html body .login-modal-sheet:not(.login-modal-compact-sheet) .login-modal-conten
   background: linear-gradient(145deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
   border-color: rgba(255,255,255,.24);
 }
-.profile-add-btn:active { transform: scale(.97); }
+.profile-add-btn:active { transform: scale(var(--press-scale)); }
 .profile-add-btn svg { flex-shrink: 0; }
 
 /* Lista graczy */
@@ -5027,7 +5117,7 @@ html body .profile-inline-rename .profile-pin-input {
   font-weight: 700;
   cursor: pointer;
   border: 1px solid rgba(255,255,255,.14);
-  background: linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.03));
+  background: var(--fill-soft);
   color: var(--label-1);
   transition: background .16s var(--ease-out), border-color .16s, opacity .16s, transform .12s;
   white-space: nowrap;
@@ -5036,21 +5126,21 @@ html body .profile-inline-rename .profile-pin-input {
   background: linear-gradient(145deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
   border-color: rgba(255,255,255,.24);
 }
-.profile-action-btn:active { transform: scale(.95); }
+.profile-action-btn:active { transform: scale(var(--press-scale)); }
 .profile-action-btn:disabled {
   opacity: .38;
   cursor: not-allowed;
   transform: none;
 }
 
-/* Zaloguj — akcent fioletowy (#12, spójne z primary) */
+/* Zaloguj — jeden wariant primary w całej aplikacji (--gradient-primary) */
 .profile-action-login {
-  background: linear-gradient(145deg, rgba(211,139,255,.46), rgba(191,90,242,.34));
+  background: var(--gradient-primary);
   border-color: rgba(214,170,255,.44);
-  color: #eef8ff;
+  color: #fff;
 }
 .profile-action-login:hover {
-  background: linear-gradient(145deg, rgba(223,160,255,.58), rgba(201,110,247,.44));
+  background: var(--gradient-primary-hover);
   border-color: rgba(220,175,255,.58);
 }
 
@@ -5100,9 +5190,9 @@ html body .profile-inline-rename .profile-pin-input {
 
 /* Błąd */
 .profile-error {
-  font-size: 11.5px;
+  font-size: var(--text-footnote);
   font-weight: 700;
-  color: var(--accent-red);
+  color: var(--color-danger);
   margin: 0;
   letter-spacing: .01em;
 }
@@ -5150,13 +5240,13 @@ html body .profile-inline-rename .profile-pin-input {
   letter-spacing: .45em;
   font-family: inherit;
   color: var(--label-1);
-  background: linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.03));
+  background: var(--field-fill);
   border: 1px solid rgba(255,255,255,.18);
   transition: border-color .18s, box-shadow .18s;
 }
 .profile-pin-input:focus {
-  border-color: rgba(191,90,242,.78);
-  box-shadow: 0 0 0 3px rgba(150,60,240,.18);
+  border-color: var(--color-focus-ring);
+  box-shadow: var(--focus-ring-shadow);
   outline: none;
 }
 .profile-pin-input.has-error {
@@ -5171,7 +5261,7 @@ html body .profile-inline-rename .profile-pin-input {
   gap: 5px;
 }
 .profile-label {
-  font-size: 11.5px;
+  font-size: var(--text-caption);
   font-weight: 700;
   color: var(--label-2);
   letter-spacing: .02em;
@@ -5187,13 +5277,13 @@ html body .profile-inline-rename .profile-pin-input {
   font-size: 16px;
   font-family: inherit;
   color: var(--label-1);
-  background: linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.03));
+  background: var(--field-fill);
   border: 1px solid rgba(255,255,255,.18);
   transition: border-color .18s, box-shadow .18s;
 }
 .profile-text-input:focus {
-  border-color: rgba(191,90,242,.78);
-  box-shadow: 0 0 0 3px rgba(150,60,240,.18);
+  border-color: var(--color-focus-ring);
+  box-shadow: var(--focus-ring-shadow);
   outline: none;
 }
 .profile-text-input.has-error {
@@ -5218,26 +5308,11 @@ html body .profile-inline-rename .profile-pin-input {
 @media (max-width: 520px) {
 }
 
-/* Admin/profile modal corner radius alignment. */
-html body .admin-gate-card,
-html body .login-modal-sheet:not(.login-modal-compact-sheet) {
-  border-radius: 30px !important;
-}
-
-/* Admin/profile modal color alignment. */
-html body .admin-gate-card,
-html body .login-modal-sheet:not(.login-modal-compact-sheet) {
-  background:
-    linear-gradient(180deg, rgba(31, 44, 67, .98), rgba(11, 18, 31, .98)) !important;
-  border-color: rgba(255,255,255,.10) !important;
-}
-
-/* Final admin/profile modal surface match. */
-html body .admin-gate-card,
-html body .login-modal-sheet:not(.login-modal-compact-sheet) {
-  background: linear-gradient(145deg, rgba(34,45,70,.72), rgba(12,18,31,.58)) !important;
-  border-color: transparent !important;
-}
+/* (audyt 2026-07-16) Tło panelu modalnego definiuje wyłącznie reguła
+   `html body .fixed.inset-0.z-50 > .relative.login-modal-sheet` (sekcja
+   unifikacji powierzchni, ~7280) = var(--tab-match-surface-soft) =
+   var(--surface-card). Usunięto stąd trzy martwe, sprzeczne deklaracje
+   granatowych gradientów, które nigdy nie wygrywały kaskady. */
 
 /* Admin score stepper seam fix. */
 html body .admin-score-controls > div > div:last-child {
@@ -5338,7 +5413,7 @@ html body .infinite-group-scroll > button {
    z klasą .selection-tile, więc bez tego nadpisania dziedziczyłyby
    ogólny hover). */
 html body .infinite-group-scroll > button.selection-tile:not(.is-selected):hover {
-  background: linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.03)) !important;
+  background: var(--fill-soft) !important;
   border-color: transparent !important;
   box-shadow: none !important;
   transform: none !important;
@@ -5723,10 +5798,12 @@ html body .penalty-choice-card {
   transition: background .16s ease, border-color .16s ease, color .16s ease, transform .16s ease !important;
 }
 
+/* To samo przyciemnienie co domyślny hover przycisków w apce (patrz
+   "button:hover { background-color: rgba(255,255,255,0.06) }" w sekcji
+   @media (hover: hover)), żeby karta wyboru zwycięzcy karnych zachowywała
+   się tak jak "skrzydełka" +/- do zmiany wyniku, nie osobny fioletowy akcent. */
 html body .penalty-choice-card:hover:not(:disabled) {
-  background: rgba(111,196,255,.10) !important;
-  border-color: rgba(111,196,255,.24) !important;
-  color: rgba(245,250,255,.94) !important;
+  background-color: rgba(255,255,255,.06) !important;
 }
 
 html body .penalty-choice-card.is-selected {
@@ -6524,10 +6601,8 @@ html body .compare-view .filters-sticky {
   position: sticky !important;
 }
 
-/* Global panel rhythm. */
-:root {
-  --app-panel-gap: 16px;
-}
+/* Global panel rhythm: --app-panel-gap zdefiniowany raz, później (8260+)
+   jako var(--section-spacing) — usunięto zdublowany literał 16px. */
 
 html body .app-content {
   padding-top: calc(var(--header-height, 58px) + var(--app-panel-gap)) !important;
@@ -6585,7 +6660,7 @@ html body .specials-view > section {
    spójna z .leaderboard-category-card (subtelne tło, 1px obwódka). Stan
    poprawny/błędny nadal dochodzi z inline style w app.js (SpecialsView). */
 html body .specials-position-card {
-  border-radius: 18px !important;
+  border-radius: var(--curve-inset-12) !important;
   background: rgba(255,255,255,.035) !important;
   border: 1px solid rgba(255,255,255,.08) !important;
   padding: 10px !important;
@@ -6940,21 +7015,21 @@ html body .admin-login-field {
 
 html body .admin-login-field > span {
   color: var(--label-2) !important;
-  font-size: 11px !important;
-  font-weight: 850 !important;
+  font-size: var(--text-caption) !important;
+  font-weight: 700 !important;
   line-height: 1.1 !important;
 }
 
 html body .admin-login-input {
   width: 100% !important;
-  min-height: 44px !important;
+  min-height: var(--control-height) !important;
   padding: 11px 13px !important;
-  border: 1px solid rgba(255,255,255,.16) !important;
-  border-radius: 15px !important;
-  background: linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.035)) !important;
+  border: 1px solid var(--field-border-color) !important;
+  border-radius: var(--curve-nested-deep) !important;
+  background: var(--field-fill) !important;
   color: var(--label-1) !important;
   font-size: 16px !important;
-  font-weight: 750 !important;
+  font-weight: 700 !important;
   line-height: 1.2 !important;
   outline: none !important;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.055) !important;
@@ -6963,7 +7038,7 @@ html body .admin-login-input {
 }
 
 html body .admin-login-input:focus {
-  border-color: rgba(191,90,242,.38) !important;
+  border-color: var(--color-focus-ring) !important;
   background: linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,255,.045)) !important;
 }
 
@@ -6973,34 +7048,34 @@ html body .admin-login-input.has-error {
 
 html body .admin-login-error {
   margin: -2px 0 0 !important;
-  color: #ff453a !important;
-  font-size: 12px !important;
-  font-weight: 800 !important;
+  color: var(--color-danger) !important;
+  font-size: var(--text-footnote) !important;
+  font-weight: 700 !important;
   text-align: center !important;
   line-height: 1.25 !important;
 }
 
 html body .admin-login-submit {
   width: 100% !important;
-  min-height: 45px !important;
+  min-height: var(--control-height) !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   gap: 8px !important;
   margin: 2px 0 0 !important;
   border: 0 !important;
-  border-radius: 16px !important;
-  background: linear-gradient(145deg, #d38bff, #9d4edd 78%) !important;
+  border-radius: var(--curve-nested-deep) !important;
+  background: var(--gradient-primary) !important;
   color: #fff !important;
-  font-size: 14px !important;
-  font-weight: 900 !important;
+  font-size: var(--text-body) !important;
+  font-weight: 700 !important;
   line-height: 1 !important;
   cursor: pointer !important;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.24) !important;
 }
 
 html body .admin-login-submit:active {
-  transform: scale(.985) !important;
+  transform: scale(var(--press-scale)) !important;
 }
 
 @media (max-width: 520px) {
@@ -7047,10 +7122,24 @@ html body .rounded-full {
 }
 
 /* Admin "Drużyny" tab: each team row nests inside the Grupa X card.
-   Give it a visibly smaller radius than its parent so the two curves
-   read as concentric instead of identical. */
+   Row is 60px tall, so 30px is both a true half-height pill (matching the
+   round "zapisz" button and the code pill inside it) and the same radius
+   as the parent Grupa X card (.rounded-xl, 30px) — row and banner match. */
 html body .admin-team-row.rounded-xl {
-  border-radius: 15px !important;
+  border-radius: 30px !important;
+}
+
+/* Kod i nazwa drużyny łapały globalną regułę kontrolek tekstowych
+   (min-height: 44px), przez co wiersz był wyraźnie wyższy niż okrągły
+   przycisk zapisu obok (32px). Dopasowujemy oba pola do tej samej
+   wysokości i ścieśniamy padding wiersza, żeby banery były tak wysokie
+   jak fioletowe kółka, a nie od nich znacznie wyższe. */
+html body .admin-team-row {
+  padding: 4px !important;
+}
+html body .admin-team-row input:not(#__never_admin_team_input__) {
+  min-height: 0 !important;
+  height: 32px !important;
 }
 
 /* ===== content-layer-no-glass ===== */
@@ -7085,7 +7174,12 @@ html:not([data-theme="light"]) body .bracket-page .bracket-match,
 html:not([data-theme="light"]) body .bracket-page .bracket-final-card,
 html:not([data-theme="light"]) body .bracket-page .bracket-champion,
 html:not([data-theme="light"]) body .penalty-choice-panel,
-html:not([data-theme="light"]) body .match-final-result-card {
+html:not([data-theme="light"]) body .match-final-result-card,
+/* Ranking (audyt 2026-07-16): podium i wiersze listy to karty treści —
+   miały żywy blur(14px), jedyne szkło w warstwie treści w całej appce. */
+html:not([data-theme="light"]) body .rank-podium-card,
+html:not([data-theme="light"]) body .rank-podium-panel,
+html:not([data-theme="light"]) body .rank-row {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
@@ -7361,7 +7455,8 @@ html body .phase-filter-panel .chip-scroll-row .selection-tile {
   }
 }
 
-/* Widoczny fioletowy pierścień fokusu na polach formularzy. Bije wcześniejszy
+/* Widoczny niebieski pierścień fokusu na polach formularzy (standard:
+   focus = --color-focus-ring, osobny od fioletowego akcentu). Bije wcześniejszy
    reset `input:focus { box-shadow:none !important }` wyższą swoistością
    (html body …) — bez niego pola nie miały żadnego widocznego wskaźnika
    fokusu (problem dostępności). Pokazuje się po kliknięciu i po Tabie. */
@@ -7369,8 +7464,8 @@ html body input:not(#__focus_ring__):focus,
 html body select:not(#__focus_ring__):focus,
 html body textarea:not(#__focus_ring__):focus,
 html body [contenteditable="true"]:not(#__focus_ring__):focus {
-  box-shadow: 0 0 0 3px rgba(150,60,240,.32) !important;
-  border-color: rgba(191,90,242,.75) !important;
+  box-shadow: var(--focus-ring-shadow) !important;
+  border-color: var(--color-focus-ring) !important;
   outline: none !important;
 }
 
@@ -7618,7 +7713,11 @@ html body .toast-bar.toast-error:not(#__toast__) {
   gap: 8px;
 }
 .rank-row {
-  border-radius: 20px;
+  /* Połowa wysokości zwiniętego wiersza (52px), żeby róg pasował do okrągłej
+     odznaki miejsca (.rank-row-badge, 34px) w środku — stały px, nie pełna
+     pigułka (999px), bo po rozwinięciu wiersz robi się dużo wyższy i tak duży
+     promień przycinałby szczegóły w rogach (patrz .profile-choice-shell.is-open). */
+  border-radius: 26px;
   background: var(--tab-match-surface-soft);
   box-shadow: var(--tab-match-shadow);
   backdrop-filter: blur(14px) saturate(145%);
@@ -7985,35 +8084,35 @@ html body .admin-match-team-select {
 }
 
 html body .admin-match-team-select span {
-  color: var(--label-3);
-  font-size: 11px;
-  font-weight: 900;
+  color: var(--label-2);
+  font-size: var(--text-caption);
+  font-weight: 700;
   text-transform: uppercase;
 }
 
 html body .admin-match-team-select select {
   width: 100%;
   min-width: 0;
-  border-radius: 14px;
+  border-radius: var(--ui-corner-radius);
   padding: 10px 11px;
   color: var(--label-1);
   background: rgba(0,0,0,.24);
-  border: 1px solid rgba(255,255,255,.12);
+  border: 1px solid var(--field-border-color);
   outline: none;
 }
 
 html body .admin-match-team-select select:focus {
-  border-color: rgba(196,165,255,.48);
-  box-shadow: 0 0 0 3px rgba(126,87,194,.16);
+  border-color: var(--color-focus-ring);
+  box-shadow: var(--focus-ring-shadow);
 }
 
 html body .admin-match-setup-hint,
 html body .admin-match-setup-error {
   margin: 0;
-  border-radius: 14px;
+  border-radius: var(--curve-inset-16);
   padding: 9px 10px;
-  font-size: 12px;
-  font-weight: 800;
+  font-size: var(--text-footnote);
+  font-weight: 700;
 }
 
 html body .admin-match-setup-hint {
@@ -8230,7 +8329,7 @@ html body .profile-text-input,
 html body .profile-inline-rename .profile-pin-input,
 html body .admin-login-input,
 html body .admin-login-submit,
-html body input[type="text"]:not(.profile-pin-input),
+html body input[type="text"]:not(.profile-pin-input):not(.selection-tile),
 html body input[type="password"]:not(.profile-pin-input),
 html body input[type="email"],
 html body input[type="search"],
@@ -8241,6 +8340,15 @@ html body select {
   min-height: var(--control-height) !important;
   padding-top: 0 !important;
   padding-bottom: 0 !important;
+}
+
+/* Pole "Nagrody indywidualne" (AutocompleteInput) współdzieli klasę
+   .selection-tile z pigułkami wyboru w "Podium turnieju" (TeamPicker,
+   <button>) — bez tego wyjątku globalna reguła kontrolek tekstowych
+   wymuszała na nim 44px, podczas gdy przyciski podium mają naturalne 40px
+   z paddingu (py-2.5), więc pole i pigułki różniły się wysokością. */
+html body input.selection-tile {
+  min-height: 0 !important;
 }
 
 html body .app-control--lg {
@@ -8332,10 +8440,17 @@ html body .bottom-nav .nav-droplet {
   border-radius: var(--curve-inset-7) !important;
 }
 
-html body .match-card.expanded .penalty-choice-panel,
+html body .match-card.expanded .penalty-choice-panel {
+  border-radius: var(--curve-inset-12) !important;
+}
+
+/* Pole PIN i duży przycisk zapisu typu są wysokie na 52px (patrz reguły
+   wyżej) — pełna pigułka (999px, przycięta do połowy wysokości = 26px),
+   żeby boki były w pełni zaokrąglone, tak jak inne pola/przyciski tej
+   wysokości w apce, a nie płytszy promień koncentryczny 18px. */
 html body .match-card.expanded input.prediction-pin-input[type="password"],
 html body .match-card.expanded .app-control--lg {
-  border-radius: var(--curve-inset-12) !important;
+  border-radius: var(--curve-nested-deep) !important;
 }
 
 html body .match-card.expanded .penalty-choice-card {
@@ -8346,10 +8461,13 @@ html body .rank-row .rank-categories {
   border-radius: var(--curve-rank-detail) !important;
 }
 
-html body .specials-view .specials-position-card,
+html body .specials-view .specials-position-card {
+  border-radius: var(--curve-inset-16) !important;
+}
+
 html body .specials-view input.prediction-pin-input[type="password"],
 html body .specials-view .app-control--lg {
-  border-radius: var(--curve-inset-16) !important;
+  border-radius: var(--curve-nested-deep) !important;
 }
 
 /* Pola formularza i przyciski akcji (imię, PIN, Anuluj/Utwórz konto, hasło
@@ -8557,8 +8675,8 @@ html body .specials-group-order-panel .specials-order-drag-handle:not(:disabled)
 }
 
 html body .specials-group-order-panel .specials-order-drag-handle:focus-visible {
-  outline: 2px solid var(--system-purple, #bf5af2) !important;
-  outline-offset: 1px !important;
+  outline: 2px solid var(--color-focus-ring) !important;
+  outline-offset: 2px !important;
 }
 
 html body .specials-group-order-panel .specials-order-drag-handle:disabled {
@@ -8590,6 +8708,14 @@ html body .specials-group-order-panel .specials-order-move-button {
   border-radius: 999px !important;
   background: transparent !important;
   color: var(--label-2) !important;
+  position: relative !important;
+}
+/* Niewidoczne powiększenie obszaru dotyku do 44×44px (wizualnie nadal 32px). */
+html body .specials-group-order-panel .specials-order-move-button::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 999px;
 }
 
 html body .specials-group-order-panel .specials-order-move-button:not(:disabled):hover {
@@ -8598,12 +8724,12 @@ html body .specials-group-order-panel .specials-order-move-button:not(:disabled)
 }
 
 html body .specials-group-order-panel .specials-order-move-button:focus-visible {
-  outline: 2px solid var(--system-purple, #bf5af2) !important;
-  outline-offset: 1px !important;
+  outline: 2px solid var(--color-focus-ring) !important;
+  outline-offset: 2px !important;
 }
 
 html body .specials-group-order-panel .specials-order-move-button:disabled {
-  opacity: .25 !important;
+  opacity: var(--disabled-opacity) !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

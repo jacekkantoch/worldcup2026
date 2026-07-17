@@ -1994,9 +1994,10 @@ function Btn({
     dark: 'bg-stone-900 hover:bg-stone-800 text-stone-50'
   };
   const liquidGlassButtonStyle = {
-    borderRadius: '999px',
+    borderRadius: 'var(--curve-nested-deep)',
     transition: 'all .20s var(--ease-out)',
-    boxShadow: 'var(--hl), 0 2px 8px rgba(0,0,0,0.30)',
+    // box-shadow celowo brak: flat-mode w main.css zeruje cienie kontrolek,
+    // wcześniejsza wartość inline (var(--hl) + rgba) była martwa.
     letterSpacing: '0.01em'
   };
   return React.createElement("button", _extends({
@@ -2019,7 +2020,7 @@ function ScoreInput({
   return React.createElement("div", {
     className: "flex flex-col items-center gap-1"
   }, label && React.createElement("span", {
-    className: "text-[11px] uppercase tracking-wider text-stone-500 font-medium"
+    className: "text-[11px] uppercase tracking-wider text-stone-500 font-bold"
   }, label), React.createElement("div", {
     className: "flex items-center gap-0 score-input-shell"
   }, React.createElement("button", {
@@ -2477,6 +2478,7 @@ function Modal({
 const NAME_TO_ABBR = {
   'meksyk': 'MEX',
   'rpa': 'RSA',
+  'republika południowej afryki': 'RSA',
   'korea południowa': 'KOR',
   'czechy': 'CZE',
   'kanada': 'CAN',
@@ -2488,6 +2490,7 @@ const NAME_TO_ABBR = {
   'haiti': 'HAI',
   'szkocja': 'SCO',
   'usa': 'USA',
+  'stany zjednoczone': 'USA',
   'paragwaj': 'PAR',
   'australia': 'AUS',
   'turcja': 'TUR',
@@ -2509,6 +2512,7 @@ const NAME_TO_ABBR = {
   'hiszpania': 'ESP',
   'rep. zielonego przylądka': 'CPV',
   'rep. ziel. przylądka': 'CPV',
+  'republika zielonego przylądka': 'CPV',
   'arabia saudyjska': 'KSA',
   'urugwaj': 'URU',
   'francja': 'FRA',
@@ -2783,13 +2787,20 @@ const COMPUTER_FLAG_COLORS = {
   cd: ['51, 138, 243'],
   uz: ['109, 165, 68'],
   co: ['255, 218, 68'],
-  'gb-eng': ['216, 0, 39', '232, 178, 188'],
+  'gb-eng': ['216, 0, 39', '255, 255, 255'],
   hr: ['0, 82, 180'],
   gh: ['255, 218, 68'],
   pa: ['216, 0, 39']
 };
 const MATCHUP_AWAY_COLOR_INDEX = {
-  'ci|ec': 1
+  'ci|ec': 1,
+  // Mecz o 3. miejsce: Francja gra na niebiesko, Anglia na biało.
+  'fr|gb-eng': 1
+};
+// Jak wyżej, ale dla gospodarza: mecz o 3. miejsce (Francja–Anglia) to dwa
+// czerwone kraje — Francja bierze niebieski (indeks 1), Anglia zostaje czerwona.
+const MATCHUP_HOME_COLOR_INDEX = {
+  'fr|gb-eng': 1
 };
 function useFlagGradient(homeFlag, awayFlag) {
   const [colors, setColors] = React.useState({ home: FLAG_COLORS_EMPTY, away: FLAG_COLORS_EMPTY });
@@ -2805,7 +2816,8 @@ function useFlagGradient(homeFlag, awayFlag) {
   }, [homeCode, awayCode]);
   const homePalette = COMPUTER_FLAG_COLORS[homeCode] || colors.home.colors;
   const awayPalette = COMPUTER_FLAG_COLORS[awayCode] || colors.away.colors;
-  const homeRgb = homePalette[0] || colors.home.colors[0] || colors.away.colors[0];
+  const forcedHomeIndex = MATCHUP_HOME_COLOR_INDEX[`${homeCode}|${awayCode}`];
+  const homeRgb = homePalette[forcedHomeIndex] || homePalette[0] || colors.home.colors[0] || colors.away.colors[0];
   if (!homeRgb) return null;
   const forcedAwayIndex = MATCHUP_AWAY_COLOR_INDEX[`${homeCode}|${awayCode}`];
   let awayRgb = awayPalette[forcedAwayIndex] || awayPalette[0] || colors.away.colors[0] || colors.home.colors[0];
@@ -2935,7 +2947,7 @@ function TeamPicker({
   })), open && !disabled && React.createElement("div", {
     className: "absolute z-40 left-0 right-0 mt-2 max-h-64 overflow-y-auto rounded-2xl border border-stone-200 shadow-xl p-1.5",
     style: {
-      background: 'linear-gradient(145deg, rgba(31,40,59,.97), rgba(10,15,26,.96))',
+      background: 'var(--expanded-match-surface)',
       backdropFilter: 'blur(14px) saturate(150%)'
     }
   }, React.createElement("button", {
@@ -3010,7 +3022,7 @@ function AutocompleteInput({
       onChange(s);
       setOpen(false);
     },
-    className: "block w-full text-left px-3 py-2 text-sm hover:bg-white/10 hover:text-[#0d1b5e]"
+    className: "block w-full text-left px-3 py-2 text-sm hover:bg-white/10"
   }, s))));
 }
 
@@ -3484,7 +3496,7 @@ const MatchCard = React.memo(function MatchCard({
     },
     placeholder: "Wpisz sw\xF3j PIN",
     maxLength: 8,
-    className: `prediction-pin-input w-full px-3 py-2.5 border-2 rounded-lg focus:outline-none text-sm text-center tracking-widest ${pinErr ? 'border-red-400 bg-red-50' : 'border-stone-200 focus:border-[#0d1b5e]'}`
+    className: `prediction-pin-input w-full px-3 py-2.5 border-2 rounded-lg focus:outline-none text-sm text-center tracking-widest ${pinErr ? 'border-red-400 bg-red-50' : 'border-stone-200'}`
   }), pinErr && React.createElement("p", {
     className: "text-xs text-red-600 font-semibold mt-1 text-center"
   }, pinErr)), React.createElement(Btn, {
@@ -3597,7 +3609,7 @@ const MatchCard = React.memo(function MatchCard({
         width: '28px',
         textAlign: 'right',
         fontWeight: 800,
-        color: q === 'exact' ? '#30d158' : q === 'partial' ? '#ff9f0a' : '#ff453a'
+        color: q === 'exact' ? 'var(--color-success)' : q === 'partial' ? 'var(--color-warning)' : 'var(--color-danger)'
       }
     }, pts > 0 ? `+${pts}` : '0')));
   })))))));
@@ -3839,7 +3851,7 @@ function MatchesView({
       setGroupFilter('all');
     },
     "aria-pressed": groupFilter === 'all',
-    className: `selection-tile${groupFilter === 'all' ? ' is-selected' : ''} shrink-0 px-2.5 py-0.5 rounded-lg text-xs font-bold`
+    className: `selection-tile${groupFilter === 'all' ? ' is-selected' : ''} shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold`
   }, "Wszystkie"), GROUPS.map(g => React.createElement("button", {
     key: g,
     type: "button",
@@ -4196,7 +4208,7 @@ function SpecialsView({
     },
     placeholder: "Wpisz sw\xF3j PIN, \u017Ceby zapisa\u0107",
     maxLength: 8,
-    className: `prediction-pin-input w-full px-3 py-2.5 border-2 rounded-lg focus:outline-none text-sm text-center tracking-widest ${pinErr ? 'border-red-400 bg-red-50' : 'border-stone-200 focus:border-[#0d1b5e]'}`
+    className: `prediction-pin-input w-full px-3 py-2.5 border-2 rounded-lg focus:outline-none text-sm text-center tracking-widest ${pinErr ? 'border-red-400 bg-red-50' : 'border-stone-200'}`
   }), pinErr && React.createElement("p", {
     className: "text-xs text-red-600 font-semibold mt-1 text-center"
   }, pinErr)), React.createElement(Btn, {
@@ -5017,7 +5029,7 @@ function CompareView({
       setGroupFilter('all');
     },
     "aria-pressed": groupFilter === 'all',
-    className: `selection-tile${groupFilter === 'all' ? ' is-selected' : ''} shrink-0 px-2.5 py-0.5 rounded-lg text-xs font-bold`
+    className: `selection-tile${groupFilter === 'all' ? ' is-selected' : ''} shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold`
   }, "Wszystkie"), GROUPS.map(g => React.createElement("button", {
     key: g,
     type: "button",
@@ -5171,7 +5183,7 @@ function CompareView({
         style: {
           fontWeight: 800,
           fontSize: 14,
-          color: pts === null ? 'transparent' : q === 'exact' ? '#30d158' : q === 'partial' ? '#ff9f0a' : '#ff453a'
+          color: pts === null ? 'transparent' : q === 'exact' ? 'var(--color-success)' : q === 'partial' ? 'var(--color-warning)' : 'var(--color-danger)'
         }
       }, pts === null ? '0' : pts > 0 ? `+${pts}` : '0')));
     })));
@@ -5338,6 +5350,7 @@ function AdminMatchRow({
 }) {
   const home = teams[match.homeTeamId],
     away = teams[match.awayTeamId];
+  const abbr = t => (t && NAME_TO_ABBR[t.name.toLowerCase()]) || t?.name || '';
   const isKO = match.phase !== 'group';
   const [draft, setDraft] = useState(result || {
     home: null,
@@ -5410,7 +5423,7 @@ function AdminMatchRow({
     }
   }), React.createElement("span", {
     className: "min-w-0 truncate"
-  }, home?.name || 'TBD')), React.createElement("span", {
+  }, home ? abbr(home) : 'TBD')), React.createElement("span", {
     className: "text-stone-400 mx-1 shrink-0"
   }, "vs"), React.createElement("span", {
     className: "inline-flex items-center gap-1.5 min-w-0 max-w-full"
@@ -5429,7 +5442,7 @@ function AdminMatchRow({
     }
   }), React.createElement("span", {
     className: "min-w-0 truncate"
-  }, away?.name || 'TBD')))), React.createElement("div", {
+  }, away ? abbr(away) : 'TBD')))), React.createElement("div", {
     className: "flex items-center gap-2 shrink-0"
   }, matchMode ? null : result ? React.createElement("div", {
     style: {
@@ -5472,7 +5485,7 @@ function AdminMatchRow({
   }, "Wybierz drużynę"), teamOptions.map(t => React.createElement("option", {
     key: t.id,
     value: t.id
-  }, t.name)))), React.createElement("label", {
+  }, abbr(t))))), React.createElement("label", {
     className: "admin-match-team-select"
   }, React.createElement("span", null, "Gość"), React.createElement("select", {
     value: awayId,
@@ -5482,7 +5495,7 @@ function AdminMatchRow({
   }, "Wybierz drużynę"), teamOptions.map(t => React.createElement("option", {
     key: t.id,
     value: t.id
-  }, t.name))))), sameTeam && React.createElement("p", {
+  }, abbr(t)))))), sameTeam && React.createElement("p", {
     className: "admin-match-setup-error"
   }, "Wybierz dwie różne drużyny."), !sameTeam && (!homeId || !awayId) && React.createElement("p", {
     className: "admin-match-setup-hint"
@@ -5508,7 +5521,7 @@ function AdminMatchRow({
     title: teams[homeId]?.name
   }), React.createElement("span", {
     className: "admin-score-team-name"
-  }, teams[homeId]?.name)), React.createElement("div", {
+  }, abbr(teams[homeId]))), React.createElement("div", {
     className: "admin-score-controls"
   }, React.createElement(ScoreInput, {
     value: draft.home,
@@ -5529,7 +5542,7 @@ function AdminMatchRow({
     title: teams[awayId]?.name
   }), React.createElement("span", {
     className: "admin-score-team-name"
-  }, teams[awayId]?.name)), React.createElement("div", {
+  }, abbr(teams[awayId]))), React.createElement("div", {
     className: "admin-score-controls"
   }, React.createElement(ScoreInput, {
     value: draft.away,
@@ -5568,7 +5581,7 @@ function AdminMatchRow({
       title: t?.name
     })), React.createElement("span", {
       className: "penalty-choice-team"
-    }, t?.name || "Drużyna"), React.createElement("span", {
+    }, t ? abbr(t) : "Drużyna"), React.createElement("span", {
       className: "penalty-choice-check"
     }, sel ? "✓" : ""));
   }))), React.createElement("div", {
@@ -5647,16 +5660,16 @@ function AdminTeamRow({
   }), React.createElement("input", {
     value: name,
     onChange: e => setName(e.target.value),
-    placeholder: "Nazwa dru\u017Cyny",
-    "aria-label": `Nazwa dru\u017Cyny ${team.id}`,
+    placeholder: "Nazwa drużyny",
+    "aria-label": `Nazwa drużyny ${team.id}`,
     className: "flex-1 min-w-0 px-3 py-1.5 text-xs font-bold focus:outline-none"
   }), React.createElement("button", {
     type: "button",
     onClick: saveTeam,
     "aria-label": `Zapisz ${name}`,
-    className: "shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white transition-transform active:scale-95",
+    className: "team-save-btn shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white transition-transform active:scale-95",
     style: {
-      background: 'radial-gradient(circle at 24% 0%, rgba(255,255,255,.34), transparent 42%), linear-gradient(145deg, #d38bff, #bf5af2 55%, #8b3ff0)',
+      background: 'var(--gradient-primary)',
       border: '1px solid rgba(214,170,255,.38)',
       boxShadow: saved ? '0 0 0 3px rgba(48,209,88,.35), inset 0 1px 0 rgba(255,255,255,.34)' : 'inset 0 1px 0 rgba(255,255,255,.34)'
     }
@@ -5711,6 +5724,7 @@ function AdminPlayerRow({
     type: "button",
     onClick: openConfirm,
     className: "shrink-0 px-3 py-1.5 rounded-lg bg-red-600 text-white text-xs font-bold hover:bg-red-700 active:scale-95 transition-all",
+    style: { minHeight: 'var(--control-height)' },
     title: "Usu\u0144 uczestnika"
   }, "Usu\u0144")), confirm && React.createElement("div", {
     className: "mt-3 pt-3 border-t border-stone-100"
@@ -5732,7 +5746,7 @@ function AdminPlayerRow({
     },
     placeholder: "Wpisz has\u0142o administratora",
     autoComplete: "current-password",
-    className: `w-full px-3 py-2.5 border-2 rounded-lg focus:outline-none text-sm mb-2 ${error ? 'border-red-400 bg-red-50' : 'border-stone-200 focus:border-[#0d1b5e]'}`,
+    className: `w-full px-3 py-2.5 border-2 rounded-lg focus:outline-none text-sm mb-2 ${error ? 'border-red-400 bg-red-50' : 'border-stone-200'}`,
     autoFocus: true
   }), error && React.createElement("p", {
     className: "text-xs text-red-600 font-semibold mb-2",
@@ -5774,7 +5788,7 @@ function AdminScoringField({
     step: "1",
     value: value,
     onChange: e => onChange(e.target.value),
-    className: "w-full px-3 py-2.5 pr-12 border border-stone-200 rounded-lg text-center text-lg font-bold focus:border-[#0d1b5e] focus:outline-none"
+    className: "w-full px-3 py-2.5 pr-12 border border-stone-200 rounded-lg text-center text-lg font-bold focus:outline-none"
   }), React.createElement("span", {
     className: "absolute right-3 top-1/2 -translate-y-1/2 text-[11px] uppercase tracking-wider text-stone-400"
   }, "PKT")));
@@ -6015,8 +6029,8 @@ function AdminPanel({
   onLogout
 }) {
   const [tab, setTab] = useState('results');
-  const [matchSearch, setMatchSearch] = useState('');
   const [mPhase, setMPhase] = useState('all');
+  const [mStatus, setMStatus] = useState('all');
   const autoMPhaseRef = useRef('all');
   const mPhaseTouchedRef = useRef(false);
   const [editingId, setEditingId] = useState(null);
@@ -6050,17 +6064,13 @@ function AdminPanel({
     if (mPhase !== defaultResultPhase) setMPhase(defaultResultPhase);
   }, [defaultResultPhase, mPhase]);
   const filteredMatches = useMemo(() => {
-    const q = matchSearch.trim().toLowerCase();
     return matches.filter(m => {
       if (mPhase !== 'all' && m.phase !== mPhase) return false;
-      if (q) {
-        const hn = teams[m.homeTeamId]?.name?.toLowerCase() || '',
-          an = teams[m.awayTeamId]?.name?.toLowerCase() || '';
-        return hn.includes(q) || an.includes(q) || m.id.toLowerCase().includes(q);
-      }
+      if (mStatus === 'pending' && results[m.id]) return false;
+      if (mStatus === 'done' && !results[m.id]) return false;
       return true;
     }).sort((a, b) => (PHASE_RANK[a.phase] ?? 99) - (PHASE_RANK[b.phase] ?? 99) || new Date(a.date) - new Date(b.date) || a.num - b.num);
-  }, [matches, teams, mPhase, matchSearch]);
+  }, [matches, mPhase, mStatus, results]);
   const handleExport = () => {
     const data = {
       version: 2,
@@ -6187,7 +6197,7 @@ function AdminPanel({
   }, React.createElement(LockIcon, {
     name: "unlock",
     size: 18,
-    className: "text-[#6080d0]"
+    className: "text-stone-400"
   }), React.createElement("span", {
     className: "font-display text-base tracking-wide"
   }, "Panel administratora")), React.createElement(Btn, {
@@ -6214,19 +6224,8 @@ function AdminPanel({
   }, React.createElement("div", {
     className: "bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900 app-note app-note--warning"
   }, tab === 'matches' ? 'Przypisuj pary w fazie pucharowej i kontroluj kompletność terminarza.' : 'Wpisuj wyniki końcowe i usuwaj błędnie zapisane wyniki.'), React.createElement("div", {
-    className: "admin-phase-filters bg-white border border-stone-200 rounded-xl p-3 space-y-2"
+    className: "admin-phase-filters phase-filter-panel bg-white border border-stone-200 rounded-xl p-3 space-y-2"
   }, React.createElement("div", {
-    className: "relative"
-  }, React.createElement(Icon, {
-    name: "search",
-    size: 14,
-    className: "absolute left-3 top-1/2 -translate-y-1/2 text-stone-400"
-  }), React.createElement("input", {
-    value: matchSearch,
-    onChange: e => setMatchSearch(e.target.value),
-    placeholder: tab === 'matches' ? "Szukaj meczu lub drużyny" : "Szukaj wyniku lub drużyny",
-    className: "w-full pl-9 pr-3 py-2 border border-stone-200 rounded-lg focus:border-[#0d1b5e] focus:outline-none text-sm"
-  })), React.createElement("div", {
     className: "chip-scroll-row"
   }, PHASE_FILTER_TABS.map(t => React.createElement("button", {
     key: t.k,
@@ -6235,7 +6234,32 @@ function AdminPanel({
       setMPhase(t.k);
     },
     className: `selection-tile${mPhase === t.k ? ' is-selected' : ''} shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold`
-  }, t.l)))), filteredMatches.map(m => React.createElement(AdminMatchRow, {
+  }, t.l))), React.createElement("div", {
+    className: "flex items-center gap-1.5"
+  }, React.createElement("div", {
+    className: "edge-safe-row flex gap-1 items-center py-0.5 flex-1 min-w-0",
+    role: "group",
+    "aria-label": "Filtr statusu meczu"
+  }, [{
+    k: 'all',
+    l: 'Wszystkie'
+  }, {
+    k: 'pending',
+    l: 'Nadchodzące'
+  }, {
+    k: 'done',
+    l: 'Zakończone'
+  }].map(t => React.createElement("button", {
+    key: t.k,
+    type: "button",
+    onClick: () => {
+      setMStatus(t.k);
+    },
+    "aria-pressed": mStatus === t.k,
+    className: `selection-tile${mStatus === t.k ? ' is-selected' : ''} flex-1 px-2 py-1 rounded-lg text-xs font-medium`
+  }, t.l))), React.createElement("div", {
+    className: "match-count-badge shrink-0"
+  }, filteredMatches.length, " ", plMecze(filteredMatches.length)))), filteredMatches.map(m => React.createElement(AdminMatchRow, {
     key: m.id,
     match: m,
     teams: teams,
@@ -6257,7 +6281,7 @@ function AdminPanel({
     className: "space-y-3"
   }, React.createElement("div", {
     className: "app-note app-note--warning app-note--compact"
-  }, "Wpisz nazw\u0119 dru\u017Cyny oraz dwuliterowy kod kraju, np. pl, de lub fr."), GROUPS.map(g => React.createElement("div", {
+  }, "Wpisz nazwę drużyny oraz dwuliterowy kod kraju, np. pl, de lub fr."), GROUPS.map(g => React.createElement("div", {
     key: g,
     className: "bg-white border border-stone-200 rounded-xl p-4"
   }, React.createElement("div", {
@@ -6266,7 +6290,7 @@ function AdminPanel({
     className: "font-display text-lg"
   }, "Grupa ", g), React.createElement("span", {
     className: "text-xs text-stone-400 font-semibold"
-  }, "4 dru\u017Cyny")), React.createElement("div", {
+  }, "4 drużyny")), React.createElement("div", {
     className: "space-y-1.5 mt-1.5"
   }, [1, 2, 3, 4].map(i => {
     const t = teams[`${g}${i}`];
@@ -6468,7 +6492,7 @@ function AdminPanel({
     onChange: e => setImportText(e.target.value),
     rows: 4,
     placeholder: "{\"players\": [...], ...}",
-    className: "w-full p-2 border border-stone-200 rounded-lg text-xs font-mono focus:border-[#0d1b5e] focus:outline-none mb-2"
+    className: "w-full p-2 border border-stone-200 rounded-lg text-xs font-mono focus:outline-none mb-2"
   }), importErr && React.createElement("p", {
     className: "text-xs text-red-600 mb-2"
   }, importErr), React.createElement(Btn, {
@@ -6520,7 +6544,7 @@ function AdminPanel({
     placeholder: "Wpisz has\u0142o administratora",
     autoComplete: "current-password",
     disabled: resetBusy,
-    className: `w-full px-3 py-2.5 border-2 rounded-lg focus:outline-none text-sm ${resetError ? 'border-red-400 bg-red-50' : 'border-stone-200 focus:border-[#0d1b5e]'}`,
+    className: `w-full px-3 py-2.5 border-2 rounded-lg focus:outline-none text-sm ${resetError ? 'border-red-400 bg-red-50' : 'border-stone-200'}`,
     autoFocus: true
   }), resetError && React.createElement("p", {
     className: "text-xs text-red-600 font-semibold",
@@ -7348,9 +7372,18 @@ function BottomNav({
     };
     const frame = requestAnimationFrame(update);
     window.addEventListener('resize', update);
+    // Szerokość toru zmienia się też bez zdarzenia resize okna (np. pasek
+    // przewijania pojawia się po dorenderowaniu treści zakładki) — bez tego
+    // kropelka zostawała ze stalą szerokością i odstawała od przycisku.
+    let ro = null;
+    if (typeof ResizeObserver !== 'undefined' && trackRef.current) {
+      ro = new ResizeObserver(update);
+      ro.observe(trackRef.current);
+    }
     return () => {
       cancelAnimationFrame(frame);
       window.removeEventListener('resize', update);
+      if (ro) ro.disconnect();
     };
   }, [matchedActiveIdx, tabs.length, positionFor, dragging]);
   const idxFromX = useCallback(clientX => {
