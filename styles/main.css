@@ -9708,3 +9708,155 @@ html.app-keyboard-open body .app-content {
 html.app-keyboard-open body .login-modal-content {
   scroll-padding-bottom: 32px !important;
 }
+
+/* Compact, static next-match strip: teams on the left, countdown on the right. */
+html body .matches-view .next-match-countdown.next-match-compact:not(#__compact_next_a__):not(#__compact_next_b__) {
+  min-height: 0 !important;
+  padding: 9px 12px !important;
+  border: 0 !important;
+  border-radius: 22px !important;
+  cursor: default !important;
+  background: var(--tab-match-surface-soft) !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+html body .matches-view .next-match-countdown.next-match-compact:not(#__compact_next_a__):not(#__compact_next_b__)::before {
+  display: none !important;
+}
+
+html body .matches-view .next-match-countdown.next-match-compact:not(#__compact_next_a__):not(#__compact_next_b__):is(:hover, :active, :focus, :focus-visible, :focus-within) {
+  background: var(--tab-match-surface-soft) !important;
+  box-shadow: none !important;
+  filter: none !important;
+  transform: none !important;
+  outline: none !important;
+}
+
+html body .matches-view .next-match-compact:not(#__compact_inner_a__):not(#__compact_inner_b__) .next-match-summary {
+  display: block !important;
+  min-width: 0 !important;
+}
+
+html body .matches-view .next-match-compact:not(#__compact_inner_a__):not(#__compact_inner_b__) .next-match-board {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 12px !important;
+  min-height: 30px !important;
+}
+
+html body .matches-view .next-match-compact:not(#__compact_inner_a__):not(#__compact_inner_b__) .next-match-inline-fixture {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 7px !important;
+  min-width: 0 !important;
+}
+
+html body .matches-view .next-match-compact:not(#__compact_inner_a__):not(#__compact_inner_b__) .next-match-team {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 6px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html body .matches-view .next-match-compact:not(#__compact_inner_a__):not(#__compact_inner_b__) .next-match-team.is-home {
+  justify-content: flex-end !important;
+}
+
+html body .matches-view .next-match-compact:not(#__compact_inner_a__):not(#__compact_inner_b__) .next-match-team.is-away {
+  justify-content: flex-start !important;
+}
+
+html body .matches-view .next-match-compact:not(#__compact_inner_a__):not(#__compact_inner_b__) .next-match-team-name {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  padding: 1px 0 2px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  line-height: 15px !important;
+}
+
+html body .matches-view .next-match-compact:not(#__compact_inner_a__):not(#__compact_inner_b__) .next-match-vs {
+  color: var(--label-3) !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: .05em !important;
+  white-space: nowrap !important;
+}
+
+html body .matches-view .next-match-compact:not(#__compact_inner_a__):not(#__compact_inner_b__) .next-match-clock {
+  min-width: 96px !important;
+  padding: 1px 0 1px 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  border: 0 !important;
+  border-left: 1px solid rgba(255,255,255,.10) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  text-align: right !important;
+}
+
+html body .matches-view .next-match-compact:not(#__compact_inner_a__):not(#__compact_inner_b__) .next-match-clock strong {
+  font-size: 25px !important;
+  line-height: 1 !important;
+  letter-spacing: .02em !important;
+  white-space: nowrap !important;
+}
+
+@media (max-width: 360px) {
+  html body .matches-view .next-match-compact:not(#__compact_inner_a__):not(#__compact_inner_b__) .next-match-board {
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    gap: 8px !important;
+  }
+
+  html body .matches-view .next-match-compact:not(#__compact_inner_a__):not(#__compact_inner_b__) .next-match-inline-fixture {
+    gap: 5px !important;
+  }
+
+  html body .matches-view .next-match-compact:not(#__compact_inner_a__):not(#__compact_inner_b__) .next-match-team {
+    gap: 4px !important;
+  }
+
+  html body .matches-view .next-match-compact:not(#__compact_inner_a__):not(#__compact_inner_b__) .next-match-team-name {
+    font-size: 11px !important;
+  }
+
+  html body .matches-view .next-match-compact:not(#__compact_inner_a__):not(#__compact_inner_b__) .next-match-clock {
+    min-width: 84px !important;
+    padding-left: 8px !important;
+  }
+
+  html body .matches-view .next-match-compact:not(#__compact_inner_a__):not(#__compact_inner_b__) .next-match-clock strong {
+    font-size: 22px !important;
+  }
+}
+
+/* Bottom navigation droplet: lighter translucent fill, unchanged geometry. */
+html body .bottom-nav .nav-droplet:not(#__transparent_drop_a__):not(#__transparent_drop_b__) {
+  background: rgba(191,90,242,.18) !important;
+  border-color: rgba(214,170,255,.38) !important;
+}
+
+/* Bottom navigation: clearer glass with more of the page visible underneath. */
+html body .bottom-nav:not(#__transparent_nav_a__):not(#__transparent_nav_b__) {
+  background: rgba(54,54,58,.20) !important;
+  -webkit-backdrop-filter: blur(9px) saturate(140%) !important;
+  backdrop-filter: blur(9px) saturate(140%) !important;
+  border-color: rgba(255,255,255,.13) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.12),
+    0 -8px 28px rgba(0,0,0,.18) !important;
+}

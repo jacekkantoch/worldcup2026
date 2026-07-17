@@ -3609,7 +3609,6 @@ const MatchCard = React.memo(function MatchCard({
 // ═══════════════════════════════════════════════════════════════
 function NextMatchCountdown({ matches, teams, predictions, players, activePlayerId, comparisonVisible }) {
   const [now, setNow] = useState(() => Date.now());
-  const [expandedId, setExpandedId] = useState(null);
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
@@ -3636,57 +3635,34 @@ function NextMatchCountdown({ matches, teams, predictions, players, activePlayer
     const clock = `${pad(hh)}:${pad(mm)}:${pad(ss)}`;
     const home = teams && teams[match.homeTeamId];
     const away = teams && teams[match.awayTeamId];
-    const canExpand = true;
-    const expanded = expandedId === match.id;
-    const toggleExpanded = () => {
-      setExpandedId(prev => prev === match.id ? null : match.id);
-    };
+    const expanded = false;
     const visiblePlayers = comparisonVisible ? allPlayers : allPlayers.filter(player => player.id === activePlayerId);
     const predictionTitle = comparisonVisible ? "Typy wszystkich uczestników" : "Mój typ";
     return React.createElement("div", {
       key: match.id,
-      className: `next-match-countdown${canExpand ? ' is-clickable' : ''}${expanded ? ' is-expanded' : ''}`,
-      role: canExpand ? "button" : undefined,
-      tabIndex: canExpand ? 0 : undefined,
-      "aria-expanded": canExpand ? expanded : undefined,
-      "aria-label": canExpand ? expanded ? "Zwiń typy uczestników" : "Rozwiń typy uczestników" : undefined,
-      onClick: toggleExpanded,
-      onKeyDown: e => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          toggleExpanded();
-        }
-      }
+      className: "next-match-countdown next-match-compact",
+      "aria-label": `Następny mecz: ${home?.name || 'TBD'} kontra ${away?.name || 'TBD'}. Do rozpoczęcia: ${clock}`
     }, React.createElement("div", {
       className: "next-match-summary"
     }, React.createElement("div", {
-      className: "next-match-card-head"
-    }, React.createElement("div", {
-      className: "next-match-kicker-row"
-    }, React.createElement("span", {
-      className: "next-match-kicker"
-    }, "Następny mecz")), React.createElement("span", {
-      className: "next-match-chevron",
-      "aria-hidden": true
-    }, React.createElement(Icon, {
-      name: expanded ? 'chevup' : 'chevdown',
-      size: 18
-    }))), React.createElement("div", {
       className: "next-match-board"
+    }, React.createElement("div", {
+      className: "next-match-inline-fixture"
     }, React.createElement("span", {
       className: "next-match-team is-home"
-    }, React.createElement(FlagImg, { code: home?.flag, size: 26, title: home?.name }), React.createElement("span", {
+    }, React.createElement("span", {
       className: "next-match-team-name"
-    }, home?.name || 'TBD')), React.createElement("div", {
-      className: "next-match-center"
-    }, React.createElement("div", {
-      className: "next-match-clock",
-      "aria-label": `Do rozpoczęcia: ${clock}`
-    }, React.createElement("strong", null, clock))), React.createElement("span", {
+    }, home?.name || 'TBD'), React.createElement(FlagImg, { code: home?.flag, size: 26, title: home?.name })), React.createElement("span", {
+      className: "next-match-vs",
+      "aria-hidden": true
+    }, "VS"), React.createElement("span", {
       className: "next-match-team is-away"
     }, React.createElement(FlagImg, { code: away?.flag, size: 26, title: away?.name }), React.createElement("span", {
       className: "next-match-team-name"
-    }, away?.name || 'TBD')))), expanded && React.createElement("div", {
+    }, away?.name || 'TBD'))), React.createElement("div", {
+      className: "next-match-clock",
+      "aria-label": `Do rozpoczęcia: ${clock}`
+    }, React.createElement("strong", null, clock)))), expanded && React.createElement("div", {
       className: "next-match-details compare-view"
     }, React.createElement("div", {
       className: "next-match-predictions-card"
@@ -7375,20 +7351,22 @@ function BottomNav({
     document.scrollingElement?.scrollTo?.({ top: 0, left: 0, behavior });
   }, []);
 
-  // Pozycja pastylki jest liczona z faktycznego prostokąta przycisku.
+  // Pozycja pastylki wynika ze stałej geometrii toru. Nie mierzymy
+  // transformowanego przycisku, bo stan :active w Safari chwilowo go skaluje.
   const positionFor = useCallback(idx => {
     const track = trackRef.current;
     if (!track) return null;
     const buttons = track.querySelectorAll('button[data-nav-index]');
-    const btn = buttons[idx];
-    if (!btn) return null;
-    const trackRect = track.getBoundingClientRect();
-    const btnRect = btn.getBoundingClientRect();
-    const sizeRect = buttons[0].getBoundingClientRect();
-    const inset = 1;
+    if (!buttons[idx] || !buttons.length) return null;
+    const style = window.getComputedStyle(track);
+    const paddingLeft = parseFloat(style.paddingLeft) || 0;
+    const paddingRight = parseFloat(style.paddingRight) || 0;
+    const gap = parseFloat(style.columnGap || style.gap) || 0;
+    const availableWidth = track.clientWidth - paddingLeft - paddingRight - gap * (buttons.length - 1);
+    const itemWidth = Math.max(0, availableWidth / buttons.length);
     return {
-      left: btnRect.left - trackRect.left + inset,
-      width: Math.max(0, sizeRect.width - inset * 2)
+      left: paddingLeft + idx * (itemWidth + gap),
+      width: itemWidth
     };
   }, []);
 
