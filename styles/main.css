@@ -4219,7 +4219,7 @@ html body .bracket-page {
   /* 2026-07-17: awans oznaczany kolorem tekstu, nie tłem — usunięte
      zielone/czerwone gradienty wierszy, zwycięzca = zielony tekst. */
   --bracket-winner-bg: transparent;
-  --bracket-winner-text: var(--color-success);
+  --bracket-winner-text: rgba(245,250,255,.98);
   --bracket-loser-bg: transparent;
   --bracket-loser-text: rgba(215,224,240,.48);
   --bracket-muted: rgba(225,233,248,.68);
@@ -4273,6 +4273,7 @@ html body .bracket-page .bracket-team-row + .bracket-team-row {
 html body .bracket-page .bracket-team-row.is-winner {
   background: var(--bracket-winner-bg) !important;
   color: var(--bracket-winner-text) !important;
+  font-weight: 800 !important;
 }
 
 html body .bracket-page .bracket-team-row.is-loser {
@@ -5545,6 +5546,23 @@ html body .bracket-page .bracket-group-compact-team {
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
+  font-size: 11px !important;
+  font-weight: 400 !important;
+  line-height: 14px !important;
+}
+
+html body .bracket-page .bracket-group-compact-row.is-advance .bracket-group-compact-team {
+  font-weight: 800 !important;
+}
+
+html body .bracket-page .bracket-team-name {
+  font-size: 11px !important;
+  font-weight: 400 !important;
+  line-height: 14px !important;
+}
+
+html body .bracket-page .bracket-team-row.is-winner .bracket-team-name {
+  font-weight: 800 !important;
 }
 
 html body .bracket-page .bracket-group-compact-diff,
@@ -5661,6 +5679,7 @@ html body .bracket-page .bracket-group-compact-head {
   align-items: center !important;
   gap: 4px !important;
   padding: 2px 8px 0 !important;
+  font-weight: 400 !important;
 }
 
 html body .bracket-page .bracket-group-compact-head::after {
@@ -5682,6 +5701,7 @@ html body .bracket-page .bracket-group-compact-stat-head {
   font-variant-numeric: tabular-nums !important;
   line-height: 1 !important;
   opacity: .76 !important;
+  font-weight: 400 !important;
 }
 
 html body .bracket-page .bracket-group-compact-diff,
@@ -7316,8 +7336,23 @@ html body .app-note.matches-empty-note {
   background: var(--tab-match-surface-soft) !important;
   border: 1px solid rgba(255,255,255,.10) !important;
   border-radius: 30px !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.055) !important;
+  box-shadow: none !important;
   color: var(--label-2) !important;
+  min-height: 72px !important;
+  padding: 16px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  line-height: 1.4 !important;
+}
+
+html body .app-note.matches-empty-note:is(:hover, :active, :focus, :focus-visible, :focus-within) {
+  background: var(--tab-match-surface-soft) !important;
+  border-color: rgba(255,255,255,.10) !important;
+  box-shadow: none !important;
+  color: var(--label-2) !important;
+  transform: none !important;
+  filter: none !important;
+  outline: none !important;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -7915,8 +7950,8 @@ html body .toast-bar.toast-error:not(#__toast__) {
    i tak są nadpisywane globalnym mapowaniem klas Tailwind na var(--bg-3)
    (main.css ok. linii 512), więc krążek wychodził neutralnie szary. */
 html body .admin-player-avatar {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   flex-shrink: 0;
   display: flex;
@@ -7927,6 +7962,37 @@ html body .admin-player-avatar {
   background: linear-gradient(145deg, rgba(211,139,255,.55), rgba(139,63,240,.42)) !important;
   color: #f5ecff !important;
   box-shadow: inset 0 0 0 1px rgba(214,170,255,.4) !important;
+}
+
+/* Admin / Uczestnicy: compact rows with unchanged 44px action hit target. */
+html body .admin-player-card {
+  padding: 8px 10px !important;
+  border-width: 1px !important;
+}
+
+html body .admin-player-card__main {
+  min-height: 44px;
+  gap: 10px !important;
+}
+
+html body .admin-player-card__name {
+  line-height: 1.2;
+}
+
+html body .admin-player-card__remove {
+  min-width: 62px;
+  min-height: 44px !important;
+  padding: 0 12px !important;
+  line-height: 1;
+}
+
+html body .admin-player-card__confirm {
+  margin-top: 8px !important;
+  padding-top: 8px !important;
+}
+
+html body .admin-players-list > .admin-player-card + .admin-player-card {
+  margin-top: 0 !important;
 }
 
 html body .next-match-details.compare-view .next-match-player-score {
@@ -8797,24 +8863,22 @@ html body .bottom-nav .nav-droplet {
   top: 7px !important;
   bottom: 7px !important;
   transform-origin: center !important;
+  transform: none !important;
   transition:
     left 320ms cubic-bezier(.22, 1, .36, 1),
-    width 320ms cubic-bezier(.22, 1, .36, 1),
-    transform 160ms ease-out,
     opacity 160ms ease-out !important;
-  will-change: left, width, transform !important;
+  will-change: left, opacity !important;
 }
 
 html body .bottom-nav .nav-droplet.squishing {
-  transform: scaleX(.97) scaleY(1.015) !important;
+  transform: none !important;
 }
 
 html body .bottom-nav .nav-droplet.dragging {
-  transform: scale(1.012) !important;
+  transform: none !important;
   transition:
     left 80ms linear,
-    width 120ms ease-out,
-    transform 120ms ease-out !important;
+    opacity 160ms ease-out !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -9511,4 +9575,136 @@ html body .bracket-page .bracket-group-team span:last-child {
   .modal-pop-in, .modal-backdrop-fade-in {
     animation: none !important;
   }
+}
+
+/* Admin phase locks: compact, touch-friendly switches replace action buttons. */
+html body .phase-lock-row > div:first-child {
+  min-width: 0;
+}
+
+html body .phase-lock-switch {
+  position: relative;
+  display: inline-block;
+  flex: 0 0 auto;
+  width: 51px;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent !important;
+  box-shadow: none !important;
+  filter: none !important;
+  transform: none !important;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+html body .phase-lock-switch__track {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  display: block;
+  width: 51px;
+  height: 31px;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 999px;
+  background: rgba(120, 120, 128, .26);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .05);
+  overflow: hidden;
+  transform: translateY(-50%);
+  transition: background .2s ease, border-color .2s ease;
+}
+
+html body .phase-lock-switch__thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 27px;
+  height: 27px;
+  box-sizing: border-box;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .32);
+  transform: translate3d(0, 0, 0);
+  transition: transform .22s cubic-bezier(.2, .8, .2, 1);
+}
+
+html body .phase-lock-switch.is-locked .phase-lock-switch__track {
+  border-color: var(--color-success);
+  background: var(--color-success);
+}
+
+html body .phase-lock-switch.is-locked .phase-lock-switch__thumb {
+  transform: translate3d(20px, 0, 0);
+}
+
+html body .phase-lock-switch.is-dragging .phase-lock-switch__thumb {
+  transform: translate3d(var(--switch-drag-x), 0, 0);
+  transition: none !important;
+}
+
+html body .phase-lock-switch:focus-visible {
+  outline: 0;
+}
+
+html body .phase-lock-switch:focus-visible .phase-lock-switch__track {
+  box-shadow: var(--focus-ring-shadow), inset 0 0 0 1px rgba(255, 255, 255, .12);
+}
+
+html body .phase-lock-switch:is(:hover, :active, :focus, :focus-visible) {
+  background: transparent !important;
+  box-shadow: none !important;
+  filter: none !important;
+  transform: none !important;
+}
+
+html:not([data-theme="light"]) body .phase-lock-switch__track {
+  border-color: rgba(255, 255, 255, .1);
+  background: rgba(120, 120, 128, .3);
+}
+
+html:not([data-theme="light"]) body .phase-lock-switch.is-locked .phase-lock-switch__track {
+  border-color: var(--color-success);
+  background: var(--color-success);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body .phase-lock-switch__track,
+  html body .phase-lock-switch__thumb {
+    transition: none !important;
+  }
+}
+
+/* Bottom navigation labels need a full line box for y, p, g and j descenders. */
+html body .bottom-nav .nav-label {
+  min-height: 14px !important;
+  line-height: 14px !important;
+}
+
+/* iOS/Safari keyboard: keep focused controls above the visual viewport edge. */
+html body input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="button"]):not([type="submit"]):not([type="reset"]),
+html body textarea,
+html body select,
+html body [contenteditable="true"] {
+  scroll-margin-top: calc(var(--header-height, 61px) + 14px) !important;
+  scroll-margin-bottom: 28px !important;
+}
+
+html.app-keyboard-open body .bottom-nav {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transition: none !important;
+}
+
+html.app-keyboard-open body .app-content {
+  padding-bottom: calc(var(--app-keyboard-inset, 0px) + 40px) !important;
+}
+
+html.app-keyboard-open body .login-modal-content {
+  scroll-padding-bottom: 32px !important;
 }

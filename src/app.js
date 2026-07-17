@@ -2771,7 +2771,7 @@ const COMPUTER_FLAG_COLORS = {
   eg: ['216, 0, 39'],
   ir: ['216, 0, 39', '109, 165, 68'],
   nz: ['0, 82, 180'],
-  es: ['216, 0, 39'],
+  es: ['216, 0, 39', '255, 218, 68'],
   cv: ['1, 82, 180', '217, 4, 41'],
   sa: ['73, 110, 45'],
   uy: ['51, 138, 243'],
@@ -2781,7 +2781,7 @@ const COMPUTER_FLAG_COLORS = {
   no: ['216, 0, 39', '0, 82, 180'],
   ar: ['51, 138, 243'],
   dz: ['73, 110, 45', '212, 3, 39'],
-  at: ['216, 0, 39'],
+  at: ['216, 0, 39', '255, 255, 255'],
   jo: ['110, 165, 69'],
   pt: ['216, 0, 39'],
   cd: ['51, 138, 243'],
@@ -3770,9 +3770,7 @@ function MatchesView({
 }) {
   const [phaseFilter, setPhaseFilter] = useState('all');
   const [groupFilter, setGroupFilter] = useState('all');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const autoPhaseFilterRef = useRef('all');
-  const phaseFilterTouchedRef = useRef(false);
+  const [statusFilter, setStatusFilter] = useState('pending');
   const [expandedId, setExpandedId] = useState(null);
   const [compactDevice, setCompactDevice] = useState(() => typeof window !== "undefined" && (window.innerWidth <= 700 || window.matchMedia("(pointer: coarse)").matches));
   useEffect(() => {
@@ -3783,17 +3781,7 @@ function MatchesView({
   }, []);
   const [visibleCount, setVisibleCount] = useState(() => compactDevice ? 18 : Number.MAX_SAFE_INTEGER);
   const handleToggleMatch = useCallback(id => setExpandedId(prev => prev === id ? null : id), []);
-  const defaultResultPhase = useMemo(() => getLatestResultPhase(matches, results), [matches, results]);
-  useEffect(() => {
-    if (defaultResultPhase === 'all') return;
-    const canAutoSelect = !phaseFilterTouchedRef.current || phaseFilter === autoPhaseFilterRef.current;
-    if (!canAutoSelect) return;
-    autoPhaseFilterRef.current = defaultResultPhase;
-    if (phaseFilter !== defaultResultPhase) setPhaseFilter(defaultResultPhase);
-    setGroupFilter('all');
-  }, [defaultResultPhase, phaseFilter]);
   const handlePhaseFilter = useCallback(phase => {
-    phaseFilterTouchedRef.current = true;
     setPhaseFilter(phase);
   }, []);
   const filtered = useMemo(() => {
@@ -3916,12 +3904,12 @@ function MatchesView({
   }, "Poka\u017C kolejne mecze (", filtered.length - visibleCount, ")"), filtered.length === 0 && React.createElement(React.Fragment, null, React.createElement("div", {
     className: "text-center text-stone-500 app-note app-note--info app-note--center matches-empty-note",
     style: {
-      minHeight: 130,
+      minHeight: 72,
       display: "flex",
       alignItems: "center",
       justifyContent: "center"
     }
-  }, "Nie znaleziono mecz\xF3w pasuj\u0105cych do wybranych filtr\xF3w."), React.createElement("div", {
+  }, "Brak mecz\xF3w dla wybranych filtr\xF3w"), React.createElement("div", {
     "aria-hidden": "true",
     style: {
       minHeight: "calc(100dvh - var(--header-height, 80px) - 310px)"
@@ -4954,9 +4942,7 @@ function CompareView({
 }) {
   const [phaseFilter, setPhaseFilter] = useState('all');
   const [groupFilter, setGroupFilter] = useState('all');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const autoPhaseFilterRef = useRef('all');
-  const phaseFilterTouchedRef = useRef(false);
+  const [statusFilter, setStatusFilter] = useState('pending');
   const [compactDevice, setCompactDevice] = useState(() => typeof window !== "undefined" && (window.innerWidth <= 700 || window.matchMedia("(pointer: coarse)").matches));
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -4973,15 +4959,6 @@ function CompareView({
       return next;
     });
   }, []);
-  const defaultResultPhase = useMemo(() => getLatestResultPhase(matches, results), [matches, results]);
-  useEffect(() => {
-    if (defaultResultPhase === 'all') return;
-    const canAutoSelect = !phaseFilterTouchedRef.current || phaseFilter === autoPhaseFilterRef.current;
-    if (!canAutoSelect) return;
-    autoPhaseFilterRef.current = defaultResultPhase;
-    if (phaseFilter !== defaultResultPhase) setPhaseFilter(defaultResultPhase);
-    setGroupFilter('all');
-  }, [defaultResultPhase, phaseFilter]);
   const filtered = useMemo(() => {
     return matches.filter(m => {
       if (phaseFilter !== 'all' && m.phase !== phaseFilter) return false;
@@ -5014,7 +4991,6 @@ function CompareView({
     key: t.k,
     type: "button",
     onClick: () => {
-      phaseFilterTouchedRef.current = true;
       setPhaseFilter(t.k);
     },
     "aria-pressed": phaseFilter === t.k,
@@ -5194,7 +5170,7 @@ function CompareView({
   }, "Pokaż kolejne mecze (", filtered.length - visibleCount, ")"), filtered.length === 0 && React.createElement(React.Fragment, null, React.createElement("div", {
     className: "text-center text-stone-500 app-note app-note--info app-note--center matches-empty-note",
     style: {
-      minHeight: 130,
+      minHeight: 72,
       display: "flex",
       alignItems: "center",
       justifyContent: "center"
@@ -5711,23 +5687,23 @@ function AdminPlayerRow({
     onRemove();
   };
   return React.createElement("div", {
-    className: `bg-white border-2 rounded-xl p-3 transition-all ${confirm ? 'border-red-300' : 'border-stone-200'}`
+    className: `admin-player-card bg-white border-2 rounded-xl p-3 transition-all ${confirm ? 'border-red-300' : 'border-stone-200'}`
   }, React.createElement("div", {
-    className: "flex items-center gap-3"
+    className: "admin-player-card__main flex items-center gap-3"
   }, React.createElement("div", {
     className: "admin-player-avatar shrink-0"
   }, player.name.slice(0, 1).toUpperCase()), React.createElement("div", {
     className: "flex-1 min-w-0"
   }, React.createElement("div", {
-    className: "font-semibold text-stone-900 text-sm truncate"
+    className: "admin-player-card__name font-semibold text-stone-900 text-sm truncate"
   }, player.name)), !confirm && React.createElement("button", {
     type: "button",
     onClick: openConfirm,
-    className: "shrink-0 px-3 py-1.5 rounded-lg bg-red-600 text-white text-xs font-bold hover:bg-red-700 active:scale-95 transition-all",
+    className: "admin-player-card__remove shrink-0 px-3 py-1.5 rounded-lg bg-red-600 text-white text-xs font-bold hover:bg-red-700 active:scale-95 transition-all",
     style: { minHeight: 'var(--control-height)' },
     title: "Usu\u0144 uczestnika"
   }, "Usu\u0144")), confirm && React.createElement("div", {
-    className: "mt-3 pt-3 border-t border-stone-100"
+    className: "admin-player-card__confirm mt-3 pt-3 border-t border-stone-100"
   }, React.createElement("p", {
     className: "text-xs text-red-700 font-semibold mb-2"
   }, "Usun\u0105\u0107 uczestnika \u201E", player.name, "\" i wszystkie jego typy?"), React.createElement("label", {
@@ -5938,6 +5914,86 @@ function AdminScoringPanel({
     size: 16
   }), "Zapisz punktacj\u0119")));
 }
+function PhaseLockSwitch({
+  label,
+  checked,
+  onChange
+}) {
+  const dragRef = React.useRef({
+    active: false,
+    startX: 0,
+    moved: false,
+    suppressClick: false
+  });
+  const [dragX, setDragX] = React.useState(null);
+  const finishDrag = event => {
+    const drag = dragRef.current;
+    if (!drag.active) return;
+    drag.active = false;
+    const delta = event.clientX - drag.startX;
+    const moved = drag.moved || Math.abs(delta) >= 4;
+    if (moved) {
+      drag.suppressClick = true;
+      const nextChecked = delta > 0 ? true : delta < 0 ? false : checked;
+      if (nextChecked !== checked) onChange();
+    }
+    setDragX(null);
+    if (event.currentTarget.hasPointerCapture && event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+  };
+  return React.createElement("button", {
+    type: "button",
+    role: "switch",
+    "aria-checked": checked,
+    "aria-label": `${label}: ${checked ? 'zablokowane' : 'odblokowane'}`,
+    title: checked ? 'Zablokowane' : 'Odblokowane',
+    className: `phase-lock-switch${checked ? ' is-locked' : ''}${dragX !== null ? ' is-dragging' : ''}`,
+    style: dragX === null ? undefined : {
+      '--switch-drag-x': `${dragX}px`
+    },
+    onPointerDown: event => {
+      if (event.pointerType === 'mouse' && event.button !== 0) return;
+      dragRef.current = {
+        active: true,
+        startX: event.clientX,
+        moved: false,
+        suppressClick: false
+      };
+      setDragX(checked ? 20 : 0);
+      event.currentTarget.setPointerCapture(event.pointerId);
+    },
+    onPointerMove: event => {
+      const drag = dragRef.current;
+      if (!drag.active) return;
+      const delta = event.clientX - drag.startX;
+      if (Math.abs(delta) >= 4) drag.moved = true;
+      const origin = checked ? 20 : 0;
+      setDragX(Math.max(0, Math.min(20, origin + delta)));
+    },
+    onPointerUp: finishDrag,
+    onPointerCancel: event => {
+      dragRef.current.active = false;
+      setDragX(null);
+      if (event.currentTarget.hasPointerCapture && event.currentTarget.hasPointerCapture(event.pointerId)) {
+        event.currentTarget.releasePointerCapture(event.pointerId);
+      }
+    },
+    onClick: event => {
+      if (dragRef.current.suppressClick) {
+        dragRef.current.suppressClick = false;
+        event.preventDefault();
+        return;
+      }
+      onChange();
+    }
+  }, React.createElement("span", {
+    className: "phase-lock-switch__track",
+    "aria-hidden": "true"
+  }, React.createElement("span", {
+    className: "phase-lock-switch__thumb"
+  })));
+}
 function PhaseLockRow({
   label,
   hint,
@@ -5945,19 +6001,16 @@ function PhaseLockRow({
   onToggle
 }) {
   return React.createElement("div", {
-    className: "flex items-center justify-between gap-3 py-2.5 border-b border-stone-100 last:border-0"
+    className: "phase-lock-row flex items-center justify-between gap-3 py-2.5 border-b border-stone-100 last:border-0"
   }, React.createElement("div", null, React.createElement("div", {
     className: "font-semibold text-sm text-stone-800"
   }, label), hint && React.createElement("div", {
     className: "text-xs text-stone-500"
-  }, hint)), React.createElement(Btn, {
-    variant: locked ? 'danger' : 'outline',
-    size: "sm",
-    onClick: onToggle
-  }, React.createElement(LockIcon, {
-    name: locked ? 'lock' : 'unlock',
-    size: 14
-  }), locked ? 'Zablokowane' : 'Odblokowane'));
+  }, hint)), React.createElement(PhaseLockSwitch, {
+    label: label,
+    checked: locked,
+    onChange: onToggle
+  }));
 }
 function PhaseLockPanel({
   matches,
@@ -5996,8 +6049,8 @@ function PhaseLockPanel({
     locked: !!locks.specials,
     onToggle: () => togglePhase('specials')
   }), React.createElement(PhaseLockRow, {
-    label: "Por\u00f3wnanie uczestnik\u00f3w",
-    hint: "Udost\u0119pnia uczestnikom zak\u0142adk\u0119 \u201ePodgl\u0105d\u201d z typami mecz\u00f3w i typami specjalnymi.",
+    label: "Blokada podgl\u0105du typ\u00f3w",
+    hint: "Blokuje uczestnikom podgl\u0105d typ\u00f3w innych graczy \u2014 meczowych i specjalnych.",
     locked: !locks.compareVisible,
     onToggle: () => onSavePhaseLocks(prev => ({
       ...(prev || {}),
@@ -6030,9 +6083,7 @@ function AdminPanel({
 }) {
   const [tab, setTab] = useState('results');
   const [mPhase, setMPhase] = useState('all');
-  const [mStatus, setMStatus] = useState('all');
-  const autoMPhaseRef = useRef('all');
-  const mPhaseTouchedRef = useRef(false);
+  const [mStatus, setMStatus] = useState('pending');
   const [editingId, setEditingId] = useState(null);
   const [importText, setImportText] = useState('');
   const [importErr, setImportErr] = useState('');
@@ -6042,7 +6093,6 @@ function AdminPanel({
   const [resetBusy, setResetBusy] = useState(false);
   const fileRef = useRef(null);
   const teamOptions = useMemo(() => Object.values(teams).sort((a, b) => a.group.localeCompare(b.group) || a.name.localeCompare(b.name)), [teams]);
-  const defaultResultPhase = useMemo(() => getLatestResultPhase(matches, results), [matches, results]);
   const adminMatchStats = useMemo(() => {
     const list = Array.isArray(matches) ? matches : [];
     const assigned = list.filter(m => m.homeTeamId && m.awayTeamId).length;
@@ -6056,13 +6106,6 @@ function AdminPanel({
       knockoutMissing
     };
   }, [matches, results]);
-  useEffect(() => {
-    if (defaultResultPhase === 'all') return;
-    const canAutoSelect = !mPhaseTouchedRef.current || mPhase === autoMPhaseRef.current;
-    if (!canAutoSelect) return;
-    autoMPhaseRef.current = defaultResultPhase;
-    if (mPhase !== defaultResultPhase) setMPhase(defaultResultPhase);
-  }, [defaultResultPhase, mPhase]);
   const filteredMatches = useMemo(() => {
     return matches.filter(m => {
       if (mPhase !== 'all' && m.phase !== mPhase) return false;
@@ -6230,7 +6273,6 @@ function AdminPanel({
   }, PHASE_FILTER_TABS.map(t => React.createElement("button", {
     key: t.k,
     onClick: () => {
-      mPhaseTouchedRef.current = true;
       setMPhase(t.k);
     },
     className: `selection-tile${mPhase === t.k ? ' is-selected' : ''} shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold`
@@ -6259,7 +6301,16 @@ function AdminPanel({
     className: `selection-tile${mStatus === t.k ? ' is-selected' : ''} flex-1 px-2 py-1 rounded-lg text-xs font-medium`
   }, t.l))), React.createElement("div", {
     className: "match-count-badge shrink-0"
-  }, filteredMatches.length, " ", plMecze(filteredMatches.length)))), filteredMatches.map(m => React.createElement(AdminMatchRow, {
+  }, filteredMatches.length, " ", plMecze(filteredMatches.length)))), filteredMatches.length === 0 && React.createElement("div", {
+    className: "text-center text-stone-500 app-note app-note--info app-note--center matches-empty-note admin-matches-empty-note",
+    role: "status",
+    style: {
+      minHeight: 72,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center"
+    }
+  }, "Brak mecz\u00f3w dla wybranych filtr\u00f3w"), filteredMatches.map(m => React.createElement(AdminMatchRow, {
     key: m.id,
     match: m,
     teams: teams,
@@ -6269,8 +6320,6 @@ function AdminPanel({
     mode: tab,
     onToggleEdit: () => setEditingId(editingId === m.id ? null : m.id),
     onSave: payload => {
-      autoMPhaseRef.current = m.phase;
-      mPhaseTouchedRef.current = false;
       setMPhase(m.phase);
       onSaveResult(m.id, payload);
       setEditingId(null);
@@ -6436,7 +6485,7 @@ function AdminPanel({
     scoringSettings: scoringSettings,
     onSave: onSaveScoringSettings
   }), tab === 'players' && React.createElement("div", {
-    className: "space-y-3"
+    className: "admin-players-list space-y-3"
   }, React.createElement("div", {
     className: "bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900 app-note app-note--warning"
   }, "Usuni\u0119cie uczestnika wymaga ponownego wpisania has\u0142a administratora. Uczestnik i wszystkie jego typy zostan\u0105 usuni\u0119te bez mo\u017Cliwo\u015Bci przywr\u00F3cenia."), players.length === 0 && React.createElement("p", {
@@ -7352,10 +7401,11 @@ function BottomNav({
     if (!btn) return null;
     const trackRect = track.getBoundingClientRect();
     const btnRect = btn.getBoundingClientRect();
+    const sizeRect = buttons[0].getBoundingClientRect();
     const inset = 1;
     return {
       left: btnRect.left - trackRect.left + inset,
-      width: Math.max(0, btnRect.width - inset * 2)
+      width: Math.max(0, sizeRect.width - inset * 2)
     };
   }, []);
 
@@ -7524,11 +7574,6 @@ function BottomNav({
       scrollPageTop();
       return;
     }
-    const _dropEl = trackRef.current && trackRef.current.querySelector('.nav-droplet');
-    if (_dropEl) {
-      _dropEl.classList.add('squishing');
-      setTimeout(() => _dropEl.classList.remove('squishing'), 180);
-    }
     requestSelect(tabKey);
   };
   useEffect(() => () => {
@@ -7607,6 +7652,67 @@ function Mundial2026() {
   useEffect(() => {
     const root = document.documentElement;
     let frame = 0;
+    let fieldFrame = 0;
+    const fieldTimers = new Set();
+    const editableSelector = 'input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [contenteditable="true"]';
+
+    const clearFieldTimers = () => {
+      fieldTimers.forEach(timer => window.clearTimeout(timer));
+      fieldTimers.clear();
+    };
+
+    const getScrollableParent = field => {
+      const modalContent = field.closest('.login-modal-content');
+      if (modalContent && modalContent.scrollHeight > modalContent.clientHeight + 1) return modalContent;
+      let node = field.parentElement;
+      while (node && node !== document.body && node !== document.documentElement) {
+        const style = window.getComputedStyle(node);
+        if (/(auto|scroll|overlay)/.test(style.overflowY) && node.scrollHeight > node.clientHeight + 1) return node;
+        node = node.parentElement;
+      }
+      return null;
+    };
+
+    const keepFocusedFieldVisible = () => {
+      fieldFrame = 0;
+      const field = document.activeElement;
+      if (!(field instanceof HTMLElement) || !field.matches(editableSelector)) return;
+
+      const vv = window.visualViewport;
+      const viewportTop = vv ? Math.max(0, vv.offsetTop || 0) : 0;
+      const viewportHeight = vv ? vv.height : window.innerHeight;
+      const inModal = !!field.closest('[role="dialog"], .login-modal-content, .admin-gate-card');
+      const headerHeight = parseFloat(window.getComputedStyle(root).getPropertyValue('--header-height')) || 61;
+      const safeTop = viewportTop + (inModal ? 14 : Math.min(headerHeight + 14, viewportHeight * .25));
+      const safeBottom = viewportTop + viewportHeight - 24;
+      const rect = field.getBoundingClientRect();
+      let delta = 0;
+
+      if (rect.bottom > safeBottom) delta = rect.bottom - safeBottom;
+      else if (rect.top < safeTop) delta = rect.top - safeTop;
+      if (Math.abs(delta) < 1) return;
+
+      const scrollParent = getScrollableParent(field);
+      if (scrollParent) {
+        scrollParent.scrollTop += delta;
+      } else {
+        window.scrollBy({ top: delta, left: 0, behavior: 'auto' });
+      }
+    };
+
+    const scheduleFieldVisibility = () => {
+      if (fieldFrame) cancelAnimationFrame(fieldFrame);
+      clearFieldTimers();
+      fieldFrame = requestAnimationFrame(keepFocusedFieldVisible);
+      [80, 220, 420].forEach(delay => {
+        const timer = window.setTimeout(() => {
+          fieldTimers.delete(timer);
+          keepFocusedFieldVisible();
+        }, delay);
+        fieldTimers.add(timer);
+      });
+    };
+
     const updateViewportMode = () => {
       frame = 0;
       const vv = window.visualViewport;
@@ -7616,34 +7722,53 @@ function Mundial2026() {
       const mobile = (window.matchMedia('(pointer: coarse)').matches && Math.min(window.innerWidth || 0, window.screen?.width || 0) <= 820) || visualWidth <= 620;
       const topInset = vv ? Math.max(0, vv.offsetTop || 0) : 0;
       const bottomInset = vv ? Math.max(0, (window.innerHeight || visualHeight) - visualHeight - topInset) : 0;
+      const focusedField = document.activeElement instanceof HTMLElement && document.activeElement.matches(editableSelector);
+      const keyboardOpen = bottomInset > 80 && focusedField;
       root.classList.toggle('is-mobile-device', !!mobile);
       root.classList.toggle('is-mobile-browser', !!mobile && !standalone);
       root.classList.toggle('is-mobile-standalone', !!mobile && !!standalone);
+      root.classList.toggle('app-keyboard-open', !!keyboardOpen);
       root.style.setProperty('--real-vh', `${visualHeight}px`);
       root.style.setProperty('--real-vw', `${visualWidth}px`);
       root.style.setProperty('--browser-top-ui', `${topInset}px`);
       root.style.setProperty('--browser-bottom-ui', `${bottomInset}px`);
+      root.style.setProperty('--app-keyboard-inset', `${keyboardOpen ? bottomInset : 0}px`);
+      if (focusedField) scheduleFieldVisibility();
     };
     const schedule = () => {
       if (frame) return;
       frame = requestAnimationFrame(updateViewportMode);
+    };
+    const handleFieldFocus = () => {
+      schedule();
+      scheduleFieldVisibility();
+    };
+    const handleFieldBlur = () => {
+      window.setTimeout(schedule, 0);
     };
     schedule();
     window.addEventListener('resize', schedule);
     window.addEventListener('orientationchange', schedule);
     window.visualViewport && window.visualViewport.addEventListener('resize', schedule);
     window.visualViewport && window.visualViewport.addEventListener('scroll', schedule);
+    document.addEventListener('focusin', handleFieldFocus, true);
+    document.addEventListener('focusout', handleFieldBlur, true);
     return () => {
       if (frame) cancelAnimationFrame(frame);
+      if (fieldFrame) cancelAnimationFrame(fieldFrame);
+      clearFieldTimers();
       window.removeEventListener('resize', schedule);
       window.removeEventListener('orientationchange', schedule);
       window.visualViewport && window.visualViewport.removeEventListener('resize', schedule);
       window.visualViewport && window.visualViewport.removeEventListener('scroll', schedule);
-      root.classList.remove('is-mobile-device', 'is-mobile-browser', 'is-mobile-standalone');
+      document.removeEventListener('focusin', handleFieldFocus, true);
+      document.removeEventListener('focusout', handleFieldBlur, true);
+      root.classList.remove('is-mobile-device', 'is-mobile-browser', 'is-mobile-standalone', 'app-keyboard-open');
       root.style.removeProperty('--real-vh');
       root.style.removeProperty('--real-vw');
       root.style.removeProperty('--browser-top-ui');
       root.style.removeProperty('--browser-bottom-ui');
+      root.style.removeProperty('--app-keyboard-inset');
     };
   }, []);
 
