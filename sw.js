@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mundial-typer-v61';
+const CACHE_NAME = 'mundial-typer-v62';
 
 const APP_ASSETS = [
   './',
