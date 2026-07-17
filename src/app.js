@@ -2201,10 +2201,7 @@ function Modal({
     const focusInitialElement = () => {
       const currentPanel = panelRef.current;
       if (!currentPanel) return;
-      const primaryField = currentPanel.querySelector('input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [contenteditable="true"]');
-      const focusableElements = getFocusableElements();
-      const target = primaryField instanceof HTMLElement ? primaryField : focusableElements[0] || currentPanel;
-      target.focus({ preventScroll: true });
+      currentPanel.focus({ preventScroll: true });
     };
 
     const focusFrame = requestAnimationFrame(focusInitialElement);
@@ -5285,7 +5282,6 @@ function AdminGate({
     onChange: updateInput(setInput),
     placeholder: isSetup ? 'Nowe hasło' : 'Hasło',
     className: 'admin-login-input' + (error ? ' has-error' : ''),
-    autoFocus: true,
     autoComplete: isSetup ? 'new-password' : 'current-password',
     autoCapitalize: 'off',
     autoCorrect: 'off',
@@ -5723,7 +5719,6 @@ function AdminPlayerRow({
     placeholder: "Wpisz has\u0142o administratora",
     autoComplete: "current-password",
     className: `w-full px-3 py-2.5 border-2 rounded-lg focus:outline-none text-sm mb-2 ${error ? 'border-red-400 bg-red-50' : 'border-stone-200'}`,
-    autoFocus: true
   }), error && React.createElement("p", {
     className: "text-xs text-red-600 font-semibold mb-2",
     role: "alert"
@@ -6594,7 +6589,6 @@ function AdminPanel({
     autoComplete: "current-password",
     disabled: resetBusy,
     className: `w-full px-3 py-2.5 border-2 rounded-lg focus:outline-none text-sm ${resetError ? 'border-red-400 bg-red-50' : 'border-stone-200'}`,
-    autoFocus: true
   }), resetError && React.createElement("p", {
     className: "text-xs text-red-600 font-semibold",
     role: "alert"
@@ -6789,7 +6783,6 @@ function LoginModal({
           React.createElement("div", { className: "profile-field" },
             React.createElement("label", { className: "profile-label" }, "Nowe imię i nazwisko"),
             React.createElement("input", {
-              autoFocus: true,
               value: newName,
               onChange: e => { setNewName(e.target.value); setRenameErr(''); },
               onKeyDown: e => { if (e.key === 'Enter' && !hasPinHash) handleRenameSubmit(); },
@@ -6840,7 +6833,6 @@ function LoginModal({
       type: "password",
       inputMode: "numeric",
       value: pin,
-      autoFocus: true,
       onChange: e => { setPin(e.target.value); setErr(''); },
       onKeyDown: e => e.key === 'Enter' && handlePin(),
       placeholder: "••••",
@@ -6932,7 +6924,6 @@ function PlayersManager({
       setError('');
     },
     placeholder: "np. Jan Kowalski",
-    autoFocus: true,
     className: "profile-text-input"
   })), React.createElement("div", {
     className: "profile-field"
