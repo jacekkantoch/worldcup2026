@@ -2198,13 +2198,6 @@ function Modal({
       });
     };
 
-    const focusInitialElement = () => {
-      const currentPanel = panelRef.current;
-      if (!currentPanel) return;
-      currentPanel.focus({ preventScroll: true });
-    };
-
-    const focusFrame = requestAnimationFrame(focusInitialElement);
     const handleKeyDown = event => {
       if (event.key === 'Escape') {
         event.preventDefault();
@@ -2239,7 +2232,6 @@ function Modal({
 
     document.addEventListener('keydown', handleKeyDown);
     return () => {
-      cancelAnimationFrame(focusFrame);
       document.removeEventListener('keydown', handleKeyDown);
       const previousFocus = previousFocusRef.current;
       previousFocusRef.current = null;
