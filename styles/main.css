@@ -244,7 +244,7 @@
       min-width: 0;
       max-width: 100%;
       overflow: hidden;
-      text-overflow: ellipsis;
+      text-overflow: clip;
       white-space: nowrap;
       color: var(--label-1);
       font-size: 15px;
@@ -5550,7 +5550,7 @@ html body .bracket-page .bracket-group-compact-pos {
 html body .bracket-page .bracket-group-compact-team {
   min-width: 0 !important;
   overflow: hidden !important;
-  text-overflow: ellipsis !important;
+  text-overflow: clip !important;
   white-space: nowrap !important;
   font-size: 11px !important;
   font-weight: 400 !important;
@@ -9821,11 +9821,23 @@ html body .matches-view .next-match-compact:not(#__compact_inner_a__):not(#__com
   max-width: 100% !important;
   padding: 1px 0 2px !important;
   overflow: hidden !important;
-  text-overflow: ellipsis !important;
+  text-overflow: clip !important;
   white-space: nowrap !important;
   font-size: 12px !important;
   font-weight: 800 !important;
   line-height: 15px !important;
+}
+
+html body .matches-view .next-match-team-name {
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+}
+
+html body .matches-view .next-match-team-name.is-overflowing {
+  -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 16px), transparent 100%) !important;
+  mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 16px), transparent 100%) !important;
+  -webkit-mask-repeat: no-repeat !important;
+  mask-repeat: no-repeat !important;
 }
 
 html body .matches-view .next-match-compact:not(#__compact_inner_a__):not(#__compact_inner_b__) .next-match-vs {

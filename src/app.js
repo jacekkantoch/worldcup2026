@@ -3680,6 +3680,24 @@ function NextMatchCountdown({ matches, teams, predictions, players, activePlayer
   const displayMatches = firstFutureStart !== null
     ? sorted.filter(m => new Date(m.date).getTime() === firstFutureStart)
     : [];
+  useEffect(() => {
+    let raf = null;
+    const updateOverflow = () => {
+      document.querySelectorAll('.matches-view .next-match-team-name').forEach(el => {
+        el.classList.toggle('is-overflowing', el.scrollWidth > el.clientWidth + 1);
+      });
+    };
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(updateOverflow);
+    };
+    schedule();
+    window.addEventListener('resize', schedule);
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      window.removeEventListener('resize', schedule);
+    };
+  }, [teams, firstFutureStart, displayMatches.length]);
   if (!displayMatches.length) return null;
   const allPlayers = Array.isArray(players) ? players : [];
   const pad = n => String(n).padStart(2, '0');
@@ -8192,7 +8210,14 @@ function Mundial2026() {
     onSaveResult: onSaveResultCb,
     onDeleteResult: handleDeleteResult,
     onUpdateTeam: onUpdateTeamCb,
-    onSaveSpecialResults: s => setSpecialResults(s),
+    onSaveSpecialResults: async s => {
+      try {
+        await setSpecialResults(s);
+        showToast('Wyniki specjalne zostały zapisane.');
+      } catch (error) {
+        showToast('Nie udało się zapisać wyników specjalnych.');
+      }
+    },
     onResetAll: handleResetAll,
     onExport: () => ({
       version: 2,
