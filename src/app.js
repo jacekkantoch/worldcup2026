@@ -2571,6 +2571,62 @@ const FLAG_ABBR = {
   'gh': 'GHA',
   'pa': 'PAN'
 };
+const FLAG_WIKI_URLS = {
+  'mx': 'https://upload.wikimedia.org/wikipedia/commons/f/fc/Flag_of_Mexico.svg',
+  'za': 'https://upload.wikimedia.org/wikipedia/commons/a/af/Flag_of_South_Africa.svg',
+  'kr': 'https://upload.wikimedia.org/wikipedia/commons/0/09/Flag_of_South_Korea.svg',
+  'cz': 'https://upload.wikimedia.org/wikipedia/commons/c/cb/Flag_of_the_Czech_Republic.svg',
+  'ca': 'https://upload.wikimedia.org/wikipedia/commons/c/cf/Flag_of_Canada.svg',
+  'ba': 'https://upload.wikimedia.org/wikipedia/commons/b/bf/Flag_of_Bosnia_and_Herzegovina.svg',
+  'qa': 'https://upload.wikimedia.org/wikipedia/commons/6/65/Flag_of_Qatar.svg',
+  'ch': 'https://upload.wikimedia.org/wikipedia/commons/f/f3/Flag_of_Switzerland.svg',
+  'br': 'https://upload.wikimedia.org/wikipedia/commons/0/05/Flag_of_Brazil.svg',
+  'ma': 'https://upload.wikimedia.org/wikipedia/commons/2/2c/Flag_of_Morocco.svg',
+  'ht': 'https://upload.wikimedia.org/wikipedia/commons/5/56/Flag_of_Haiti.svg',
+  'gb-sct': 'https://upload.wikimedia.org/wikipedia/commons/1/10/Flag_of_Scotland.svg',
+  'us': 'https://upload.wikimedia.org/wikipedia/commons/a/a4/Flag_of_the_United_States.svg',
+  'py': 'https://upload.wikimedia.org/wikipedia/commons/2/27/Flag_of_Paraguay.svg',
+  'au': 'https://upload.wikimedia.org/wikipedia/commons/b/b9/Flag_of_Australia.svg',
+  'tr': 'https://upload.wikimedia.org/wikipedia/commons/b/b4/Flag_of_Turkey.svg',
+  'de': 'https://upload.wikimedia.org/wikipedia/commons/b/ba/Flag_of_Germany.svg',
+  'cw': 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Flag_of_Cura%C3%A7ao.svg',
+  'ci': 'https://upload.wikimedia.org/wikipedia/commons/f/fe/Flag_of_C%C3%B4te_d%27Ivoire.svg',
+  'ec': 'https://upload.wikimedia.org/wikipedia/commons/e/e8/Flag_of_Ecuador.svg',
+  'nl': 'https://upload.wikimedia.org/wikipedia/commons/2/20/Flag_of_the_Netherlands.svg',
+  'jp': 'https://upload.wikimedia.org/wikipedia/commons/9/9e/Flag_of_Japan.svg',
+  'se': 'https://upload.wikimedia.org/wikipedia/commons/4/4c/Flag_of_Sweden.svg',
+  'tn': 'https://upload.wikimedia.org/wikipedia/commons/c/ce/Flag_of_Tunisia.svg',
+  'be': 'https://upload.wikimedia.org/wikipedia/commons/6/65/Flag_of_Belgium.svg',
+  'eg': 'https://upload.wikimedia.org/wikipedia/commons/f/fe/Flag_of_Egypt.svg',
+  'ir': 'https://upload.wikimedia.org/wikipedia/commons/c/ca/Flag_of_Iran.svg',
+  'nz': 'https://upload.wikimedia.org/wikipedia/commons/3/3e/Flag_of_New_Zealand.svg',
+  'es': 'https://upload.wikimedia.org/wikipedia/commons/9/9a/Flag_of_Spain.svg',
+  'cv': 'https://upload.wikimedia.org/wikipedia/commons/7/7a/Flag_of_Cape_Verde_%283-2%29.svg',
+  'sa': 'https://upload.wikimedia.org/wikipedia/commons/0/0d/Flag_of_Saudi_Arabia.svg',
+  'uy': 'https://upload.wikimedia.org/wikipedia/commons/f/fe/Flag_of_Uruguay.svg',
+  'fr': 'https://upload.wikimedia.org/wikipedia/commons/c/c3/Flag_of_France.svg',
+  'sn': 'https://upload.wikimedia.org/wikipedia/commons/f/fd/Flag_of_Senegal.svg',
+  'iq': 'https://upload.wikimedia.org/wikipedia/commons/f/f6/Flag_of_Iraq.svg',
+  'no': 'https://upload.wikimedia.org/wikipedia/commons/d/d9/Flag_of_Norway.svg',
+  'ar': 'https://upload.wikimedia.org/wikipedia/commons/1/1a/Flag_of_Argentina.svg',
+  'dz': 'https://upload.wikimedia.org/wikipedia/commons/7/77/Flag_of_Algeria.svg',
+  'at': 'https://upload.wikimedia.org/wikipedia/commons/4/41/Flag_of_Austria.svg',
+  'jo': 'https://upload.wikimedia.org/wikipedia/commons/c/c0/Flag_of_Jordan.svg',
+  'pt': 'https://upload.wikimedia.org/wikipedia/commons/5/5c/Flag_of_Portugal.svg',
+  'cd': 'https://upload.wikimedia.org/wikipedia/commons/6/6f/Flag_of_the_Democratic_Republic_of_the_Congo.svg',
+  'uz': 'https://upload.wikimedia.org/wikipedia/commons/8/84/Flag_of_Uzbekistan.svg',
+  'co': 'https://upload.wikimedia.org/wikipedia/commons/2/21/Flag_of_Colombia.svg',
+  'gb-eng': 'https://upload.wikimedia.org/wikipedia/commons/b/be/Flag_of_England.svg',
+  'hr': 'https://upload.wikimedia.org/wikipedia/commons/1/1b/Flag_of_Croatia.svg',
+  'gh': 'https://upload.wikimedia.org/wikipedia/commons/1/19/Flag_of_Ghana.svg',
+  'pa': 'https://upload.wikimedia.org/wikipedia/commons/a/ab/Flag_of_Panama.svg'
+};
+function getFlagUrl(code) {
+  return FLAG_WIKI_URLS[code] || '';
+}
+const FLAG_OBJECT_POSITION = {
+  qa: '25% center'
+};
 function getTeamAbbr(team) {
   if (!team) return '???';
   const flag = (team.flag || '').toLowerCase();
@@ -2696,7 +2752,7 @@ function getFlagColors(code) {
         resolve({ colors: [], hasWhite: false });
         done();
       };
-      img.src = `https://cdn.jsdelivr.net/gh/HatScripts/circle-flags@gh-pages/flags/${code}.svg`;
+      img.src = getFlagUrl(code);
     }));
     runFlagFetchQueue();
   });
@@ -2827,12 +2883,12 @@ function FlagImg({
   const fallback = normalized.fallback || FLAG_ABBR[c] || '';
   const [err, setErr] = React.useState(false);
   React.useEffect(() => setErr(false), [code]);
-  const src = c ? `https://cdn.jsdelivr.net/gh/HatScripts/circle-flags@gh-pages/flags/${c}.svg` : '';
+  const src = c ? getFlagUrl(c) : '';
   const showImage = Boolean(src) && !err;
   const fallbackIsEmoji = !c;
   return React.createElement("span", {
     title: title || fallback,
-    className: className,
+    className: `flag-img-frame${className ? ` ${className}` : ''}`,
     style: {
       width: size,
       height: size,
@@ -2842,7 +2898,7 @@ function FlagImg({
       alignItems: 'center',
       justifyContent: 'center',
       background: 'var(--bg-3)',
-      border: '1px solid var(--border-2)',
+      border: '1px solid #fff',
       boxShadow: 'none',
       filter: 'none',
       overflow: 'hidden'
@@ -2857,7 +2913,9 @@ function FlagImg({
       display: 'block',
       borderRadius: '50%',
       boxShadow: 'none',
-      filter: 'none'
+      filter: 'none',
+      objectFit: 'cover',
+      objectPosition: FLAG_OBJECT_POSITION[c] || 'center'
     },
     onError: () => setErr(true),
     alt: fallback,

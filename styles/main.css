@@ -4332,6 +4332,12 @@ html body .compare-view .compare-player-list-title {
   padding-right: 10px !important;
 }
 
+html body .prediction-list-title,
+html body .compare-player-list > .compare-player-list-title {
+  width: 100% !important;
+  text-align: center !important;
+}
+
 @media (max-width: 380px) {
   html body .prediction-list-title,
   html body .compare-view .compare-player-list-title {
@@ -4753,11 +4759,11 @@ html:not([data-theme="light"]) body .admin-phase-filters {
   filter: none !important;
 }
 
-/* Porownaj: panel filtrow z takim samym kryciem jak Mecze. */
+/* Porownaj: panel filtrow z takim samym kryciem jak Mecze (widoczna warstwa to
+   ::before, patrz regula nizej — tlo samego elementu i tak jest zaslaniane). */
 html:not([data-theme="light"]) body .compare-view .phase-filter-panel.filters-sticky {
   opacity: 1 !important;
-  background: rgba(28,28,30,.92) !important;
-  background-color: transparent !important;
+  background: transparent !important;
   border-color: transparent !important;
 }
 
@@ -5803,12 +5809,12 @@ html body .penalty-choice-grid {
 html body .penalty-choice-card {
   position: relative !important;
   min-width: 0 !important;
-  min-height: 64px !important;
+  min-height: 46px !important;
   display: grid !important;
-  grid-template-columns: 34px minmax(0, 1fr) 22px !important;
+  grid-template-columns: 26px minmax(0, 1fr) 22px !important;
   align-items: center !important;
   gap: 8px !important;
-  padding: 10px 12px !important;
+  padding: 6px 10px !important;
   border-radius: 18px !important;
   background: rgba(255,255,255,.045) !important;
   border: 1px solid rgba(255,255,255,.09) !important;
@@ -5838,8 +5844,8 @@ html body .penalty-choice-card:disabled {
 }
 
 html body .penalty-choice-flag {
-  width: 34px !important;
-  height: 34px !important;
+  width: 26px !important;
+  height: 26px !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -5891,14 +5897,14 @@ html body .penalty-choice-note {
   }
 
   html body .penalty-choice-card {
-    grid-template-columns: 30px minmax(0, 1fr) 20px !important;
-    min-height: 58px !important;
-    padding: 9px 9px !important;
+    grid-template-columns: 26px minmax(0, 1fr) 20px !important;
+    min-height: 46px !important;
+    padding: 6px 8px !important;
   }
 
   html body .penalty-choice-flag {
-    width: 30px !important;
-    height: 30px !important;
+    width: 26px !important;
+    height: 26px !important;
   }
 
   html body .penalty-choice-team {
@@ -6324,29 +6330,64 @@ html body .match-final-result-team.is-away {
   text-align: left !important;
 }
 
-/* Remove borders around circular flags. */
-html body .penalty-choice-flag,
-html body .match-final-result-team > span[title],
-html body .compare-match-team > span[title],
-html body .admin-score-team > span[title],
-html body .bracket-team-row > span[title],
-html body .bracket-group-compact-row > span[title],
-html body .bracket-group-team > span[title],
-html body span[title] {
-  border: 0 !important;
+/* White border around circular flags. Uses the same specificity trick as the
+   blanket "no element borders" reset above (:not(#…)) so it wins over it. */
+html body .match-final-result-team > span[title]:not(#__flag_border_restore__),
+html body .compare-match-team > span[title]:not(#__flag_border_restore__),
+html body .admin-score-team > span[title]:not(#__flag_border_restore__),
+html body .bracket-team-row > span[title]:not(#__flag_border_restore__),
+html body .bracket-group-compact-row > span[title]:not(#__flag_border_restore__),
+html body .bracket-group-team > span[title]:not(#__flag_border_restore__),
+html body .flag-img-frame:not(#__flag_border_restore__) {
+  border: 1px solid #fff !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+  border-color: #fff !important;
   outline: 0 !important;
   box-shadow: none !important;
+  /* Przywraca okrągły kształt zaslaniany przez regułę [style*="border-radius"]
+     (~2208), która łapie KAŻDY element z inline border-radius (w tym te
+     kołowe awatary flag) i wymusza im sztywny --ui-corner-radius (30px). Przy
+     dużych flagach (32-40px) 30px bywa bliskie połowie boku, więc różnicy
+     prawie nie widać, ale przy małych (np. 18px w wierszach panelu admina)
+     wychodzi zauważalny "kwadrat" zamiast koła. */
+  border-radius: 50% !important;
 }
 
 html body .penalty-choice-flag {
-  background: transparent !important;
-}
-
-html body span[title] > img {
+  width: 26px !important;
+  height: 26px !important;
   border: 0 !important;
+  background: transparent !important;
   outline: 0 !important;
   box-shadow: none !important;
 }
+
+html body .flag-img-frame > img {
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  border-radius: 50% !important;
+}
+
+/* FlagImg always stays circular, including the compact admin match summary. */
+html body .flag-img-frame,
+html body .admin-match-summary-teams .flag-img-frame {
+  aspect-ratio: 1 / 1 !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+}
+
+html body .flag-img-frame > img,
+html body .admin-match-summary-teams .flag-img-frame > img {
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+}
+
 
 /* Final result names fade only when overflowing. */
 html body .match-final-result-name {
@@ -6524,13 +6565,20 @@ html:not([data-theme="light"]) body .filters-sticky {
   position: sticky !important;
   isolation: isolate !important;
   overflow: hidden !important;
-  background: rgba(28,28,30,.92) !important;
-  background-color: rgb(28,28,30) !important;
+  background: transparent !important;
   border-color: transparent !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
 
+/* Ta warstwa (::before, z-index:-1) renderuje się NAD własnym tłem elementu
+   (paint order: tło elementu -> potomkowie o z-index<0 -> zwykła treść), więc
+   to ona jest faktycznie widoczna — stąd gradient --tab-match-surface-soft
+   (ten sam token co baner najblizszego meczu). Podkład to #000000, a nie
+   --bg-0 (#05070d): baner najbliższego meczu ma przezroczyste tło własne,
+   więc realnie stoi na czystej czerni body (patrz reguła `body{background:
+   #000000}`), a nie na tokenie --bg-0. Użycie --bg-0 tutaj dawało zauważalnie
+   chłodniejszy, granatowy odcień panelu wobec neutralnie czarnego banera. */
 html:not([data-theme="light"]) body .phase-filter-panel.filters-sticky::before,
 html:not([data-theme="light"]) body .filters-sticky::before {
   content: "" !important;
@@ -6538,7 +6586,8 @@ html:not([data-theme="light"]) body .filters-sticky::before {
   inset: 0 !important;
   z-index: -1 !important;
   border-radius: inherit !important;
-  background: rgb(28,28,30) !important;
+  background: var(--tab-match-surface-soft) !important;
+  background-color: #000000 !important;
   opacity: 1 !important;
   pointer-events: none !important;
 }
