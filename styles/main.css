@@ -6330,27 +6330,11 @@ html body .match-final-result-team.is-away {
   text-align: left !important;
 }
 
-/* White border around circular flags. Uses the same specificity trick as the
-   blanket "no element borders" reset above (:not(#…)) so it wins over it. */
-html body .match-final-result-team > span[title]:not(#__flag_border_restore__),
-html body .compare-match-team > span[title]:not(#__flag_border_restore__),
-html body .admin-score-team > span[title]:not(#__flag_border_restore__),
-html body .bracket-team-row > span[title]:not(#__flag_border_restore__),
-html body .bracket-group-compact-row > span[title]:not(#__flag_border_restore__),
-html body .bracket-group-team > span[title]:not(#__flag_border_restore__),
+/* Circular flags have no decorative outline. */
 html body .flag-img-frame:not(#__flag_border_restore__) {
-  border: 1px solid #fff !important;
-  border-width: 1px !important;
-  border-style: solid !important;
-  border-color: #fff !important;
+  border: 0 !important;
   outline: 0 !important;
   box-shadow: none !important;
-  /* Przywraca okrągły kształt zaslaniany przez regułę [style*="border-radius"]
-     (~2208), która łapie KAŻDY element z inline border-radius (w tym te
-     kołowe awatary flag) i wymusza im sztywny --ui-corner-radius (30px). Przy
-     dużych flagach (32-40px) 30px bywa bliskie połowie boku, więc różnicy
-     prawie nie widać, ale przy małych (np. 18px w wierszach panelu admina)
-     wychodzi zauważalny "kwadrat" zamiast koła. */
   border-radius: 50% !important;
 }
 
@@ -6376,6 +6360,10 @@ html body .admin-match-summary-teams .flag-img-frame {
   aspect-ratio: 1 / 1 !important;
   border-radius: 50% !important;
   overflow: hidden !important;
+  clip-path: circle(50% at 50% 50%) !important;
+  -webkit-clip-path: circle(50% at 50% 50%) !important;
+  -webkit-mask-image: -webkit-radial-gradient(white, black) !important;
+  transform: translateZ(0);
 }
 
 html body .flag-img-frame > img,
@@ -6386,6 +6374,9 @@ html body .admin-match-summary-teams .flag-img-frame > img {
   max-width: 100% !important;
   border-radius: 50% !important;
   object-fit: cover !important;
+  transform: scale(1.025) translateZ(0) !important;
+  backface-visibility: hidden !important;
+  -webkit-backface-visibility: hidden !important;
 }
 
 
