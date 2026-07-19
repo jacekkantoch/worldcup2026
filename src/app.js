@@ -2571,62 +2571,18 @@ const FLAG_ABBR = {
   'gh': 'GHA',
   'pa': 'PAN'
 };
-const FLAG_WIKI_URLS = {
-  'mx': 'https://upload.wikimedia.org/wikipedia/commons/f/fc/Flag_of_Mexico.svg',
-  'za': 'https://upload.wikimedia.org/wikipedia/commons/a/af/Flag_of_South_Africa.svg',
-  'kr': 'https://upload.wikimedia.org/wikipedia/commons/0/09/Flag_of_South_Korea.svg',
-  'cz': 'https://upload.wikimedia.org/wikipedia/commons/c/cb/Flag_of_the_Czech_Republic.svg',
-  'ca': 'https://upload.wikimedia.org/wikipedia/commons/c/cf/Flag_of_Canada.svg',
-  'ba': 'https://upload.wikimedia.org/wikipedia/commons/b/bf/Flag_of_Bosnia_and_Herzegovina.svg',
-  'qa': 'https://upload.wikimedia.org/wikipedia/commons/6/65/Flag_of_Qatar.svg',
-  'ch': 'https://upload.wikimedia.org/wikipedia/commons/f/f3/Flag_of_Switzerland.svg',
-  'br': 'https://upload.wikimedia.org/wikipedia/commons/0/05/Flag_of_Brazil.svg',
-  'ma': 'https://upload.wikimedia.org/wikipedia/commons/2/2c/Flag_of_Morocco.svg',
-  'ht': 'https://upload.wikimedia.org/wikipedia/commons/5/56/Flag_of_Haiti.svg',
-  'gb-sct': 'https://upload.wikimedia.org/wikipedia/commons/1/10/Flag_of_Scotland.svg',
-  'us': 'https://upload.wikimedia.org/wikipedia/commons/a/a4/Flag_of_the_United_States.svg',
-  'py': 'https://upload.wikimedia.org/wikipedia/commons/2/27/Flag_of_Paraguay.svg',
-  'au': 'https://upload.wikimedia.org/wikipedia/commons/b/b9/Flag_of_Australia.svg',
-  'tr': 'https://upload.wikimedia.org/wikipedia/commons/b/b4/Flag_of_Turkey.svg',
-  'de': 'https://upload.wikimedia.org/wikipedia/commons/b/ba/Flag_of_Germany.svg',
-  'cw': 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Flag_of_Cura%C3%A7ao.svg',
-  'ci': 'https://upload.wikimedia.org/wikipedia/commons/f/fe/Flag_of_C%C3%B4te_d%27Ivoire.svg',
-  'ec': 'https://upload.wikimedia.org/wikipedia/commons/e/e8/Flag_of_Ecuador.svg',
-  'nl': 'https://upload.wikimedia.org/wikipedia/commons/2/20/Flag_of_the_Netherlands.svg',
-  'jp': 'https://upload.wikimedia.org/wikipedia/commons/9/9e/Flag_of_Japan.svg',
-  'se': 'https://upload.wikimedia.org/wikipedia/commons/4/4c/Flag_of_Sweden.svg',
-  'tn': 'https://upload.wikimedia.org/wikipedia/commons/c/ce/Flag_of_Tunisia.svg',
-  'be': 'https://upload.wikimedia.org/wikipedia/commons/6/65/Flag_of_Belgium.svg',
-  'eg': 'https://upload.wikimedia.org/wikipedia/commons/f/fe/Flag_of_Egypt.svg',
-  'ir': 'https://upload.wikimedia.org/wikipedia/commons/c/ca/Flag_of_Iran.svg',
-  'nz': 'https://upload.wikimedia.org/wikipedia/commons/3/3e/Flag_of_New_Zealand.svg',
-  'es': 'https://upload.wikimedia.org/wikipedia/commons/9/9a/Flag_of_Spain.svg',
-  'cv': 'https://upload.wikimedia.org/wikipedia/commons/7/7a/Flag_of_Cape_Verde_%283-2%29.svg',
-  'sa': 'https://upload.wikimedia.org/wikipedia/commons/0/0d/Flag_of_Saudi_Arabia.svg',
-  'uy': 'https://upload.wikimedia.org/wikipedia/commons/f/fe/Flag_of_Uruguay.svg',
-  'fr': 'https://upload.wikimedia.org/wikipedia/commons/c/c3/Flag_of_France.svg',
-  'sn': 'https://upload.wikimedia.org/wikipedia/commons/f/fd/Flag_of_Senegal.svg',
-  'iq': 'https://upload.wikimedia.org/wikipedia/commons/f/f6/Flag_of_Iraq.svg',
-  'no': 'https://upload.wikimedia.org/wikipedia/commons/d/d9/Flag_of_Norway.svg',
-  'ar': 'https://upload.wikimedia.org/wikipedia/commons/1/1a/Flag_of_Argentina.svg',
-  'dz': 'https://upload.wikimedia.org/wikipedia/commons/7/77/Flag_of_Algeria.svg',
-  'at': 'https://upload.wikimedia.org/wikipedia/commons/4/41/Flag_of_Austria.svg',
-  'jo': 'https://upload.wikimedia.org/wikipedia/commons/c/c0/Flag_of_Jordan.svg',
-  'pt': 'https://upload.wikimedia.org/wikipedia/commons/5/5c/Flag_of_Portugal.svg',
-  'cd': 'https://upload.wikimedia.org/wikipedia/commons/6/6f/Flag_of_the_Democratic_Republic_of_the_Congo.svg',
-  'uz': 'https://upload.wikimedia.org/wikipedia/commons/8/84/Flag_of_Uzbekistan.svg',
-  'co': 'https://upload.wikimedia.org/wikipedia/commons/2/21/Flag_of_Colombia.svg',
-  'gb-eng': 'https://upload.wikimedia.org/wikipedia/commons/b/be/Flag_of_England.svg',
-  'hr': 'https://upload.wikimedia.org/wikipedia/commons/1/1b/Flag_of_Croatia.svg',
-  'gh': 'https://upload.wikimedia.org/wikipedia/commons/1/19/Flag_of_Ghana.svg',
-  'pa': 'https://upload.wikimedia.org/wikipedia/commons/a/ab/Flag_of_Panama.svg'
-};
+const FLAG_CODES = [
+  'us', 'fr', 'de', 'jp', 'ca', 'co', 'be', 'ma', 'za', 'ch', 'at', 'es',
+  'gb-eng', 'se', 'kr', 'cz', 'no', 'uz', 'pa', 'cd', 'tr', 'qa', 'ar', 'tn',
+  'hr', 'br', 'ba', 'ci', 'gb-sct', 'sn', 'uy', 'dz', 'py', 'cw', 'ec', 'ht',
+  'jo', 'nl', 'pt', 'cv', 'eg', 'mx', 'au', 'nz', 'sa', 'ir', 'iq', 'gh'
+];
+const FLAG_URLS = Object.fromEntries(
+  FLAG_CODES.map(code => [code, `./assets/circle-flags/${code}.svg`])
+);
 function getFlagUrl(code) {
-  return FLAG_WIKI_URLS[code] || '';
+  return FLAG_URLS[code] || '';
 }
-const FLAG_OBJECT_POSITION = {
-  qa: '25% center'
-};
 function getTeamAbbr(team) {
   if (!team) return '???';
   const flag = (team.flag || '').toLowerCase();
@@ -2783,7 +2739,15 @@ function areFlagColorsSimilar(a, b) {
   const [h2, s2, l2] = rgbToHsl(b);
   const neutralA = s1 < 0.12 || l1 > 0.92 || l1 < 0.08;
   const neutralB = s2 < 0.12 || l2 > 0.92 || l2 < 0.08;
-  return !neutralA && !neutralB && hueDistance(h1, h2) < FLAG_HUE_MIN_DISTANCE;
+  const rgbA = a.split(',').map(Number);
+  const rgbB = b.split(',').map(Number);
+  const rgbDistance = Math.hypot(
+    rgbA[0] - rgbB[0],
+    rgbA[1] - rgbB[1],
+    rgbA[2] - rgbB[2]
+  ) / 441.67;
+  if (neutralA || neutralB) return neutralA === neutralB && Math.abs(l1 - l2) < 0.18;
+  return rgbDistance < 0.2 || (hueDistance(h1, h2) < FLAG_HUE_MIN_DISTANCE && Math.abs(l1 - l2) < 0.24);
 }
 const FLAG_HUE_MIN_DISTANCE = 35;
 const FLAG_COLORS_EMPTY = { colors: [], hasWhite: false };
@@ -2837,16 +2801,24 @@ const COMPUTER_FLAG_COLORS = {
   gh: ['255, 218, 68'],
   pa: ['216, 0, 39']
 };
-const MATCHUP_AWAY_COLOR_INDEX = {
-  'ci|ec': 1,
-  // Mecz o 3. miejsce: Francja gra na niebiesko, Anglia na biało.
-  'fr|gb-eng': 1
-};
-// Jak wyżej, ale dla gospodarza: mecz o 3. miejsce (Francja–Anglia) to dwa
-// czerwone kraje — Francja bierze niebieski (indeks 1), Anglia zostaje czerwona.
-const MATCHUP_HOME_COLOR_INDEX = {
-  'fr|gb-eng': 1
-};
+function getCompleteFlagPalette(code, detected) {
+  const candidates = [
+    ...(COMPUTER_FLAG_COLORS[code] || []),
+    ...(detected.colors || []),
+    ...(detected.hasWhite ? ['245, 245, 245'] : [])
+  ];
+  return candidates.filter((color, index) => {
+    const rgb = color.split(',').map(Number);
+    return !candidates.slice(0, index).some(previous => {
+      const previousRgb = previous.split(',').map(Number);
+      return Math.hypot(
+        rgb[0] - previousRgb[0],
+        rgb[1] - previousRgb[1],
+        rgb[2] - previousRgb[2]
+      ) < 42;
+    });
+  });
+}
 function useFlagGradient(homeFlag, awayFlag) {
   const [colors, setColors] = React.useState({ home: FLAG_COLORS_EMPTY, away: FLAG_COLORS_EMPTY });
   const homeCode = normalizeFlagValue(homeFlag).code;
@@ -2859,17 +2831,15 @@ function useFlagGradient(homeFlag, awayFlag) {
     });
     return () => { alive = false; };
   }, [homeCode, awayCode]);
-  const homePalette = COMPUTER_FLAG_COLORS[homeCode] || colors.home.colors;
-  const awayPalette = COMPUTER_FLAG_COLORS[awayCode] || colors.away.colors;
-  const forcedHomeIndex = MATCHUP_HOME_COLOR_INDEX[`${homeCode}|${awayCode}`];
-  const homeRgb = homePalette[forcedHomeIndex] || homePalette[0] || colors.home.colors[0] || colors.away.colors[0];
+  const homePalette = getCompleteFlagPalette(homeCode, colors.home);
+  const awayPalette = getCompleteFlagPalette(awayCode, colors.away);
+  const homeRgb = homePalette[0] || awayPalette[0];
   if (!homeRgb) return null;
-  const forcedAwayIndex = MATCHUP_AWAY_COLOR_INDEX[`${homeCode}|${awayCode}`];
-  let awayRgb = awayPalette[forcedAwayIndex] || awayPalette[0] || colors.away.colors[0] || colors.home.colors[0];
-  if (forcedAwayIndex == null && awayRgb && areFlagColorsSimilar(homeRgb, awayRgb)) {
-    awayRgb = awayPalette[1] || colors.away.colors[1] || awayRgb;
+  let awayRgb = awayPalette[0] || homeRgb;
+  if (areFlagColorsSimilar(homeRgb, awayRgb)) {
+    awayRgb = awayPalette.find(color => !areFlagColorsSimilar(homeRgb, color)) || awayRgb;
   }
-  return `linear-gradient(115deg, rgba(${homeRgb}, 0.24) 0%, rgba(${awayRgb}, 0.24) 100%)`;
+  return `linear-gradient(115deg, rgba(${homeRgb}, 0.24) 10%, rgba(${awayRgb}, 0.24) 90%)`;
 }
 function FlagImg({
   code,
@@ -2892,16 +2862,14 @@ function FlagImg({
     style: {
       width: size,
       height: size,
-      borderRadius: '50%',
       flexShrink: 0,
       display: 'inline-flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: 'var(--bg-3)',
-      border: '1px solid #fff',
+      background: showImage ? 'transparent' : 'var(--bg-3)',
+      border: 0,
       boxShadow: 'none',
-      filter: 'none',
-      overflow: 'hidden'
+      filter: 'none'
     }
   }, showImage ? React.createElement("img", {
     src: src,
@@ -2911,11 +2879,10 @@ function FlagImg({
       width: '100%',
       height: '100%',
       display: 'block',
-      borderRadius: '50%',
       boxShadow: 'none',
       filter: 'none',
       objectFit: 'cover',
-      objectPosition: FLAG_OBJECT_POSITION[c] || 'center'
+      objectPosition: 'center'
     },
     onError: () => setErr(true),
     alt: fallback,
@@ -2976,18 +2943,20 @@ function TeamPicker({
   }) : React.createElement("span", {
     className: "w-5 h-5 rounded-full border border-stone-300 shrink-0"
   }), React.createElement("span", {
-    className: `min-w-0 flex-1 truncate text-left ${selected ? '' : 'text-stone-400 font-medium'}`
-  }, selected ? selected.name : placeholder), selected && React.createElement("span", {
-    className: "text-[11px] text-stone-400 shrink-0"
-  }, "Gr. ", selected.group), status === 'correct' && React.createElement(Icon, {
+    className: `min-w-0 flex-1 inline-flex items-center gap-1.5 text-left ${selected ? '' : 'text-stone-400 font-medium'}`
+  }, React.createElement("span", {
+    className: `team-picker-name min-w-0 truncate${status === 'correct' ? ' is-correct' : status === 'wrong' ? ' is-wrong' : ''}`
+  }, selected ? selected.name : placeholder), status === 'correct' && React.createElement(Icon, {
     name: "check",
     size: 14,
-    className: "shrink-0"
+    className: "team-picker-status is-correct shrink-0"
   }), status === 'wrong' && React.createElement(Icon, {
     name: "x",
     size: 14,
-    className: "shrink-0"
-  }), React.createElement(Icon, {
+    className: "team-picker-status is-wrong shrink-0"
+  })), selected && React.createElement("span", {
+    className: "text-[11px] text-stone-400 shrink-0"
+  }, "Gr. ", selected.group), React.createElement(Icon, {
     name: open ? 'chevup' : 'chevdown',
     size: 16,
     className: "shrink-0"
@@ -3027,7 +2996,8 @@ function AutocompleteInput({
   onChange,
   suggestions,
   placeholder,
-  disabled
+  disabled,
+  status = ''
 }) {
   const [open, setOpen] = useState(false);
   const [filtered, setFiltered] = useState([]);
@@ -3047,7 +3017,7 @@ function AutocompleteInput({
     return () => document.removeEventListener('mousedown', h);
   }, []);
   return React.createElement("div", {
-    className: "relative",
+    className: `autocomplete-input-wrap relative${status ? ` is-${status}` : ''}`,
     ref: ref
   }, React.createElement("input", {
     type: "text",
@@ -3059,7 +3029,11 @@ function AutocompleteInput({
     onFocus: () => setOpen(true),
     disabled: disabled,
     placeholder: placeholder,
-    className: "selection-tile w-full px-3 py-2.5 rounded-full border text-sm font-semibold disabled:opacity-60"
+    className: `selection-tile autocomplete-status-input w-full px-3 py-2.5 rounded-full border text-sm font-semibold disabled:opacity-60${status ? ` is-${status}` : ''}`
+  }), status && React.createElement(Icon, {
+    name: status === 'correct' ? 'check' : 'x',
+    size: 14,
+    className: `autocomplete-status-icon is-${status}`
   }), open && filtered.length > 0 && React.createElement("div", {
     className: "absolute z-20 left-0 right-0 mt-1 bg-white border border-stone-200 rounded-lg shadow-lg max-h-48 overflow-y-auto"
   }, filtered.map(s => React.createElement("button", {
@@ -4045,6 +4019,12 @@ function SpecialsView({
   };
   const myScores = useMemo(() => scoreSpecials(mine, specialResults, scoringSettings), [mine, specialResults, scoringSettings]);
   const hasResults = !!(specialResults?.champion || specialResults?.topScorer || Object.keys(specialResults?.groupOrders || {}).length > 0);
+  const awardStatus = (prediction, official) => {
+    const predictedName = (prediction || '').trim().toLowerCase();
+    const officialName = (official || '').trim().toLowerCase();
+    if (!predictedName || !officialName) return '';
+    return predictedName === officialName ? 'correct' : 'wrong';
+  };
   React.useEffect(() => {
     let raf = null;
     const updateOverflow = () => {
@@ -4201,7 +4181,8 @@ function SpecialsView({
     })),
     suggestions: STAR_PLAYERS,
     placeholder: "np. Kylian Mbapp\xE9",
-    disabled: tournamentLocked || specialsLocked
+    disabled: tournamentLocked || specialsLocked,
+    status: awardStatus(draft.topScorer, specialResults?.topScorer)
   })), React.createElement("div", null, React.createElement("label", {
     className: "text-xs font-semibold text-stone-700 flex items-center gap-1.5 mb-1.5"
   }, "MVP turnieju ", React.createElement("span", {
@@ -4214,7 +4195,8 @@ function SpecialsView({
     })),
     suggestions: STAR_PLAYERS,
     placeholder: "np. Jude Bellingham",
-    disabled: tournamentLocked || specialsLocked
+    disabled: tournamentLocked || specialsLocked,
+    status: awardStatus(draft.mvp, specialResults?.mvp)
   }))), !(tournamentLocked || specialsLocked) && React.createElement("div", {
     className: "space-y-2 mt-2"
   }, validErr && React.createElement("div", {

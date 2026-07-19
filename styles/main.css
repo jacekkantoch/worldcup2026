@@ -1350,6 +1350,44 @@
         0 7px 18px rgba(180,0,0,.08);
       text-shadow: none;
     }
+    .team-picker-name.is-correct {
+      color: #30d158 !important;
+    }
+    .team-picker-name.is-wrong {
+      color: #ff453a !important;
+    }
+    .team-picker-status.is-correct {
+      color: #30d158 !important;
+      stroke: #30d158 !important;
+    }
+    .team-picker-status.is-wrong {
+      color: #ff453a !important;
+      stroke: #ff453a !important;
+    }
+    .autocomplete-status-input.is-correct {
+      color: #30d158 !important;
+      padding-right: 36px !important;
+    }
+    .autocomplete-status-input.is-wrong {
+      color: #ff453a !important;
+      padding-right: 36px !important;
+    }
+    .autocomplete-status-icon {
+      position: absolute;
+      top: 50%;
+      right: 12px;
+      z-index: 1;
+      pointer-events: none;
+      transform: translateY(-50%);
+    }
+    .autocomplete-status-icon.is-correct {
+      color: #30d158 !important;
+      stroke: #30d158 !important;
+    }
+    .autocomplete-status-icon.is-wrong {
+      color: #ff453a !important;
+      stroke: #ff453a !important;
+    }
     .selection-tile:focus-visible {
       outline: 2px solid var(--color-focus-ring);
       outline-offset: 2px;
@@ -6335,7 +6373,6 @@ html body .flag-img-frame:not(#__flag_border_restore__) {
   border: 0 !important;
   outline: 0 !important;
   box-shadow: none !important;
-  border-radius: 50% !important;
 }
 
 html body .penalty-choice-flag {
@@ -6351,19 +6388,12 @@ html body .flag-img-frame > img {
   border: 0 !important;
   outline: 0 !important;
   box-shadow: none !important;
-  border-radius: 50% !important;
 }
 
-/* FlagImg always stays circular, including the compact admin match summary. */
+/* FlagImg keeps a square layout; the SVG asset provides the circular shape. */
 html body .flag-img-frame,
 html body .admin-match-summary-teams .flag-img-frame {
   aspect-ratio: 1 / 1 !important;
-  border-radius: 50% !important;
-  overflow: hidden !important;
-  clip-path: circle(50% at 50% 50%) !important;
-  -webkit-clip-path: circle(50% at 50% 50%) !important;
-  -webkit-mask-image: -webkit-radial-gradient(white, black) !important;
-  transform: translateZ(0);
 }
 
 html body .flag-img-frame > img,
@@ -6372,11 +6402,7 @@ html body .admin-match-summary-teams .flag-img-frame > img {
   height: 100% !important;
   min-width: 100% !important;
   max-width: 100% !important;
-  border-radius: 50% !important;
   object-fit: cover !important;
-  transform: scale(1.025) translateZ(0) !important;
-  backface-visibility: hidden !important;
-  -webkit-backface-visibility: hidden !important;
 }
 
 
@@ -9839,6 +9865,7 @@ html body .matches-view .next-match-team-name.is-overflowing {
   -webkit-mask-repeat: no-repeat !important;
   mask-repeat: no-repeat !important;
 }
+
 
 html body .matches-view .next-match-compact:not(#__compact_inner_a__):not(#__compact_inner_b__) .next-match-vs {
   color: var(--label-3) !important;
