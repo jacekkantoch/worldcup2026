@@ -2577,8 +2577,22 @@ const FLAG_CODES = [
   'hr', 'br', 'ba', 'ci', 'gb-sct', 'sn', 'uy', 'dz', 'py', 'cw', 'ec', 'ht',
   'jo', 'nl', 'pt', 'cv', 'eg', 'mx', 'au', 'nz', 'sa', 'ir', 'iq', 'gh'
 ];
+const FLAG_FILES = [
+  '001-united-states.png', '002-france.png', '003-germany.png', '004-japan.png',
+  '005-canada.png', '006-colombia.png', '007-belgium.png', '008-morocco.png',
+  '009-south-africa.png', '010-switzerland.png', '011-austria.png', '012-spain.png',
+  '013-england.png', '014-sweden.png', '015-south-korea.png', '016-czech-republic.png',
+  '017-norway.png', '018-uzbekistan.png', '019-panama.png', '020-democratic-republic-of-congo.png',
+  '021-turkey.png', '022-qatar.png', '023-argentina.png', '024-tunisia.png',
+  '025-croatia.png', '026-brazil.png', '027-bosnia-and-herzegovina.png', '028-ivory-coast.png',
+  '029-scotland.png', '030-senegal.png', '031-uruguay.png', '032-algeria.png',
+  '033-paraguay.png', '034-curacao.png', '035-ecuador.png', '036-haiti.png',
+  '037-jordan.png', '038-netherlands.png', '039-portugal.png', '040-cape-verde.png',
+  '041-egypt.png', '042-mexico.png', '043-australia.png', '044-new-zealand.png',
+  '045-saudi-arabia.png', '046-iran.png', '047-iraq.png', '048-ghana.png'
+];
 const FLAG_URLS = Object.fromEntries(
-  FLAG_CODES.map(code => [code, `./assets/circle-flags/${code}.svg`])
+  FLAG_CODES.map((code, index) => [code, `./assets/flags/${FLAG_FILES[index]}`])
 );
 function getFlagUrl(code) {
   return FLAG_URLS[code] || '';
