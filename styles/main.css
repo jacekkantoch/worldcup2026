@@ -7397,6 +7397,177 @@ html body .ranking-share-button:focus-visible {
   outline-offset: 2px;
 }
 
+html body .fixed.inset-0.z-50 > .relative.final-winner-modal {
+  width: min(calc(100% - 24px), 520px) !important;
+  max-width: 520px !important;
+  align-self: center !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+  border-radius: 30px !important;
+  background:
+    radial-gradient(circle at 18% -30%, rgba(255,255,255,.10), transparent 46%),
+    linear-gradient(145deg, rgba(25,25,28,.98), rgba(12,12,14,.98)) !important;
+  background-color: #141416 !important;
+  box-shadow: 0 18px 50px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.07) !important;
+  overflow: hidden !important;
+}
+
+html body .final-winner-modal .panel-header {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 4;
+  width: 32px;
+  min-height: 32px;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+html body .final-winner-modal .panel-title {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  white-space: nowrap !important;
+}
+
+html body .final-winner-modal .panel-close-btn {
+  width: 32px !important;
+  height: 32px !important;
+  min-height: 32px !important;
+}
+
+html body .final-winner-modal .login-modal-content {
+  overflow: hidden !important;
+  padding: 0 !important;
+}
+
+html body .final-winner-announcement {
+  position: relative;
+  display: flex;
+  min-height: 104px;
+  align-items: center;
+  gap: 13px;
+  padding: 20px 50px 20px 18px;
+  text-align: left;
+  isolation: isolate;
+}
+
+html body .final-winner-fireworks {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: .48;
+}
+
+html body .final-winner-firework {
+  position: absolute;
+  left: var(--firework-x);
+  top: var(--firework-y);
+  width: 1px;
+  height: 1px;
+}
+
+html body .final-winner-firework::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: hsl(var(--firework-hue) 100% 70%);
+  box-shadow: 0 0 14px hsl(var(--firework-hue) 100% 65%);
+  animation: final-winner-flash 1.8s ease-out infinite;
+  animation-delay: var(--firework-delay);
+  opacity: 0;
+}
+
+html body .final-winner-spark {
+  position: absolute;
+  left: -1.5px;
+  top: -4px;
+  width: 3px;
+  height: 8px;
+  border-radius: 999px;
+  background: hsl(calc(var(--firework-hue) + var(--spark-index) * 9) 100% 68%);
+  opacity: 0;
+  transform-origin: 50% 100%;
+  animation: final-winner-spark 1.8s cubic-bezier(.16,.7,.35,1) infinite;
+  animation-delay: var(--firework-delay);
+}
+
+@keyframes final-winner-flash {
+  0%, 15%, 100% { opacity: 0; transform: scale(.2); }
+  20% { opacity: .9; transform: scale(1); }
+  32% { opacity: 0; transform: scale(2.2); }
+}
+
+@keyframes final-winner-spark {
+  0%, 15% { opacity: 0; transform: rotate(var(--spark-angle)) translateY(0) scaleY(.4); }
+  20% { opacity: 1; }
+  58%, 100% { opacity: 0; transform: rotate(var(--spark-angle)) translateY(-38px) scaleY(1); }
+}
+
+html body .final-winner-trophy {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 0 0 50px;
+  width: 50px;
+  height: 50px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 50%;
+}
+
+html body .final-winner-text {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+html body .final-winner-title {
+  color: var(--label-1);
+  font-family: var(--font-family-display);
+  font-size: clamp(19px, 4.8vw, 24px);
+  line-height: 1.08;
+  letter-spacing: .01em;
+}
+
+html body .final-winner-copy {
+  margin-top: 5px;
+  color: var(--label-2);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+html body .final-winner-copy strong {
+  color: var(--label-1);
+}
+
+@media (max-width: 420px) {
+  html body .final-winner-announcement {
+    gap: 10px;
+    padding: 17px 42px 17px 14px;
+  }
+
+  html body .final-winner-trophy {
+    flex-basis: 44px;
+    width: 44px;
+    height: 44px;
+  }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body .final-winner-fireworks {
+    display: none;
+  }
+}
+
 @media (max-width: 360px) {
   html body .ranking-share-button {
     right: 12px;
@@ -8024,6 +8195,12 @@ html body .toast-bar.toast-error:not(#__toast__) {
   font-weight: 700;
   color: var(--label-3);
 }
+.rank-cat-percent {
+  margin-left: 3px;
+  color: var(--label-2);
+  font-size: 10.5px;
+  font-weight: 750;
+}
 .rank-cat-track {
   height: 4px;
   border-radius: 999px;
@@ -8501,7 +8678,7 @@ html body .all-special-award-name {
   --curve-inset-14: 16px;
   --curve-inset-16: 14px;
   --curve-nested-deep: 999px;
-  --curve-rank-detail: 6px;
+  --curve-rank-detail: 10px;
 
   /* Compatibility for components that consume the earlier spacing tokens. */
   --app-panel-gap: var(--section-spacing);
@@ -10040,4 +10217,80 @@ html body .bottom-nav:not(#__transparent_nav_a__):not(#__transparent_nav_b__) {
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,.12),
     0 -8px 28px rgba(0,0,0,.18) !important;
+}
+
+/* Compact bottom navigation while the page is being scrolled down. */
+html body .bottom-nav {
+  transition:
+    width 220ms cubic-bezier(.22, 1, .36, 1),
+    left 220ms cubic-bezier(.22, 1, .36, 1),
+    right 220ms cubic-bezier(.22, 1, .36, 1) !important;
+}
+
+html body .bottom-nav .nav-track {
+  transition: padding 220ms cubic-bezier(.22, 1, .36, 1) !important;
+}
+
+html body .bottom-nav .nav-track > button {
+  transition:
+    min-height 220ms cubic-bezier(.22, 1, .36, 1),
+    padding 220ms cubic-bezier(.22, 1, .36, 1),
+    gap 220ms cubic-bezier(.22, 1, .36, 1),
+    color .22s var(--ease-out),
+    transform .16s var(--ease-spring),
+    opacity .22s ease !important;
+}
+
+html body .bottom-nav .nav-track > button svg.nav-icon {
+  transition:
+    width 220ms cubic-bezier(.22, 1, .36, 1),
+    height 220ms cubic-bezier(.22, 1, .36, 1),
+    opacity 220ms ease !important;
+}
+
+html body .bottom-nav .nav-label {
+  transition:
+    font-size 220ms cubic-bezier(.22, 1, .36, 1),
+    line-height 220ms cubic-bezier(.22, 1, .36, 1) !important;
+}
+
+html body .bottom-nav.is-scroll-compact {
+  left: 28px !important;
+  right: 28px !important;
+  width: min(640px, calc(100% - 56px)) !important;
+}
+
+html body .bottom-nav.is-scroll-compact .nav-track {
+  padding: 4px !important;
+}
+
+html body .bottom-nav.is-scroll-compact .nav-track > button:not(#__compact_nav__) {
+  min-height: 48px !important;
+  gap: 0 !important;
+}
+
+html body .bottom-nav.is-scroll-compact .nav-track > button svg.nav-icon {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+html body .bottom-nav.is-scroll-compact .nav-label {
+  min-height: 12px !important;
+  font-size: 9px !important;
+  line-height: 12px !important;
+}
+
+html body .bottom-nav.is-scroll-compact .nav-droplet {
+  top: 4px !important;
+  bottom: 4px !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body .bottom-nav,
+  html body .bottom-nav .nav-track,
+  html body .bottom-nav .nav-track > button,
+  html body .bottom-nav .nav-track > button svg.nav-icon,
+  html body .bottom-nav .nav-label {
+    transition: none !important;
+  }
 }

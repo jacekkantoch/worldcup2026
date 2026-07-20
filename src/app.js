@@ -1903,6 +1903,40 @@ function compareRankingEntries(a, b) {
   });
 }
 
+function buildRankingEntries(players, matches, predictions, results, specialPredictions, specialResults, scoringSettings, excludeMatchTime = null) {
+  return (players || []).map(pl => {
+    let gm = 0,
+      km = 0,
+      exact = 0,
+      partial = 0,
+      incorrect = 0;
+    (matches || []).forEach(m => {
+      if (excludeMatchTime != null && new Date(m.date).getTime() === excludeMatchTime) return;
+      const pred = predictions?.[`${pl.id}:${m.id}`],
+        res = results?.[m.id];
+      if (!pred || !res) return;
+      const pts = scoreMatch(pred, res, m.phase, scoringSettings);
+      const q = predictionQuality(pred, res, m.phase, scoringSettings);
+      if (q === 'exact') exact++;else if (q === 'partial') partial++;else if (q === 'miss') incorrect++;
+      if (m.phase === 'group') gm += pts;else km += pts;
+    });
+    const sp = scoreSpecials(specialPredictions?.[pl.id], specialResults, scoringSettings);
+    return {
+      player: pl,
+      gm,
+      km,
+      specials: sp.total,
+      go: sp.groupOrders,
+      podium: sp.podium,
+      awards: sp.awards,
+      total: gm + km + sp.total,
+      exact,
+      partial,
+      incorrect
+    };
+  }).sort(compareRankingEntries);
+}
+
 // ═══════════════════════════════════════════════════════════════
 //  POMOCNICZE
 // ═══════════════════════════════════════════════════════════════
@@ -4071,7 +4105,11 @@ function SpecialsView({
   }, [activeGroup, draft.groupOrders, specialResults, tournamentLocked, specialsLocked]);
   if (!activePlayerId) return React.createElement("div", {
     className: "text-center text-sm text-stone-600 bg-amber-50 border border-amber-200 rounded-lg p-4 mt-4 app-note app-note--warning app-note--center"
-  }, "Wybierz uczestnika na g\xF3rze ekranu");
+  }, React.createElement(Icon, {
+    name: "alert",
+    size: 16,
+    className: "inline mr-1"
+  }), "Wybierz uczestnika na g\xF3rze ekranu");
   return React.createElement("div", {
     className: "specials-view space-y-4"
   }, (tournamentLocked || specialsLocked) && React.createElement("div", {
@@ -4597,7 +4635,9 @@ function RankCategoryRow({
     className: "rank-cat-score"
   }, v, React.createElement("span", {
     className: "rank-cat-max"
-  }, "/", max))), React.createElement("div", {
+  }, "/", max), React.createElement("span", {
+    className: "rank-cat-percent"
+  }, " (", pct, "%)"))), React.createElement("div", {
     className: "rank-cat-track"
   }, React.createElement("div", {
     className: "rank-cat-fill",
@@ -4784,37 +4824,7 @@ function LeaderboardView({
     ranking,
     rankDeltas
   } = useMemo(() => {
-    const build = excludeMatchTime => players.map(pl => {
-      let gm = 0,
-        km = 0,
-        exact = 0,
-        partial = 0,
-        incorrect = 0;
-      matches.forEach(m => {
-        if (excludeMatchTime != null && new Date(m.date).getTime() === excludeMatchTime) return;
-        const pred = predictions[`${pl.id}:${m.id}`],
-          res = results[m.id];
-        if (!pred || !res) return;
-        const pts = scoreMatch(pred, res, m.phase, scoringSettings);
-        const q = predictionQuality(pred, res, m.phase, scoringSettings);
-        if (q === 'exact') exact++;else if (q === 'partial') partial++;else if (q === 'miss') incorrect++;
-        if (m.phase === 'group') gm += pts;else km += pts;
-      });
-      const sp = scoreSpecials(specialPredictions[pl.id], specialResults, scoringSettings);
-      return {
-        player: pl,
-        gm,
-        km,
-        specials: sp.total,
-        go: sp.groupOrders,
-        podium: sp.podium,
-        awards: sp.awards,
-        total: gm + km + sp.total,
-        exact,
-        partial,
-        incorrect
-      };
-    }).sort(compareRankingEntries);
+    const build = excludeMatchTime => buildRankingEntries(players, matches, predictions, results, specialPredictions, specialResults, scoringSettings, excludeMatchTime);
     const current = build(null);
     const completedTimes = matches.filter(m => results[m.id]).map(m => new Date(m.date).getTime());
     const deltas = {};
@@ -4874,7 +4884,7 @@ function LeaderboardView({
     }, 1800);
   };
   const shareRanking = async () => {
-    const heading = 'Końcowa klasyfikacja Football Typer';
+    const heading = 'Końcowa klasyfikacja';
     const rankingLines = ranking.map((entry, index) => `${index + 1}. ${entry.player.name} — ${entry.total} pkt`);
     const isLocalPreview = /^(localhost|127\.0\.0\.1)$/.test(window.location.hostname);
     const publicUrl = isLocalPreview ? '' : `${window.location.origin}${window.location.pathname}`;
@@ -7492,6 +7502,9 @@ function BottomNav({
   });
   const [dragging, setDragging] = useState(false);
   const [previewIdx, setPreviewIdx] = useState(null);
+  const [scrollCompact, setScrollCompact] = useState(false);
+  const lastScrollY = useRef(typeof window !== 'undefined' ? window.scrollY : 0);
+  const scrollFrame = useRef(0);
   const dragInfo = useRef({
     active: false,
     startX: 0,
@@ -7511,6 +7524,35 @@ function BottomNav({
     const behavior = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
     window.scrollTo({ top: 0, left: 0, behavior });
     document.scrollingElement?.scrollTo?.({ top: 0, left: 0, behavior });
+  }, []);
+
+  // Podczas przewijania w dół pasek zajmuje mniej miejsca. Przewinięcie
+  // w górę (albo powrót na początek strony) przywraca pełny rozmiar.
+  useEffect(() => {
+    const updateCompactState = () => {
+      scrollFrame.current = 0;
+      const currentY = Math.max(0, window.scrollY || document.scrollingElement?.scrollTop || 0);
+      const delta = currentY - lastScrollY.current;
+
+      if (currentY <= 24) {
+        setScrollCompact(false);
+      } else if (delta > 6) {
+        setScrollCompact(true);
+      } else if (delta < -6) {
+        setScrollCompact(false);
+      }
+
+      lastScrollY.current = currentY;
+    };
+    const onScroll = () => {
+      if (!scrollFrame.current) scrollFrame.current = requestAnimationFrame(updateCompactState);
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (scrollFrame.current) cancelAnimationFrame(scrollFrame.current);
+    };
   }, []);
 
   // Pozycja pastylki wynika ze stałej geometrii toru. Nie mierzymy
@@ -7704,7 +7746,7 @@ function BottomNav({
     if (selectTimer.current) clearTimeout(selectTimer.current);
   }, []);
   return React.createElement("nav", {
-    className: "bottom-nav",
+    className: "bottom-nav" + (scrollCompact && !dragging ? " is-scroll-compact" : ""),
     "aria-label": "Główna nawigacja"
   }, React.createElement("div", {
     className: "nav-track",
@@ -8085,6 +8127,37 @@ function Mundial2026() {
   const safeScoringSettings = useMemo(() => normalizePointsSettings(scoringSettings), [scoringSettings]);
   POINTS = safeScoringSettings;
   const activePlayerData = useMemo(() => safePlayers.find(p => p.id === activePlayer) || null, [safePlayers, activePlayer]);
+  const finalWinner = useMemo(() => {
+    const matchesComplete = safeMatches.length > 0 && safeMatches.every(match => !!safeResults[match.id]);
+    const groupOrdersComplete = GROUPS.every(group => {
+      const order = safeSpecialResults?.groupOrders?.[group];
+      return Array.isArray(order) && order.length >= 4 && order.slice(0, 4).every(Boolean) && new Set(order.slice(0, 4)).size === 4;
+    });
+    const specialResultsComplete = groupOrdersComplete && !!(
+      safeSpecialResults?.champion &&
+      safeSpecialResults?.runnerUp &&
+      safeSpecialResults?.third &&
+      String(safeSpecialResults?.topScorer || '').trim() &&
+      String(safeSpecialResults?.mvp || '').trim()
+    );
+    if (!matchesComplete || !specialResultsComplete || safePlayers.length === 0) return null;
+    return buildRankingEntries(
+      safePlayers,
+      safeMatches,
+      safePredictions,
+      safeResults,
+      safeSpecialPredictions,
+      safeSpecialResults,
+      safeScoringSettings
+    )[0] || null;
+  }, [safePlayers, safeMatches, safePredictions, safeResults, safeSpecialPredictions, safeSpecialResults, safeScoringSettings]);
+  const [showFinalCongratulations, setShowFinalCongratulations] = useState(false);
+  const finalCongratulationsShown = useRef(false);
+  useEffect(() => {
+    if (!allLoaded || !finalWinner || finalCongratulationsShown.current) return;
+    finalCongratulationsShown.current = true;
+    setShowFinalCongratulations(true);
+  }, [allLoaded, finalWinner]);
 
   // ── install prompt ──
   const [installPrompt, setInstallPrompt] = useState(null);
@@ -8328,6 +8401,56 @@ function Mundial2026() {
     activeTab: activeTab,
     onSelect: setActiveTab
   }), React.createElement(Modal, {
+    open: showFinalCongratulations && !!finalWinner,
+    onClose: () => setShowFinalCongratulations(false),
+    title: "Turniej zakończony",
+    maxWidth: "max-w-xl",
+    panelClassName: "final-winner-modal",
+    overlayClassName: "profile-modal-overlay"
+  }, finalWinner && React.createElement("div", {
+    className: "final-winner-announcement"
+  }, React.createElement("div", {
+    className: "final-winner-fireworks",
+    "aria-hidden": "true"
+  }, [{
+    x: '16%', y: '28%', delay: '0s', hue: 42
+  }, {
+    x: '54%', y: '24%', delay: '.55s', hue: 286
+  }, {
+    x: '84%', y: '68%', delay: '1.05s', hue: 150
+  }].map((firework, fireworkIndex) => React.createElement("span", {
+    key: fireworkIndex,
+    className: "final-winner-firework",
+    style: {
+      '--firework-x': firework.x,
+      '--firework-y': firework.y,
+      '--firework-delay': firework.delay,
+      '--firework-hue': firework.hue
+    }
+  }, Array.from({ length: 10 }, (_, sparkIndex) => React.createElement("i", {
+    key: sparkIndex,
+    className: "final-winner-spark",
+    style: {
+      '--spark-angle': `${sparkIndex * 36}deg`,
+      '--spark-index': sparkIndex
+    }
+  }))))), React.createElement("div", {
+    className: "final-winner-trophy",
+    style: {
+      background: RANK_MEDAL_THEME[0].bg,
+      color: RANK_MEDAL_THEME[0].color,
+      boxShadow: `inset 0 0 0 1px ${RANK_MEDAL_THEME[0].ring}`
+    },
+    "aria-hidden": "true"
+  }, React.createElement(FilledMedalIcon, {
+    size: 25
+  })), React.createElement("div", {
+    className: "final-winner-text"
+  }, React.createElement("h2", {
+    className: "final-winner-title"
+  }, "Gratulacje, ", finalWinner.player.name, "!"), React.createElement("p", {
+    className: "final-winner-copy"
+  }, "Zwycięstwo w końcowej klasyfikacji z wynikiem ", React.createElement("strong", null, finalWinner.total, " PKT"), ".")))), React.createElement(Modal, {
     open: adminLoginOpen && !adminUnlocked,
     onClose: () => setAdminLoginOpen(false),
     title: adminPasswordHash ? "Panel administratora" : "Ustaw hasło administratora",
