@@ -10451,19 +10451,19 @@ html.modal-scroll-locked body > #root {
   will-change: auto !important;
 }
 
-/* Profil i administrator nie mogą zależeć od szkła WebKit. Zachowujemy ich
-   dotychczasową granatową paletę, lecz dajemy im realne, prawie kryjące tło. */
+/* Profil i administrator nie mogą zależeć od szkła WebKit. Używają neutralnej
+   grafitowej powierzchni spójnej z kartami i komunikatem końcowym aplikacji. */
 html body > .fixed.inset-0.z-50.profile-modal-overlay-root > .relative.login-modal-sheet,
 html body > .fixed.inset-0.z-50.profile-modal-overlay-root > .relative.login-modal-compact-sheet {
   z-index: 1 !important;
   background:
-    radial-gradient(circle at 18% -12%, rgba(255,255,255,.12), transparent 42%),
-    linear-gradient(145deg, rgba(29,40,62,.99), rgba(8,14,26,.99)) !important;
-  background-color: #111824 !important;
-  border: 1px solid rgba(255,255,255,.16) !important;
+    radial-gradient(circle at 18% -24%, rgba(255,255,255,.09), transparent 44%),
+    linear-gradient(145deg, rgba(27,27,30,.99), rgba(12,12,14,.99)) !important;
+  background-color: #141416 !important;
+  border: 1px solid rgba(255,255,255,.11) !important;
   -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
   box-shadow:
     0 28px 90px rgba(0,0,0,.58),
-    inset 0 1px 0 rgba(255,255,255,.16) !important;
+    inset 0 1px 0 rgba(255,255,255,.08) !important;
 }
