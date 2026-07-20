@@ -7588,6 +7588,9 @@ html body .final-winner-overlay-root {
     max(12px, var(--safe-bottom, 0px)) !important;
   opacity: 1 !important;
   visibility: visible !important;
+  background: transparent !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
 }
 
 html body .final-winner-overlay-root .final-winner-overlay {
@@ -7595,9 +7598,9 @@ html body .final-winner-overlay-root .final-winner-overlay {
   opacity: 1 !important;
   visibility: visible !important;
   animation: none !important;
-  background: rgba(2, 7, 16, .40) !important;
-  -webkit-backdrop-filter: blur(18px) saturate(135%) brightness(.78) !important;
-  backdrop-filter: blur(18px) saturate(135%) brightness(.78) !important;
+  background: rgba(2, 7, 16, .56) !important;
+  -webkit-backdrop-filter: blur(6px) saturate(120%) !important;
+  backdrop-filter: blur(6px) saturate(120%) !important;
   transform: translateZ(0) !important;
   will-change: backdrop-filter !important;
 }
@@ -7627,6 +7630,9 @@ html body .final-winner-overlay-root .final-winner-modal.modal-pop-in {
     opacity: 1 !important;
     visibility: visible !important;
     pointer-events: auto !important;
+    background: transparent !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
   }
 
   html body .profile-modal-overlay-root .profile-modal-overlay {
@@ -7639,6 +7645,7 @@ html body .final-winner-overlay-root .final-winner-modal.modal-pop-in {
   html body .profile-modal-overlay-root .modal-pop-in,
   html body .profile-modal-overlay-root .login-modal-sheet.modal-pop-in,
   html body .profile-modal-overlay-root .login-modal-compact-sheet.modal-pop-in {
+    max-height: max(220px, calc(100dvh - var(--modal-chrome-top, 80px) - var(--modal-chrome-bottom, 100px))) !important;
     opacity: 1 !important;
     visibility: visible !important;
     transform: none !important;

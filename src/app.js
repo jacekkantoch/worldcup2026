@@ -2331,7 +2331,12 @@ function Modal({
     const updateModalViewport = () => {
       frame = 0;
       const vv = window.visualViewport;
-      const height = vv ? vv.height : window.innerHeight;
+      const viewportFallback = Math.max(320, window.innerHeight || document.documentElement.clientHeight || 0);
+      // Safari podczas otwierania/przywracania aplikacji potrafi chwilowo
+      // zgłosić visualViewport.height jako 0. Nie zapisujemy tej wartości,
+      // bo zerowałaby maksymalną wysokość wszystkich paneli mobilnych.
+      const reportedHeight = vv ? Number(vv.height) : viewportFallback;
+      const height = Number.isFinite(reportedHeight) && reportedHeight >= 240 ? reportedHeight : viewportFallback;
       const keyboardInset = vv ? Math.max(0, (window.innerHeight || height) - height) : 0;
 
       const active = document.activeElement;
@@ -2339,7 +2344,9 @@ function Modal({
         active.matches('input, textarea, select, [contenteditable="true"]') &&
         !!active.closest('.login-modal-content');
       const coarsePointer = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
-      const likelyKeyboardOpen = keyboardInset > 80 || (focusedModalField && coarsePointer);
+      // Różnica wysokości wynikająca z pasków Safari nie jest klawiaturą.
+      // Tryb klawiatury włączamy wyłącznie, gdy pole w modalu ma fokus.
+      const likelyKeyboardOpen = focusedModalField && (keyboardInset > 80 || coarsePointer);
 
       root.style.setProperty('--modal-vh', `${Math.max(0, height)}px`);
       root.style.setProperty('--modal-offset-top', '0px');
