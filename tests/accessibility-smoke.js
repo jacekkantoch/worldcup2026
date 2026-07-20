@@ -46,6 +46,8 @@ assert.match(css, /@media \(max-width: 360px\)[\s\S]*?\.next-match-summary[\s\S]
 assert.match(css, /@media \(max-width: 360px\)[\s\S]*?\.next-match-clock[\s\S]*?grid-column: 1 \/ -1 !important;/);
 assert.match(app, /const base = 'app-control /);
 assert.match(app, /className: "login-modal-content overflow-y-auto"/);
+assert.match(app, /ReactDOM\.createPortal\(modalNode, document\.body\)/);
+assert.doesNotMatch(app, /body\.style\.setProperty\('position', 'fixed'/);
 assert.doesNotMatch(app, /login-modal-content overflow-y-auto p-4/);
 assert.match(css, /\.bracket-page \.bracket-intro:not\(#__panel_padding__\)[\s\S]*?min-height: 0 !important;/);
 assert.match(css, /\.admin-login-panel:not\(#__panel_padding__\)[\s\S]*?padding: 0 !important;/);

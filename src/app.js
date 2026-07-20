@@ -2288,18 +2288,15 @@ function Modal({
     // żaden modal nie był już otwarty.
     if (root.classList.contains('modal-scroll-locked')) return undefined;
 
-    const scrollY = window.scrollY || window.pageYOffset || 0;
-
     root.classList.add('modal-scroll-locked');
     body.classList.add('modal-scroll-locked');
 
+    // Nie ustawiamy body jako position: fixed. W mobilnym Safari tworzyło to
+    // wadliwą warstwę kompozycji dla potomnych position: fixed: stan modala
+    // był aktywny i scroll zablokowany, ale sam panel nie był malowany.
+    // Overflow + obsługa touchmove poniżej wystarczają do blokady tła.
     root.style.setProperty('overflow', 'hidden', 'important');
     root.style.setProperty('overscroll-behavior', 'none', 'important');
-    body.style.setProperty('position', 'fixed', 'important');
-    body.style.setProperty('top', `-${scrollY}px`, 'important');
-    body.style.setProperty('left', '0', 'important');
-    body.style.setProperty('right', '0', 'important');
-    body.style.setProperty('width', '100%', 'important');
     body.style.setProperty('overflow', 'hidden', 'important');
     body.style.setProperty('overscroll-behavior', 'none', 'important');
 
@@ -2309,15 +2306,8 @@ function Modal({
 
       root.style.removeProperty('overflow');
       root.style.removeProperty('overscroll-behavior');
-      body.style.removeProperty('position');
-      body.style.removeProperty('top');
-      body.style.removeProperty('left');
-      body.style.removeProperty('right');
-      body.style.removeProperty('width');
       body.style.removeProperty('overflow');
       body.style.removeProperty('overscroll-behavior');
-
-      window.scrollTo(0, scrollY);
     };
   }, [open]);
 
@@ -2479,7 +2469,7 @@ function Modal({
   }, [open]);
 
   if (!open) return null;
-  return React.createElement("div", {
+  const modalNode = React.createElement("div", {
     className: `fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 ${overlayClassName ? `${overlayClassName}-root` : ''}`
   }, React.createElement("div", {
     className: `absolute inset-0 bg-stone-900/60 backdrop-blur-sm modal-backdrop-fade-in ${overlayClassName}`,
@@ -2504,6 +2494,10 @@ function Modal({
   }), React.createElement("div", {
     className: "login-modal-content overflow-y-auto"
   }, children)));
+  // Portal odcina modal od izolacji, contain/transform i animowanych warstw
+  // aplikacji. Dzięki temu fixed oraz backdrop-filter są liczone względem
+  // prawdziwego viewportu również w Safari i w trybie PWA.
+  return ReactDOM.createPortal(modalNode, document.body);
 }
 const NAME_TO_ABBR = {
   'meksyk': 'MEX',
@@ -5310,7 +5304,7 @@ function CompareView({
           color: pts === null ? 'transparent' : q === 'exact' ? 'var(--color-success)' : q === 'partial' ? 'var(--color-warning)' : 'var(--color-danger)'
         }
       }, pts === null ? '0' : pts > 0 ? `+${pts}` : '0')));
-    })));
+    })))
   }), hasMoreMatches && React.createElement("button", {
     type: "button",
     onClick: () => setVisibleCount(count => count + 18),
@@ -7551,7 +7545,13 @@ function BottomNav({
     const refreshFilterRows = () => {
       filterRows = Array.from(document.querySelectorAll('.phase-filter-panel.filters-sticky .filter-status-clip')).map(clip => {
         const row = clip.querySelector('.filter-status-row');
-        return row ? { clip, row, height: Math.max(0, row.scrollHeight || row.getBoundingClientRect().height || 0) } : null;
+        if (!row) return null;
+        const height = Math.max(0, row.scrollHeight || row.getBoundingClientRect().height || 0);
+        return {
+          clip,
+          row,
+          height
+        };
       }).filter(Boolean);
     };
     const renderProgress = progress => {

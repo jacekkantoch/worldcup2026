@@ -7601,8 +7601,8 @@ html body .final-winner-overlay-root .final-winner-overlay {
   background: rgba(2, 7, 16, .56) !important;
   -webkit-backdrop-filter: blur(6px) saturate(120%) !important;
   backdrop-filter: blur(6px) saturate(120%) !important;
-  transform: translateZ(0) !important;
-  will-change: backdrop-filter !important;
+  transform: none !important;
+  will-change: auto !important;
 }
 
 @supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
@@ -10398,4 +10398,44 @@ html.app-scroll-compact body .phase-filter-panel.filters-sticky > div > div:last
   html.app-scroll-compact body .phase-filter-panel.filters-sticky > div > div:last-child {
     transition: none !important;
   }
+}
+
+/* Canonical mobile-safe modal layer. The selectors deliberately exceed the
+   specificity of older structural .fixed.inset-0.z-50 modal rules. */
+html body > .fixed.inset-0.z-50.profile-modal-overlay-root,
+html body > .fixed.inset-0.z-50.final-winner-overlay-root {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 1000 !important;
+  width: 100% !important;
+  height: var(--modal-vh, 100dvh) !important;
+  min-height: -webkit-fill-available !important;
+  display: flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  isolation: isolate !important;
+  transform: none !important;
+  filter: none !important;
+  contain: none !important;
+}
+
+html body > .fixed.inset-0.z-50 > .absolute.inset-0.profile-modal-overlay,
+html body > .fixed.inset-0.z-50 > .absolute.inset-0.final-winner-overlay {
+  position: absolute !important;
+  inset: 0 !important;
+  display: block !important;
+  background: rgba(2, 7, 16, .56) !important;
+  -webkit-backdrop-filter: blur(6px) saturate(120%) !important;
+  backdrop-filter: blur(6px) saturate(120%) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+  filter: none !important;
+  will-change: auto !important;
+}
+
+html body > .fixed.inset-0.z-50 > [role="dialog"] {
+  opacity: 1 !important;
+  visibility: visible !important;
 }
