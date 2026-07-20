@@ -8700,10 +8700,27 @@ html body input.autocomplete-status-input.is-correct:disabled {
   -webkit-text-fill-color: #30d158 !important;
 }
 
+/* Trafione typy nagród korzystają z finalnego koloru zielonego pola TOP 3,
+   bez rozjaśniania przez półprzezroczyste tło sekcji. */
+html body .specials-view input.autocomplete-status-input.is-correct,
+html body .specials-view input.autocomplete-status-input.is-correct:disabled {
+  background: rgb(13, 48, 26) !important;
+  opacity: 1 !important;
+}
+
 html body input.autocomplete-status-input.is-wrong,
 html body input.autocomplete-status-input.is-wrong:disabled {
   color: #ff453a !important;
   -webkit-text-fill-color: #ff453a !important;
+}
+
+/* Niepoprawne typy nagród mają ten sam finalny, ciemnoczerwony kolor
+   powierzchni co niepoprawny wybór w sekcji TOP 3. Kolor jest nieprzezroczysty,
+   dzięki czemu nie rozjaśnia go tło karty „Nagrody indywidualne”. */
+html body .specials-view input.autocomplete-status-input.is-wrong,
+html body .specials-view input.autocomplete-status-input.is-wrong:disabled {
+  background: rgb(46, 10, 10) !important;
+  opacity: 1 !important;
 }
 
 html body .all-special-awards-table {
