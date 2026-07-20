@@ -10545,3 +10545,32 @@ html body > .fixed.inset-0.z-50.profile-modal-overlay-root > .relative.login-mod
     0 28px 90px rgba(0,0,0,.58),
     inset 0 1px 0 rgba(255,255,255,.08) !important;
 }
+
+/* iOS/PWA mobile-safe layout. Admin cards must keep their own content inset
+   even when the runtime utility stylesheet is restored from an incomplete
+   Safari cache. The header and page shell also honor the side safe areas. */
+:root {
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+}
+
+html body .app-header {
+  padding-left: max(17px, calc(var(--safe-left) + 17px)) !important;
+  padding-right: max(17px, calc(var(--safe-right) + 17px)) !important;
+}
+
+html body .app-content {
+  padding-left: max(var(--screen-horizontal-padding, 16px), calc(var(--safe-left) + 16px)) !important;
+  padding-right: max(var(--screen-horizontal-padding, 16px), calc(var(--safe-right) + 16px)) !important;
+}
+
+html body .admin-panel,
+html body .admin-panel > * {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+}
+
+html body .admin-panel .p-4 {
+  padding: var(--panel-content-padding, 16px) !important;
+}
