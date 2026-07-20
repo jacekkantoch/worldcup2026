@@ -7822,6 +7822,9 @@ function Mundial2026() {
   // activePlayer — lokalnie (per-urządzenie)
   const [activePlayer, setActivePlayerState] = useState(() => {
     try {
+      // Starsze wersje automatycznie zapisywały pierwszą osobę z listy.
+      // Odtwarzamy wyłącznie profil, który użytkownik świadomie wybrał.
+      if (localStorage.getItem('wc2026:activePlayerConfirmed') !== '1') return '';
       return localStorage.getItem('wc2026:activePlayer') || '';
     } catch (e) {
       return '';
@@ -7829,7 +7832,13 @@ function Mundial2026() {
   });
   const setActivePlayer = useCallback(id => {
     try {
-      localStorage.setItem('wc2026:activePlayer', id);
+      if (id) {
+        localStorage.setItem('wc2026:activePlayer', id);
+        localStorage.setItem('wc2026:activePlayerConfirmed', '1');
+      } else {
+        localStorage.removeItem('wc2026:activePlayer');
+        localStorage.removeItem('wc2026:activePlayerConfirmed');
+      }
     } catch (e) {}
     setActivePlayerState(id);
   }, []);
@@ -7992,8 +8001,9 @@ function Mundial2026() {
     if (!scoringSettings || Object.keys(scoringSettings).length === 0) setScoringSettings(DEFAULT_POINTS);
   }, [allLoaded]);
   useEffect(() => {
-    if (allLoaded && !activePlayer && players && players.length > 0) setActivePlayer(players[0].id);
-  }, [allLoaded, players]);
+    if (!allLoaded || !activePlayer) return;
+    if (!(players || []).some(player => player.id === activePlayer)) setActivePlayer('');
+  }, [allLoaded, players, activePlayer, setActivePlayer]);
   useEffect(() => {
     if (allLoaded) {
       document.getElementById('loading').style.display = 'none';
@@ -8452,7 +8462,7 @@ function Mundial2026() {
     title: "Turniej zakończony",
     maxWidth: "max-w-xl",
     panelClassName: "final-winner-modal",
-    overlayClassName: "profile-modal-overlay"
+    overlayClassName: "final-winner-overlay"
   }, finalWinner && React.createElement("div", {
     className: "final-winner-announcement"
   }, React.createElement("div", {

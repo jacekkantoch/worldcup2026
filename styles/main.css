@@ -7568,6 +7568,47 @@ html body .final-winner-copy strong {
   }
 }
 
+/* Winner announcement uses a dedicated, startup-safe overlay. Mobile browsers
+   can suspend an entry animation while restoring the app and leave a modal at
+   its invisible first keyframe, even though scroll locking is already active. */
+html body .final-winner-overlay-root {
+  box-sizing: border-box !important;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 1000 !important;
+  width: 100% !important;
+  height: var(--modal-vh, 100dvh) !important;
+  min-height: -webkit-fill-available !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding:
+    max(12px, var(--safe-top, 0px))
+    12px
+    max(12px, var(--safe-bottom, 0px)) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+html body .final-winner-overlay-root .final-winner-overlay {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  animation: none !important;
+  background: rgba(2, 7, 16, .62) !important;
+  -webkit-backdrop-filter: blur(6px) saturate(120%) !important;
+  backdrop-filter: blur(6px) saturate(120%) !important;
+}
+
+html body .final-winner-overlay-root .final-winner-modal.modal-pop-in {
+  align-self: center !important;
+  margin: auto !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+  animation: none !important;
+}
+
 @media (max-width: 360px) {
   html body .ranking-share-button {
     right: 12px;
