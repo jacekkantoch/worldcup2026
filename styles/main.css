@@ -8700,6 +8700,12 @@ html body input.autocomplete-status-input.is-correct:disabled {
 /* Nazwisko i wynik tworzą jeden elastyczny rząd. Nie używamy pozycji
    obliczanej w pikselach, która rozjeżdżała się po zmianie fontu lub
    szerokości widoku w mobilnym Safari. */
+html body .autocomplete-input-wrap {
+  position: relative !important;
+  min-width: 0;
+  isolation: isolate;
+}
+
 html body .autocomplete-status-display {
   position: absolute;
   inset: 0;
