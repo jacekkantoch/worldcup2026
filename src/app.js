@@ -7506,9 +7506,6 @@ function BottomNav({
   });
   const [dragging, setDragging] = useState(false);
   const [previewIdx, setPreviewIdx] = useState(null);
-  const lastScrollY = useRef(typeof window !== 'undefined' ? window.scrollY : 0);
-  const scrollUiProgress = useRef(0);
-  const scrollFrame = useRef(0);
   const dragInfo = useRef({
     active: false,
     startX: 0,
@@ -7531,40 +7528,108 @@ function BottomNav({
   }, []);
 
   // Interfejs reaguje proporcjonalnie do przebytej drogi przewijania zamiast
-  // przełączać się skokowo między dwoma stanami.
+  // przełączać się skokowo między dwoma stanami. Gest ustawia cel, a jedna
+  // pętla RAF płynnie prowadzi menu i filtr do tej samej wartości.
   useEffect(() => {
     const root = document.documentElement;
-    const applyProgress = value => {
-      const progress = Math.max(0, Math.min(1, value));
-      scrollUiProgress.current = progress;
+    const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let targetProgress = 0;
+    let renderedProgress = 0;
+    let motionFrame = 0;
+    let lastScrollY = Math.max(0, window.scrollY || document.scrollingElement?.scrollTop || 0);
+    let lastTouchY = null;
+    let lastDirectInputAt = 0;
+    let filterRows = [];
+
+    const refreshFilterRows = () => {
+      filterRows = Array.from(document.querySelectorAll('.phase-filter-panel.filters-sticky .filter-status-clip')).map(clip => {
+        const row = clip.querySelector('.filter-status-row');
+        return row ? { clip, row, height: Math.max(0, row.scrollHeight || row.getBoundingClientRect().height || 0) } : null;
+      }).filter(Boolean);
+    };
+    const renderProgress = progress => {
       root.style.setProperty('--scroll-ui-scale', (1 - progress * .2).toFixed(4));
       root.style.setProperty('--filter-status-margin', `${(-8 * progress).toFixed(2)}px`);
-      document.querySelectorAll('.phase-filter-panel.filters-sticky .filter-status-clip').forEach(clip => {
-        const row = clip.querySelector('.filter-status-row');
-        if (!row) return;
-        const rowHeight = Math.max(0, row.scrollHeight || row.getBoundingClientRect().height || 0);
-        clip.style.setProperty('--filter-status-height', `${(rowHeight * (1 - progress)).toFixed(2)}px`);
-        row.style.setProperty('--filter-status-shift', `${(-rowHeight * progress).toFixed(2)}px`);
+      filterRows.forEach(({ clip, row, height }) => {
+        clip.style.setProperty('--filter-status-height', `${(height * (1 - progress)).toFixed(2)}px`);
+        row.style.setProperty('--filter-status-shift', `${(-height * progress).toFixed(2)}px`);
       });
       root.classList.toggle('app-scroll-compact', progress >= .999);
     };
-    const updateScrollProgress = () => {
-      scrollFrame.current = 0;
-      const currentY = Math.max(0, window.scrollY || document.scrollingElement?.scrollTop || 0);
-      const delta = currentY - lastScrollY.current;
-      const nextProgress = currentY <= 0 ? 0 : scrollUiProgress.current + delta / 96;
-      applyProgress(nextProgress);
-      lastScrollY.current = currentY;
+    const animateProgress = () => {
+      const difference = targetProgress - renderedProgress;
+      if (reducedMotion || Math.abs(difference) < .0008) {
+        renderedProgress = targetProgress;
+        renderProgress(renderedProgress);
+        motionFrame = 0;
+        return;
+      }
+      renderedProgress += difference * .2;
+      renderProgress(renderedProgress);
+      motionFrame = requestAnimationFrame(animateProgress);
+    };
+    const startMotion = () => {
+      if (!motionFrame) motionFrame = requestAnimationFrame(animateProgress);
+    };
+    const moveTarget = distance => {
+      targetProgress = Math.max(0, Math.min(1, targetProgress + distance / 112));
+      startMotion();
+    };
+    const onWheel = event => {
+      lastDirectInputAt = performance.now();
+      moveTarget(event.deltaY);
+    };
+    const onTouchStart = event => {
+      if (event.touches?.length === 1) lastTouchY = event.touches[0].clientY;
+    };
+    const onTouchMove = event => {
+      if (event.touches?.length !== 1 || lastTouchY === null) return;
+      const currentTouchY = event.touches[0].clientY;
+      lastDirectInputAt = performance.now();
+      moveTarget(lastTouchY - currentTouchY);
+      lastTouchY = currentTouchY;
+    };
+    const onTouchEnd = () => {
+      lastTouchY = null;
     };
     const onScroll = () => {
-      if (!scrollFrame.current) scrollFrame.current = requestAnimationFrame(updateScrollProgress);
+      const currentY = Math.max(0, window.scrollY || document.scrollingElement?.scrollTop || 0);
+      const delta = currentY - lastScrollY;
+      lastScrollY = currentY;
+      if (currentY <= 0) {
+        targetProgress = 0;
+        startMotion();
+      } else if (performance.now() - lastDirectInputAt > 140 && Math.abs(delta) > .5) {
+        // Klawiatura, pasek przewijania i programowe przewijanie nie emitują
+        // wheel/touchmove, więc korzystają z tego lekkiego fallbacku.
+        moveTarget(delta);
+      }
     };
+    const refreshAndRender = () => {
+      refreshFilterRows();
+      renderProgress(renderedProgress);
+    };
+    const mutationObserver = new MutationObserver(refreshAndRender);
 
-    applyProgress(0);
+    refreshAndRender();
+    mutationObserver.observe(document.body, { childList: true, subtree: true });
     window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('wheel', onWheel, { passive: true });
+    window.addEventListener('touchstart', onTouchStart, { passive: true });
+    window.addEventListener('touchmove', onTouchMove, { passive: true });
+    window.addEventListener('touchend', onTouchEnd, { passive: true });
+    window.addEventListener('touchcancel', onTouchEnd, { passive: true });
+    window.addEventListener('resize', refreshAndRender);
     return () => {
+      mutationObserver.disconnect();
       window.removeEventListener('scroll', onScroll);
-      if (scrollFrame.current) cancelAnimationFrame(scrollFrame.current);
+      window.removeEventListener('wheel', onWheel);
+      window.removeEventListener('touchstart', onTouchStart);
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchend', onTouchEnd);
+      window.removeEventListener('touchcancel', onTouchEnd);
+      window.removeEventListener('resize', refreshAndRender);
+      if (motionFrame) cancelAnimationFrame(motionFrame);
       root.classList.remove('app-scroll-compact');
       root.style.removeProperty('--scroll-ui-scale');
       root.style.removeProperty('--filter-status-margin');

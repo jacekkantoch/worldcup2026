@@ -7595,9 +7595,17 @@ html body .final-winner-overlay-root .final-winner-overlay {
   opacity: 1 !important;
   visibility: visible !important;
   animation: none !important;
-  background: rgba(2, 7, 16, .62) !important;
-  -webkit-backdrop-filter: blur(6px) saturate(120%) !important;
-  backdrop-filter: blur(6px) saturate(120%) !important;
+  background: rgba(2, 7, 16, .40) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(135%) brightness(.78) !important;
+  backdrop-filter: blur(18px) saturate(135%) brightness(.78) !important;
+  transform: translateZ(0) !important;
+  will-change: backdrop-filter !important;
+}
+
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  html body .final-winner-overlay-root .final-winner-overlay {
+    background: rgba(2, 7, 16, .72) !important;
+  }
 }
 
 html body .final-winner-overlay-root .final-winner-modal.modal-pop-in {
@@ -7607,6 +7615,35 @@ html body .final-winner-overlay-root .final-winner-modal.modal-pop-in {
   visibility: visible !important;
   transform: none !important;
   animation: none !important;
+}
+
+/* Mobile browsers may suspend the shared entry animation at its invisible
+   first keyframe. Keep profile, login and admin modals fully rendered on
+   coarse-pointer/mobile viewports; desktop keeps the origin animation. */
+@media (max-width: 640px), (pointer: coarse) {
+  html body .profile-modal-overlay-root {
+    z-index: 1000 !important;
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+
+  html body .profile-modal-overlay-root .profile-modal-overlay {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    animation: none !important;
+  }
+
+  html body .profile-modal-overlay-root .modal-pop-in,
+  html body .profile-modal-overlay-root .login-modal-sheet.modal-pop-in,
+  html body .profile-modal-overlay-root .login-modal-compact-sheet.modal-pop-in {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+    animation: none !important;
+  }
 }
 
 @media (max-width: 360px) {
@@ -10269,7 +10306,8 @@ html body .bottom-nav {
   margin-inline: 0 !important;
   transform: translateX(-50%) scale(var(--scroll-ui-scale, 1)) !important;
   transform-origin: center bottom !important;
-  transition: transform 70ms linear !important;
+  transition: none !important;
+  will-change: transform !important;
 }
 
 html body .bottom-nav .nav-track > button {
@@ -10310,16 +10348,15 @@ html body .phase-filter-panel.filters-sticky > div > div:last-child {
   transform: none !important;
   -webkit-mask-image: none !important;
   mask-image: none !important;
-  transition:
-    max-height 70ms linear,
-    margin-top 70ms linear,
-    visibility 0s linear !important;
+  transition: visibility 0s linear !important;
+  will-change: max-height !important;
 }
 
 html body .phase-filter-panel.filters-sticky .filter-status-row {
   transform: translateY(var(--filter-status-shift, 0px)) !important;
   transform-origin: center top !important;
-  transition: transform 70ms linear !important;
+  transition: none !important;
+  will-change: transform !important;
 }
 
 html.app-scroll-compact body .phase-filter-panel.filters-sticky > div > div:last-child {
