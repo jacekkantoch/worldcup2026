@@ -10221,14 +10221,14 @@ html body .bottom-nav:not(#__transparent_nav_a__):not(#__transparent_nav_b__) {
 
 /* Compact bottom navigation while the page is being scrolled down. */
 html body .bottom-nav {
-  transition:
-    width 220ms cubic-bezier(.22, 1, .36, 1),
-    left 220ms cubic-bezier(.22, 1, .36, 1),
-    right 220ms cubic-bezier(.22, 1, .36, 1) !important;
-}
-
-html body .bottom-nav .nav-track {
-  transition: padding 220ms cubic-bezier(.22, 1, .36, 1) !important;
+  left: 50% !important;
+  right: auto !important;
+  width: calc(100% - 16px) !important;
+  max-width: 740px !important;
+  margin-inline: 0 !important;
+  transform: translateX(-50%) !important;
+  transform-origin: center bottom !important;
+  transition: transform 280ms cubic-bezier(.22, 1, .36, 1) !important;
 }
 
 html body .bottom-nav .nav-track > button {
@@ -10255,34 +10255,43 @@ html body .bottom-nav .nav-label {
 }
 
 html body .bottom-nav.is-scroll-compact {
-  left: 28px !important;
-  right: 28px !important;
-  width: min(640px, calc(100% - 56px)) !important;
+  transform: translateX(-50%) scale(.8) !important;
 }
 
-html body .bottom-nav.is-scroll-compact .nav-track {
-  padding: 4px !important;
+/* The filter keeps its full scale; only its status/count row collapses. */
+html body .phase-filter-panel.filters-sticky {
+  transform: none !important;
 }
 
-html body .bottom-nav.is-scroll-compact .nav-track > button:not(#__compact_nav__) {
-  min-height: 48px !important;
-  gap: 0 !important;
+html body .phase-filter-panel.filters-sticky > div > div:last-child {
+  max-height: 96px !important;
+  margin-top: 0 !important;
+  overflow: hidden !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateY(0) !important;
+  transform-origin: center top !important;
+  transition:
+    max-height 280ms cubic-bezier(.22, 1, .36, 1),
+    margin-top 280ms cubic-bezier(.22, 1, .36, 1),
+    opacity 180ms ease-out,
+    transform 280ms cubic-bezier(.22, 1, .36, 1),
+    visibility 0s linear !important;
 }
 
-html body .bottom-nav.is-scroll-compact .nav-track > button svg.nav-icon {
-  width: 18px !important;
-  height: 18px !important;
-}
-
-html body .bottom-nav.is-scroll-compact .nav-label {
-  min-height: 12px !important;
-  font-size: 9px !important;
-  line-height: 12px !important;
-}
-
-html body .bottom-nav.is-scroll-compact .nav-droplet {
-  top: 4px !important;
-  bottom: 4px !important;
+html.app-scroll-compact body .phase-filter-panel.filters-sticky > div > div:last-child {
+  max-height: 0 !important;
+  margin-top: calc(-1 * var(--space-small)) !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transform: translateY(-8px) !important;
+  transition:
+    max-height 280ms cubic-bezier(.22, 1, .36, 1),
+    margin-top 280ms cubic-bezier(.22, 1, .36, 1),
+    opacity 150ms ease-out,
+    transform 280ms cubic-bezier(.22, 1, .36, 1),
+    visibility 0s linear 280ms !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -10290,7 +10299,9 @@ html body .bottom-nav.is-scroll-compact .nav-droplet {
   html body .bottom-nav .nav-track,
   html body .bottom-nav .nav-track > button,
   html body .bottom-nav .nav-track > button svg.nav-icon,
-  html body .bottom-nav .nav-label {
+  html body .bottom-nav .nav-label,
+  html body .phase-filter-panel.filters-sticky > div > div:last-child,
+  html.app-scroll-compact body .phase-filter-panel.filters-sticky > div > div:last-child {
     transition: none !important;
   }
 }

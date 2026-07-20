@@ -7529,17 +7529,21 @@ function BottomNav({
   // Podczas przewijania w dół pasek zajmuje mniej miejsca. Przewinięcie
   // w górę (albo powrót na początek strony) przywraca pełny rozmiar.
   useEffect(() => {
+    const setCompactMode = compact => {
+      setScrollCompact(compact);
+      document.documentElement.classList.toggle('app-scroll-compact', compact);
+    };
     const updateCompactState = () => {
       scrollFrame.current = 0;
       const currentY = Math.max(0, window.scrollY || document.scrollingElement?.scrollTop || 0);
       const delta = currentY - lastScrollY.current;
 
       if (currentY <= 24) {
-        setScrollCompact(false);
+        setCompactMode(false);
       } else if (delta > 6) {
-        setScrollCompact(true);
+        setCompactMode(true);
       } else if (delta < -6) {
-        setScrollCompact(false);
+        setCompactMode(false);
       }
 
       lastScrollY.current = currentY;
@@ -7552,6 +7556,7 @@ function BottomNav({
     return () => {
       window.removeEventListener('scroll', onScroll);
       if (scrollFrame.current) cancelAnimationFrame(scrollFrame.current);
+      document.documentElement.classList.remove('app-scroll-compact');
     };
   }, []);
 
@@ -8155,6 +8160,8 @@ function Mundial2026() {
   const finalCongratulationsShown = useRef(false);
   useEffect(() => {
     if (!allLoaded || !finalWinner || finalCongratulationsShown.current) return;
+    // Jedno wyświetlenie na każde pełne uruchomienie lub odświeżenie strony.
+    // Sam powrót do aplikacji działającej w tle nie otwiera banera ponownie.
     finalCongratulationsShown.current = true;
     setShowFinalCongratulations(true);
   }, [allLoaded, finalWinner]);
