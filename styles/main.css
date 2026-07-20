@@ -5258,7 +5258,7 @@ html body .profile-inline-rename .profile-pin-input {
   font-size: 24px;
   font-weight: 850;
   color: #eef8ff;
-  background: linear-gradient(145deg, rgba(93,188,255,.46), rgba(91,77,242,.38));
+  background: linear-gradient(145deg, rgba(211,139,255,.58), rgba(139,63,240,.48));
   border: 1px solid rgba(174,220,255,.46);
   margin: 0 auto 10px;
   letter-spacing: -.01em;
@@ -10449,10 +10449,16 @@ html body > .fixed.inset-0.z-50 > [role="dialog"] {
   visibility: visible !important;
 }
 
-/* iOS/PWA fallback: Safari potrafi narysować półprzezroczysty scrim, ale
-   pominąć backdrop-filter. Modal jest portalem obok #root, więc możemy
-   niezawodnie rozmyć samą aplikację bez rozmywania panelu. */
+/* iOS/PWA fallback: nie filtrujemy całego #root, ponieważ filtr na przodku
+   elementu position:fixed tworzy w WebKit osobną warstwę współrzędnych.
+   Po zamknięciu klawiatury header był wtedy rysowany niżej niż jego hitbox.
+   Rozmywamy wyłącznie przewijaną treść, poza headerem i dolną nawigacją. */
 html.modal-scroll-locked body > #root {
+  -webkit-filter: none !important;
+  filter: none !important;
+}
+
+html.modal-scroll-locked body > #root .app-content {
   -webkit-filter: blur(6px) saturate(.9) !important;
   filter: blur(6px) saturate(.9) !important;
   will-change: auto !important;
