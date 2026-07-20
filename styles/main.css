@@ -1332,8 +1332,8 @@
 
     .selection-tile.is-correct,
     .selection-tile.is-correct:hover {
-      background: rgba(0,160,60,.30) !important;
-      border-color: rgba(0,220,80,.45) !important;
+      background: var(--special-result-row-bg, #1c1c1e) !important;
+      border-color: transparent !important;
       color: #30d158 !important;
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,.14),
@@ -1342,8 +1342,8 @@
     }
     .selection-tile.is-wrong,
     .selection-tile.is-wrong:hover {
-      background: rgba(180,0,0,.28) !important;
-      border-color: rgba(220,0,0,.40) !important;
+      background: var(--special-result-row-bg, #1c1c1e) !important;
+      border-color: transparent !important;
       color: #ff453a !important;
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,.10),
@@ -6188,7 +6188,7 @@ html body .compare-match-toggle {
   margin: 0 !important;
   padding: 9px 44px !important;
   border-radius: 18px !important;
-  border: 1px solid rgba(255,255,255,.075) !important;
+  border: 0 !important;
   background: var(--compare-flag-gradient, rgba(255,255,255,.04)) !important;
   color: inherit !important;
   cursor: pointer !important;
@@ -8742,7 +8742,7 @@ html body .autocomplete-status-text {
    bez rozjaśniania przez półprzezroczyste tło sekcji. */
 html body .specials-view input.autocomplete-status-input.is-correct,
 html body .specials-view input.autocomplete-status-input.is-correct:disabled {
-  background: rgb(13, 48, 26) !important;
+  background: var(--special-result-row-bg, #1c1c1e) !important;
   opacity: 1 !important;
 }
 
@@ -8757,8 +8757,29 @@ html body input.autocomplete-status-input.is-wrong:disabled {
    dzięki czemu nie rozjaśnia go tło karty „Nagrody indywidualne”. */
 html body .specials-view input.autocomplete-status-input.is-wrong,
 html body .specials-view input.autocomplete-status-input.is-wrong:disabled {
-  background: rgb(46, 10, 10) !important;
+  background: var(--special-result-row-bg, #1c1c1e) !important;
   opacity: 1 !important;
+}
+
+/* Pola nagród mają tę samą neutralną powierzchnię co wiersze drużyn w
+   kolejności grup, niezależnie od tego, czy wynik jest trafiony lub błędny. */
+html body .specials-view input.autocomplete-status-input:not(#__group_row_surface__) {
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  background: var(--special-result-row-bg, #1c1c1e) !important;
+  background-image: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Ten sam wygląd pól wyników specjalnych w panelu administratora. */
+html body .admin-panel .admin-specials-panel input:not(#__admin_special_surface__),
+html body .admin-panel .admin-specials-panel select:not(#__admin_special_surface__) {
+  background-color: var(--special-result-row-bg, #1c1c1e) !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
 }
 
 /* Musi występować po regułach kolorów is-correct/is-wrong. Sam tekst pola
@@ -9128,13 +9149,13 @@ html body .specials-group-order-panel .specials-order-item {
   align-items: center !important;
   gap: 10px !important;
   padding: 4px 8px 4px 10px !important;
-  border: 1px solid rgba(255,255,255,.075) !important;
+  border: 0 !important;
   /* Ten sam promień co karta-rodzic (.specials-group-order-panel) i baner
      "Twoje punkty specjalne" (.specials-score-banner, oba 30px) — wiersze
      są zaokrąglone tak samo jak reszta widoku, nie osobną, większą pigułką. */
   border-radius: 30px !important;
-  background: rgba(255,255,255,.045) !important;
-  box-shadow: 0 1px 0 rgba(255,255,255,.025) inset !important;
+  background: var(--special-result-row-bg, #1c1c1e) !important;
+  box-shadow: none !important;
   cursor: default !important;
   user-select: none !important;
   -webkit-user-select: none !important;
@@ -10573,4 +10594,20 @@ html body .admin-panel > * {
 
 html body .admin-panel .p-4 {
   padding: var(--panel-content-padding, 16px) !important;
+}
+
+/* Globalna, dwupoziomowa paleta tekstu. Wszystkie neutralne poziomy wtórne
+   korzystają z jednego szarego; kolory semantyczne sukcesu, błędu i ostrzeżeń
+   pozostają niezależne i nadal są zielone, czerwone oraz żółte. */
+:root {
+  --app-text-primary: #f5f5f7;
+  --app-text-secondary: #8e8e93;
+  --label-1: var(--app-text-primary);
+  --label-2: var(--app-text-secondary);
+  --label-3: var(--app-text-secondary);
+  --label-4: var(--app-text-secondary);
+  --color-text-primary: var(--app-text-primary);
+  --color-text-secondary: var(--app-text-secondary);
+  --color-text-tertiary: var(--app-text-secondary);
+  --color-text-quaternary: var(--app-text-secondary);
 }
