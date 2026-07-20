@@ -4164,9 +4164,7 @@ function SpecialsView({
       className: "text-xs font-semibold text-stone-700 flex items-center gap-1.5 mb-1.5"
     }, item.label, " ", React.createElement("span", {
       className: "text-stone-400"
-    }, "(", item.pts, " PKT)"), isCorrect && React.createElement(Badge, {
-      variant: "success"
-    }, "+", item.pts)), React.createElement(TeamPicker, {
+    }, "(", item.pts, " PKT)")), React.createElement(TeamPicker, {
       value: draft[item.key] || '',
       onChange: teamId => setDraft(d => ({
         ...d,
@@ -4429,7 +4427,7 @@ function SpecialsAllView({
   }, "Nagrody indywidualne"), React.createElement("div", {
     className: "overflow-x-auto"
   }, React.createElement("table", {
-    className: "w-full text-xs"
+    className: "all-special-awards-table w-full text-xs"
   }, React.createElement("thead", null, React.createElement("tr", {
     className: "bg-stone-50 border-b border-stone-200"
   }, React.createElement("th", {
@@ -4451,24 +4449,26 @@ function SpecialsAllView({
     }, React.createElement("td", {
       className: "px-3 py-2 font-semibold text-stone-800 truncate max-w-[80px]"
     }, pl.name), React.createElement("td", {
-      className: "px-3 py-2"
+      className: "all-special-award-cell px-3 py-2"
     }, React.createElement("span", {
-      className: `inline-flex items-center gap-1 ${okScorer ? 'all-special-status-correct' : scorerWrong ? 'all-special-status-wrong' : ''}`
-    }, sp.topScorer || React.createElement("span", {
-      className: "text-stone-300"
-    }, "\u2014"), okScorer && React.createElement(Icon, {
+      className: `all-special-award-value ${okScorer ? 'all-special-status-correct' : scorerWrong ? 'all-special-status-wrong' : ''}`,
+      title: sp.topScorer || ''
+    }, React.createElement("span", {
+      className: `all-special-award-name${sp.topScorer ? '' : ' text-stone-300'}`
+    }, sp.topScorer || "\u2014"), okScorer && React.createElement(Icon, {
       name: "check",
       size: 11
     }), scorerWrong && React.createElement(Icon, {
       name: "x",
       size: 11
     }))), React.createElement("td", {
-      className: "px-3 py-2"
+      className: "all-special-award-cell px-3 py-2"
     }, React.createElement("span", {
-      className: `inline-flex items-center gap-1 ${okMvp ? 'all-special-status-correct' : mvpWrong ? 'all-special-status-wrong' : ''}`
-    }, sp.mvp || React.createElement("span", {
-      className: "text-stone-300"
-    }, "\u2014"), okMvp && React.createElement(Icon, {
+      className: `all-special-award-value ${okMvp ? 'all-special-status-correct' : mvpWrong ? 'all-special-status-wrong' : ''}`,
+      title: sp.mvp || ''
+    }, React.createElement("span", {
+      className: `all-special-award-name${sp.mvp ? '' : ' text-stone-300'}`
+    }, sp.mvp || "\u2014"), okMvp && React.createElement(Icon, {
       name: "check",
       size: 11
     }), mvpWrong && React.createElement(Icon, {

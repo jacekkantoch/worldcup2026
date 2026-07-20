@@ -8377,6 +8377,56 @@ html body textarea:disabled {
   -webkit-text-fill-color: var(--label-2) !important;
 }
 
+html body input.autocomplete-status-input.is-correct,
+html body input.autocomplete-status-input.is-correct:disabled {
+  color: #30d158 !important;
+  -webkit-text-fill-color: #30d158 !important;
+}
+
+html body input.autocomplete-status-input.is-wrong,
+html body input.autocomplete-status-input.is-wrong:disabled {
+  color: #ff453a !important;
+  -webkit-text-fill-color: #ff453a !important;
+}
+
+html body .all-special-awards-table {
+  table-layout: fixed;
+}
+
+html body .all-special-awards-table th:first-child,
+html body .all-special-awards-table td:first-child {
+  width: 24%;
+}
+
+html body .all-special-award-cell {
+  width: 38%;
+  min-width: 0;
+}
+
+html body .all-special-award-value {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+html body .all-special-award-value > svg {
+  flex: 0 0 auto;
+}
+
+html body .all-special-award-name {
+  display: block;
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: clip;
+  -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 18px), transparent 100%);
+  mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 18px), transparent 100%);
+}
+
 /* 2026 spacing audit: compact 4pt rhythm and responsive collision fixes. */
 :root {
   --space-compact: 4px;
