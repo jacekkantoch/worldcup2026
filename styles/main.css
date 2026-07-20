@@ -10226,9 +10226,9 @@ html body .bottom-nav {
   width: calc(100% - 16px) !important;
   max-width: 740px !important;
   margin-inline: 0 !important;
-  transform: translateX(-50%) !important;
+  transform: translateX(-50%) scale(var(--scroll-ui-scale, 1)) !important;
   transform-origin: center bottom !important;
-  transition: transform 280ms cubic-bezier(.22, 1, .36, 1) !important;
+  transition: transform 70ms linear !important;
 }
 
 html body .bottom-nav .nav-track > button {
@@ -10254,44 +10254,52 @@ html body .bottom-nav .nav-label {
     line-height 220ms cubic-bezier(.22, 1, .36, 1) !important;
 }
 
-html body .bottom-nav.is-scroll-compact {
-  transform: translateX(-50%) scale(.8) !important;
-}
-
 /* The filter keeps its full scale; only its status/count row collapses. */
 html body .phase-filter-panel.filters-sticky {
   transform: none !important;
+  overflow-anchor: none !important;
 }
 
 html body .phase-filter-panel.filters-sticky > div > div:last-child {
-  max-height: 96px !important;
-  margin-top: 0 !important;
+  max-height: var(--filter-status-height, 96px) !important;
+  margin-top: var(--filter-status-margin, 0px) !important;
   overflow: hidden !important;
-  opacity: 1 !important;
   visibility: visible !important;
-  transform: translateY(0) !important;
-  transform-origin: center top !important;
+  opacity: 1 !important;
+  transform: none !important;
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
   transition:
-    max-height 280ms cubic-bezier(.22, 1, .36, 1),
-    margin-top 280ms cubic-bezier(.22, 1, .36, 1),
-    opacity 180ms ease-out,
-    transform 280ms cubic-bezier(.22, 1, .36, 1),
+    max-height 70ms linear,
+    margin-top 70ms linear,
     visibility 0s linear !important;
 }
 
+html body .phase-filter-panel.filters-sticky .filter-status-row {
+  transform: translateY(var(--filter-status-shift, 0px)) !important;
+  transform-origin: center top !important;
+  transition: transform 70ms linear !important;
+}
+
 html.app-scroll-compact body .phase-filter-panel.filters-sticky > div > div:last-child {
-  max-height: 0 !important;
-  margin-top: calc(-1 * var(--space-small)) !important;
-  opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;
-  transform: translateY(-8px) !important;
-  transition:
-    max-height 280ms cubic-bezier(.22, 1, .36, 1),
-    margin-top 280ms cubic-bezier(.22, 1, .36, 1),
-    opacity 150ms ease-out,
-    transform 280ms cubic-bezier(.22, 1, .36, 1),
-    visibility 0s linear 280ms !important;
+}
+
+@media (max-width: 360px) {
+  html body .phase-filter-panel.filters-sticky .filter-status-row {
+    flex-wrap: wrap !important;
+    gap: var(--space-compact) !important;
+  }
+
+  html body .phase-filter-panel.filters-sticky .filter-status-row .edge-safe-row {
+    flex: 1 0 100% !important;
+    width: 100% !important;
+  }
+
+  html body .phase-filter-panel.filters-sticky .filter-status-row .match-count-badge {
+    margin-left: auto !important;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -10301,6 +10309,7 @@ html.app-scroll-compact body .phase-filter-panel.filters-sticky > div > div:last
   html body .bottom-nav .nav-track > button svg.nav-icon,
   html body .bottom-nav .nav-label,
   html body .phase-filter-panel.filters-sticky > div > div:last-child,
+  html body .phase-filter-panel.filters-sticky .filter-status-row,
   html.app-scroll-compact body .phase-filter-panel.filters-sticky > div > div:last-child {
     transition: none !important;
   }

@@ -3923,7 +3923,9 @@ function MatchesView({
     "aria-pressed": groupFilter === g,
     className: `selection-tile${groupFilter === g ? ' is-selected' : ''} shrink-0 w-7 h-6 rounded-lg text-xs font-bold`
   }, g))), React.createElement("div", {
-    className: "flex items-center gap-1.5"
+    className: "filter-status-clip"
+  }, React.createElement("div", {
+    className: "filter-status-row flex items-center gap-1.5"
   }, React.createElement("div", {
     className: "edge-safe-row flex gap-1 items-center py-0.5 flex-1 min-w-0",
     role: "group",
@@ -3948,7 +3950,7 @@ function MatchesView({
     className: `selection-tile${statusFilter === t.k ? ' is-selected' : ''} flex-1 px-2 py-1 rounded-lg text-xs font-medium`
   }, t.l))), React.createElement("div", {
     className: "match-count-badge shrink-0"
-  }, filtered.length, " ", plMecze(filtered.length)))));
+  }, filtered.length, " ", plMecze(filtered.length))))));
   return React.createElement("div", {
     className: "matches-view space-y-3"
   }, React.createElement(NextMatchCountdown, {
@@ -5151,7 +5153,9 @@ function CompareView({
     "aria-pressed": groupFilter === g,
     className: `selection-tile${groupFilter === g ? ' is-selected' : ''} shrink-0 w-7 h-6 rounded-lg text-xs font-bold`
   }, g))), React.createElement("div", {
-    className: "flex items-center gap-1.5"
+    className: "filter-status-clip"
+  }, React.createElement("div", {
+    className: "filter-status-row flex items-center gap-1.5"
   }, React.createElement("div", {
     className: "edge-safe-row flex gap-1 items-center py-0.5 flex-1 min-w-0",
     role: "group",
@@ -5176,7 +5180,7 @@ function CompareView({
     className: `selection-tile${statusFilter === t.k ? ' is-selected' : ''} flex-1 px-2 py-1 rounded-lg text-xs font-medium`
   }, t.l))), React.createElement("div", {
     className: "match-count-badge shrink-0"
-  }, filtered.length, " ", plMecze(filtered.length))))), visibleMatches.map(m => {
+  }, filtered.length, " ", plMecze(filtered.length)))))), visibleMatches.map(m => {
     const home = teams[m.homeTeamId],
       away = teams[m.awayTeamId],
       result = results[m.id];
@@ -7502,8 +7506,8 @@ function BottomNav({
   });
   const [dragging, setDragging] = useState(false);
   const [previewIdx, setPreviewIdx] = useState(null);
-  const [scrollCompact, setScrollCompact] = useState(false);
   const lastScrollY = useRef(typeof window !== 'undefined' ? window.scrollY : 0);
+  const scrollUiProgress = useRef(0);
   const scrollFrame = useRef(0);
   const dragInfo = useRef({
     active: false,
@@ -7526,37 +7530,48 @@ function BottomNav({
     document.scrollingElement?.scrollTo?.({ top: 0, left: 0, behavior });
   }, []);
 
-  // Podczas przewijania w dół pasek zajmuje mniej miejsca. Przewinięcie
-  // w górę (albo powrót na początek strony) przywraca pełny rozmiar.
+  // Interfejs reaguje proporcjonalnie do przebytej drogi przewijania zamiast
+  // przełączać się skokowo między dwoma stanami.
   useEffect(() => {
-    const setCompactMode = compact => {
-      setScrollCompact(compact);
-      document.documentElement.classList.toggle('app-scroll-compact', compact);
+    const root = document.documentElement;
+    const applyProgress = value => {
+      const progress = Math.max(0, Math.min(1, value));
+      scrollUiProgress.current = progress;
+      root.style.setProperty('--scroll-ui-scale', (1 - progress * .2).toFixed(4));
+      root.style.setProperty('--filter-status-margin', `${(-8 * progress).toFixed(2)}px`);
+      document.querySelectorAll('.phase-filter-panel.filters-sticky .filter-status-clip').forEach(clip => {
+        const row = clip.querySelector('.filter-status-row');
+        if (!row) return;
+        const rowHeight = Math.max(0, row.scrollHeight || row.getBoundingClientRect().height || 0);
+        clip.style.setProperty('--filter-status-height', `${(rowHeight * (1 - progress)).toFixed(2)}px`);
+        row.style.setProperty('--filter-status-shift', `${(-rowHeight * progress).toFixed(2)}px`);
+      });
+      root.classList.toggle('app-scroll-compact', progress >= .999);
     };
-    const updateCompactState = () => {
+    const updateScrollProgress = () => {
       scrollFrame.current = 0;
       const currentY = Math.max(0, window.scrollY || document.scrollingElement?.scrollTop || 0);
       const delta = currentY - lastScrollY.current;
-
-      if (currentY <= 24) {
-        setCompactMode(false);
-      } else if (delta > 6) {
-        setCompactMode(true);
-      } else if (delta < -6) {
-        setCompactMode(false);
-      }
-
+      const nextProgress = currentY <= 0 ? 0 : scrollUiProgress.current + delta / 96;
+      applyProgress(nextProgress);
       lastScrollY.current = currentY;
     };
     const onScroll = () => {
-      if (!scrollFrame.current) scrollFrame.current = requestAnimationFrame(updateCompactState);
+      if (!scrollFrame.current) scrollFrame.current = requestAnimationFrame(updateScrollProgress);
     };
 
+    applyProgress(0);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => {
       window.removeEventListener('scroll', onScroll);
       if (scrollFrame.current) cancelAnimationFrame(scrollFrame.current);
-      document.documentElement.classList.remove('app-scroll-compact');
+      root.classList.remove('app-scroll-compact');
+      root.style.removeProperty('--scroll-ui-scale');
+      root.style.removeProperty('--filter-status-margin');
+      document.querySelectorAll('.filter-status-clip').forEach(clip => {
+        clip.style.removeProperty('--filter-status-height');
+        clip.querySelector('.filter-status-row')?.style.removeProperty('--filter-status-shift');
+      });
     };
   }, []);
 
@@ -7751,7 +7766,7 @@ function BottomNav({
     if (selectTimer.current) clearTimeout(selectTimer.current);
   }, []);
   return React.createElement("nav", {
-    className: "bottom-nav" + (scrollCompact && !dragging ? " is-scroll-compact" : ""),
+    className: "bottom-nav",
     "aria-label": "Główna nawigacja"
   }, React.createElement("div", {
     className: "nav-track",
@@ -8158,12 +8173,36 @@ function Mundial2026() {
   }, [safePlayers, safeMatches, safePredictions, safeResults, safeSpecialPredictions, safeSpecialResults, safeScoringSettings]);
   const [showFinalCongratulations, setShowFinalCongratulations] = useState(false);
   const finalCongratulationsShown = useRef(false);
+  const finalCongratulationsWasHidden = useRef(false);
   useEffect(() => {
-    if (!allLoaded || !finalWinner || finalCongratulationsShown.current) return;
-    // Jedno wyświetlenie na każde pełne uruchomienie lub odświeżenie strony.
-    // Sam powrót do aplikacji działającej w tle nie otwiera banera ponownie.
-    finalCongratulationsShown.current = true;
-    setShowFinalCongratulations(true);
+    if (!allLoaded || !finalWinner) return;
+    if (!finalCongratulationsShown.current) {
+      finalCongratulationsShown.current = true;
+      setShowFinalCongratulations(true);
+    }
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        finalCongratulationsWasHidden.current = true;
+        return;
+      }
+      if (document.visibilityState === 'visible' && finalCongratulationsWasHidden.current) {
+        finalCongratulationsWasHidden.current = false;
+        setShowFinalCongratulations(true);
+      }
+    };
+    const handlePageShow = event => {
+      if (event.persisted) setShowFinalCongratulations(true);
+    };
+
+    // Telefon często przywraca aplikację z tła bez ponownego montowania Reacta.
+    // Traktujemy taki powrót jak kolejne uruchomienie aplikacji.
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('pageshow', handlePageShow);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('pageshow', handlePageShow);
+    };
   }, [allLoaded, finalWinner]);
 
   // ── install prompt ──
