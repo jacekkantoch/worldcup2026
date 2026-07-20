@@ -3051,7 +3051,6 @@ function AutocompleteInput({
   const [open, setOpen] = useState(false);
   const [filtered, setFiltered] = useState([]);
   const ref = useRef(null);
-  const inputRef = useRef(null);
   useEffect(() => {
     if (!value || value.length < 1) {
       setFiltered([]);
@@ -3066,43 +3065,10 @@ function AutocompleteInput({
     document.addEventListener('mousedown', h);
     return () => document.removeEventListener('mousedown', h);
   }, []);
-  useLayoutEffect(() => {
-    const wrap = ref.current;
-    const input = inputRef.current;
-    if (!wrap || !input || !status) {
-      wrap?.style.removeProperty('--autocomplete-status-left');
-      return undefined;
-    }
-    const updateStatusPosition = () => {
-      const style = getComputedStyle(input);
-      const canvas = document.createElement('canvas');
-      const context = canvas.getContext('2d');
-      if (!context) return;
-      context.font = style.font;
-      const text = value || '';
-      const letterSpacing = parseFloat(style.letterSpacing) || 0;
-      const textWidth = context.measureText(text).width + Math.max(0, text.length - 1) * letterSpacing;
-      const paddingLeft = parseFloat(style.paddingLeft) || 0;
-      const paddingRight = parseFloat(style.paddingRight) || 0;
-      const iconSize = 14;
-      const desiredLeft = paddingLeft + textWidth + 4;
-      const maximumLeft = Math.max(paddingLeft, input.clientWidth - paddingRight - iconSize);
-      wrap.style.setProperty('--autocomplete-status-left', `${Math.min(desiredLeft, maximumLeft).toFixed(2)}px`);
-    };
-    updateStatusPosition();
-    const observer = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(updateStatusPosition) : null;
-    observer?.observe(input);
-    window.addEventListener('resize', updateStatusPosition);
-    return () => {
-      observer?.disconnect();
-      window.removeEventListener('resize', updateStatusPosition);
-    };
-  }, [value, status]);
   return React.createElement("div", {
     className: `autocomplete-input-wrap relative${status ? ` is-${status}` : ''}`,
     ref: ref
   }, React.createElement("input", {
-    ref: inputRef,
     type: "text",
     value: value || '',
     onChange: e => {
@@ -3112,12 +3078,17 @@ function AutocompleteInput({
     onFocus: () => setOpen(true),
     disabled: disabled,
     placeholder: placeholder,
-    className: `selection-tile autocomplete-status-input w-full px-3 py-2.5 rounded-full border text-sm font-semibold disabled:opacity-60${status ? ` is-${status}` : ''}`
-  }), status && React.createElement(Icon, {
+    className: `selection-tile autocomplete-status-input w-full px-3 py-2.5 rounded-full border text-sm font-semibold disabled:opacity-60${status ? ` is-${status} has-status-display` : ''}`
+  }), status && React.createElement("div", {
+    className: `autocomplete-status-display is-${status}`,
+    "aria-hidden": "true"
+  }, React.createElement("span", {
+    className: "autocomplete-status-text"
+  }, value || ''), React.createElement(Icon, {
     name: status === 'correct' ? 'check' : 'x',
     size: 14,
     className: `autocomplete-status-icon is-${status}`
-  }), open && filtered.length > 0 && React.createElement("div", {
+  })), open && filtered.length > 0 && React.createElement("div", {
     className: "absolute z-20 left-0 right-0 mt-1 bg-white border border-stone-200 rounded-lg shadow-lg max-h-48 overflow-y-auto"
   }, filtered.map(s => React.createElement("button", {
     key: s,

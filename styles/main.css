@@ -1373,13 +1373,10 @@
       padding-right: 36px !important;
     }
     .autocomplete-status-icon {
-      position: absolute;
-      top: 50%;
-      left: var(--autocomplete-status-left, 12px);
-      right: auto;
-      z-index: 1;
+      position: static;
+      flex: 0 0 auto;
       pointer-events: none;
-      transform: translateY(-50%);
+      transform: none;
     }
     .autocomplete-status-icon.is-correct {
       color: #30d158 !important;
@@ -8698,6 +8695,48 @@ html body input.autocomplete-status-input.is-correct,
 html body input.autocomplete-status-input.is-correct:disabled {
   color: #30d158 !important;
   -webkit-text-fill-color: #30d158 !important;
+}
+
+/* Nazwisko i wynik tworzą jeden elastyczny rząd. Nie używamy pozycji
+   obliczanej w pikselach, która rozjeżdżała się po zmianie fontu lub
+   szerokości widoku w mobilnym Safari. */
+html body .autocomplete-status-display {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 4px;
+  min-width: 0;
+  padding: 0 12px;
+  overflow: hidden;
+  pointer-events: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+html body .autocomplete-status-display.is-correct {
+  color: #30d158 !important;
+}
+
+html body .autocomplete-status-display.is-wrong {
+  color: #ff453a !important;
+}
+
+html body .autocomplete-status-text {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: clip;
+}
+
+html body input.autocomplete-status-input.has-status-display,
+html body input.autocomplete-status-input.has-status-display:disabled {
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  caret-color: transparent !important;
 }
 
 /* Trafione typy nagród korzystają z finalnego koloru zielonego pola TOP 3,
