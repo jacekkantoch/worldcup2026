@@ -10436,6 +10436,34 @@ html body > .fixed.inset-0.z-50 > .absolute.inset-0.final-winner-overlay {
 }
 
 html body > .fixed.inset-0.z-50 > [role="dialog"] {
+  position: relative !important;
+  z-index: 1 !important;
   opacity: 1 !important;
   visibility: visible !important;
+}
+
+/* iOS/PWA fallback: Safari potrafi narysować półprzezroczysty scrim, ale
+   pominąć backdrop-filter. Modal jest portalem obok #root, więc możemy
+   niezawodnie rozmyć samą aplikację bez rozmywania panelu. */
+html.modal-scroll-locked body > #root {
+  -webkit-filter: blur(6px) saturate(.9) !important;
+  filter: blur(6px) saturate(.9) !important;
+  will-change: auto !important;
+}
+
+/* Profil i administrator nie mogą zależeć od szkła WebKit. Zachowujemy ich
+   dotychczasową granatową paletę, lecz dajemy im realne, prawie kryjące tło. */
+html body > .fixed.inset-0.z-50.profile-modal-overlay-root > .relative.login-modal-sheet,
+html body > .fixed.inset-0.z-50.profile-modal-overlay-root > .relative.login-modal-compact-sheet {
+  z-index: 1 !important;
+  background:
+    radial-gradient(circle at 18% -12%, rgba(255,255,255,.12), transparent 42%),
+    linear-gradient(145deg, rgba(29,40,62,.99), rgba(8,14,26,.99)) !important;
+  background-color: #111824 !important;
+  border: 1px solid rgba(255,255,255,.16) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  box-shadow:
+    0 28px 90px rgba(0,0,0,.58),
+    inset 0 1px 0 rgba(255,255,255,.16) !important;
 }
