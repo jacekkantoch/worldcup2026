@@ -3051,6 +3051,7 @@ function AutocompleteInput({
   const [open, setOpen] = useState(false);
   const [filtered, setFiltered] = useState([]);
   const ref = useRef(null);
+  const inputRef = useRef(null);
   useEffect(() => {
     if (!value || value.length < 1) {
       setFiltered([]);
@@ -3065,10 +3066,43 @@ function AutocompleteInput({
     document.addEventListener('mousedown', h);
     return () => document.removeEventListener('mousedown', h);
   }, []);
+  useLayoutEffect(() => {
+    const wrap = ref.current;
+    const input = inputRef.current;
+    if (!wrap || !input || !status) {
+      wrap?.style.removeProperty('--autocomplete-status-left');
+      return undefined;
+    }
+    const updateStatusPosition = () => {
+      const style = getComputedStyle(input);
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      if (!context) return;
+      context.font = style.font;
+      const text = value || '';
+      const letterSpacing = parseFloat(style.letterSpacing) || 0;
+      const textWidth = context.measureText(text).width + Math.max(0, text.length - 1) * letterSpacing;
+      const paddingLeft = parseFloat(style.paddingLeft) || 0;
+      const paddingRight = parseFloat(style.paddingRight) || 0;
+      const iconSize = 14;
+      const desiredLeft = paddingLeft + textWidth + 4;
+      const maximumLeft = Math.max(paddingLeft, input.clientWidth - paddingRight - iconSize);
+      wrap.style.setProperty('--autocomplete-status-left', `${Math.min(desiredLeft, maximumLeft).toFixed(2)}px`);
+    };
+    updateStatusPosition();
+    const observer = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(updateStatusPosition) : null;
+    observer?.observe(input);
+    window.addEventListener('resize', updateStatusPosition);
+    return () => {
+      observer?.disconnect();
+      window.removeEventListener('resize', updateStatusPosition);
+    };
+  }, [value, status]);
   return React.createElement("div", {
     className: `autocomplete-input-wrap relative${status ? ` is-${status}` : ''}`,
     ref: ref
   }, React.createElement("input", {
+    ref: inputRef,
     type: "text",
     value: value || '',
     onChange: e => {
@@ -4348,6 +4382,24 @@ function SpecialsAllView({
 }) {
   const [selGroup, setSelGroup] = useState('A');
   const hasResults = !!(specialResults?.champion || specialResults?.topScorer || Object.keys(specialResults?.groupOrders || {}).length > 0);
+  useEffect(() => {
+    let frame = 0;
+    const updateOverflow = () => {
+      frame = 0;
+      document.querySelectorAll('.all-special-award-name').forEach(element => {
+        element.classList.toggle('is-overflowing', element.scrollWidth > element.clientWidth + 1);
+      });
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(updateOverflow);
+    };
+    schedule();
+    window.addEventListener('resize', schedule);
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener('resize', schedule);
+    };
+  }, [players, specialPredictions, specialResults]);
   const teamName = id => teams[id]?.name || id;
   const teamFlag = id => teams[id]?.flag || '';
   const teamAbbr = id => {

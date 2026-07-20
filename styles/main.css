@@ -1375,7 +1375,8 @@
     .autocomplete-status-icon {
       position: absolute;
       top: 50%;
-      right: 12px;
+      left: var(--autocomplete-status-left, 12px);
+      right: auto;
       z-index: 1;
       pointer-events: none;
       transform: translateY(-50%);
@@ -6553,7 +6554,9 @@ html.is-mobile-browser body {
 }
 
 html.is-mobile-browser body .app-header {
-  padding-top: calc(max(var(--safe-top, 0px), var(--browser-top-ui, 0px)) + 9px) !important;
+  /* visualViewport.offsetTop rośnie podczas zamykania klawiatury w iOS.
+     Nie jest to safe area i nie może zmieniać geometrii nagłówka. */
+  padding-top: calc(var(--safe-top, 0px) + 9px) !important;
 }
 
 html.is-mobile-browser body .bottom-nav {
@@ -8718,8 +8721,9 @@ html body .all-special-award-cell {
 }
 
 html body .all-special-award-value {
-  display: flex;
-  width: 100%;
+  display: inline-flex;
+  width: auto;
+  max-width: 100%;
   min-width: 0;
   align-items: center;
   gap: 4px;
@@ -8733,10 +8737,13 @@ html body .all-special-award-value > svg {
 html body .all-special-award-name {
   display: block;
   min-width: 0;
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: clip;
+}
+
+html body .all-special-award-name.is-overflowing {
   -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 18px), transparent 100%);
   mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 18px), transparent 100%);
 }
