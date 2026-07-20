@@ -8732,13 +8732,6 @@ html body .autocomplete-status-text {
   text-overflow: clip;
 }
 
-html body input.autocomplete-status-input.has-status-display,
-html body input.autocomplete-status-input.has-status-display:disabled {
-  color: transparent !important;
-  -webkit-text-fill-color: transparent !important;
-  caret-color: transparent !important;
-}
-
 /* Trafione typy nagród korzystają z finalnego koloru zielonego pola TOP 3,
    bez rozjaśniania przez półprzezroczyste tło sekcji. */
 html body .specials-view input.autocomplete-status-input.is-correct,
@@ -8760,6 +8753,16 @@ html body .specials-view input.autocomplete-status-input.is-wrong,
 html body .specials-view input.autocomplete-status-input.is-wrong:disabled {
   background: rgb(46, 10, 10) !important;
   opacity: 1 !important;
+}
+
+/* Musi występować po regułach kolorów is-correct/is-wrong. Sam tekst pola
+   pozostaje dostępny dla formularza, ale wizualnie pokazuje go pojedyncza
+   warstwa flex razem z ikoną — bez dublowania w mobilnym Safari. */
+html body .specials-view input.autocomplete-status-input.has-status-display,
+html body .specials-view input.autocomplete-status-input.has-status-display:disabled {
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  caret-color: transparent !important;
 }
 
 html body .all-special-awards-table {
