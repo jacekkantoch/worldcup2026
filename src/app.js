@@ -3797,9 +3797,11 @@ function MatchesView({
   onSavePrediction,
   scoringSettings
 }) {
+  const allMatchesFinished = matches.length > 0 && matches.every(match => !!results?.[match.id]);
+  const filtersTouched = useRef(false);
   const [phaseFilter, setPhaseFilter] = useState('all');
   const [groupFilter, setGroupFilter] = useState('all');
-  const [statusFilter, setStatusFilter] = useState('pending');
+  const [statusFilter, setStatusFilter] = useState(() => allMatchesFinished ? 'done' : 'pending');
   const [expandedId, setExpandedId] = useState(null);
   const [compactDevice, setCompactDevice] = useState(() => typeof window !== "undefined" && (window.innerWidth <= 700 || window.matchMedia("(pointer: coarse)").matches));
   useEffect(() => {
@@ -3811,8 +3813,15 @@ function MatchesView({
   const [visibleCount, setVisibleCount] = useState(() => compactDevice ? 18 : Number.MAX_SAFE_INTEGER);
   const handleToggleMatch = useCallback(id => setExpandedId(prev => prev === id ? null : id), []);
   const handlePhaseFilter = useCallback(phase => {
+    filtersTouched.current = true;
     setPhaseFilter(phase);
   }, []);
+  useEffect(() => {
+    if (!allMatchesFinished || filtersTouched.current) return;
+    setPhaseFilter('all');
+    setGroupFilter('all');
+    setStatusFilter('done');
+  }, [allMatchesFinished]);
   const filtered = useMemo(() => {
     return matches.filter(m => {
       if (phaseFilter !== 'all' && m.phase !== phaseFilter) return false;
@@ -3865,6 +3874,7 @@ function MatchesView({
   }, React.createElement("button", {
     type: "button",
     onClick: () => {
+      filtersTouched.current = true;
       setGroupFilter('all');
     },
     "aria-pressed": groupFilter === 'all',
@@ -3873,6 +3883,7 @@ function MatchesView({
     key: g,
     type: "button",
     onClick: () => {
+      filtersTouched.current = true;
       setGroupFilter(g);
     },
     "aria-pressed": groupFilter === g,
@@ -3896,6 +3907,7 @@ function MatchesView({
     key: t.k,
     type: "button",
     onClick: () => {
+      filtersTouched.current = true;
       setStatusFilter(t.k);
     },
     "aria-pressed": statusFilter === t.k,
@@ -4766,6 +4778,8 @@ function LeaderboardView({
   scoringSettings
 }) {
   const [openPodiumId, setOpenPodiumId] = useState(null);
+  const [shareFeedback, setShareFeedback] = useState('');
+  const shareFeedbackTimer = useRef(0);
   const {
     ranking,
     rankDeltas
@@ -4848,6 +4862,56 @@ function LeaderboardView({
       awards: !!((specialResults?.topScorer || '').trim() && (specialResults?.mvp || '').trim())
     };
   }, [matches, results, specialResults]);
+  useEffect(() => () => {
+    if (shareFeedbackTimer.current) clearTimeout(shareFeedbackTimer.current);
+  }, []);
+  const showShareFeedback = message => {
+    setShareFeedback(message);
+    if (shareFeedbackTimer.current) clearTimeout(shareFeedbackTimer.current);
+    shareFeedbackTimer.current = setTimeout(() => {
+      setShareFeedback('');
+      shareFeedbackTimer.current = 0;
+    }, 1800);
+  };
+  const shareRanking = async () => {
+    const heading = 'Końcowa klasyfikacja Football Typer';
+    const rankingLines = ranking.map((entry, index) => `${index + 1}. ${entry.player.name} — ${entry.total} pkt`);
+    const isLocalPreview = /^(localhost|127\.0\.0\.1)$/.test(window.location.hostname);
+    const publicUrl = isLocalPreview ? '' : `${window.location.origin}${window.location.pathname}`;
+    const rankingText = [heading, '', ...rankingLines].join('\n');
+    const clipboardText = [rankingText, ...(publicUrl ? ['', publicUrl] : [])].join('\n');
+    const shareData = {
+      title: heading,
+      text: rankingText,
+      ...(publicUrl ? { url: publicUrl } : {})
+    };
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+        return;
+      } catch (error) {
+        if (error?.name === 'AbortError') return;
+      }
+    }
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(clipboardText);
+      } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = clipboardText;
+        textarea.setAttribute('readonly', '');
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        textarea.remove();
+      }
+      showShareFeedback('Skopiowano ranking');
+    } catch (error) {
+      showShareFeedback('Nie udało się udostępnić');
+    }
+  };
   if (players.length === 0) return React.createElement("div", {
     className: "text-center text-stone-600 bg-stone-100 border border-stone-200 rounded-lg p-6"
   }, "Nie dodano jeszcze uczestnik\u00F3w.");
@@ -4859,11 +4923,25 @@ function LeaderboardView({
     className: "leaderboard-view rank-view"
   }, React.createElement("div", {
     className: "leaderboard-header rounded-xl p-4"
+  }, React.createElement("div", {
+    className: "leaderboard-header-copy"
   }, React.createElement("h3", {
     className: "font-display text-2xl tracking-wider"
   }, "Klasyfikacja"), React.createElement("p", {
     className: "text-xs mt-1"
-  }, "Punktacja na żywo")), podium.length > 0 && React.createElement("div", {
+  }, "Punktacja na żywo")), React.createElement("button", {
+    type: "button",
+    className: "ranking-share-button",
+    onClick: shareRanking,
+    "aria-label": "Udostępnij ranking"
+  }, React.createElement(Icon, {
+    name: "upload",
+    size: 16
+  }), React.createElement("span", null, shareFeedback || "Udostępnij")), React.createElement("span", {
+    className: "sr-only",
+    role: "status",
+    "aria-live": "polite"
+  }, shareFeedback)), podium.length > 0 && React.createElement("div", {
     className: "rank-podium"
   }, [1, 0, 2].map(i => React.createElement("div", {
     key: podium[i].player.id,
@@ -4977,9 +5055,11 @@ function CompareView({
   players,
   scoringSettings
 }) {
+  const allMatchesFinished = matches.length > 0 && matches.every(match => !!results?.[match.id]);
+  const filtersTouched = useRef(false);
   const [phaseFilter, setPhaseFilter] = useState('all');
   const [groupFilter, setGroupFilter] = useState('all');
-  const [statusFilter, setStatusFilter] = useState('pending');
+  const [statusFilter, setStatusFilter] = useState(() => allMatchesFinished ? 'done' : 'pending');
   const [compactDevice, setCompactDevice] = useState(() => typeof window !== "undefined" && (window.innerWidth <= 700 || window.matchMedia("(pointer: coarse)").matches));
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -4989,6 +5069,12 @@ function CompareView({
   }, []);
   const [visibleCount, setVisibleCount] = useState(() => compactDevice ? 18 : Number.MAX_SAFE_INTEGER);
   const [expandedMatches, setExpandedMatches] = useState(() => new Set());
+  useEffect(() => {
+    if (!allMatchesFinished || filtersTouched.current) return;
+    setPhaseFilter('all');
+    setGroupFilter('all');
+    setStatusFilter('done');
+  }, [allMatchesFinished]);
   const toggleMatchDetails = useCallback(matchId => {
     setExpandedMatches(prev => {
       const next = new Set(prev);
@@ -5028,6 +5114,7 @@ function CompareView({
     key: t.k,
     type: "button",
     onClick: () => {
+      filtersTouched.current = true;
       setPhaseFilter(t.k);
     },
     "aria-pressed": phaseFilter === t.k,
@@ -5039,6 +5126,7 @@ function CompareView({
   }, React.createElement("button", {
     type: "button",
     onClick: () => {
+      filtersTouched.current = true;
       setGroupFilter('all');
     },
     "aria-pressed": groupFilter === 'all',
@@ -5047,6 +5135,7 @@ function CompareView({
     key: g,
     type: "button",
     onClick: () => {
+      filtersTouched.current = true;
       setGroupFilter(g);
     },
     "aria-pressed": groupFilter === g,
@@ -5070,6 +5159,7 @@ function CompareView({
     key: t.k,
     type: "button",
     onClick: () => {
+      filtersTouched.current = true;
       setStatusFilter(t.k);
     },
     "aria-pressed": statusFilter === t.k,

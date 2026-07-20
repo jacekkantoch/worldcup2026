@@ -7349,7 +7349,59 @@ html:not([data-theme="light"]) .leaderboard-view .leaderboard-card:nth-of-type(2
 }
 
 html body .leaderboard-header {
+  position: relative;
   border-radius: 30px !important;
+  display: block;
+}
+
+html body .leaderboard-header-copy {
+  min-width: 0;
+}
+
+html body .ranking-share-button {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  min-height: 38px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 14px;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 999px;
+  background: rgba(255,255,255,.075);
+  color: var(--label-1);
+  font-size: 12px;
+  font-weight: 750;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+  transform: translateY(-50%) !important;
+  transition: background .16s ease, border-color .16s ease, transform .14s ease;
+}
+
+@media (hover: hover) {
+  html body .ranking-share-button:hover {
+    background: rgba(255,255,255,.13);
+    border-color: rgba(255,255,255,.22);
+    transform: translateY(-50%) !important;
+  }
+}
+
+html body .ranking-share-button:active {
+  transform: translateY(-50%) scale(.97) !important;
+}
+
+html body .ranking-share-button:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+@media (max-width: 360px) {
+  html body .ranking-share-button {
+    right: 12px;
+    padding: 0 11px;
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════
