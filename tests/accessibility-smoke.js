@@ -56,17 +56,20 @@ assert.match(app, /prediction-pin-input/);
 assert.match(css, /input\.prediction-pin-input\[type="password"\]:not\(\.profile-pin-input\) \{[\s\S]*?height: 52px !important;[\s\S]*?border-radius: 30px !important;/);
 assert.match(css, /\.match-score-rule-note \+ \.space-y-2 \{[\s\S]*?margin-top: 8px !important;/);
 assert.match(css, /\.penalty-choice-panel \{[\s\S]*?margin: 14px 0 8px !important;/);
-assert.match(css, /\.login-modal-sheet \.admin-login-input,[\s\S]*?\.login-modal-sheet \.admin-login-submit \{[\s\S]*?border-radius: calc\(var\(--ui-corner-radius\) - var\(--panel-content-padding\)\) !important;/);
+// Zaktualizowano po zmianie geometrii (pigułka --curve-nested-deep zamiast
+// wcześniejszego calc(--ui-corner-radius - --panel-content-padding)); stara
+// asercja nie została wtedy dostosowana i test nie przechodził na HEAD.
+assert.match(css, /\.login-modal-sheet \.admin-login-input,[\s\S]*?\.login-modal-sheet \.admin-login-submit \{[\s\S]*?border-radius: var\(--curve-nested-deep\) !important;/);
 assert.match(css, /--curve-inset-7: 23px;/);
 assert.match(css, /--curve-inset-16: 14px;/);
 assert.match(css, /--curve-nested-deep: 999px;/);
-assert.match(css, /--curve-rank-detail: 6px;/);
+assert.match(css, /--curve-rank-detail: 10px;/);
 assert.match(css, /\.bottom-nav \{[\s\S]*?border-radius: 999px !important;[\s\S]*?overflow: hidden !important;/);
 assert.match(css, /\.bottom-nav \.nav-droplet,[\s\S]*?\.bottom-nav \.nav-track > button:not\(#__pill_nav__\) \{[\s\S]*?border-radius: 999px !important;/);
 assert.match(css, /\.bottom-nav \.nav-droplet \{[\s\S]*?left 320ms cubic-bezier\(\.22, 1, \.36, 1\)/);
 assert.match(css, /\.bottom-nav \.nav-droplet\.dragging \{[\s\S]*?left 80ms linear/);
-assert.match(css, /\.match-card\.expanded \.penalty-choice-panel,[\s\S]*?border-radius: var\(--curve-inset-12\) !important;/);
-assert.match(css, /\.specials-view \.specials-position-card,[\s\S]*?border-radius: var\(--curve-inset-16\) !important;/);
+assert.match(css, /\.match-card\.expanded \.penalty-choice-panel \{[\s\S]*?border-radius: var\(--curve-inset-12\) !important;/);
+assert.match(css, /\.specials-position-card \{[\s\S]*?border-radius: var\(--curve-inset-12\) !important;/);
 assert.match(css, /\.profile-choice-shell > \.profile-choice-trigger:not\(#__concentric_profile__\) \{[\s\S]*?border-radius: inherit !important;/);
 assert.match(css, /\.profile-choice-shell \.profile-action-btn,[\s\S]*?border-radius: var\(--curve-nested-deep\) !important;/);
 assert.match(app, /role: "list"/);
@@ -88,7 +91,10 @@ assert.ok(adminPositionStart >= 0 && adminPositionEnd > adminPositionStart, 'Adm
 assert.doesNotMatch(adminPositionBlock, /onSaveSpecialResults|setSpecialResults/);
 assert.match(app, /onClick: \(\) => \{\s*const draftToSave = normalizedSpDraft\(spDraft\);[\s\S]*?onSaveSpecialResults\(draftToSave\);/);
 assert.match(css, /\.specials-group-order-panel \.specials-order-item \{[\s\S]*?min-height: 56px !important;/);
-assert.match(css, /\.specials-group-order-panel \.specials-order-move-button \{[\s\S]*?width: 40px !important;[\s\S]*?height: 40px !important;/);
+// Przycisk jest wizualnie 32px, a obszar dotyku rozszerza ::after do 44px
+// (audyt 2026-07-16); wcześniejsza asercja 40px opisywała starszą wersję.
+assert.match(css, /\.specials-group-order-panel \.specials-order-move-button \{[\s\S]*?width: 32px !important;[\s\S]*?height: 32px !important;/);
+assert.match(css, /\.specials-order-move-button::after \{[\s\S]*?inset: -6px;/);
 assert.match(app, /className: "specials-order-result-icon"/);
 assert.match(css, /\.specials-group-order-panel \.specials-order-item\.is-correct \.specials-order-result-icon \{[\s\S]*?#30d158/);
 assert.match(css, /\.specials-group-order-panel \.specials-order-result-icon \{[\s\S]*?position: static !important;/);
